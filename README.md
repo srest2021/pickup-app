@@ -29,14 +29,10 @@ Additionally, describe and show how to run the tests, explain your code style an
 
     a. On iOS, to run the simulator on Xcode:
 
-        ```shell
-        expo prebuild --platform ios
-        npx expo run:ios
-        ```
+    `expo prebuild --platform ios`
+    `npx expo run:ios`
 
     b. On Android (not tested yet):
     
-        ```shell
-        expo prebuild --platform android
-        npx expo run:android
-        ```
+    `expo prebuild --platform android`
+    `npx expo run:android`
