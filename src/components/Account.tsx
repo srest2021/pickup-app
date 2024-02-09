@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
-//import Avatar from './Avatar'
+import Avatar from './Avatar'
 
 export default function Account({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true)
@@ -84,12 +84,12 @@ export default function Account({ session }: { session: Session }) {
         <Input label="Email" value={session?.user?.email} disabled />
       </View>
       <View style={styles.verticallySpaced}>
-        <Input label="Display Name" value={displayName || ''} onChangeText={(text) => setDisplayName(text)} />
+        <Input label="Display Name" value={displayName || ''} onChangeText={(text: string) => setDisplayName(text)} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Input label="Bio" value={bio || ''} onChangeText={(text) => setBio(text)} />
+        <Input label="Bio" value={bio || ''} onChangeText={(text: string) => setBio(text)} />
       </View>
-      {/* <View>
+      <View>
         <Avatar
             size={200}
             url={avatarUrl}
@@ -98,7 +98,7 @@ export default function Account({ session }: { session: Session }) {
             updateProfile({ display_name: displayName, bio, avatar_url: url })
             }}
         />
-      </View> */}
+      </View>
 
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
