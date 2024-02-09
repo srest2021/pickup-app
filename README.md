@@ -21,8 +21,11 @@ Additionally, describe and show how to run the tests, explain your code style an
 1. Run `npm install`.
 
 2. To use the Expo Go app: 
+
     a. Download the Expo Go app on your phone.
+
     b. Run `npx expo start --go`.
+    
     c. Scan the QR code with the Expo Go app (Android) or the Camera app (iOS) and open the link.
 
 3. To locally build the project:
@@ -30,9 +33,11 @@ Additionally, describe and show how to run the tests, explain your code style an
     a. On iOS, to run the simulator on Xcode:
 
     `expo prebuild --platform ios`
+
     `npx expo run:ios`
 
     b. On Android (not tested yet):
-    
+
     `expo prebuild --platform android`
+
     `npx expo run:android`
