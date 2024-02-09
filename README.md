@@ -26,12 +26,16 @@ Additionally, describe and show how to run the tests, explain your code style an
     c. Scan the QR code with the Expo Go app (Android) or the Camera app (iOS) and open the link.
 
 3. To locally build the project:
+
     a. On iOS, to run the simulator on Xcode:
+
         ```shell
         expo prebuild --platform ios
         npx expo run:ios
         ```
+
     b. On Android (not tested yet):
+    
         ```shell
         expo prebuild --platform android
         npx expo run:android
