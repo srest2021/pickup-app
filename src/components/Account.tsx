@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { StyleSheet, View, Alert } from 'react-native'
+import { ScrollView, View, Alert } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
 import Avatar from './Avatar'
@@ -79,17 +79,17 @@ export default function Account({ session }: { session: Session }) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+    <ScrollView className="p-12 mt-0">
+      <View className="mt-20 py-4 self-stretch">
         <Input label="Email" value={session?.user?.email} disabled />
       </View>
-      <View style={styles.verticallySpaced}>
+      <View className="py-4 self-stretch">
         <Input label="Display Name" value={displayName || ''} onChangeText={(text: string) => setDisplayName(text)} />
       </View>
-      <View style={styles.verticallySpaced}>
+      <View className="py-4 self-stretch">
         <Input label="Bio" value={bio || ''} onChangeText={(text: string) => setBio(text)} />
       </View>
-      <View>
+      <View className="items-center">
         <Avatar
             size={200}
             url={avatarUrl}
@@ -100,7 +100,7 @@ export default function Account({ session }: { session: Session }) {
         />
       </View>
 
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+      <View className="mt-10 py-4 self-stretch">
         <Button
           title={loading ? 'Loading ...' : 'Update'}
           onPress={() => updateProfile({ display_name: displayName, bio, avatar_url: avatarUrl })}
@@ -108,24 +108,9 @@ export default function Account({ session }: { session: Session }) {
         />
       </View>
 
-      <View style={styles.verticallySpaced}>
+      <View className="py-4 self-stretch">
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
-    </View>
+    </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    padding: 12,
-  },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
-  },
-  mt20: {
-    marginTop: 20,
-  },
-})

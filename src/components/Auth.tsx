@@ -47,8 +47,8 @@ export default function Auth() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+    <View className="p-12 mt-40">
+      <View className="mt-20 py-4 self-stretch">
         <Input
           label="Email"
           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
@@ -58,7 +58,7 @@ export default function Auth() {
           autoCapitalize={'none'}
         />
       </View>
-      <View style={styles.verticallySpaced}>
+      <View className="py-4 self-stretch">
         <Input
           label="Password"
           leftIcon={{ type: 'font-awesome', name: 'lock' }}
@@ -69,27 +69,12 @@ export default function Auth() {
           autoCapitalize={'none'}
         />
       </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+      <View className="mt-20 py-4 self-stretch">
         <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
       </View>
-      <View style={styles.verticallySpaced}>
+      <View className="py-4 self-stretch">
         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    padding: 12,
-  },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
-  },
-  mt20: {
-    marginTop: 20,
-  },
-})

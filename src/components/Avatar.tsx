@@ -9,10 +9,9 @@ interface Props {
   onUpload: (filePath: string) => void
 }
 
-export default function Avatar({ url, size = 150, onUpload }: Props) {
+export default function Avatar({ url, onUpload }: Props) {
   const [uploading, setUploading] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-  const avatarSize = { height: size, width: size }
 
   useEffect(() => {
     if (url) downloadImage(url)
@@ -94,37 +93,22 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
         <Image
           source={{ uri: avatarUrl }}
           accessibilityLabel="Avatar"
-          style={[avatarSize, styles.avatar, styles.image]}
+          className="h-36 w-36 rounded-md overflow-hidden max-w-full object-cover pt-0"
+          //style={[avatarSize, styles.avatar, styles.image]}
         />
       ) : (
-        <View style={[avatarSize, styles.avatar, styles.noImage]} />
+        <View 
+          className="h-36 w-36 rounded-md overflow-hidden max-w-full border-slate-300 border-solid border-2 bg-slate-200"
+          //style={[avatarSize, styles.avatar, styles.noImage]} 
+        />
       )}
       <View>
         <Button
-          title={uploading ? 'Uploading ...' : 'Upload'}
+          title={uploading ? 'Uploading ...' : 'Upload Avatar'}
           onPress={uploadAvatar}
           disabled={uploading}
         />
-      </View>
+      </View> 
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  avatar: {
-    borderRadius: 5,
-    overflow: 'hidden',
-    maxWidth: '100%',
-  },
-  image: {
-    objectFit: 'cover',
-    paddingTop: 0,
-  },
-  noImage: {
-    backgroundColor: '#333',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgb(200, 200, 200)',
-    borderRadius: 5,
-  },
-})

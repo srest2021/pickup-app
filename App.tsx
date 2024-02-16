@@ -5,6 +5,7 @@ import Auth from './src/components/Auth'
 import Account from './src/components/Account'
 import { View } from 'react-native'
 import { Session } from '@supabase/supabase-js'
+import "./global.css"
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
