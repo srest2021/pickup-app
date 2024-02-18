@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { StyleSheet, View, Alert, Image, Button } from 'react-native'
+import { View, Alert, Image, Button } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 
 interface Props {
-  size: number
   url: string | null
   onUpload: (filePath: string) => void
+  allowUpload: boolean
 }
 
-export default function Avatar({ url, onUpload }: Props) {
+export default function Avatar({ url, onUpload, allowUpload }: Props) {
   const [uploading, setUploading] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
 
@@ -94,21 +94,21 @@ export default function Avatar({ url, onUpload }: Props) {
           source={{ uri: avatarUrl }}
           accessibilityLabel="Avatar"
           className="h-36 w-36 rounded-md overflow-hidden max-w-full object-cover pt-0"
-          //style={[avatarSize, styles.avatar, styles.image]}
         />
       ) : (
         <View 
           className="h-36 w-36 rounded-md overflow-hidden max-w-full border-slate-300 border-solid border-2 bg-slate-200"
-          //style={[avatarSize, styles.avatar, styles.noImage]} 
         />
       )}
-      <View>
-        <Button
-          title={uploading ? 'Uploading ...' : 'Upload Avatar'}
-          onPress={uploadAvatar}
-          disabled={uploading}
-        />
-      </View> 
+      { allowUpload && 
+        <View>
+            <Button
+            title={uploading ? 'Uploading ...' : 'Upload Avatar'}
+            onPress={uploadAvatar}
+            disabled={uploading}
+            />
+        </View> 
+      }
     </View>
   )
 }

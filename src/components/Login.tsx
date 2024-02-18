@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Alert, StyleSheet, View, AppState } from 'react-native'
+import { Alert, StyleSheet, View, AppState, Text } from 'react-native'
 import { supabase } from '../lib/supabase'
 import { Button, Input } from 'react-native-elements'
 
@@ -15,7 +15,7 @@ AppState.addEventListener('change', (state) => {
   }
 })
 
-export default function Auth() {
+export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -31,24 +31,14 @@ export default function Auth() {
     setLoading(false)
   }
 
-  async function signUpWithEmail() {
-    setLoading(true)
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
-    setLoading(false)
-  }
-
   return (
     <View className="p-12 mt-40">
-      <View className="mt-20 py-4 self-stretch">
+      <View className="mb-20 py-4 self-stretch">
+        <Text className="text-2xl text-center">
+            Login
+        </Text>
+      </View>
+      <View className="py-4 self-stretch">
         <Input
           label="Email"
           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
@@ -69,11 +59,8 @@ export default function Auth() {
           autoCapitalize={'none'}
         />
       </View>
-      <View className="mt-20 py-4 self-stretch">
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
-      </View>
       <View className="py-4 self-stretch">
-        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+        <Button title="Login" disabled={loading} onPress={() => signInWithEmail()} />
       </View>
     </View>
   )

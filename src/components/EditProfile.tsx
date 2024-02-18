@@ -5,7 +5,7 @@ import { Button, Input } from 'react-native-elements'
 import { Session } from '@supabase/supabase-js'
 import Avatar from './Avatar'
 
-export default function Account({ session }: { session: Session }) {
+export default function EditProfile({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true)
   const [displayName, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
@@ -91,12 +91,12 @@ export default function Account({ session }: { session: Session }) {
       </View>
       <View className="items-center">
         <Avatar
-            size={200}
             url={avatarUrl}
             onUpload={(url: string) => {
             setAvatarUrl(url)
             updateProfile({ display_name: displayName, bio, avatar_url: url })
             }}
+            allowUpload={true}
         />
       </View>
 
@@ -108,9 +108,9 @@ export default function Account({ session }: { session: Session }) {
         />
       </View>
 
-      <View className="py-4 self-stretch">
+      {/* <View className="py-4 self-stretch">
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View>
+      </View> */}
     </ScrollView>
   )
 }
