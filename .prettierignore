@@ -1,0 +1,5 @@
+build/
+coverage/
+assets/
+node_modules/
+README.md
