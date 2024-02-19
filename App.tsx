@@ -4,10 +4,10 @@ import { supabase } from "./src/lib/supabase";
 import { View } from "react-native";
 import { Session } from "@supabase/supabase-js";
 import "./global.css";
-import EditProfile from "./src/components/EditProfile";
-import Profile from "./src/components/Profile";
-import Login from "./src/components/Login";
-import Register from "./src/components/Register";
+import EditProfile from "./src/components/user/EditProfile";
+import Profile from "./src/components/user/Profile";
+import Login from "./src/components/auth/Login";
+import Register from "./src/components/auth/Register";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);

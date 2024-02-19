@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../../lib/supabase";
 import { ScrollView, View, Alert, Text } from "react-native";
-import { Button, Input } from "react-native-elements";
+import { Button } from "react-native-elements";
 import { Session } from "@supabase/supabase-js";
 import Avatar from "./Avatar";
+import Sports from "../Sports";
 
 export default function Profile({ session }: { session: Session }) {
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState(null);
   const [displayName, setDisplayName] = useState(null);
   const [bio, setBio] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [sports, setSports] = useState(null);
 
   useEffect(() => {
     if (session) getProfile();
@@ -18,31 +20,51 @@ export default function Profile({ session }: { session: Session }) {
 
   async function getProfile() {
     try {
-      setLoading(true);
+      //setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`username, display_name, bio, avatar_url`)
+        .select(
+          `
+            username, 
+            display_name, 
+            bio, 
+            avatar_url,
+            sports (
+                id,
+                name,
+                skill_level
+            )
+        `,
+        )
         .eq("id", session?.user.id)
         .single();
       if (error && status !== 406) {
         throw error;
       }
+      //console.log(data);
 
       if (data) {
         setUsername(data.username);
         setDisplayName(data.display_name);
         setBio(data.bio);
         setAvatarUrl(data.avatar_url);
+
+        data.sports = data.sports.map((sport) => {
+            return {...sport, skillLevel: sport.skill_level}
+        });
+        setSports(data.sports); 
+        //console.log("hi ", sports);
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
-    } finally {
-      setLoading(false);
     }
+    // finally {
+    //   setLoading(false);
+    // }
   }
 
   return (
@@ -63,6 +85,8 @@ export default function Profile({ session }: { session: Session }) {
       <View className="py-4 self-stretch">
         <Text className="text-lg">{bio ? bio : "No bio yet"}</Text>
       </View>
+
+      <Sports sports={sports} />
 
       <View className="py-4 self-stretch">
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
