@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { ScrollView, View, Alert } from "react-native";
 import { Button, Input } from "react-native-elements";
+import { Session } from "@supabase/supabase-js";
 import Avatar from "./Avatar";
 
-export default function EditProfile({ route }) {
+export default function EditProfile({ session }: { session: Session }) {
   const [loading, setLoading] = useState(true);
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const { session } = route.params;
 
   useEffect(() => {
     if (session) getProfile();
@@ -80,7 +80,7 @@ export default function EditProfile({ route }) {
 
   return (
     <ScrollView className="p-12 mt-0">
-      <View className="py-4 self-stretch">
+      <View className="mt-20 py-4 self-stretch">
         <Input label="Email" value={session?.user?.email} disabled />
       </View>
       <View className="py-4 self-stretch">

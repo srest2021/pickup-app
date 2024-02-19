@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View, AppState, Text } from "react-native";
+import { Alert, View, AppState } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { Button, Input } from "react-native-elements";
 
@@ -15,7 +15,7 @@ AppState.addEventListener("change", (state) => {
   }
 });
 
-export default function Login() {
+export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,10 +32,7 @@ export default function Login() {
   }
 
   return (
-    <View className="p-12 mt-40">
-      <View className="mb-20 py-4 self-stretch">
-        <Text className="text-2xl text-center">Login</Text>
-      </View>
+    <View className="p-12 mt-28">
       <View className="py-4 self-stretch">
         <Input
           label="Email"
@@ -62,6 +59,14 @@ export default function Login() {
           title="Login"
           disabled={loading}
           onPress={() => signInWithEmail()}
+        />
+      </View>
+
+      <View className="py-4 self-stretch">
+        <Button
+          title="Register"
+          disabled={loading}
+          onPress={() => navigation.navigate("Register")}
         />
       </View>
     </View>

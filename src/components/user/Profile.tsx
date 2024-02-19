@@ -2,19 +2,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { ScrollView, View, Alert, Text } from "react-native";
 import { Button } from "react-native-elements";
-import { Session } from "@supabase/supabase-js";
 import Avatar from "./Avatar";
 import Sports from "../Sports";
-import {Sport as SportType} from "../../lib/types"
-//import { SkillLevel } from "../../lib/types";
+import { Sport as SportType } from "../../lib/types";
 
-export default function Profile({ session }: { session: Session }) {
-  //const [loading, setLoading] = useState(true);
+export default function Profile({ navigation, route }) {
+  const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState(null);
   const [displayName, setDisplayName] = useState(null);
   const [bio, setBio] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [sports, setSports] = useState<SportType | null>(null);
+
+  const { session } = route.params;
 
   useEffect(() => {
     if (session) getProfile();
@@ -22,7 +22,7 @@ export default function Profile({ session }: { session: Session }) {
 
   async function getProfile() {
     try {
-      //setLoading(true);
+      setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
       const { data, error, status } = await supabase
@@ -57,22 +57,21 @@ export default function Profile({ session }: { session: Session }) {
             id: sport.id,
             name: sport.name,
             skillLevel: sport.skill_level,
-          }))
+          })),
         );
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
+    } finally {
+      setLoading(false);
     }
-    // finally {
-    //   setLoading(false);
-    // }
   }
 
   return (
     <ScrollView className="p-12">
-      <View className="mt-20 mb-10 items-center">
+      <View className="mb-10 items-center">
         <Avatar url={avatarUrl} onUpload={() => {}} allowUpload={false} />
       </View>
 
@@ -87,14 +86,22 @@ export default function Profile({ session }: { session: Session }) {
 
       <View className="py-6 self-stretch">
         <Text className="text-lg font-bold">Bio</Text>
-        <Text className="p-2 text-lg bg-slate-100">
+        <Text className="p-2 text-lg bg-gray-200">
           {bio ? bio : "No bio yet"}
         </Text>
       </View>
 
       <Sports sports={sports} />
 
-      <View className="mt-10 py-6 self-stretch">
+      <View className="mt-10 py-4 self-stretch">
+        <Button
+          title="Edit Profile"
+          disabled={loading}
+          onPress={() => navigation.navigate("EditProfile")}
+        />
+      </View>
+
+      <View className="py-4 self-stretch">
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
     </ScrollView>

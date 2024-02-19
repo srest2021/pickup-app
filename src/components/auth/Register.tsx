@@ -43,11 +43,7 @@ export default function Register() {
   }
 
   return (
-    <View className="p-12 mt-40">
-      <View className="mb-20 py-4 self-stretch">
-        <Text className="text-2xl text-center">Register</Text>
-      </View>
-
+    <View className="p-12 mt-28">
       <View className="py-4 self-stretch">
         <Input
           label="Email"

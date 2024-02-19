@@ -1,11 +1,6 @@
 import { View, Text } from "react-native";
 import { SkillLevel, Sport as SportType } from "../lib/types";
 
-//import { styled } from 'nativewind';
-
-//const StyledView = styled(View)
-//const StyledText = styled(Text)
-
 export default function Sport({ sport }: { sport: SportType }) {
   function getSkillLevelString(skillLevel: SkillLevel): string {
     switch (skillLevel) {

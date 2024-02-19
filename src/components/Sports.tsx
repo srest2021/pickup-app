@@ -6,11 +6,13 @@ export default function Sports({ sports }: { sports: any }) {
   return (
     <View>
       <Text className="text-lg font-bold">My Sports</Text>
-      <View className="bg-slate-100">
+      <View className="bg-gray-200">
         {sports ? (
-          sports.map((sport: SportType) => <Sport key={sport.id} sport={sport} />)
+          sports.map((sport: SportType) => (
+            <Sport key={sport.id} sport={sport} />
+          ))
         ) : (
-          <Text>No sports yet</Text>
+          <Text className="text-lg">No sports yet</Text>
         )}
       </View>
     </View>
