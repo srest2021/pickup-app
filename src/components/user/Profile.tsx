@@ -5,6 +5,7 @@ import { Button } from "react-native-elements";
 import { Session } from "@supabase/supabase-js";
 import Avatar from "./Avatar";
 import Sports from "../Sports";
+import {Sport as SportType} from "../../lib/types"
 //import { SkillLevel } from "../../lib/types";
 
 export default function Profile({ session }: { session: Session }) {
@@ -13,7 +14,7 @@ export default function Profile({ session }: { session: Session }) {
   const [displayName, setDisplayName] = useState(null);
   const [bio, setBio] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const [sports, setSports] = useState(null);
+  const [sports, setSports] = useState<SportType | null>(null);
 
   useEffect(() => {
     if (session) getProfile();
@@ -56,7 +57,7 @@ export default function Profile({ session }: { session: Session }) {
             id: sport.id,
             name: sport.name,
             skillLevel: sport.skill_level,
-          })),
+          }))
         );
       }
     } catch (error) {
