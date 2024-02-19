@@ -5,6 +5,7 @@ import { Button } from "react-native-elements";
 import { Session } from "@supabase/supabase-js";
 import Avatar from "./Avatar";
 import Sports from "../Sports";
+//import { SkillLevel } from "../../lib/types";
 
 export default function Profile({ session }: { session: Session }) {
   //const [loading, setLoading] = useState(true);
@@ -50,12 +51,13 @@ export default function Profile({ session }: { session: Session }) {
         setDisplayName(data.display_name);
         setBio(data.bio);
         setAvatarUrl(data.avatar_url);
-
-        data.sports = data.sports.map((sport) => {
-            return {...sport, skillLevel: sport.skill_level}
-        });
-        setSports(data.sports); 
-        //console.log("hi ", sports);
+        setSports(
+          data.sports.map((sport) => ({
+            id: sport.id,
+            name: sport.name,
+            skillLevel: sport.skill_level,
+          })),
+        );
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -68,12 +70,12 @@ export default function Profile({ session }: { session: Session }) {
   }
 
   return (
-    <ScrollView className="p-12 mt-0">
-      <View className="mt-20 items-center">
+    <ScrollView className="p-12">
+      <View className="mt-20 mb-10 items-center">
         <Avatar url={avatarUrl} onUpload={() => {}} allowUpload={false} />
       </View>
 
-      <View className="mt-10 py-4 self-stretch">
+      <View className="py-0 self-stretch">
         <Text className="text-2xl text-center">
           {displayName ? displayName : "No display name"}
         </Text>
@@ -82,13 +84,16 @@ export default function Profile({ session }: { session: Session }) {
         <Text className="text-xl text-center">@{username}</Text>
       </View>
 
-      <View className="py-4 self-stretch">
-        <Text className="text-lg">{bio ? bio : "No bio yet"}</Text>
+      <View className="py-6 self-stretch">
+        <Text className="text-lg font-bold">Bio</Text>
+        <Text className="p-2 text-lg bg-slate-100">
+          {bio ? bio : "No bio yet"}
+        </Text>
       </View>
 
       <Sports sports={sports} />
 
-      <View className="py-4 self-stretch">
+      <View className="mt-10 py-6 self-stretch">
         <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
       </View>
     </ScrollView>

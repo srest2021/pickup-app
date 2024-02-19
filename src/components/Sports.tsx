@@ -5,11 +5,14 @@ import Sport from "./Sport";
 export default function Sports({ sports }: { sports: any }) {
   return (
     <View>
-      {sports ? (
-        sports.map((sport: SportType) => <Sport sport={sport} />)
-      ) : (
-        <Text>No sports yet</Text>
-      )}
+      <Text className="text-lg font-bold">My Sports</Text>
+      <View className="bg-slate-100">
+        {sports ? (
+          sports.map((sport: SportType) => <Sport sport={sport} />)
+        ) : (
+          <Text>No sports yet</Text>
+        )}
+      </View>
     </View>
   );
 }
