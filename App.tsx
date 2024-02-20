@@ -9,6 +9,8 @@ import Login from "./src/components/auth/Login";
 import Register from "./src/components/auth/Register";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { TamaguiProvider } from 'tamagui'
+import appConfig from './tamagui.config'
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +28,7 @@ export default function App() {
   }, []);
 
   return (
+    <TamaguiProvider config={appConfig}>
     <NavigationContainer>
       <Stack.Navigator>
         {session && session.user ? (
@@ -59,5 +62,6 @@ export default function App() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    </TamaguiProvider>
   );
 }

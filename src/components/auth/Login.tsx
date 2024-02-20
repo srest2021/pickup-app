@@ -33,7 +33,7 @@ export default function Login({ navigation }) {
 
   return (
     <View className="p-12 mt-28">
-      <View className="py-4 self-stretch">
+      <View className="self-stretch py-4">
         <Input
           label="Email"
           leftIcon={{ type: "font-awesome", name: "envelope" }}
@@ -43,7 +43,7 @@ export default function Login({ navigation }) {
           autoCapitalize={"none"}
         />
       </View>
-      <View className="py-4 self-stretch">
+      <View className="self-stretch py-4">
         <Input
           label="Password"
           leftIcon={{ type: "font-awesome", name: "lock" }}
@@ -54,7 +54,7 @@ export default function Login({ navigation }) {
           autoCapitalize={"none"}
         />
       </View>
-      <View className="py-4 self-stretch">
+      <View className="self-stretch py-4">
         <Button
           title="Login"
           disabled={loading}
@@ -62,7 +62,7 @@ export default function Login({ navigation }) {
         />
       </View>
 
-      <View className="py-4 self-stretch">
+      <View className="self-stretch py-4">
         <Button
           title="Register"
           disabled={loading}
