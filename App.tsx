@@ -86,13 +86,14 @@ export default function App() {
               initialParams={{ key: session.user.id }}
             />
             <Tab.Screen
-              name="Profile"
+              name="My Profile"
               component={EditProfileNavigator}
               options={{
                 tabBarLabel: "Profile",
                 tabBarIcon: ({ color, size, focused }) => (
                   <CircleUser color={focused ? "black" : "gray"} />
                 ),
+                headerShown: false,
               }}
               initialParams={{ key: session.user.id }}
             />

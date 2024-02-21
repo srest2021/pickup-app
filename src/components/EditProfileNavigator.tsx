@@ -9,12 +9,12 @@ export default function EditProfileNavigator() {
       <Stack.Screen
         name="Profile"
         component={Profile}
-        options={{ title: "My Profile", headerShown: false }}
+        options={{ title: "Profile", headerShown: true }}
       />
       <Stack.Screen
         name="EditProfile"
         component={EditProfile}
-        options={{ title: "Edit Profile", headerShown: false }}
+        options={{ title: "Edit Profile", headerShown: true }}
       />
     </Stack.Navigator>
   );
