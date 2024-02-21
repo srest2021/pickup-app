@@ -1,7 +1,4 @@
 import "react-native-url-polyfill/auto";
-// import { useState, useEffect } from "react";
-// import { supabase } from "./src/lib/supabase";
-// import { Session } from "@supabase/supabase-js";
 import "./global.css";
 import EditProfile from "./src/components/user/EditProfile";
 import Profile from "./src/components/user/Profile";
