@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, View, AppState, Text } from "react-native";
 import { supabase } from "../../lib/supabase";
-import { Button, Input } from "react-native-elements";
+import { Input, Button, YStack, SizableText } from "tamagui";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -43,48 +43,48 @@ export default function Register() {
   }
 
   return (
-    <View className="p-12 mt-28">
-      <View className="py-4 self-stretch">
+    <View className="p-12">
+      <SizableText size="$9" paddingBottom="$5" paddingTop="$10">
+        Create an account
+      </SizableText>
+
+      <YStack overflow="hidden" space="$2" paddingBottom="$2">
         <Input
-          label="Email"
-          leftIcon={{ type: "font-awesome", name: "envelope" }}
-          onChangeText={(text: string) => setEmail(text)}
-          value={email}
+          size="$5"
           placeholder="email@address.com"
+          value={email}
+          onChangeText={(text: string) => setEmail(text)}
           autoCapitalize={"none"}
         />
-      </View>
 
-      <View className="py-4 self-stretch">
         <Input
-          label="Password"
-          leftIcon={{ type: "font-awesome", name: "lock" }}
-          onChangeText={(text: string) => setPassword(text)}
-          value={password}
-          secureTextEntry={true}
-          placeholder="Password"
-          autoCapitalize={"none"}
-        />
-      </View>
-
-      <View className="py-4 self-stretch">
-        <Input
-          label="Username"
-          leftIcon={{ type: "font-awesome", name: "user" }}
-          onChangeText={(text: string) => setUsername(text)}
-          value={username}
+          size="$5"
           placeholder="Username"
+          value={username}
+          onChangeText={(text: string) => setUsername(text)}
           autoCapitalize={"none"}
         />
-      </View>
 
-      <View className="py-4 self-stretch">
+        <Input
+          size="$5"
+          placeholder={`Password`}
+          secureTextEntry={true}
+          value={password}
+          onChangeText={(text: string) => setPassword(text)}
+          autoCapitalize={"none"}
+        />
+      </YStack>
+
+      <YStack space="$6" paddingTop="$2">
         <Button
-          title="Sign up"
+          theme="active"
           disabled={loading}
           onPress={() => signUpWithEmail()}
-        />
-      </View>
+          size="$5"
+        >
+          Register
+        </Button>
+      </YStack>
     </View>
   );
 }

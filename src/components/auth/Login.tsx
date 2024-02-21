@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, View, AppState } from "react-native";
 import { supabase } from "../../lib/supabase";
-import { Button, Input } from "react-native-elements";
+import { Input, Button, YStack, SizableText } from "tamagui";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -32,43 +32,49 @@ export default function Login({ navigation }) {
   }
 
   return (
-    <View className="p-12 mt-28">
-      <View className="self-stretch py-4">
+    <View className="p-12">
+      <SizableText size="$10" paddingBottom="$5" paddingTop="$10">
+        Welcome to Pickup!
+      </SizableText>
+
+      <YStack overflow="hidden" space="$2" paddingBottom="$2">
         <Input
-          label="Email"
-          leftIcon={{ type: "font-awesome", name: "envelope" }}
-          onChangeText={(text: string) => setEmail(text)}
-          value={email}
+          size="$5"
           placeholder="email@address.com"
+          value={email}
+          onChangeText={(text: string) => setEmail(text)}
           autoCapitalize={"none"}
         />
-      </View>
-      <View className="self-stretch py-4">
+
         <Input
-          label="Password"
-          leftIcon={{ type: "font-awesome", name: "lock" }}
-          onChangeText={(text: string) => setPassword(text)}
-          value={password}
+          size="$5"
+          placeholder={`Password`}
           secureTextEntry={true}
-          placeholder="Password"
+          value={password}
+          onChangeText={(text: string) => setPassword(text)}
           autoCapitalize={"none"}
         />
-      </View>
-      <View className="self-stretch py-4">
+      </YStack>
+
+      <YStack space="$6" paddingTop="$2">
         <Button
-          title="Login"
+          theme="active"
           disabled={loading}
           onPress={() => signInWithEmail()}
-        />
-      </View>
+          size="$5"
+        >
+          Login
+        </Button>
 
-      <View className="self-stretch py-4">
         <Button
-          title="Register"
+          variant="outlined"
           disabled={loading}
           onPress={() => navigation.navigate("Register")}
-        />
-      </View>
+          size="$5"
+        >
+          Register
+        </Button>
+      </YStack>
     </View>
   );
 }
