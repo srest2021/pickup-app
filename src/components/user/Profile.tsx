@@ -15,7 +15,7 @@ export default function Profile({ navigation }) {
     <ScrollView className="p-12">
       {user ? (
         <View>
-          <View className="mb-10 items-center">
+          <View className="items-center mb-10">
             <Avatar
               url={user.avatarUrl}
               onUpload={() => {}}
@@ -23,16 +23,20 @@ export default function Profile({ navigation }) {
             />
           </View>
 
-          <View className="py-0 self-stretch">
+          <Button> Hi</Button>
+
+          <View className="self-stretch py-0">
             <Text className="text-2xl text-center">
               {user.displayName ? user.displayName : "No display name"}
             </Text>
           </View>
-          <View className="py-2 self-stretch">
+          <View className="self-stretch py-2">
             <Text className="text-xl text-center">@{user.username}</Text>
           </View>
 
-          <View className="py-6 self-stretch">
+          
+
+          <View className="self-stretch py-6">
             <Text className="text-lg font-bold">Bio</Text>
             <Text className="p-2 text-lg">
               {user.bio ? user.bio : "No bio yet"}
