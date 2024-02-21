@@ -12,7 +12,7 @@ export default function Profile({ navigation }) {
   const { user } = useMutationUser();
 
   return (
-    <ScrollView className="p-12">
+    <ScrollView style={{ backgroundColor: "#1270a5" }} contentContainerStyle={{ padding: 12 }}>
       {user ? (
         <View>
           <View className="items-center mb-10">
@@ -22,8 +22,6 @@ export default function Profile({ navigation }) {
               allowUpload={false}
             />
           </View>
-
-          <Button> Hi</Button>
 
           <View className="self-stretch py-0">
             <Text className="text-2xl text-center">
@@ -44,6 +42,8 @@ export default function Profile({ navigation }) {
           </View>
 
           <Sports sports={user.sports} />
+          <Button size="$3" style={{ alignSelf: "flex-start" }}>Add Sport</Button>
+          
         </View>
       ) : (
         <Text>No user on the session.</Text>

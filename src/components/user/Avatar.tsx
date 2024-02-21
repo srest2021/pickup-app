@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
-import { View, Alert, Image, Button } from "react-native";
+import { View, Alert, Image, Button, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+
 
 interface Props {
   url: string | null;
   onUpload: (filePath: string) => void;
   allowUpload: boolean;
 }
+
 
 export default function Avatar({ url, onUpload, allowUpload }: Props) {
   const [uploading, setUploading] = useState(false);
@@ -38,7 +40,7 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
       }
     }
   }
-
+  
   async function uploadAvatar() {
     try {
       setUploading(true);
@@ -90,17 +92,30 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
       setUploading(false);
     }
   }
-
+  
+//className="object-cover max-w-full pt-0 overflow-hidden rounded-full h-36 w-36"
+//className="max-w-full overflow-hidden border-2 border-solid rounded-full h-36 w-36 border-slate-300 bg-slate-200"
   return (
-    <View>
+    <View style={{ width: 170, height: 170, overflow: 'hidden', borderRadius: 150, borderWidth: 2, borderColor: 'darkgrey' }}>
       {avatarUrl ? (
         <Image
           source={{ uri: avatarUrl }}
           accessibilityLabel="Avatar"
-          className="object-cover max-w-full pt-0 overflow-hidden rounded-full h-36 w-36"
+          style={{ flex: 1, width: null, height: null, borderRadius: 150 }}
         />
       ) : (
-        <View className="max-w-full overflow-hidden border-2 border-solid rounded-full h-36 w-36 border-slate-300 bg-slate-200" />
+        <View  
+          style={{
+            flex: 1,
+            backgroundColor: 'bg-slate-200', // Set the background color
+            borderRadius: 150,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+        {/* Your default content goes here */}
+        <Text style={{ color: 'grey' }}>No Avatar</Text>
+      </View>
       )}
       {allowUpload && (
         <View>
