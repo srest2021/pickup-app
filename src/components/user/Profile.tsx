@@ -34,8 +34,6 @@ export default function Profile({ navigation }) {
             <Text className="text-xl text-center">@{user.username}</Text>
           </View>
 
-          
-
           <View className="self-stretch py-6">
             <Text className="text-lg font-bold">Bio</Text>
             <Text className="p-2 text-lg">
