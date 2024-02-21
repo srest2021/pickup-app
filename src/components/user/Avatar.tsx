@@ -97,10 +97,10 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
         <Image
           source={{ uri: avatarUrl }}
           accessibilityLabel="Avatar"
-          className="h-36 w-36 rounded-md overflow-hidden max-w-full object-cover pt-0"
+          className="object-cover max-w-full pt-0 overflow-hidden rounded-full h-36 w-36"
         />
       ) : (
-        <View className="h-36 w-36 rounded-md overflow-hidden max-w-full border-slate-300 border-solid border-2 bg-slate-200" />
+        <View className="max-w-full overflow-hidden border-2 border-solid rounded-full h-36 w-36 border-slate-300 bg-slate-200" />
       )}
       {allowUpload && (
         <View>

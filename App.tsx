@@ -9,11 +9,27 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "./tamagui.config";
 import useMutationUser from "./src/hooks/use-mutation-user";
+import { useFonts } from 'expo-font'
+import { useEffect } from "react";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const { session } = useMutationUser();
+  const [loaded] = useFonts({
+    Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
+    InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      // can hide splash screen here
+    }
+  }, [loaded])
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <TamaguiProvider config={appConfig}>
