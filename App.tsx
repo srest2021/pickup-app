@@ -1,7 +1,4 @@
 import "react-native-url-polyfill/auto";
-// import { useState, useEffect } from "react";
-// import { supabase } from "./src/lib/supabase";
-// import { Session } from "@supabase/supabase-js";
 import "./global.css";
 import EditProfile from "./src/components/user/EditProfile";
 import Profile from "./src/components/user/Profile";
@@ -18,12 +15,29 @@ import AddGame from "./src/components/AddGame";
 import MyGames from "./src/components/MyGames";
 import { Text } from 'react-native'; //will eventually not need this
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
+import { useFonts } from 'expo-font'
+import { useEffect } from "react";
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   const { session } = useMutationUser();
+  const [loaded] = useFonts({
+    Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
+    InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      // can hide splash screen here
+    }
+  }, [loaded])
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <TamaguiProvider config={appConfig}>

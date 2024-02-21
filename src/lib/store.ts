@@ -8,11 +8,6 @@ type State = {
   loading: boolean;
   user: User | null;
   sports: Sport[];
-
-  // username: string | null;
-  // displayName: string | null;
-  // bio: string | null;
-  // avatarUrl: string | null;
 };
 
 type Action = {
@@ -21,7 +16,7 @@ type Action = {
   setLoading: (loading: boolean) => void;
 
   setUser: (user: User) => void;
-  editUser: (updatedUser) => void;
+  editUser: (updated) => void;
 
   setSports: (sports: Sport[]) => void;
   clearSports: () => void;
@@ -44,12 +39,12 @@ export const useStore = create<State & Action>()(
 
     setUser: (user) => set({ user }),
 
-    editUser: (updatedUser) => {
-      let newUser = { ...get().user };
-      for (let key in updatedUser) {
-        newUser[key] = updatedUser[key];
+    editUser: (updated) => {
+      let updatedUser = { ...get().user };
+      for (let key in updated) {
+        updatedUser[key] = updated[key];
       }
-      set({ user: newUser });
+      set({ user: updatedUser });
     },
 
     setSports: (sports) => set({ sports }),
