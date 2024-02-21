@@ -75,7 +75,7 @@ export default function Register() {
         />
       </YStack>
 
-      <YStack space="$6">
+      <YStack space="$6" paddingTop="$2">
         <Button
           theme="active"
           disabled={loading}
@@ -86,49 +86,5 @@ export default function Register() {
         </Button>
       </YStack>
     </View>
-
-    // <View className="p-12 mt-28">
-    //   <View className="py-4 self-stretch">
-    //     <Input
-    //       label="Email"
-    //       leftIcon={{ type: "font-awesome", name: "envelope" }}
-    //       onChangeText={(text: string) => setEmail(text)}
-    //       value={email}
-    //       placeholder="email@address.com"
-    //       autoCapitalize={"none"}
-    //     />
-    //   </View>
-
-    //   <View className="py-4 self-stretch">
-    //     <Input
-    //       label="Password"
-    //       leftIcon={{ type: "font-awesome", name: "lock" }}
-    //       onChangeText={(text: string) => setPassword(text)}
-    //       value={password}
-    //       secureTextEntry={true}
-    //       placeholder="Password"
-    //       autoCapitalize={"none"}
-    //     />
-    //   </View>
-
-    //   <View className="py-4 self-stretch">
-    //     <Input
-    //       label="Username"
-    //       leftIcon={{ type: "font-awesome", name: "user" }}
-    //       onChangeText={(text: string) => setUsername(text)}
-    //       value={username}
-    //       placeholder="Username"
-    //       autoCapitalize={"none"}
-    //     />
-    //   </View>
-
-    //   <View className="py-4 self-stretch">
-    //     <Button
-    //       title="Sign up"
-    //       disabled={loading}
-    //       onPress={() => signUpWithEmail()}
-    //     />
-    //   </View>
-    // </View>
   );
 }

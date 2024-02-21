@@ -56,7 +56,7 @@ export default function Login({ navigation }) {
         />
       </YStack>
 
-      <YStack space="$6">
+      <YStack space="$6" paddingTop="$2">
         <Button
           theme="active"
           disabled={loading}
