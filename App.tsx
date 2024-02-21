@@ -24,6 +24,8 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   const { session } = useMutationUser();
 
+  
+
   return (
     <TamaguiProvider config={appConfig}>
           {session && session.user ? (
@@ -61,18 +63,12 @@ export default function App() {
                 initialParams={{ key: session.user.id }}
               />
               <Tab.Screen
-                name="Profile"
-                component={Profile}
+                name="ProfileOptions"
+                component={EditProfileNavigator}
                 options={{ tabBarLabel: "Profile",
                 tabBarIcon: ({ color, size }) => (
                   <Text>Profile </ Text>
                 ),}}
-                initialParams={{ key: session.user.id }}
-              />
-              <Tab.Screen
-                name="EditProfile"
-                component={EditProfile}
-                options={{ title: "Edit Profile" }}
                 initialParams={{ key: session.user.id }}
               />
 
@@ -97,4 +93,23 @@ export default function App() {
         
     </TamaguiProvider>
   );
+}
+
+function EditProfileNavigator(){
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+              name="Profile"
+              component={Profile}
+              options={{ title: "Profile" }}
+              
+            />
+            <Stack.Screen
+              name="EditProfile"
+              component={EditProfile}
+              options={{ title: "Edit Profile" }}
+              
+            />
+    </Stack.Navigator>
+  )
 }
