@@ -12,33 +12,75 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "./tamagui.config";
 import useMutationUser from "./src/hooks/use-mutation-user";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Feed from "./src/components/Feed";
+import AddGame from "./src/components/AddGame";
+import MyGames from "./src/components/MyGames";
+import { Text } from 'react-native'; //will eventually not need this
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   const { session } = useMutationUser();
 
   return (
     <TamaguiProvider config={appConfig}>
-      <NavigationContainer>
-        <Stack.Navigator>
           {session && session.user ? (
-            <>
-              <Stack.Screen
-                name="Profile"
-                component={Profile}
-                options={{ title: "Profile" }}
+            <NavigationContainer>
+            <Tab.Navigator
+            initialRouteName="Feed"
+            screenOptions={{
+              tabBarActiveTintColor: '#e91e63',
+            }}>
+              <Tab.Screen
+                name="Feed"
+                component={Feed}
+                options={{ tabBarLabel: "Feed",
+                tabBarIcon: ({ color, size }) => (
+                  <Text> Feed </ Text>
+                ),}}
                 initialParams={{ key: session.user.id }}
               />
-              <Stack.Screen
+              <Tab.Screen
+                name="MyGames"
+                component={MyGames}
+                options={{ tabBarLabel: "MyGames",
+                tabBarIcon: ({ color, size }) => (
+                  <Text> My Games </ Text>
+                ),}}
+                initialParams={{ key: session.user.id }}
+              />
+              <Tab.Screen
+                name="AddGame"
+                component={AddGame}
+                options={{ tabBarLabel: "AddGame",
+                tabBarIcon: ({ color, size }) => (
+                  <Text> Add Game </Text>
+                ),}}
+                initialParams={{ key: session.user.id }}
+              />
+              <Tab.Screen
+                name="Profile"
+                component={Profile}
+                options={{ tabBarLabel: "Profile",
+                tabBarIcon: ({ color, size }) => (
+                  <Text>Profile </ Text>
+                ),}}
+                initialParams={{ key: session.user.id }}
+              />
+              <Tab.Screen
                 name="EditProfile"
                 component={EditProfile}
                 options={{ title: "Edit Profile" }}
                 initialParams={{ key: session.user.id }}
               />
-            </>
+
+            </Tab.Navigator>
+      </NavigationContainer>
           ) : (
-            <>
+            <NavigationContainer>
+              <Stack.Navigator>
               <Stack.Screen
                 name="Login"
                 component={Login}
@@ -49,10 +91,10 @@ export default function App() {
                 component={Register}
                 options={{ title: "Register" }}
               />
-            </>
+              </Stack.Navigator>
+            </NavigationContainer>
           )}
-        </Stack.Navigator>
-      </NavigationContainer>
+        
     </TamaguiProvider>
   );
 }
