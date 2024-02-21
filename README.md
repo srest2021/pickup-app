@@ -41,3 +41,5 @@
 > You should include what is needed (e.g. all of the configurations) to set up the dev environment. For instance, global dependencies or any other tools (include download links), explaining what database (and version) has been used, etc. If there is any virtual environment, local server, ..., explain here. 
 
 > Additionally, describe and show how to run the tests, explain your code style and show how to check it.
+
+Tamagui: If you are getting errors that involve "Unable to resolve "@tamagui/themes" from "tamagui.config.ts" after running `pnpm install`, then run `pnpm add @tamagui/themes`.
