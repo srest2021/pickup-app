@@ -17,14 +17,13 @@ import Feed from "./src/components/Feed";
 import AddGame from "./src/components/AddGame";
 import MyGames from "./src/components/MyGames";
 import { Text } from 'react-native'; //will eventually not need this
+import EditProfileNavigator from "./src/components/EditProfileNavigator";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   const { session } = useMutationUser();
-
-  
 
   return (
     <TamaguiProvider config={appConfig}>
@@ -95,21 +94,4 @@ export default function App() {
   );
 }
 
-function EditProfileNavigator(){
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-              name="Profile"
-              component={Profile}
-              options={{ title: "Profile" }}
-              
-            />
-            <Stack.Screen
-              name="EditProfile"
-              component={EditProfile}
-              options={{ title: "Edit Profile" }}
-              
-            />
-    </Stack.Navigator>
-  )
-}
+
