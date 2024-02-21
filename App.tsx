@@ -1,7 +1,7 @@
 import "react-native-url-polyfill/auto";
-import { useState, useEffect } from "react";
-import { supabase } from "./src/lib/supabase";
-import { Session } from "@supabase/supabase-js";
+// import { useState, useEffect } from "react";
+// import { supabase } from "./src/lib/supabase";
+// import { Session } from "@supabase/supabase-js";
 import "./global.css";
 import EditProfile from "./src/components/user/EditProfile";
 import Profile from "./src/components/user/Profile";
@@ -11,21 +11,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "./tamagui.config";
+import useMutationUser from "./src/hooks/use-mutation-user";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+  const { session } = useMutationUser();
 
   return (
     <TamaguiProvider config={appConfig}>
@@ -37,13 +28,13 @@ export default function App() {
                 name="Profile"
                 component={Profile}
                 options={{ title: "Profile" }}
-                initialParams={{ key: session.user.id, session: session }}
+                initialParams={{ key: session.user.id }}
               />
               <Stack.Screen
                 name="EditProfile"
                 component={EditProfile}
                 options={{ title: "Edit Profile" }}
-                initialParams={{ key: session.user.id, session: session }}
+                initialParams={{ key: session.user.id }}
               />
             </>
           ) : (

@@ -1,3 +1,11 @@
+export type User = {
+  username: string;
+  displayName: string;
+  bio: string;
+  avatarUrl: string;
+  sports: Sport[];
+};
+
 export type Sport = {
   id: string;
   name: string;

@@ -1,46 +1,37 @@
-import {create} from "zustand";
+import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { Sport } from "./types";
+import { Sport, User } from "./types";
 
 type State = {
   session: Session | null;
-
+  loading: boolean;
+  user: User | null;
   sports: Sport[];
 
-  username: string | null;
-  displayName: string  | null;
-  bio: string | null;
-  avatarUrl: string | null;
-}
+  // username: string | null;
+  // displayName: string | null;
+  // bio: string | null;
+  // avatarUrl: string | null;
+};
 
 type Action = {
-  setSession: (session: Session) => void;
-  
-  setUsername: (username: string) => void;
-  clearUsername: () => void;
+  setSession: (session: Session | null) => void;
 
-  setDisplayName: (displayName: string) => void;
-  clearDisplayName: () => void;
+  setLoading: (loading: boolean) => void;
 
-  setBio: (bio: string) => void;
-  clearBio: () => void;
+  setUser: (user: User) => void;
+  editUser: (updatedUser) => void;
 
-  setAvatarUrl: (avatarUrl: string) => void;
-  clearAvatarUrl: () => void;
-
-  setSports: (sports: Sport[]) => void;  
+  setSports: (sports: Sport[]) => void;
   clearSports: () => void;
-}
+};
 
 const initialState: State = {
   session: null,
+  loading: false,
+  user: null,
   sports: [],
-
-  username: null,
-  displayName: null,
-  bio: null,
-  avatarUrl: null
 };
 
 export const useStore = create<State & Action>()(
@@ -49,20 +40,19 @@ export const useStore = create<State & Action>()(
 
     setSession: (session) => set({ session }),
 
-    setUsername: (username) => set({ username }),
-    clearUsername: () => set({ username: null }),
+    setLoading: (loading) => set({ loading }),
 
-    setDisplayName: (displayName) => set({ displayName }),
-    clearDisplayName: () => set({ displayName: null }),
+    setUser: (user) => set({ user }),
 
-    setBio: (bio) => set({ bio }),
-    clearBio: () => set({ bio: null }),
-
-    setAvatarUrl: (avatarUrl) => set({ avatarUrl }),
-    clearAvatarUrl: () => set({ avatarUrl: null }),
+    editUser: (updatedUser) => {
+      let newUser = { ...get().user };
+      for (let key in updatedUser) {
+        newUser[key] = updatedUser[key];
+      }
+      set({ user: newUser });
+    },
 
     setSports: (sports) => set({ sports }),
     clearSports: () => set({ sports: [] }),
   })),
 );
-

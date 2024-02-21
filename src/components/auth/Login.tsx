@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Alert, View, AppState } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { Input, Button, YStack, SizableText } from "tamagui";
+import { useStore } from "../../lib/store";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -18,7 +19,10 @@ AppState.addEventListener("change", (state) => {
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useStore((state) => [
+    state.loading,
+    state.setLoading,
+  ]);
 
   async function signInWithEmail() {
     setLoading(true);
