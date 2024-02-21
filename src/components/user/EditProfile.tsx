@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { ScrollView, View, Alert } from "react-native";
-import { Button, Input } from "react-native-elements";
+import { Input } from "react-native-elements";
 import Avatar from "./Avatar";
+import { Button, YStack } from "tamagui";
 
 export default function EditProfile({ route }) {
   const [loading, setLoading] = useState(true);
@@ -83,6 +84,7 @@ export default function EditProfile({ route }) {
       <View className="py-4 self-stretch">
         <Input label="Email" value={session?.user?.email} disabled />
       </View>
+
       <View className="py-4 self-stretch">
         <Input
           label="Display Name"
@@ -90,6 +92,7 @@ export default function EditProfile({ route }) {
           onChangeText={(text: string) => setDisplayName(text)}
         />
       </View>
+
       <View className="py-4 self-stretch">
         <Input
           label="Bio"
@@ -97,6 +100,7 @@ export default function EditProfile({ route }) {
           onChangeText={(text: string) => setBio(text)}
         />
       </View>
+      
       <View className="items-center">
         <Avatar
           url={avatarUrl}
@@ -112,9 +116,10 @@ export default function EditProfile({ route }) {
         />
       </View>
 
-      <View className="mt-10 py-4 self-stretch">
+      <YStack space="$6" paddingTop="$5">
         <Button
-          title={loading ? "Loading ..." : "Update"}
+          theme="active"
+          disabled={loading}
           onPress={() =>
             updateProfile({
               display_name: displayName,
@@ -122,9 +127,11 @@ export default function EditProfile({ route }) {
               avatar_url: avatarUrl,
             })
           }
-          disabled={loading}
-        />
-      </View>
+          size="$5"
+        >
+          {loading ? "Loading..." : "Update"}
+        </Button>
+      </YStack>
     </ScrollView>
   );
 }

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import { ScrollView, View, Alert, Text } from "react-native";
-import { Button } from "react-native-elements";
+//import { Button } from "react-native-elements";
 import Avatar from "./Avatar";
 import Sports from "../Sports";
 import { Sport as SportType } from "../../lib/types";
+import { Button, YStack } from "tamagui";
 
 export default function Profile({ navigation, route }) {
   const [loading, setLoading] = useState(true);
@@ -86,24 +87,29 @@ export default function Profile({ navigation, route }) {
 
       <View className="py-6 self-stretch">
         <Text className="text-lg font-bold">Bio</Text>
-        <Text className="p-2 text-lg bg-gray-200">
-          {bio ? bio : "No bio yet"}
-        </Text>
+        <Text className="p-2 text-lg">{bio ? bio : "No bio yet"}</Text>
       </View>
 
       <Sports sports={sports} />
 
-      <View className="mt-10 py-4 self-stretch">
+      <YStack space="$6" paddingTop="$5">
         <Button
-          title="Edit Profile"
+          theme="active"
           disabled={loading}
           onPress={() => navigation.navigate("EditProfile")}
-        />
-      </View>
+          size="$5"
+        >
+          Edit Profile
+        </Button>
 
-      <View className="py-4 self-stretch">
-        <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View>
+        <Button
+          variant="outlined"
+          onPress={() => supabase.auth.signOut()}
+          size="$5"
+        >
+          Log Out
+        </Button>
+      </YStack>
     </ScrollView>
   );
 }

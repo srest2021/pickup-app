@@ -1,18 +1,7 @@
 import { useState } from "react";
 import { Alert, View, AppState, Text } from "react-native";
 import { supabase } from "../../lib/supabase";
-//import { Button, Input } from "react-native-elements";
-//import { YStack } from "tamagui";
-import {
-  Input,
-  Button,
-  Label,
-  TextArea,
-  XStack,
-  YStack,
-  SizeTokens,
-  SizableText,
-} from "tamagui";
+import { Input, Button, YStack, SizableText } from "tamagui";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
