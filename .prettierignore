@@ -3,3 +3,4 @@ coverage/
 assets/
 node_modules/
 *.md
+dist
