@@ -17,3 +17,11 @@ export enum SkillLevel {
   Intermediate = 1,
   Advanced = 2,
 }
+
+export const sports = [
+  { name: "Soccer" },
+  { name: "Basketball" },
+  { name: "Tennis" },
+  { name: "Football" },
+  { name: "Volleyball" },
+];
