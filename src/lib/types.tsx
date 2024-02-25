@@ -18,6 +18,15 @@ export enum SkillLevel {
   Advanced = 2,
 }
 
+export type Game = {
+  title: string;
+  description: string;
+  datetime: Date;
+  address: string;
+  sport: Sport;
+  maxPlayers: number;
+}
+
 export const sports = [
   { name: "Soccer" },
   { name: "Basketball" },

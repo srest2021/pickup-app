@@ -1,13 +1,14 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { Sport, User } from "./types";
+import { Game, Sport, User } from "./types";
 
 type State = {
   session: Session | null;
   loading: boolean;
   user: User | null;
   sports: Sport[];
+  myGames: Game[];
 };
 
 type Action = {
@@ -20,6 +21,9 @@ type Action = {
 
   setSports: (sports: Sport[]) => void;
   clearSports: () => void;
+
+  setMyGames: (myGames: Game[]) => void;
+  clearMyGames: () => void;
 };
 
 const initialState: State = {
@@ -27,6 +31,7 @@ const initialState: State = {
   loading: false,
   user: null,
   sports: [],
+  myGames: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -49,5 +54,8 @@ export const useStore = create<State & Action>()(
 
     setSports: (sports) => set({ sports }),
     clearSports: () => set({ sports: [] }),
+
+    setMyGames: (myGames) => set({ myGames }),
+    clearMyGames: () => set({ myGames: [] }),
   })),
 );
