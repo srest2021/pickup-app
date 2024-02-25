@@ -62,8 +62,6 @@ export default function Profile({ navigation }) {
             <Text className="text-xl text-center">@{user.username}</Text>
           </View>
 
-          
-
           <View className="self-stretch py-6">
           <Text style={{ fontSize: 25, fontWeight: 'bold', paddingLeft: 12 }}>Bio</Text>
             <Text className="p-2 text-lg">
