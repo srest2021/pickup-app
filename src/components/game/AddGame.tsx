@@ -16,7 +16,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
+import { Game, SkillLevel, GameSport, sports } from "../../lib/types";
 import { Toast, ToastProvider, ToastViewport, useToastController, useToastState } from '@tamagui/toast'
 
 const AddGame = () => {
@@ -73,6 +73,17 @@ const AddGame = () => {
     // Convert the date + time into timestampz type
     const combinedDateTime = new Date(`${date}T${time}:00.000Z`);
     const isoDateTimeString = combinedDateTime.toISOString();
+
+    // const mySport: GameSport = {
+    //   name: sport,
+    //   skillLevel
+    // }
+    // const myGame: Game = {
+    //   title,
+    //   description,
+
+    //   sport: mySport,
+    // }
 
     createGame(
       title,
