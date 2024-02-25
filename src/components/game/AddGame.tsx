@@ -1,5 +1,6 @@
 import { View, Text, ScrollView } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
+import useMutationGame from "../../hooks/use-mutation-game";
 import { Input } from "react-native-elements";
 import {
   Adapt,
@@ -8,16 +9,19 @@ import {
   RadioGroup,
   Select,
   Sheet,
+  TextArea,
   XStack,
   YStack,
 } from "tamagui";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
+import { Toast, ToastProvider, ToastViewport, useToastController, useToastState } from '@tamagui/toast'
 
 const AddGame = () => {
-  // const { session, user, updateProfile } = useMutationUser();
+  const { user } = useMutationUser();
+  const { createGame } = useMutationGame();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -25,16 +29,51 @@ const AddGame = () => {
   const [sport, setSport] = useState(sports[0].name);
   const [skillLevel, setSkillLevel] = useState("");
   const [playerLimit, setPlayerLimit] = useState("0");
+  const [description, setDescription] = useState("");
   const [loading] = useStore((state) => [state.loading]);
+  const [isToastVisible, setToastVisible] = useState(false);
 
-  function createNewGame(): string {
-    return "Temporary Hold!";
+  useEffect(() => {
+    let timer: number;
+    if (isToastVisible) {
+      let timer = setTimeout(() => {
+        setToastVisible(false);
+      }, 7000); // Hide toast after 7 seconds
+    }
+    return () => clearTimeout(timer);
+  }, [isToastVisible]);
+
+  function createNewGame() {
+    // Check that no fields are left blank (except description, optional)
+    if (
+      !title ||
+      !date ||
+      !time ||
+      !address ||
+      !sport ||
+      !skillLevel ||
+      !playerLimit
+    ) {
+      setToastVisible(true); 
+      return;
+    }
+    createGame(
+      title,
+      date,
+      time,
+      address,
+      sport,
+      skillLevel,
+      playerLimit,
+      description,
+    );
   }
 
   return (
+    <ToastProvider>
     <View>
       {user ? (
-        <ScrollView className="p-12 mt-0">
+        <ScrollView contentContainerStyle={{ paddingBottom: 100 }} className="p-12 mt-0">
           <View className="py-4 self-stretch">
             <Input
               label="Game Title"
@@ -130,6 +169,8 @@ const AddGame = () => {
             aria-labelledby="Select one item"
             defaultValue="3"
             name="form"
+            value={skillLevel}
+            onValueChange={setSkillLevel}
           >
             <YStack>
               <XStack width={300} alignItems="center" space="$4">
@@ -187,6 +228,14 @@ const AddGame = () => {
             />
           </View>
 
+          <View className="py-4 self-stretch">
+            <TextArea
+              placeholder="Enter your game details..."
+              value={description}
+              onChangeText={(text: string) => setDescription(text)}
+            />
+          </View>
+
           <YStack space="$6" paddingTop="$5">
             <Button
               theme="active"
@@ -201,7 +250,19 @@ const AddGame = () => {
       ) : (
         <Text>Log in to create a new game!</Text>
       )}
-    </View>
+      {isToastVisible && (
+        <Toast>
+          <YStack>
+            <Toast.Title>Sorry! Required fields cannot be empty! 🙁</Toast.Title>
+            <Toast.Description>Please enter all the content for your game.</Toast.Description>
+          </YStack>
+          <Toast.Close onPress={() => setToastVisible(false)} />
+        </Toast>
+      )}
+      
+      <ToastViewport />
+      </View>
+      </ToastProvider>
   );
 };
 
