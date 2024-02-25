@@ -7,7 +7,7 @@ create extension if not exists "http" with schema "extensions";
 CREATE TABLE IF NOT EXISTS "public"."profiles" (
   "id" "uuid" unique references auth.users on delete cascade not null primary key,
   "updated_at" timestamp with time zone,
-  "username" "text" unique, --not null,
+  "username" "text" unique not null,
   "display_name" "text",
   "avatar_url" "text",
   "bio" "text",
@@ -27,7 +27,7 @@ create policy "Users can insert their own profile." on profiles
 create policy "Users can update own profile." on profiles
   for update using (auth.uid() = id);
 
-create function public.handle_new_user()
+create or replace function public.handle_new_user()
 returns trigger as $$
 begin
   insert into public.profiles (id, username)
@@ -36,7 +36,7 @@ begin
 end;
 $$ language plpgsql security definer;
 
-create trigger on_auth_user_created
+create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
@@ -114,7 +114,7 @@ begin
 end;
 $$;
 
-create trigger before_profile_changes
+create or replace trigger before_profile_changes
   before update of avatar_url or delete on public.profiles
   for each row execute function public.delete_old_avatar();
 
@@ -131,7 +131,7 @@ begin
 end;
 $$;
 
-create trigger before_delete_user
+create or replace trigger before_delete_user
   before delete on auth.users
   for each row execute function public.delete_old_profile();
 
@@ -142,7 +142,6 @@ create table sports (
   "user_id" "uuid" references "profiles" on delete cascade not null,
   "name" text not null,
   "skill_level" int not null,
-
   constraint skill_level_range check (skill_level >= 0 and skill_level <= 2)
 );
 
