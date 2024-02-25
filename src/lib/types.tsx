@@ -3,11 +3,18 @@ export type User = {
   displayName: string;
   bio: string;
   avatarUrl: string;
-  sports: Sport[];
+  sports: UserSport[];
 };
 
-export type Sport = {
+// displayed on user profile
+export type UserSport = {
   id: string;
+  name: string;
+  skillLevel: SkillLevel;
+};
+
+// displayed on games
+export type GameSport = {
   name: string;
   skillLevel: SkillLevel;
 };
@@ -23,7 +30,7 @@ export type Game = {
   description: string;
   datetime: Date;
   address: string;
-  sport: Sport;
+  sport: GameSport;
   maxPlayers: number;
 }
 
