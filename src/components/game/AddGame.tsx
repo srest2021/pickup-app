@@ -27,11 +27,12 @@ const AddGame = () => {
   const [time, setTime] = useState("");
   const [address, setAddress] = useState("");
   const [sport, setSport] = useState(sports[0].name);
-  const [skillLevel, setSkillLevel] = useState("");
+  const [skillLevel, setSkillLevel] = useState(0);
   const [playerLimit, setPlayerLimit] = useState("0");
   const [description, setDescription] = useState("");
   const [loading] = useStore((state) => [state.loading]);
   const [isToastVisible, setToastVisible] = useState(false);
+  let stringSkillLevel: string = "0";
 
   useEffect(() => {
     let timer: number;
@@ -42,6 +43,17 @@ const AddGame = () => {
     }
     return () => clearTimeout(timer);
   }, [isToastVisible]);
+
+   // Radio group value is only string. Conver string skill level to number
+  function convertSkillLevel() {
+    if (stringSkillLevel === "0") {
+      setSkillLevel(SkillLevel.Beginner);
+    } else if (stringSkillLevel === "1") {
+      setSkillLevel(SkillLevel.Intermediate);
+    } else {
+      setSkillLevel(SkillLevel.Advanced);
+    }
+  }
 
   function createNewGame() {
     // Check that no fields are left blank (except description, optional)
@@ -57,10 +69,14 @@ const AddGame = () => {
       setToastVisible(true); 
       return;
     }
+
+    // Convert the date + time into timestampz type
+    const combinedDateTime = new Date(`${date}T${time}:00.000Z`);
+    const isoDateTimeString = combinedDateTime.toISOString();
+
     createGame(
       title,
-      date,
-      time,
+      isoDateTimeString,
       address,
       sport,
       skillLevel,
@@ -84,6 +100,7 @@ const AddGame = () => {
 
           <View className="py-4 self-stretch">
             <Input
+              placeholder="YYYY-MM-DD"
               label="Date"
               value={date}
               onChangeText={(text: string) => setDate(text)}
@@ -92,6 +109,7 @@ const AddGame = () => {
 
           <View className="py-4 self-stretch">
             <Input
+              placeholder="HH:MM"
               label="Time"
               value={time}
               onChangeText={(text: string) => setTime(text)}
@@ -169,13 +187,13 @@ const AddGame = () => {
             aria-labelledby="Select one item"
             defaultValue="3"
             name="form"
-            value={skillLevel}
-            onValueChange={setSkillLevel}
+            value={stringSkillLevel}
+            onValueChange={convertSkillLevel}
           >
             <YStack>
               <XStack width={300} alignItems="center" space="$4">
                 <RadioGroup.Item
-                  value={"Beginner"}
+                  value={"0"}
                   id={`skill-level-${SkillLevel.Beginner}`}
                   size={2}
                 >
@@ -188,7 +206,7 @@ const AddGame = () => {
               </XStack>
               <XStack width={300} alignItems="center" space="$4">
                 <RadioGroup.Item
-                  value={"Intermediate"}
+                  value={"1"}
                   id={`skill-level-${SkillLevel.Intermediate}`}
                   size={2}
                 >
@@ -205,7 +223,7 @@ const AddGame = () => {
 
               <XStack width={300} alignItems="center" space="$4">
                 <RadioGroup.Item
-                  value={"Advanced"}
+                  value={"3"}
                   id={`skill-level-${SkillLevel.Advanced}`}
                   size={2}
                 >
@@ -224,6 +242,7 @@ const AddGame = () => {
             <Input
               label="Player Limit"
               value={playerLimit}
+              keyboardType="numeric"
               onChangeText={(text: string) => setPlayerLimit(text)}
             />
           </View>
