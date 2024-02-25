@@ -96,7 +96,7 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
 //className="object-cover max-w-full pt-0 overflow-hidden rounded-full h-36 w-36"
 //className="max-w-full overflow-hidden border-2 border-solid rounded-full h-36 w-36 border-slate-300 bg-slate-200"
   return (
-    <View style={{ width: 170, height: 170, overflow: 'hidden', borderRadius: 150, borderWidth: 2, borderColor: 'darkgrey' }}>
+    <View style={{ width: 170, height: 170, overflow: 'hidden', borderRadius: 150, borderWidth: 2, borderColor: 'darkgrey', backgroundColor: '#d3d4d3'}}>
       {avatarUrl ? (
         <Image
           source={{ uri: avatarUrl }}

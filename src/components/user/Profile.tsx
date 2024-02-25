@@ -6,16 +6,46 @@ import Sports from "../Sports";
 import { Button, YStack } from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
+import { Dimensions } from 'react-native';
+import { AddSport } from "./AddSport";
+
+
+// Get the height of the screen
+const windowHeight = Dimensions.get('window').height;
+
+//const avatarMidpoint = avatarHeight / 2;
+
+// Calculate the height for the top third
+const topThirdHeight = windowHeight / 4;
 
 export default function Profile({ navigation }) {
   const [loading] = useStore((state) => [state.loading]);
+  const [isAddSportOpen, setAddSportOpen] = useState(false);
+
   const { user } = useMutationUser();
 
+  const openAddSport = () => {
+    setAddSportOpen(true);
+  };
+
+  const closeAddSport = () => {
+    setAddSportOpen(false);
+  };
+
   return (
-    <ScrollView style={{ backgroundColor: "#1270a5" }} contentContainerStyle={{ padding: 12 }}>
+    <View style={{ flex: 1 }}>
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={{
+        paddingBottom: '100%',
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <View style={{ backgroundColor: "#08348c", height: topThirdHeight, width: '100%'}} />
       {user ? (
         <View>
-          <View className="items-center mb-10">
+          
+          <View className="items-center mb-10" style={{ marginTop: -topThirdHeight/3}}> 
             <Avatar
               url={user.avatarUrl}
               onUpload={() => {}}
@@ -35,14 +65,14 @@ export default function Profile({ navigation }) {
           
 
           <View className="self-stretch py-6">
-            <Text className="text-lg font-bold">Bio</Text>
+          <Text style={{ fontSize: 25, fontWeight: 'bold', paddingLeft: 12 }}>Bio</Text>
             <Text className="p-2 text-lg">
               {user.bio ? user.bio : "No bio yet"}
             </Text>
           </View>
 
           <Sports sports={user.sports} />
-          <Button size="$3" style={{ alignSelf: "flex-start" }}>Add Sport</Button>
+          <AddSport />
           
         </View>
       ) : (
@@ -68,5 +98,6 @@ export default function Profile({ navigation }) {
         </Button>
       </YStack>
     </ScrollView>
+    </View>
   );
 }
