@@ -32,28 +32,24 @@ function useMutationGame() {
     sport: string,
     skillLevel: number,
     playerLimit: string,
-    description: string,
+    description: string = "",
   ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      // Notes:
-      // should we save the current_players for the next iteration when we allow palyers to join game
       const { data, error } = await supabase
         .from("games")
         .insert([
           {
-            id: "someValue",
-            created_at: "otherValue",
-            time: "",
-            date: "",
-            sport: "",
-            address: "",
             organizer_id: session?.user.id,
-            max_players: "",
-            current_players: "",
-            skill_level: "",
+            title: game_title, 
+            description: description,
+            datetime: datetime,
+            sport: sport,
+            skill_level: skillLevel,
+            address: address,
+            max_players: playerLimit,
           },
         ])
         .select();

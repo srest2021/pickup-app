@@ -27,7 +27,7 @@ const AddGame = () => {
   const [time, setTime] = useState("");
   const [address, setAddress] = useState("");
   const [sport, setSport] = useState(sports[0].name);
-  const [skillLevel, setSkillLevel] = useState(0);
+  const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("0");
   const [description, setDescription] = useState("");
   const [loading] = useStore((state) => [state.loading]);
@@ -44,14 +44,14 @@ const AddGame = () => {
     return () => clearTimeout(timer);
   }, [isToastVisible]);
 
-   // Radio group value is only string. Conver string skill level to number
-  function convertSkillLevel() {
-    if (stringSkillLevel === "0") {
-      setSkillLevel(SkillLevel.Beginner);
-    } else if (stringSkillLevel === "1") {
-      setSkillLevel(SkillLevel.Intermediate);
+   // Radio group value is only string. Convert string skill level to number
+  function convertSkillLevel() : number {
+    if (skillLevel === "0") {
+      return SkillLevel.Beginner;
+    } else if (skillLevel === "1") {
+      return SkillLevel.Intermediate;
     } else {
-      setSkillLevel(SkillLevel.Advanced);
+      return SkillLevel.Advanced;
     }
   }
 
@@ -79,7 +79,7 @@ const AddGame = () => {
       isoDateTimeString,
       address,
       sport,
-      skillLevel,
+      convertSkillLevel(),
       playerLimit,
       description,
     );
@@ -187,8 +187,8 @@ const AddGame = () => {
             aria-labelledby="Select one item"
             defaultValue="3"
             name="form"
-            value={stringSkillLevel}
-            onValueChange={convertSkillLevel}
+            value={skillLevel}
+            onValueChange={setSkillLevel}
           >
             <YStack>
               <XStack width={300} alignItems="center" space="$4">
