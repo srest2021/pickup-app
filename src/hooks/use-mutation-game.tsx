@@ -27,8 +27,8 @@ function useMutationGame() {
 
   const createGame = async (
     title: string,
-    date: string,
-    time: string,
+    date: Date,
+    time: Date,
     address: string,
     sport: string,
     skillLevel: string,
@@ -39,8 +39,16 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      // Convert the date + time into timestampz type
-      const combinedDateTime = new Date(`${date}T${time}:00.000Z`);
+      // Combine date and time to one object
+      //console.log(date.toLocaleDateString(), time.toLocaleTimeString())
+      const combinedDateTime = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        time.getHours(),
+        time.getMinutes(),
+      );
+      //console.log(combinedDateTime.toLocaleString());
       const isoDateTimeString = combinedDateTime.toISOString();
 
       const { data, error } = await supabase
@@ -72,7 +80,7 @@ function useMutationGame() {
         } as GameSport,
         maxPlayers: data[0]?.max_players,
       };
-      //console.log(myGame);
+      //console.log(myGame.datetime.toLocaleString());
       addMyGame(myGame);
     } catch (error) {
       if (error instanceof Error) {

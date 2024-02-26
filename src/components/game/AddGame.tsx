@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, SafeAreaView } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
@@ -24,6 +24,7 @@ import {
   useToastController,
   useToastState,
 } from "@tamagui/toast";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const AddGame = () => {
   const { user } = useMutationUser();
@@ -33,8 +34,8 @@ const AddGame = () => {
 
   // game attributes
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
   const [address, setAddress] = useState("");
   const [sport, setSport] = useState(sports[0].name);
   const [skillLevel, setSkillLevel] = useState("0");
@@ -43,10 +44,10 @@ const AddGame = () => {
 
   function clearGameAttributes() {
     setTitle("");
-    setDate("");
-    setTime("");
+    setDate(new Date());
+    setTime(new Date());
     setAddress("");
-    //setSport(sports[0].name);
+    setSport(sports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
@@ -100,11 +101,10 @@ const AddGame = () => {
           >
             <YStack space="$4" paddingBottom="$4">
               <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60} htmlFor="title">
+                <Label size="$5" width={60}>
                   Title
                 </Label>
                 <Input
-                  id="title"
                   size="$5"
                   placeholder="Title"
                   value={title}
@@ -113,37 +113,36 @@ const AddGame = () => {
               </XStack>
 
               <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60} htmlFor="date">
+                <Label size="$5" width={60}>
                   Date
                 </Label>
-                <Input
-                  id="date"
-                  size="$5"
-                  placeholder="YYYY-MM-DD"
+                <DateTimePicker
                   value={date}
-                  onChangeText={(text: string) => setDate(text)}
+                  mode="date"
+                  display="calendar"
+                  onChange={(event, datetime) => {
+                    if (datetime) setDate(datetime);
+                  }}
                 />
               </XStack>
 
               <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60} htmlFor="time">
+                <Label size="$5" width={60}>
                   Time
                 </Label>
-                <Input
-                  id="time"
-                  size="$5"
-                  placeholder="HH:MM"
+                <DateTimePicker
                   value={time}
-                  onChangeText={(text: string) => setTime(text)}
+                  mode="time"
+                  display="clock"
+                  onChange={(event, datetime) => {
+                    if (datetime) setTime(datetime);
+                  }}
                 />
               </XStack>
 
               <YStack space="$1">
-                <Label size="$5" htmlFor="address">
-                  Address
-                </Label>
+                <Label size="$5">Address</Label>
                 <Input
-                  id="address"
                   size="$5"
                   placeholder="Address"
                   value={address}
@@ -272,11 +271,10 @@ const AddGame = () => {
 
               {/* TODO: Make number selector */}
               <XStack space="$4" alignItems="center">
-                <Label size="$5" width={90} htmlFor="playerLimit">
+                <Label size="$5" width={90}>
                   Player Limit
                 </Label>
                 <Input
-                  id="playerLimit"
                   size="$5"
                   defaultValue="1"
                   keyboardType="numeric"
@@ -286,11 +284,8 @@ const AddGame = () => {
               </XStack>
 
               <YStack space="$1">
-                <Label size="$5" htmlFor="description">
-                  Description
-                </Label>
+                <Label size="$5">Description</Label>
                 <TextArea
-                  id="description"
                   size="$5"
                   placeholder="Enter your game details..."
                   value={description}
