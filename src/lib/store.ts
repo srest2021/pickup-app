@@ -17,13 +17,16 @@ type Action = {
   setLoading: (loading: boolean) => void;
 
   setUser: (user: User) => void;
-  editUser: (updated) => void;
+  editUser: (updated: any) => void;
 
   setUserSports: (userSports: UserSport[]) => void;
   clearUserSports: () => void;
 
   setMyGames: (myGames: Game[]) => void;
   clearMyGames: () => void;
+  addMyGame: (myGame: Game) => void;
+  removeMyGame: (myGameId: string) => void;
+  editMyGame: (myGameId: string, updated: any) => void;
 };
 
 const initialState: State = {
@@ -47,15 +50,46 @@ export const useStore = create<State & Action>()(
     editUser: (updated) => {
       let updatedUser = { ...get().user };
       for (let key in updated) {
-        updatedUser[key] = updated[key];
+        if (key in updatedUser) {
+          updatedUser[key] = updated[key];
+        }
       }
       set({ user: updatedUser });
     },
 
     setUserSports: (userSports) => set({ userSports }),
+
     clearUserSports: () => set({ userSports: [] }),
 
     setMyGames: (myGames) => set({ myGames }),
+
     clearMyGames: () => set({ myGames: [] }),
+
+    addMyGame: (myGame) => {
+      set({ myGames: [myGame, ...get().myGames] });
+    },
+
+    removeMyGame: (myGameId) => {
+      const newMyGames = get().myGames.filter(
+        (myGame) => myGame.id !== myGameId,
+      );
+      set({ myGames: newMyGames });
+    },
+
+    editMyGame: (myGameId, updated) => {
+      const newMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === myGameId) {
+          let updatedGame = { ...myGame };
+          for (let key in updated) {
+            if (key in updatedGame) {
+              updatedGame[key] = updated[key];
+            }
+          }
+          return updatedGame;
+        }
+        return myGame;
+      });
+      set({ myGames: newMyGames });
+    },
   })),
 );

@@ -26,13 +26,14 @@ export enum SkillLevel {
 }
 
 export type Game = {
+  id: string;
   title: string;
   description: string;
   datetime: Date;
   address: string;
   sport: GameSport;
   maxPlayers: number;
-}
+};
 
 export const sports = [
   { name: "Soccer" },

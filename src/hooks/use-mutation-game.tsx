@@ -1,36 +1,40 @@
 import { useStore } from "../lib/store";
-import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
+import { SkillLevel, GameSport, Game } from "../lib/types";
 
 function useMutationGame() {
-  const [session, user, setSession, setLoading] = useStore(
+  const [session, loading, setLoading, addMyGame, editMyGame] = useStore(
     (state) => [
       state.session,
-      state.user,
-      state.setSession,
+      state.loading,
       state.setLoading,
-      state.setUser,
-      state.editUser,
+      state.addMyGame,
+      state.editMyGame,
     ],
   );
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+  // Radio group value is only string. Convert string skill level to number
+  function convertSkillLevel(skillLevel: string): SkillLevel {
+    switch (skillLevel) {
+      case "0":
+        return SkillLevel.Beginner;
+      case "1":
+        return SkillLevel.Intermediate;
+      case "2":
+        return SkillLevel.Advanced;
+      default:
+        return SkillLevel.Beginner;
+    }
+  }
 
   const createGame = async (
-    game_title: string,
-    datetime: string,
+    title: string,
+    date: string,
+    time: string,
     address: string,
     sport: string,
-    skillLevel: number,
+    skillLevel: string,
     playerLimit: string,
     description: string = "",
   ) => {
@@ -38,21 +42,41 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
+      // Convert the date + time into timestampz type
+      const combinedDateTime = new Date(`${date}T${time}:00.000Z`);
+      const isoDateTimeString = combinedDateTime.toISOString();
+
       const { data, error } = await supabase
         .from("games")
         .insert([
           {
             organizer_id: session?.user.id,
-            title: game_title, 
+            title,
             description: description,
-            datetime: datetime,
+            datetime: isoDateTimeString,
             sport: sport,
-            skill_level: skillLevel,
+            skill_level: convertSkillLevel(skillLevel),
             address: address,
             max_players: playerLimit,
           },
         ])
         .select();
+      //console.log(data);
+
+      const myGame: Game = {
+        id: data[0]?.id,
+        title: data[0]?.title,
+        description: data[0]?.description,
+        datetime: new Date(data[0]?.datetime),
+        address: data[0]?.address,
+        sport: {
+          name: data[0]?.sport,
+          skillLevel: data[0]?.skill_level,
+        } as GameSport,
+        maxPlayers: data[0]?.max_players,
+      };
+      //console.log(myGame);
+      addMyGame(myGame);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -61,8 +85,6 @@ function useMutationGame() {
       setLoading(false);
     }
   };
-
-  
 
   return { createGame };
 }
