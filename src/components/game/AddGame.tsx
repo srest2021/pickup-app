@@ -1,11 +1,11 @@
 import { View, Text, ScrollView } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
 import useMutationGame from "../../hooks/use-mutation-game";
-import { Input } from "react-native-elements";
 import {
   Adapt,
   Button,
   Label,
+  Input,
   RadioGroup,
   Select,
   Sheet,
@@ -46,6 +46,7 @@ const AddGame = () => {
     setDate("");
     setTime("");
     setAddress("");
+    //setSport(sports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
@@ -91,193 +92,222 @@ const AddGame = () => {
 
   return (
     <ToastProvider>
-      <View>
+      <View className="p-12">
         {user ? (
           <ScrollView
             contentContainerStyle={{ paddingBottom: 100 }}
-            className="p-12 mt-0"
+            showsVerticalScrollIndicator={false}
           >
-            <View className="py-4 self-stretch">
-              <Input
-                label="Game Title"
-                value={title}
-                onChangeText={(text: string) => setTitle(text)}
-              />
-            </View>
+            <YStack space="$4" paddingBottom="$4">
+              <XStack space="$2" alignItems="center">
+                <Label size="$5" width={60} htmlFor="title">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  size="$5"
+                  placeholder="Title"
+                  value={title}
+                  onChangeText={(text: string) => setTitle(text)}
+                />
+              </XStack>
 
-            <View className="py-4 self-stretch">
-              <Input
-                placeholder="YYYY-MM-DD"
-                label="Date"
-                value={date}
-                onChangeText={(text: string) => setDate(text)}
-              />
-            </View>
+              <XStack space="$2" alignItems="center">
+                <Label size="$5" width={60} htmlFor="date">
+                  Date
+                </Label>
+                <Input
+                  id="date"
+                  size="$5"
+                  placeholder="YYYY-MM-DD"
+                  value={date}
+                  onChangeText={(text: string) => setDate(text)}
+                />
+              </XStack>
 
-            <View className="py-4 self-stretch">
-              <Input
-                placeholder="HH:MM"
-                label="Time"
-                value={time}
-                onChangeText={(text: string) => setTime(text)}
-              />
-            </View>
+              <XStack space="$2" alignItems="center">
+                <Label size="$5" width={60} htmlFor="time">
+                  Time
+                </Label>
+                <Input
+                  id="time"
+                  size="$5"
+                  placeholder="HH:MM"
+                  value={time}
+                  onChangeText={(text: string) => setTime(text)}
+                />
+              </XStack>
 
-            <View className="py-4 self-stretch">
-              <Input
-                label="Address"
-                value={address}
-                onChangeText={(text: string) => setAddress(text)}
-              />
-            </View>
-
-            <Select value={sport} onValueChange={setSport}>
-              <Select.Trigger iconAfter={ChevronDown}>
-                <Select.Value placeholder="Select a sport..." />
-              </Select.Trigger>
-
-              <Adapt when="sm" platform="touch">
-                <Sheet
-                  modal
-                  dismissOnSnapToBottom
-                  animationConfig={{
-                    type: "spring",
-                    damping: 20,
-                    mass: 1.2,
-                    stiffness: 250,
-                  }}
-                >
-                  <Sheet.Frame>
-                    <Sheet.ScrollView>
-                      <Adapt.Contents />
-                    </Sheet.ScrollView>
-                  </Sheet.Frame>
-                  <Sheet.Overlay
-                    animation="lazy"
-                    enterStyle={{ opacity: 0 }}
-                    exitStyle={{ opacity: 0 }}
-                  />
-                  <Sheet.Overlay />
-                </Sheet>
-              </Adapt>
-
-              <Select.Content>
-                <Select.ScrollUpButton />
-                <Select.Viewport>
-                  <Select.Group>
-                    <Select.Label>Sports</Select.Label>
-                    {useMemo(
-                      () =>
-                        sports.map((sport, i) => {
-                          return (
-                            <Select.Item
-                              index={i}
-                              key={sport.name}
-                              value={sport.name.toLowerCase()}
-                            >
-                              <Select.ItemText>{sport.name}</Select.ItemText>
-                              <Select.ItemIndicator marginLeft="auto">
-                                <Check size={16} />
-                              </Select.ItemIndicator>
-                            </Select.Item>
-                          );
-                        }),
-                      [sports],
-                    )}
-                  </Select.Group>
-                </Select.Viewport>
-                <Select.ScrollDownButton />
-              </Select.Content>
-            </Select>
-
-            <RadioGroup
-              aria-labelledby="Select one item"
-              defaultValue="3"
-              name="form"
-              value={skillLevel}
-              onValueChange={setSkillLevel}
-            >
-              <YStack>
-                <XStack width={300} alignItems="center" space="$4">
-                  <RadioGroup.Item
-                    value={"0"}
-                    id={`skill-level-${SkillLevel.Beginner}`}
-                    size={2}
-                  >
-                    <RadioGroup.Indicator />
-                  </RadioGroup.Item>
-
-                  <Label
-                    size={2}
-                    htmlFor={`skill-level-${SkillLevel.Beginner}`}
-                  >
-                    {"Beginner"}
-                  </Label>
-                </XStack>
-                <XStack width={300} alignItems="center" space="$4">
-                  <RadioGroup.Item
-                    value={"1"}
-                    id={`skill-level-${SkillLevel.Intermediate}`}
-                    size={2}
-                  >
-                    <RadioGroup.Indicator />
-                  </RadioGroup.Item>
-
-                  <Label
-                    size={2}
-                    htmlFor={`skill-level-${SkillLevel.Intermediate}`}
-                  >
-                    {"Intermediate"}
-                  </Label>
-                </XStack>
-
-                <XStack width={300} alignItems="center" space="$4">
-                  <RadioGroup.Item
-                    value={"2"}
-                    id={`skill-level-${SkillLevel.Advanced}`}
-                    size={2}
-                  >
-                    <RadioGroup.Indicator />
-                  </RadioGroup.Item>
-
-                  <Label
-                    size={2}
-                    htmlFor={`skill-level-${SkillLevel.Advanced}`}
-                  >
-                    {"Advanced"}
-                  </Label>
-                </XStack>
+              <YStack space="$1">
+                <Label size="$5" htmlFor="address">
+                  Address
+                </Label>
+                <Input
+                  id="address"
+                  size="$5"
+                  placeholder="Address"
+                  value={address}
+                  onChangeText={(text: string) => setAddress(text)}
+                />
               </YStack>
-            </RadioGroup>
 
-            {/*TODO: Make number selector */}
-            <View className="py-4 self-stretch">
-              <Input
-                label="Player Limit"
-                value={playerLimit}
-                keyboardType="numeric"
-                defaultValue="1"
-                onChangeText={(text: string) => setPlayerLimit(text)}
-              />
-            </View>
+              <Select value={sport} onValueChange={setSport}>
+                <Select.Trigger iconAfter={ChevronDown}>
+                  <Select.Value placeholder="Select a sport..." />
+                </Select.Trigger>
 
-            <View className="py-4 self-stretch">
-              <TextArea
-                placeholder="Enter your game details..."
-                value={description}
-                onChangeText={(text: string) => setDescription(text)}
-              />
-            </View>
+                <Adapt when="sm" platform="touch">
+                  <Sheet
+                    modal
+                    dismissOnSnapToBottom
+                    animationConfig={{
+                      type: "spring",
+                      damping: 20,
+                      mass: 1.2,
+                      stiffness: 250,
+                    }}
+                  >
+                    <Sheet.Frame>
+                      <Sheet.ScrollView>
+                        <Adapt.Contents />
+                      </Sheet.ScrollView>
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                      animation="lazy"
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+                    <Sheet.Overlay />
+                  </Sheet>
+                </Adapt>
 
-            <YStack space="$6" paddingTop="$5">
-              <Button
-                theme="active"
-                disabled={loading}
-                onPress={() => createNewGame()}
-                size="$5"
+                <Select.Content>
+                  <Select.ScrollUpButton />
+                  <Select.Viewport>
+                    <Select.Group>
+                      <Select.Label>Sports</Select.Label>
+                      {useMemo(
+                        () =>
+                          sports.map((sport, i) => {
+                            return (
+                              <Select.Item
+                                index={i}
+                                key={sport.name}
+                                value={sport.name.toLowerCase()}
+                              >
+                                <Select.ItemText>{sport.name}</Select.ItemText>
+                                <Select.ItemIndicator marginLeft="auto">
+                                  <Check size={16} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                            );
+                          }),
+                        [sports],
+                      )}
+                    </Select.Group>
+                  </Select.Viewport>
+                  <Select.ScrollDownButton />
+                </Select.Content>
+              </Select>
+
+              <RadioGroup
+                aria-labelledby="Select one item"
+                defaultValue="3"
+                name="form"
+                value={skillLevel}
+                onValueChange={setSkillLevel}
               >
-                {loading ? "Loading..." : "Create"}
-              </Button>
+                <YStack>
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"0"}
+                      id={`skill-level-${SkillLevel.Beginner}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Beginner}`}
+                    >
+                      {"Beginner"}
+                    </Label>
+                  </XStack>
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"1"}
+                      id={`skill-level-${SkillLevel.Intermediate}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Intermediate}`}
+                    >
+                      {"Intermediate"}
+                    </Label>
+                  </XStack>
+
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"2"}
+                      id={`skill-level-${SkillLevel.Advanced}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Advanced}`}
+                    >
+                      {"Advanced"}
+                    </Label>
+                  </XStack>
+                </YStack>
+              </RadioGroup>
+
+              {/* TODO: Make number selector */}
+              <XStack space="$4" alignItems="center">
+                <Label size="$5" width={90} htmlFor="playerLimit">
+                  Player Limit
+                </Label>
+                <Input
+                  id="playerLimit"
+                  size="$5"
+                  defaultValue="1"
+                  keyboardType="numeric"
+                  value={playerLimit}
+                  onChangeText={(text: string) => setPlayerLimit(text)}
+                />
+              </XStack>
+
+              <YStack space="$1">
+                <Label size="$5" htmlFor="description">
+                  Description
+                </Label>
+                <TextArea
+                  id="description"
+                  size="$5"
+                  placeholder="Enter your game details..."
+                  value={description}
+                  onChangeText={(text: string) => setDescription(text)}
+                />
+              </YStack>
+
+              <YStack paddingTop="$5">
+                <Button
+                  theme="active"
+                  disabled={loading}
+                  onPress={() => createNewGame()}
+                  size="$5"
+                >
+                  {loading ? "Loading..." : "Create"}
+                </Button>
+              </YStack>
             </YStack>
           </ScrollView>
         ) : (

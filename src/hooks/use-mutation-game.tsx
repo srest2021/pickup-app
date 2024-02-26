@@ -4,15 +4,12 @@ import { Alert } from "react-native";
 import { SkillLevel, GameSport, Game } from "../lib/types";
 
 function useMutationGame() {
-  const [session, loading, setLoading, addMyGame, editMyGame] = useStore(
-    (state) => [
-      state.session,
-      state.loading,
-      state.setLoading,
-      state.addMyGame,
-      state.editMyGame,
-    ],
-  );
+  const [session, setLoading, addMyGame, editMyGame] = useStore((state) => [
+    state.session,
+    state.setLoading,
+    state.addMyGame,
+    state.editMyGame,
+  ]);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(skillLevel: string): SkillLevel {
