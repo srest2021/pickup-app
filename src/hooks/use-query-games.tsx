@@ -46,7 +46,7 @@ function useQueryGames() {
           } as GameSport,
           maxPlayers: Number(data[0].max_players),
         };
-        console.log("fetched game: ", game)
+        console.log("fetched game: ", game);
 
         setGame(game);
         setSelectedGameId(game.id);
@@ -80,7 +80,7 @@ function useQueryGames() {
       if (games) {
         setMyGames(games);
         console.log("fetched games: ", games);
-      } 
+      }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

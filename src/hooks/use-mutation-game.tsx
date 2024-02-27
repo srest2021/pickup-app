@@ -138,6 +138,8 @@ function useMutationGame() {
         .select();
 
       if (error) throw error;
+      // Successful game editing.
+      setUpdateGameStatus(true);
 
       // Edit game in store
       if (data && data[0]) {
@@ -153,7 +155,7 @@ function useMutationGame() {
     }
   };
 
-  return { createGame, removeGameById };
+  return { createGame, removeGameById, editGameById };
 }
 
 export default useMutationGame;
