@@ -17,7 +17,7 @@ function useQueryGames() {
     const fetchMyGames = async () => {
       try {
         setLoading(true);
-        if (!session?.user) throw new Error("No user on the session!");
+        if (!session?.user) throw new Error("Please sign in to view games");
 
         const { data: games, error } = await supabase
           .from("games")
@@ -44,7 +44,8 @@ function useQueryGames() {
       try {
         setLoading(true);
 
-        const { data: games, error } = await supabase.from("games").select("*");
+        //TODO: ADD PAGINATION - right now only returning 20 most relevant games
+        const { data: games, error } = await supabase.from("games").select("*").limit(20);
 
         if (error) {
           throw error;
