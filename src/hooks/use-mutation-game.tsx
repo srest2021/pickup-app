@@ -27,8 +27,7 @@ function useMutationGame() {
 
   const createGame = async (
     title: string,
-    date: Date,
-    time: Date,
+    datetime: Date,
     address: string,
     sport: string,
     skillLevel: string,
@@ -39,18 +38,6 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      // Combine date and time to one object
-      //console.log(date.toLocaleDateString(), time.toLocaleTimeString())
-      const combinedDateTime = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        time.getHours(),
-        time.getMinutes(),
-      );
-      //console.log(combinedDateTime.toLocaleString());
-      const isoDateTimeString = combinedDateTime.toISOString();
-
       const { data, error } = await supabase
         .from("games")
         .insert([
@@ -58,7 +45,7 @@ function useMutationGame() {
             organizer_id: session?.user.id,
             title,
             description: description,
-            datetime: isoDateTimeString,
+            datetime: datetime.toISOString(),
             sport: sport,
             skill_level: convertSkillLevel(skillLevel),
             address: address,

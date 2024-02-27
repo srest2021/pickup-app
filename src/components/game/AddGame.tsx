@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, SafeAreaView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
@@ -31,6 +31,7 @@ const AddGame = () => {
   const { createGame } = useMutationGame();
   const [loading] = useStore((state) => [state.loading]);
   const [isToastVisible, setToastVisible] = useState(false);
+  const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
 
   // game attributes
   const [title, setTitle] = useState("");
@@ -63,6 +64,16 @@ const AddGame = () => {
     return () => clearTimeout(timer);
   }, [isToastVisible]);
 
+  useEffect(() => {
+    let timer: number;
+    if (isDatetimeToastVisible) {
+      let timer = setTimeout(() => {
+        setDatetimeToastVisible(false);
+      }, 7000); // Hide toast after 7 seconds
+    }
+    return () => clearTimeout(timer);
+  }, [isDatetimeToastVisible]);
+
   function createNewGame() {
     // Check that no fields are left blank (except description, optional)
     if (
@@ -78,17 +89,32 @@ const AddGame = () => {
       return;
     }
 
-    createGame(
-      title,
-      date,
-      time,
-      address,
-      sport,
-      skillLevel,
-      playerLimit,
-      description,
+    // Combine date and time to one object
+    //console.log(date.toLocaleDateString(), time.toLocaleTimeString())
+    const combinedDateTime = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      time.getHours(),
+      time.getMinutes(),
     );
-    clearGameAttributes();
+    //console.log(combinedDateTime.toLocaleString());
+    //const isoDateTimeString = combinedDateTime.toISOString();
+
+    if (combinedDateTime < new Date()) {
+      setDatetimeToastVisible(true);
+    } else {
+      createGame(
+        title,
+        combinedDateTime,
+        address,
+        sport,
+        skillLevel,
+        playerLimit,
+        description,
+      );
+      clearGameAttributes();
+    }
   }
 
   return (
@@ -118,6 +144,7 @@ const AddGame = () => {
                 </Label>
                 <DateTimePicker
                   value={date}
+                  minimumDate={new Date()}
                   mode="date"
                   display="calendar"
                   onChange={(event, datetime) => {
@@ -319,6 +346,20 @@ const AddGame = () => {
               </Toast.Description>
             </YStack>
             <Toast.Close onPress={() => setToastVisible(false)} />
+          </Toast>
+        )}
+
+        {isDatetimeToastVisible && (
+          <Toast>
+            <YStack>
+              <Toast.Title>
+                Selected date and time cannot be in the past!
+              </Toast.Title>
+              <Toast.Description>
+                Please reenter your game's time.
+              </Toast.Description>
+            </YStack>
+            <Toast.Close onPress={() => setDatetimeToastVisible(false)} />
           </Toast>
         )}
 
