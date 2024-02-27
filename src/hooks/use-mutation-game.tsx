@@ -5,16 +5,22 @@ import { Alert } from "react-native";
 import { Game, GameSport } from "../lib/types";
 
 function useMutationGame() {
-  const [session, setLoading, setUpdateGameStatus, addMyGame, removeMyGame] = useStore(
-    (state) => [
-      state.session,
-      //state.setSession,
-      state.setLoading,
-      state.setUpdateGameStatus,
-      state.addMyGame,
-      state.removeMyGame
-    ],
-  );
+  const [
+    session,
+    setLoading,
+    setUpdateGameStatus,
+    addMyGame,
+    removeMyGame,
+    editMyGame,
+  ] = useStore((state) => [
+    state.session,
+    //state.setSession,
+    state.setLoading,
+    state.setUpdateGameStatus,
+    state.addMyGame,
+    state.removeMyGame,
+    state.editMyGame,
+  ]);
 
   // useEffect(() => {
   //   supabase.auth.getSession().then(({ data: { session } }) => {
@@ -71,7 +77,7 @@ function useMutationGame() {
           maxPlayers: Number(playerLimit),
         };
         addMyGame(myNewGame);
-        return myNewGame.id;
+        // return myNewGame.id;
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -87,13 +93,10 @@ function useMutationGame() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-      
-      const { error } = await supabase
-        .from("games")
-        .delete()
-        .eq("id", id);
+
+      const { error } = await supabase.from("games").delete().eq("id", id);
       if (error) throw error;
-        
+
       // remove from store
       removeMyGame(id);
     } catch (error) {
@@ -104,7 +107,51 @@ function useMutationGame() {
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const editGameById = async (
+    id: string,
+    game_title: string,
+    datetime: Date,
+    address: string,
+    sport: string,
+    skillLevel: number,
+    playerLimit: string,
+    description: string = "",
+  ) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { data, error } = await supabase
+        .from("games")
+        .update({
+          title: game_title,
+          description: description,
+          datetime: datetime,
+          sport: sport,
+          skill_level: skillLevel,
+          address: address,
+          max_players: playerLimit,
+        })
+        .eq("id", id)
+        .select();
+
+      if (error) throw error;
+
+      // Edit game in store
+      if (data && data[0]) {
+        editMyGame(data[0], data);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return { createGame, removeGameById };
 }
