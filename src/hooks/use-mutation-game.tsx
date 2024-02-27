@@ -2,16 +2,17 @@ import { useStore } from "../lib/store";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
+import { Game } from "../lib/types";
 
 function useMutationGame() {
-  const [session, setSession, setLoading, setUpdateGameStatus] = useStore(
-    (state) => [
+  const [session, setSession, setLoading, setUpdateGameStatus, addMyGame] =
+    useStore((state) => [
       state.session,
       state.setSession,
       state.setLoading,
       state.setUpdateGameStatus,
-    ],
-  );
+      state.addMyGame,
+    ]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -51,8 +52,25 @@ function useMutationGame() {
           },
         ])
         .select();
+
       // Successful game creation.
       setUpdateGameStatus(true);
+
+      // Temporary work around.
+      let gameId: string = "";
+      if (data) {
+        gameId = data[0];
+      }
+
+      const myNewGame: Game = {
+        id: gameId,
+        title: game_title,
+        description: description,
+        datetime: datetime,
+        address: address,
+        sport: { name: sport, skillLevel: skillLevel },
+        maxPlayers: Number(playerLimit),
+      };
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
