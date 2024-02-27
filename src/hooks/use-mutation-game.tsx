@@ -2,7 +2,7 @@ import { useStore } from "../lib/store";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Game } from "../lib/types";
+import { Game, GameSport } from "../lib/types";
 
 function useMutationGame() {
   const [session, setSession, setLoading, setUpdateGameStatus, addMyGame] =
@@ -57,20 +57,24 @@ function useMutationGame() {
       setUpdateGameStatus(true);
 
       // Temporary work around.
-      let gameId: string = "";
+      let gameId = null;
       if (data) {
-        gameId = data[0];
+        gameId = data[0].id;
+      } else {
+        throw new Error("Error adding game; please try again")
       }
 
+      // add game to store
       const myNewGame: Game = {
         id: gameId,
         title: game_title,
         description: description,
         datetime: datetime,
         address: address,
-        sport: { name: sport, skillLevel: skillLevel },
+        sport: { name: sport, skillLevel: skillLevel } as GameSport,
         maxPlayers: Number(playerLimit),
       };
+      addMyGame(myNewGame);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
