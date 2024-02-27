@@ -74,6 +74,17 @@ const AddGame = () => {
     return () => clearTimeout(timer);
   }, [isDatetimeToastVisible]);
 
+  // Radio group value is only string. Convert string skill level to number
+  function convertSkillLevel(): number {
+    if (skillLevel === "0") {
+      return SkillLevel.Beginner;
+    } else if (skillLevel === "1") {
+      return SkillLevel.Intermediate;
+    } else {
+      return SkillLevel.Advanced;
+    }
+  }
+
   function createNewGame() {
     // Check that no fields are left blank (except description, optional)
     if (
@@ -90,7 +101,6 @@ const AddGame = () => {
     }
 
     // Combine date and time to one object
-    //console.log(date.toLocaleDateString(), time.toLocaleTimeString())
     const combinedDateTime = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -98,8 +108,6 @@ const AddGame = () => {
       time.getHours(),
       time.getMinutes(),
     );
-    //console.log(combinedDateTime.toLocaleString());
-    //const isoDateTimeString = combinedDateTime.toISOString();
 
     if (combinedDateTime < new Date()) {
       setDatetimeToastVisible(true);
@@ -109,7 +117,7 @@ const AddGame = () => {
         combinedDateTime,
         address,
         sport,
-        skillLevel,
+        convertSkillLevel(),
         playerLimit,
         description,
       );
@@ -131,6 +139,7 @@ const AddGame = () => {
                   Title
                 </Label>
                 <Input
+                  flex={1}
                   size="$5"
                   placeholder="Title"
                   value={title}
@@ -170,6 +179,7 @@ const AddGame = () => {
               <YStack space="$1">
                 <Label size="$5">Address</Label>
                 <Input
+                  flex={1}
                   size="$5"
                   placeholder="Address"
                   value={address}
@@ -177,6 +187,7 @@ const AddGame = () => {
                 />
               </YStack>
 
+              <Label size="$5">Sport</Label>
               <Select value={sport} onValueChange={setSport}>
                 <Select.Trigger iconAfter={ChevronDown}>
                   <Select.Value placeholder="Select a sport..." />
@@ -236,6 +247,7 @@ const AddGame = () => {
                 </Select.Content>
               </Select>
 
+              <Label size="$5">Skill Level</Label>
               <RadioGroup
                 aria-labelledby="Select one item"
                 defaultValue="3"
@@ -296,12 +308,12 @@ const AddGame = () => {
                 </YStack>
               </RadioGroup>
 
-              {/* TODO: Make number selector */}
               <XStack space="$4" alignItems="center">
-                <Label size="$5" width={90}>
+                <Label flex={1} size="$5" width={90}>
                   Player Limit
                 </Label>
                 <Input
+                  flex={1}
                   size="$5"
                   defaultValue="1"
                   keyboardType="numeric"

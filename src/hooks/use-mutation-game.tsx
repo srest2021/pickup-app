@@ -1,36 +1,34 @@
 import { useStore } from "../lib/store";
+import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { SkillLevel, GameSport, Game } from "../lib/types";
 
 function useMutationGame() {
-  const [session, setLoading, addMyGame, editMyGame] = useStore((state) => [
+  const [session, user, setSession, setLoading] = useStore((state) => [
     state.session,
+    state.user,
+    state.setSession,
     state.setLoading,
-    state.addMyGame,
-    state.editMyGame,
+    state.setUser,
+    state.editUser,
   ]);
 
-  // Radio group value is only string. Convert string skill level to number
-  function convertSkillLevel(skillLevel: string): SkillLevel {
-    switch (skillLevel) {
-      case "0":
-        return SkillLevel.Beginner;
-      case "1":
-        return SkillLevel.Intermediate;
-      case "2":
-        return SkillLevel.Advanced;
-      default:
-        return SkillLevel.Beginner;
-    }
-  }
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
 
   const createGame = async (
-    title: string,
+    game_title: string,
     datetime: Date,
     address: string,
     sport: string,
-    skillLevel: string,
+    skillLevel: number,
     playerLimit: string,
     description: string = "",
   ) => {
@@ -43,32 +41,16 @@ function useMutationGame() {
         .insert([
           {
             organizer_id: session?.user.id,
-            title,
+            title: game_title,
             description: description,
-            datetime: datetime.toISOString(),
+            datetime: datetime,
             sport: sport,
-            skill_level: convertSkillLevel(skillLevel),
+            skill_level: skillLevel,
             address: address,
             max_players: playerLimit,
           },
         ])
         .select();
-      //console.log(data);
-
-      const myGame: Game = {
-        id: data[0]?.id,
-        title: data[0]?.title,
-        description: data[0]?.description,
-        datetime: new Date(data[0]?.datetime),
-        address: data[0]?.address,
-        sport: {
-          name: data[0]?.sport,
-          skillLevel: data[0]?.skill_level,
-        } as GameSport,
-        maxPlayers: data[0]?.max_players,
-      };
-      //console.log(myGame.datetime.toLocaleString());
-      addMyGame(myGame);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
