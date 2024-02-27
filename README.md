@@ -42,4 +42,28 @@
 
 > Additionally, describe and show how to run the tests, explain your code style and show how to check it.
 
-Tamagui: If you are getting errors that involve "Unable to resolve "@tamagui/themes" from "tamagui.config.ts" after running `pnpm install`, then run `pnpm add @tamagui/themes`.
+See the above instructions to install and run the Expo app locally.
+
+If you are getting errors that involve  `Unable to resolve "@tamagui/themes` from `tamagui.config.ts` after running `pnpm install`, then run `pnpm add @tamagui/themes`.
+
+### Supabase Local Development Setup
+
+View the tutorial to set up Supabase local development [here](https://supabase.com/docs/guides/cli/local-development?access-method=postgres). Follow these steps to set up local development and deploy the changes to the remote database.
+
+1. Login to Supabase using the team password: `npx supabase login`.
+2. Make sure the Docker engine is running and initialize Supabase: `supabase init`.
+3. Start the Supabase services: `npx supabase start` (similarly, `npx supabase stop` will stop the services). Once the command has finished running, navigate to `http://localhost:54323` to view the local dashboard.
+4. Associate the project with the remote project and pull the remote schema. After running these commands, you should see the remote schema in `supabase/migrations/<timestamp>_remote_schema.sql`.
+
+  ```
+  npx supabase link --project-ref <project-id>
+  # You can get <project-id> from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
+
+  npx supabase db pull
+  # Capture any changes that you have made to your remote database before you went through the steps above
+  # If you have not made any changes to the remote database, skip this step
+  ```
+
+5. To create a new migration file: `npx supabase migration new <migration-name>`. To reset the local database and run the migration: `npx supabase db reset`.
+
+6. To deploy a local database migration: `npx supabase db push`.
