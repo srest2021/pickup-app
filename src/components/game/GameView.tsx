@@ -1,39 +1,41 @@
-import { YStack, Text, Theme, Button } from 'tamagui';
-import { Game } from '../../lib/types';
+import { YStack, Text, Theme, Button } from "tamagui";
 
 const GameView = ({ route }) => {
   const game = route.params;
-  const { title, description, datetime, address, sport, maxPlayers } = game.game;
+  const { title, description, datetime, address, sport, maxPlayers } =
+    game.game;
 
   // Convert datetime to a readable string
   const displayDate = datetime.toLocaleDateString("en-US", {
-    year: 'numeric', month: 'long', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
   return (
-    <YStack 
+    <YStack
       position="relative"
-      padding="$4" 
-      space="$2" 
-      backgroundColor="$background" 
+      padding="$4"
+      space="$2"
+      backgroundColor="$background"
       borderRadius={10}
       alignItems="center"
     >
       {/* Edit button positioned on the top right of the view */}
-      <Button 
-          position="absolute"
-          top={0}
-          right={0}
-          size="$2"
-          onPress={() => console.log('Edit game')}>
-          Edit
+      <Button
+        position="absolute"
+        top={0}
+        right={0}
+        size="$2"
+        onPress={() => console.log("Edit game")}
+      >
+        Edit
       </Button>
 
-      <Text fontWeight="bold">
-        {title}
-      </Text>
-      <Text fontStyle="italic">{displayDate}</Text> 
+      <Text fontWeight="bold">{title}</Text>
+      <Text fontStyle="italic">{displayDate}</Text>
       <Text>Sport: {sport.name}</Text>
       <Text>Skill Level: {sport.skillLevel}</Text>
       <Text>Max Players: {maxPlayers}</Text>
