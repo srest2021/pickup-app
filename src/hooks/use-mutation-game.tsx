@@ -5,26 +5,14 @@ import { Alert } from "react-native";
 import { Game, GameSport } from "../lib/types";
 
 function useMutationGame() {
-  const [session, setLoading, setUpdateGameStatus, addMyGame, removeMyGame] = useStore(
-    (state) => [
+  const [session, setLoading, setUpdateGameStatus, addMyGame, removeMyGame] =
+    useStore((state) => [
       state.session,
-      //state.setSession,
       state.setLoading,
       state.setUpdateGameStatus,
       state.addMyGame,
-      state.removeMyGame
-    ],
-  );
-
-  // useEffect(() => {
-  //   supabase.auth.getSession().then(({ data: { session } }) => {
-  //     setSession(session);
-  //   });
-
-  //   supabase.auth.onAuthStateChange((_event, session) => {
-  //     setSession(session);
-  //   });
-  // }, []);
+      state.removeMyGame,
+    ]);
 
   const createGame = async (
     game_title: string,
@@ -87,13 +75,10 @@ function useMutationGame() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-      
-      const { error } = await supabase
-        .from("games")
-        .delete()
-        .eq("id", id);
+
+      const { error } = await supabase.from("games").delete().eq("id", id);
       if (error) throw error;
-        
+
       // remove from store
       removeMyGame(id);
     } catch (error) {
@@ -104,7 +89,7 @@ function useMutationGame() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return { createGame, removeGameById };
 }

@@ -1,6 +1,6 @@
 # Pickup!
 
-> Our app allows users to organize, find, and join pick-up games in a convenient and streamlined manner. Users have access to nearby games that fit their skill level and match the desired sport, while organizers can share and coordinate games with their friends or anyone nearby. Organizers can control game visibility (public vs. private), accept or reject user requests to join a game, and invite specific users to join, allowing full control over who has access to the game location and details. Organizers can coordinate user responsibilities for bringing gear, equipment, and more. Users can add friends and communicate easily with each other through game-specific chatrooms.
+Our app allows users to organize, find, and join pick-up games in a convenient and streamlined manner. Users have access to nearby games that fit their skill level and match the desired sport, while organizers can share and coordinate games with their friends or anyone nearby. Organizers can control game visibility (public vs. private), accept or reject user requests to join a game, and invite specific users to join, allowing full control over who has access to the game location and details. Organizers can coordinate user responsibilities for bringing gear, equipment, and more. Users can add friends and communicate easily with each other through game-specific chatrooms.
 
 ## Installing / Getting started
 
@@ -24,15 +24,19 @@
 
     a. On iOS, to run the simulator on Xcode:
 
-    `expo prebuild --platform ios`
+    ```shell
+    expo prebuild --platform ios
 
-    `npx expo run:ios`
+    npx expo run:ios
+    ```
 
     b. On Android (not tested yet):
 
-    `expo prebuild --platform android`
+    ```shell
+    expo prebuild --platform android
 
-    `npx expo run:android`
+    npx expo run:android
+    ```
 
 ## Developing
 
@@ -46,7 +50,15 @@ See the above instructions to install and run the Expo app locally.
 
 If you are getting errors that involve  `Unable to resolve "@tamagui/themes` from `tamagui.config.ts` after running `pnpm install`, then run `pnpm add @tamagui/themes`.
 
-### Supabase Local Development Setup
+### Jest tests
+
+To run the Jest tests: `npm run test`.
+
+### Code style and formatting
+
+To run prettier: `npm run prettier`.
+
+### Supabase local development setup
 
 View the tutorial to set up Supabase local development [here](https://supabase.com/docs/guides/cli/local-development?access-method=postgres). Follow these steps to set up local development and deploy the changes to the remote database.
 
