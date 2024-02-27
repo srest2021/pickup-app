@@ -4,14 +4,14 @@ import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 
 function useMutationGame() {
-  const [session, user, setSession, setLoading] = useStore((state) => [
-    state.session,
-    state.user,
-    state.setSession,
-    state.setLoading,
-    state.setUser,
-    state.editUser,
-  ]);
+  const [session, setSession, setLoading, setUpdateGameStatus] = useStore(
+    (state) => [
+      state.session,
+      state.setSession,
+      state.setLoading,
+      state.setUpdateGameStatus,
+    ],
+  );
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -51,6 +51,8 @@ function useMutationGame() {
           },
         ])
         .select();
+      // Successful game creation.
+      setUpdateGameStatus(true);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

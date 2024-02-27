@@ -30,8 +30,13 @@ const AddGame = () => {
   const { user } = useMutationUser();
   const { createGame } = useMutationGame();
   const [loading] = useStore((state) => [state.loading]);
-  const [isToastVisible, setToastVisible] = useState(false);
+  const [isErrorToastVisible, setErrorToastVisible] = useState(false);
   const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
+  const [isSuccessToastVisible, setSuccessToastVisible] = useState(false);
+  const [updateGameStatus, setUpdateGameStatus] = useStore((state) => [
+    state.updateGameStatus,
+    state.setUpdateGameStatus,
+  ]);
 
   // game attributes
   const [title, setTitle] = useState("");
@@ -52,17 +57,18 @@ const AddGame = () => {
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
+    setUpdateGameStatus(false);
   }
 
   useEffect(() => {
     let timer: number;
-    if (isToastVisible) {
+    if (isErrorToastVisible) {
       let timer = setTimeout(() => {
-        setToastVisible(false);
+        setErrorToastVisible(false);
       }, 7000); // Hide toast after 7 seconds
     }
     return () => clearTimeout(timer);
-  }, [isToastVisible]);
+  }, [isErrorToastVisible]);
 
   useEffect(() => {
     let timer: number;
@@ -73,6 +79,16 @@ const AddGame = () => {
     }
     return () => clearTimeout(timer);
   }, [isDatetimeToastVisible]);
+
+  useEffect(() => {
+    let timer: number;
+    if (isSuccessToastVisible) {
+      let timer = setTimeout(() => {
+        setSuccessToastVisible(false);
+      }, 7000); // Hide toast after 7 seconds
+    }
+    return () => clearTimeout(timer);
+  }, [isSuccessToastVisible]);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -96,7 +112,7 @@ const AddGame = () => {
       !skillLevel ||
       !playerLimit
     ) {
-      setToastVisible(true);
+      setErrorToastVisible(true);
       return;
     }
 
@@ -121,6 +137,9 @@ const AddGame = () => {
         playerLimit,
         description,
       );
+      if (updateGameStatus) {
+        setSuccessToastVisible(true);
+      }
       clearGameAttributes();
     }
   }
@@ -347,7 +366,7 @@ const AddGame = () => {
         ) : (
           <Text>Log in to create a new game!</Text>
         )}
-        {isToastVisible && (
+        {isErrorToastVisible && (
           <Toast>
             <YStack>
               <Toast.Title>
@@ -357,7 +376,21 @@ const AddGame = () => {
                 Please enter all the content for your game.
               </Toast.Description>
             </YStack>
-            <Toast.Close onPress={() => setToastVisible(false)} />
+            <Toast.Close onPress={() => setErrorToastVisible(false)} />
+          </Toast>
+        )}
+
+        {isSuccessToastVisible && (
+          <Toast>
+            <YStack>
+              <Toast.Title>
+                Congrats! You just created a new game 🙂
+              </Toast.Title>
+              <Toast.Description>
+                Navigate to "My Games" to see your new game!
+              </Toast.Description>
+            </YStack>
+            <Toast.Close onPress={() => setSuccessToastVisible(false)} />
           </Toast>
         )}
 
