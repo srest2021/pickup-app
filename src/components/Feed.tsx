@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
+
+// add event listener so that page is constantly updating! 
 const Feed = () => {
   return (
     <View style={styles.container}>
