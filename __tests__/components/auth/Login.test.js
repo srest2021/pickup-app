@@ -8,6 +8,7 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import Login from "../../../src/components/auth/Login";
 import { supabase } from "../../../src/lib/supabase";
+import { NavigationContainer } from "@react-navigation/native";
 
 // jest.mock('@supabase/supabase-js', () => ({
 //   supabase: {
@@ -30,12 +31,10 @@ describe("Login", () => {
 
 describe("Login button", () => {
   beforeEach(() => {
-    jest
-      .spyOn(supabase.auth, "signInWithPassword")
-      .mockResolvedValueOnce({
-        data: { user: null, session: null },
-        error: null,
-      });
+    jest.spyOn(supabase.auth, "signInWithPassword").mockResolvedValueOnce({
+      data: { user: null, session: null },
+      error: null,
+    });
   });
 
   it("should sign in when clicked", async () => {
@@ -65,6 +64,20 @@ describe("Login button", () => {
   });
 });
 
-// describe("Register button", () => {
-  
-// });
+describe("Register button", () => {
+  it("should navigate to register screen", async () => {
+    const navigate = jest.fn();
+
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <NavigationContainer>
+          <Login navigation={{ navigate }} />
+        </NavigationContainer>
+      </TamaguiProvider>,
+    );
+
+    const registerBtn = screen.getByTestId("register-button");
+    fireEvent.press(registerBtn);
+    expect(navigate).toHaveBeenCalled();
+  });
+});
