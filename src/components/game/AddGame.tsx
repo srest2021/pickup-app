@@ -43,6 +43,8 @@ const AddGame = () => {
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [address, setAddress] = useState("");
+  const [latitude, setLatitude] = useState("0");
+  const [longitude, setLongitude] = useState("0");
   const [sport, setSport] = useState(sports[0].name);
   const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("1");
@@ -53,6 +55,8 @@ const AddGame = () => {
     setDate(new Date());
     setTime(new Date());
     setAddress("");
+    setLatitude("0");
+    setLongitude("0");
     setSport(sports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
@@ -132,6 +136,8 @@ const AddGame = () => {
         title,
         combinedDateTime,
         address,
+        latitude, 
+        longitude,
         sport,
         convertSkillLevel(),
         playerLimit,
@@ -204,6 +210,28 @@ const AddGame = () => {
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
                 />
+              </YStack>
+
+              <YStack space="$1">
+                <Label size="$5">Location</Label>
+                <XStack space="$3">
+                  <Input
+                    flex={1}
+                    size="$5"
+                    placeholder="Latitude"
+                    value={latitude}
+                    //keyboardType="numeric"
+                    onChangeText={(text: string) => setLatitude(text)}
+                  />
+                  <Input
+                    flex={1}
+                    size="$5"
+                    placeholder="Longitude"
+                    value={longitude}
+                    // keyboardType="numeric"
+                    onChangeText={(text: string) => setLongitude(text)}
+                  />
+                </XStack>
               </YStack>
 
               <Label size="$5">Sport</Label>

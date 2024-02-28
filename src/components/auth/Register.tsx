@@ -39,10 +39,11 @@ export default function Register() {
         },
       },
     });
-    if (error) Alert.alert(error.message);
-
-    if (!session)
-      Alert.alert("Please check your inbox for email verification!");
+    if (error) {
+      Alert.alert(error.message);
+    } else { 
+      if (!session) Alert.alert("Please check your inbox for email verification!");
+    }
     setLoading(false);
   }
 
