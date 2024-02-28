@@ -42,9 +42,13 @@ const EditGame = (game: Game) => {
 
   // existing game attributes
   const [title, setTitle] = useState(game.title);
-  // TODO: Figure out how to make date picker show previously set date and time.
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
+  // Make date picker show previously set date and time.
+  const dateComponent = new Date(game.datetime);
+  dateComponent.setHours(0,0,0,0);
+  const timeComponent = new Date(0);
+  timeComponent.setHours(game.datetime.getHours(), game.datetime.getMinutes(),0,0);
+  const [date, setDate] = useState(new Date(game.datetime));
+  const [time, setTime] = useState(timeComponent);
   const [address, setAddress] = useState(game.address);
   const [sport, setSport] = useState(
     sports[sports.findIndex((sport) => sport.name === game.sport.name)].name,
