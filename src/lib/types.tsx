@@ -3,11 +3,18 @@ export type User = {
   displayName: string;
   bio: string;
   avatarUrl: string;
-  sports: Sport[];
+  sports: UserSport[];
 };
 
-export type Sport = {
+// displayed on user profile
+export type UserSport = {
   id: string;
+  name: string;
+  skillLevel: SkillLevel;
+};
+
+// displayed on games
+export type GameSport = {
   name: string;
   skillLevel: SkillLevel;
 };
@@ -17,3 +24,21 @@ export enum SkillLevel {
   Intermediate = 1,
   Advanced = 2,
 }
+
+export type Game = {
+  id: string;
+  title: string;
+  description: string;
+  datetime: Date;
+  address: string;
+  sport: GameSport;
+  maxPlayers: number;
+};
+
+export const sports = [
+  { name: "Soccer" },
+  { name: "Basketball" },
+  { name: "Tennis" },
+  { name: "Football" },
+  { name: "Volleyball" },
+];

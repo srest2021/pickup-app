@@ -54,6 +54,7 @@ export default function Register() {
 
       <YStack overflow="hidden" space="$2" paddingBottom="$2">
         <Input
+          testID="email-input"
           size="$5"
           placeholder="email@address.com"
           value={email}
@@ -62,6 +63,7 @@ export default function Register() {
         />
 
         <Input
+          testID="username-input"
           size="$5"
           placeholder="Username"
           value={username}
@@ -70,6 +72,7 @@ export default function Register() {
         />
 
         <Input
+          testID="password-input"
           size="$5"
           placeholder={`Password`}
           secureTextEntry={true}
@@ -81,6 +84,7 @@ export default function Register() {
 
       <YStack space="$6" paddingTop="$2">
         <Button
+          testID="register-button"
           theme="active"
           disabled={loading}
           onPress={() => signUpWithEmail()}
