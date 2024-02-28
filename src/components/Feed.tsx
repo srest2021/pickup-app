@@ -14,6 +14,11 @@ const Feed = () => {
     // Figure out a way to switch to MyGames
   }
 
+  const toAllGames = () => {
+    // Figure out how to swtich to AllGames
+  }
+
+  // can I use a store? 
   return (
     <View style={styles.container}>
       
@@ -32,7 +37,7 @@ const Feed = () => {
           <Tabs.Tab value = "MyGames" onInteraction={toMyGames}>
           <SizableText>My Games</SizableText>
           </Tabs.Tab>
-          <Tabs.Tab value = "AllGames">
+          <Tabs.Tab value = "AllGames" onInteraction={toAllGames}>
           <SizableText>All Games</SizableText>
           </Tabs.Tab>
         </Tabs.List>
