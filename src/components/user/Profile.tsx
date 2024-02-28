@@ -7,7 +7,9 @@ import { Button, YStack } from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from 'react-native';
-import { AddSport } from "./AddSport";
+import { Edit3 } from "@tamagui/lucide-icons";
+import AddSport from "./AddSport";
+
 
 
 // Get the height of the screen
@@ -37,15 +39,28 @@ export default function Profile({ navigation }) {
     <ScrollView
       style={{ flex: 1 }}
       contentContainerStyle={{
-        paddingBottom: '100%',
+        flexGrow: 1, 
+        justifyContent: 'space-between', 
         backgroundColor: "#ffffff",
       }}
     >
-      <View style={{ backgroundColor: "#08348c", height: topThirdHeight, width: '100%'}} />
+      <View style={{ backgroundColor: "#08348c", height: topThirdHeight, width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-start', padding: 12}}>
+      <Button
+          icon = { Edit3 }
+          theme="active"
+          disabled={loading}
+          onPress={() => navigation.navigate("EditProfile")}
+          size="$5"
+          color="#ffffff"
+          borderColor="#ffffff"
+          variant="outlined"
+        >
+        </Button>
+      </View>
       {user ? (
         <View>
-          
-          <View className="items-center mb-10" style={{ marginTop: -topThirdHeight/3}}> 
+        
+          <View className="items-center mb-10" style={{ marginTop: -topThirdHeight/2}}> 
             <Avatar
               url={user.avatarUrl}
               onUpload={() => {}}
@@ -77,20 +92,15 @@ export default function Profile({ navigation }) {
         <Text>No user on the session.</Text>
       )}
 
-      <YStack space="$6" paddingTop="$5">
-        <Button
-          theme="active"
-          disabled={loading}
-          onPress={() => navigation.navigate("EditProfile")}
-          size="$5"
-        >
-          Edit Profile
-        </Button>
+      <YStack space="$6" paddingTop="$5" alignItems="center">
 
         <Button
           variant="outlined"
           onPress={() => supabase.auth.signOut()}
           size="$5"
+          color="#ff7403"
+          borderColor="#ff7403"
+          width="94%"
         >
           Log Out
         </Button>

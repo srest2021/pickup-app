@@ -3,7 +3,6 @@ import { supabase } from "../../lib/supabase";
 import { View, Alert, Image, Button, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
-
 interface Props {
   url: string | null;
   onUpload: (filePath: string) => void;
@@ -110,7 +109,7 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
             backgroundColor: 'bg-slate-200', // Set the background color
             borderRadius: 150,
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}
         >
         {/* Your default content goes here */}
