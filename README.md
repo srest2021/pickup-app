@@ -69,11 +69,10 @@ View the tutorial to set up Supabase local development [here](https://supabase.c
 
   ```
   npx supabase link --project-ref <project-id>
-  # You can get <project-id> from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
+  # You can get <project-id> from your project's dashboard URL: 
+  # https://supabase.com/dashboard/project/<project-id>
 
   npx supabase db pull
-  # Capture any changes that you have made to your remote database before you went through the steps above
-  # If you have not made any changes to the remote database, skip this step
   ```
 
 5. To create a new migration file: `npx supabase migration new <migration-name>`. To reset the local database and run the migration: `npx supabase db reset`.
