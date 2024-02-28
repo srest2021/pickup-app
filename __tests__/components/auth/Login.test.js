@@ -1,8 +1,21 @@
-//import renderer from "react-test-renderer";
-import { render } from "@testing-library/react-native";
+import {
+  render,
+  fireEvent,
+  screen,
+  waitFor,
+} from "@testing-library/react-native";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import Login from "../../../src/components/auth/Login";
+import { supabase } from "../../../src/lib/supabase";
+
+// jest.mock('@supabase/supabase-js', () => ({
+//   supabase: {
+//     auth: {
+//       signInWithPassword: jest.fn().mockResolvedValue({ data: {user: null, session: null}, error: null}),
+//     },
+//   },
+// }));
 
 describe("Login", () => {
   it("should render successfully", () => {
@@ -15,13 +28,43 @@ describe("Login", () => {
   });
 });
 
-// describe("Login", () => {
-//   it("should have 1 child", () => {
-//     const { root } = render(
-//       <TamaguiProvider config={appConfig}>
-//         <Login />
-//       </TamaguiProvider>,
-//     );
-//     expect(root.children.length).toBe(1);
-//   });
+describe("Login button", () => {
+  beforeEach(() => {
+    jest
+      .spyOn(supabase.auth, "signInWithPassword")
+      .mockResolvedValueOnce({
+        data: { user: null, session: null },
+        error: null,
+      });
+  });
+
+  it("should sign in when clicked", async () => {
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <Login />
+      </TamaguiProvider>,
+    );
+
+    const email = "test@example.com";
+    const password = "password";
+
+    const emailInput = screen.getByTestId("email-input");
+    const passwordInput = screen.getByTestId("password-input");
+    fireEvent.changeText(emailInput, email);
+    fireEvent.changeText(passwordInput, password);
+
+    const signInBtn = screen.getByTestId("signin-button");
+    fireEvent.press(signInBtn);
+    await waitFor(() => {
+      expect(supabase.auth.signInWithPassword).toHaveBeenCalledTimes(1);
+      expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
+        email,
+        password,
+      });
+    });
+  });
+});
+
+// describe("Register button", () => {
+  
 // });
