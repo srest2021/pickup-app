@@ -5,14 +5,21 @@ import { Alert } from "react-native";
 import { Game, GameSport } from "../lib/types";
 
 function useMutationGame() {
-  const [session, setLoading, setUpdateGameStatus, addMyGame, removeMyGame] =
-    useStore((state) => [
-      state.session,
-      state.setLoading,
-      state.setUpdateGameStatus,
-      state.addMyGame,
-      state.removeMyGame,
-    ]);
+  const [
+    session,
+    setLoading,
+    setUpdateGameStatus,
+    addMyGame,
+    removeMyGame,
+    editMyGame,
+  ] = useStore((state) => [
+    state.session,
+    state.setLoading,
+    state.setUpdateGameStatus,
+    state.addMyGame,
+    state.removeMyGame,
+    state.editMyGame,
+  ]);
 
   const createGame = async (
     game_title: string,
@@ -40,7 +47,8 @@ function useMutationGame() {
             sport: sport,
             skill_level: skillLevel,
             address: address,
-            location: `POINT(${longitude} ${latitude})`,
+            location:
+              longitude && latitude && `POINT(${longitude} ${latitude})`,
             max_players: playerLimit,
           },
         ])
@@ -62,7 +70,7 @@ function useMutationGame() {
           maxPlayers: Number(playerLimit),
         };
         addMyGame(myNewGame);
-        return myNewGame.id;
+        // return myNewGame.id;
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -94,7 +102,53 @@ function useMutationGame() {
     }
   };
 
-  return { createGame, removeGameById };
+  const editGameById = async (
+    id: string,
+    game_title: string,
+    datetime: Date,
+    address: string,
+    sport: string,
+    skillLevel: number,
+    playerLimit: string,
+    description: string = "",
+  ) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { data, error } = await supabase
+        .from("games")
+        .update({
+          title: game_title,
+          description: description,
+          datetime: datetime,
+          sport: sport,
+          skill_level: skillLevel,
+          address: address,
+          max_players: playerLimit,
+        })
+        .eq("id", id)
+        .select();
+
+      if (error) throw error;
+      // Successful game editing.
+      setUpdateGameStatus(true);
+
+      // Edit game in store
+      if (data && data[0]) {
+        editMyGame(data[0], data);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { createGame, removeGameById, editGameById };
 }
 
 export default useMutationGame;

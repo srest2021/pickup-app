@@ -8,13 +8,17 @@ function useQueryGames() {
   const [
     session,
     setLoading,
+    myGames,
     setMyGames,
+    setFeedGames,
     setSelectedGameId,
     clearSelectedGameId,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
+    state.myGames,
     state.setMyGames,
+    state.setFeedGames,
     state.setSelectedGameId,
     state.clearSelectedGameId,
   ]);
@@ -31,7 +35,6 @@ function useQueryGames() {
         .select("*")
         .eq("id", id);
       if (error) throw error;
-      //console.log(data);
 
       if (data && data[0]) {
         const game: Game = {
@@ -46,7 +49,6 @@ function useQueryGames() {
           } as GameSport,
           maxPlayers: Number(data[0].max_players),
         };
-        //console.log("fetched game: ", game);
 
         setGame(game);
         setSelectedGameId(game.id);
@@ -71,15 +73,31 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
-      const { data: games, error } = await supabase
+      const { data, error } = await supabase
         .from("games")
         .select("*")
-        .eq("organizer_id", session.user.id);
+        .eq("organizer_id", session.user.id)
+        .order("created_at", { ascending: false });
       if (error) throw error;
+
+      const games = data.map((myGame) => {
+        const game: Game = {
+          id: myGame.id,
+          title: myGame.title,
+          description: myGame.description,
+          datetime: myGame.datetime,
+          address: myGame.address,
+          sport: {
+            name: myGame.sport,
+            skillLevel: myGame.skill_level,
+          } as GameSport,
+          maxPlayers: Number(myGame.max_players),
+        };
+        return game;
+      });
 
       if (games) {
         setMyGames(games);
-        //console.log("fetched games: ", games);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -102,7 +120,7 @@ function useQueryGames() {
       if (error) throw error;
 
       if (games) {
-        setMyGames(games);
+        setFeedGames(games);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -114,14 +132,13 @@ function useQueryGames() {
   };
 
   useEffect(() => {
-    //fetchGame("37bc2b67-020e-4b58-911a-c6a1864954f5"); //test
     if (session?.user) {
       fetchMyGames();
     }
     fetchAllGames();
   }, []);
 
-  return { fetchGameById, fetchMyGames, fetchAllGames };
+  return { game, myGames, fetchGameById, fetchMyGames, fetchAllGames };
 }
 
 export default useQueryGames;

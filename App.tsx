@@ -20,6 +20,7 @@ import {
   CircleUser,
   GalleryVerticalEnd,
 } from "@tamagui/lucide-icons";
+import MyGamesNavigator from "./src/components/MyGamesNavigator";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,12 +66,13 @@ export default function App() {
             />
             <Tab.Screen
               name="My Games"
-              component={MyGames}
+              component={MyGamesNavigator}
               options={{
                 tabBarLabel: "My Games",
                 tabBarIcon: ({ color, size, focused }) => (
                   <AlignJustify color={focused ? "black" : "gray"} />
                 ),
+                headerShown: false,
               }}
               initialParams={{ key: session.user.id }}
             />

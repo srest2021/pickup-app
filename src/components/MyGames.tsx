@@ -1,16 +1,17 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, Button, YStack, ScrollView } from "tamagui";
+import { View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import FeedGameView from "./game/GameView";
 import { Separator, SizableText, Tabs } from "tamagui";
 import Games from "./game/Games";
+import GameThumbnail from "./game/GameThumbnail";
 
 // 
 // add event listener so that page is constantly updating! 
 // add switch so that you can go between myGame and AllGames 
 // PICK A MINWIDTH SO THAT text always shown 
-const MyGames = () => {
-    const {fetchMyGames} = useQueryGames();
+const MyGames = ({navigation}:{navigation:any}) => {
+    const {myGames, fetchMyGames} = useQueryGames();
     // const fetchJoinedGames = useQueryGames();
 
 
@@ -30,7 +31,18 @@ const MyGames = () => {
   // Navigate to myGames view after create game 
 
   return (
-    <View style={styles.container}>
+    <View className="p-12">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <YStack space="$5" padding="12">
+          {myGames.map((myGame) => (
+            <GameThumbnail
+              navigation={navigation}
+              game={myGame}
+              key={myGame.id}
+            />
+          ))}
+        </YStack>
+      </ScrollView>
       <Tabs
       defaultValue="MyGames"
       orientation="horizontal"
@@ -55,17 +67,5 @@ const MyGames = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});
 
 export default MyGames;
