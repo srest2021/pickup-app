@@ -10,14 +10,6 @@ import Login from "../../../src/components/auth/Login";
 import { supabase } from "../../../src/lib/supabase";
 import { NavigationContainer } from "@react-navigation/native";
 
-// jest.mock('@supabase/supabase-js', () => ({
-//   supabase: {
-//     auth: {
-//       signInWithPassword: jest.fn().mockResolvedValue({ data: {user: null, session: null}, error: null}),
-//     },
-//   },
-// }));
-
 describe("Login", () => {
   it("should render successfully", () => {
     const { root } = render(

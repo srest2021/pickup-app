@@ -16,7 +16,7 @@ AppState.addEventListener("change", (state) => {
   }
 });
 
-export default function Login({ navigation }) {
+export default function Login({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useStore((state) => [
