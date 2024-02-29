@@ -116,6 +116,7 @@ const AddGame = () => {
       !skillLevel ||
       !playerLimit
     ) {
+      console.log("error toast")
       setErrorToastVisible(true);
       return;
     }
@@ -130,8 +131,11 @@ const AddGame = () => {
     );
 
     if (combinedDateTime < new Date()) {
+      console.log("datetime toast")
       setDatetimeToastVisible(true);
-    } else {
+      return;
+    }
+
       createGame(
         title,
         combinedDateTime,
@@ -144,10 +148,10 @@ const AddGame = () => {
         description,
       );
       if (updateGameStatus) {
+        console.log("success toast")
         setSuccessToastVisible(true);
       }
       clearGameAttributes();
-    }
   }
 
   return (
@@ -293,7 +297,8 @@ const AddGame = () => {
                   <Select.ScrollDownButton />
                 </Select.Content>
               </Select>
-
+              
+              <YStack>
               <Label size="$5">Skill Level</Label>
               <RadioGroup
                 aria-labelledby="Select one item"
@@ -354,6 +359,7 @@ const AddGame = () => {
                   </XStack>
                 </YStack>
               </RadioGroup>
+              </YStack>
 
               <XStack space="$4" alignItems="center">
                 <Label flex={1} size="$5" width={90}>
@@ -386,7 +392,7 @@ const AddGame = () => {
                   onPress={() => createNewGame()}
                   size="$5"
                 >
-                  {loading ? "Loading..." : "Create"}
+                  {loading ? "Loading..." : "Publish"}
                 </Button>
               </YStack>
             </YStack>

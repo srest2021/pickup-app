@@ -49,12 +49,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const dateComponent = datetime;
   dateComponent.setHours(0, 0, 0, 0);
   const timeComponent = new Date(0);
-  timeComponent.setHours(
-    datetime.getHours(),
-    datetime.getMinutes(),
-    0,
-    0,
-  );
+  timeComponent.setHours(datetime.getHours(), datetime.getMinutes(), 0, 0);
   const [date, setDate] = useState(new Date(game.datetime));
   const [time, setTime] = useState(timeComponent);
   const [address, setAddress] = useState(game.address);

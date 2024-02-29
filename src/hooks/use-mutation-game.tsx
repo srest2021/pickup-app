@@ -36,6 +36,11 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
+      let location = null;
+      if (longitude !== "" && latitude !== "") {
+        location = `POINT(${longitude} ${latitude})`
+      }
+
       const { data, error } = await supabase
         .from("games")
         .insert([
@@ -47,8 +52,7 @@ function useMutationGame() {
             sport: sport,
             skill_level: skillLevel,
             address: address,
-            location:
-              longitude && latitude && `POINT(${longitude} ${latitude})`,
+            location,
             max_players: playerLimit,
           },
         ])
