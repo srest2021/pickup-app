@@ -14,9 +14,14 @@ const MyGames = () => {
     // const fetchJoinedGames = useQueryGames();
 
 
-  const toMyGames = () => {
-    fetchMyGames();
-  }
+  const toMyGames = async() => {
+    try{
+        const games =  await fetchMyGames();
+    } catch (error){
+        console.log(error);
+    }
+   
+  };
 
   const toJoinedGames = () => {
     // Figure out how to swtich to AllGames (probably useStore) 

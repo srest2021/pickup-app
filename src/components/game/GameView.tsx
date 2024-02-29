@@ -5,9 +5,16 @@ import {Button, Card, H3,H4,H5, Separator} from 'tamagui';
 
 
 export default function Game({ game }: { game: GameType }) {
-  const time = game.datetime.toLocaleTimeString([],{hour: 'numeric', minute: '2-digit', hour12: true});
-  const month = game.datetime.getMonth();
-  const date = game.datetime.getDate();
+  
+  try {
+    const time = game.datetime.toLocaleTimeString([],{hour: 'numeric', minute: '2-digit', hour12: true});
+    const month = game.datetime.getMonth();
+    const date = game.datetime.getDate();
+  }catch(error){
+    console.log("no datetime");
+    console.log(game);
+  }
+  
   return (
     <Card elevate size = "$5">
         <Card.Header padded>

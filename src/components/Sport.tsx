@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { SkillLevel, Sport as SportType } from "../lib/types";
+import { SkillLevel, UserSport as SportType } from "../lib/types";
 
 export default function Sport({ sport }: { sport: SportType }) {
   function getSkillLevelString(skillLevel: SkillLevel): string {

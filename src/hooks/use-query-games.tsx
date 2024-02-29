@@ -38,7 +38,7 @@ function useQueryGames() {
           id: data[0].id,
           title: data[0].title,
           description: data[0].description,
-          datetime: data[0].datetime,
+          datetime: new Date (data[0].datetime),
           address: data[0].address,
           sport: {
             name: data[0].sport,

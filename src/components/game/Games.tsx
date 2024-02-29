@@ -1,5 +1,5 @@
 import { useStore } from "../../lib/store"
-import { View } from "tamagui";
+import { View, Text } from "tamagui";
 import GameView from "./GameView";
 
 
@@ -8,11 +8,16 @@ const Games = () => {
 
     return (
         <View className="">
-          {games.map((game) => (
+          {games ? (
+            games.map((game) => (
               <GameView game={game} />
-          ))}
+            ))
+          ) : (
+            <Text>No Games Yet</Text>
+          )}
         </View>
       );
+      
 };
 
 export default Games;
