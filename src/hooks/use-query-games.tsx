@@ -8,12 +8,14 @@ function useQueryGames() {
   const [
     session,
     setLoading,
+    myGames,
     setMyGames,
     setSelectedGameId,
     clearSelectedGameId,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
+    state.myGames,
     state.setMyGames,
     state.setSelectedGameId,
     state.clearSelectedGameId,
@@ -31,7 +33,6 @@ function useQueryGames() {
         .select("*")
         .eq("id", id);
       if (error) throw error;
-      //console.log(data);
 
       if (data && data[0]) {
         const game: Game = {
@@ -46,7 +47,6 @@ function useQueryGames() {
           } as GameSport,
           maxPlayers: Number(data[0].max_players),
         };
-        //console.log("fetched game: ", game);
 
         setGame(game);
         setSelectedGameId(game.id);
@@ -79,7 +79,6 @@ function useQueryGames() {
 
       if (games) {
         setMyGames(games);
-        //console.log("fetched games: ", games);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -118,10 +117,10 @@ function useQueryGames() {
     if (session?.user) {
       fetchMyGames();
     }
-    fetchAllGames();
+    //fetchAllGames();
   }, []);
 
-  return { fetchGameById, fetchMyGames, fetchAllGames };
+  return { game, myGames, fetchGameById, fetchMyGames, fetchAllGames };
 }
 
 export default useQueryGames;

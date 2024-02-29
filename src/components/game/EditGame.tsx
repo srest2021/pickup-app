@@ -16,7 +16,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
+import { Game, SkillLevel, sports } from "../../lib/types";
 import {
   Toast,
   ToastProvider,
@@ -26,10 +26,12 @@ import {
 } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-const AddGame = () => {
+const EditGame = (game: Game) => {
   const { user } = useMutationUser();
-  const { createGame } = useMutationGame();
-  const [loading] = useStore((state) => [state.loading]);
+  const { editGameById } = useMutationGame();
+
+  const loading = useStore((state) => state.loading);
+
   const [isErrorToastVisible, setErrorToastVisible] = useState(false);
   const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
   const [isSuccessToastVisible, setSuccessToastVisible] = useState(false);
@@ -38,25 +40,33 @@ const AddGame = () => {
     state.setUpdateGameStatus,
   ]);
 
-  // game attributes
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
-  const [address, setAddress] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
-  const [sport, setSport] = useState(sports[0].name);
-  const [skillLevel, setSkillLevel] = useState("0");
-  const [playerLimit, setPlayerLimit] = useState("1");
-  const [description, setDescription] = useState("");
+  // existing game attributes
+  const [title, setTitle] = useState(game.title);
+  // Make date picker show previously set date and time.
+  const dateComponent = new Date(game.datetime);
+  dateComponent.setHours(0, 0, 0, 0);
+  const timeComponent = new Date(0);
+  timeComponent.setHours(
+    game.datetime.getHours(),
+    game.datetime.getMinutes(),
+    0,
+    0,
+  );
+  const [date, setDate] = useState(new Date(game.datetime));
+  const [time, setTime] = useState(timeComponent);
+  const [address, setAddress] = useState(game.address);
+  const [sport, setSport] = useState(
+    sports[sports.findIndex((sport) => sport.name === game.sport.name)].name,
+  );
+  const [skillLevel, setSkillLevel] = useState(`${game.sport.skillLevel}`);
+  const [playerLimit, setPlayerLimit] = useState(`${game.maxPlayers}`);
+  const [description, setDescription] = useState(game.description);
 
   function clearGameAttributes() {
     setTitle("");
     setDate(new Date());
     setTime(new Date());
     setAddress("");
-    setLatitude("");
-    setLongitude("");
     setSport(sports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
@@ -105,7 +115,7 @@ const AddGame = () => {
     }
   }
 
-  function createNewGame() {
+  function editGame() {
     // Check that no fields are left blank (except description, optional)
     if (
       !title ||
@@ -132,12 +142,11 @@ const AddGame = () => {
     if (combinedDateTime < new Date()) {
       setDatetimeToastVisible(true);
     } else {
-      createGame(
+      editGameById(
+        game.id,
         title,
         combinedDateTime,
         address,
-        latitude,
-        longitude,
         sport,
         convertSkillLevel(),
         playerLimit,
@@ -210,28 +219,6 @@ const AddGame = () => {
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
                 />
-              </YStack>
-
-              <YStack space="$1">
-                <Label size="$5">Location</Label>
-                <XStack space="$3">
-                  <Input
-                    flex={1}
-                    size="$5"
-                    placeholder="Latitude"
-                    value={latitude}
-                    //keyboardType="numeric"
-                    onChangeText={(text: string) => setLatitude(text)}
-                  />
-                  <Input
-                    flex={1}
-                    size="$5"
-                    placeholder="Longitude"
-                    value={longitude}
-                    // keyboardType="numeric"
-                    onChangeText={(text: string) => setLongitude(text)}
-                  />
-                </XStack>
               </YStack>
 
               <Label size="$5">Sport</Label>
@@ -383,16 +370,16 @@ const AddGame = () => {
                 <Button
                   theme="active"
                   disabled={loading}
-                  onPress={() => createNewGame()}
+                  onPress={() => editGame()}
                   size="$5"
                 >
-                  {loading ? "Loading..." : "Create"}
+                  {loading ? "Loading..." : "Edit"}
                 </Button>
               </YStack>
             </YStack>
           </ScrollView>
         ) : (
-          <Text>Log in to create a new game!</Text>
+          <Text>Log in to edit an existing game!</Text>
         )}
         {isErrorToastVisible && (
           <Toast>
@@ -411,11 +398,9 @@ const AddGame = () => {
         {isSuccessToastVisible && (
           <Toast>
             <YStack>
-              <Toast.Title>
-                Congrats! You just created a new game 🙂
-              </Toast.Title>
+              <Toast.Title>Data successfully saved. 🙂</Toast.Title>
               <Toast.Description>
-                Navigate to "My Games" to see your new game!
+                We've got your game edits saved!
               </Toast.Description>
             </YStack>
             <Toast.Close onPress={() => setSuccessToastVisible(false)} />
@@ -442,4 +427,4 @@ const AddGame = () => {
   );
 };
 
-export default AddGame;
+export default EditGame;
