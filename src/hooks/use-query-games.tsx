@@ -10,6 +10,7 @@ function useQueryGames() {
     setLoading,
     myGames,
     setMyGames,
+    setFeedGames,
     setSelectedGameId,
     clearSelectedGameId,
   ] = useStore((state) => [
@@ -17,6 +18,7 @@ function useQueryGames() {
     state.setLoading,
     state.myGames,
     state.setMyGames,
+    state.setFeedGames,
     state.setSelectedGameId,
     state.clearSelectedGameId,
   ]);
@@ -74,7 +76,8 @@ function useQueryGames() {
       const { data, error } = await supabase
         .from("games")
         .select("*")
-        .eq("organizer_id", session.user.id);
+        .eq("organizer_id", session.user.id)
+        .order("created_at", { ascending: false });
       if (error) throw error;
 
       const games = data.map((myGame) => {
@@ -117,7 +120,7 @@ function useQueryGames() {
       if (error) throw error;
 
       if (games) {
-        setMyGames(games);
+        setFeedGames(games);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -129,11 +132,10 @@ function useQueryGames() {
   };
 
   useEffect(() => {
-    //fetchGame("37bc2b67-020e-4b58-911a-c6a1864954f5"); //test
     if (session?.user) {
       fetchMyGames();
     }
-    //fetchAllGames();
+    fetchAllGames();
   }, []);
 
   return { game, myGames, fetchGameById, fetchMyGames, fetchAllGames };
