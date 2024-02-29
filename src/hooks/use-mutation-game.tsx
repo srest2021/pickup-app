@@ -47,7 +47,8 @@ function useMutationGame() {
             sport: sport,
             skill_level: skillLevel,
             address: address,
-            location: `POINT(${longitude} ${latitude})`,
+            location:
+              longitude && latitude && `POINT(${longitude} ${latitude})`,
             max_players: playerLimit,
           },
         ])

@@ -71,11 +71,27 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
-      const { data: games, error } = await supabase
+      const { data, error } = await supabase
         .from("games")
         .select("*")
         .eq("organizer_id", session.user.id);
       if (error) throw error;
+
+      const games = data.map((myGame) => {
+        const game: Game = {
+          id: myGame.id,
+          title: myGame.title,
+          description: myGame.description,
+          datetime: myGame.datetime,
+          address: myGame.address,
+          sport: {
+            name: myGame.sport,
+            skillLevel: myGame.skill_level,
+          } as GameSport,
+          maxPlayers: Number(myGame.max_players),
+        };
+        return game;
+      });
 
       if (games) {
         setMyGames(games);

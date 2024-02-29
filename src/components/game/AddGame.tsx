@@ -146,7 +146,7 @@ const AddGame = () => {
       if (updateGameStatus) {
         setSuccessToastVisible(true);
       }
-      clearGameAttributes();
+      //clearGameAttributes();
     }
   }
 

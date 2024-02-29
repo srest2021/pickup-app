@@ -1,12 +1,14 @@
 import { YStack, Text, Theme, Button } from "tamagui";
+import { useStore } from "../../lib/store";
+import useQueryGames from "../../hooks/use-query-games";
+import { useEffect } from "react";
 
-const GameView = ({ route }) => {
-  const game = route.params;
-  const { title, description, datetime, address, sport, maxPlayers } =
-    game.game;
+const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
+  const { game } = route.params;
+  const { title, description, datetime, address, sport, maxPlayers } = game;
 
   // Convert datetime to a readable string
-  const displayDate = datetime.toLocaleDateString("en-US", {
+  const displayDate = new Date(datetime).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -48,4 +50,4 @@ const GameView = ({ route }) => {
   );
 };
 
-export default GameView;
+export default MyGameView;

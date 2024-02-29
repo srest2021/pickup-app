@@ -44,9 +44,14 @@ const EditGame = (game: Game) => {
   const [title, setTitle] = useState(game.title);
   // Make date picker show previously set date and time.
   const dateComponent = new Date(game.datetime);
-  dateComponent.setHours(0,0,0,0);
+  dateComponent.setHours(0, 0, 0, 0);
   const timeComponent = new Date(0);
-  timeComponent.setHours(game.datetime.getHours(), game.datetime.getMinutes(),0,0);
+  timeComponent.setHours(
+    game.datetime.getHours(),
+    game.datetime.getMinutes(),
+    0,
+    0,
+  );
   const [date, setDate] = useState(new Date(game.datetime));
   const [time, setTime] = useState(timeComponent);
   const [address, setAddress] = useState(game.address);

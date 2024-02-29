@@ -3,7 +3,7 @@ import { View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import GameThumbnail from "./game/GameThumbnail";
 
-const MyGames = () => {
+const MyGames = ({ navigation }: { navigation: any }) => {
   const { myGames } = useQueryGames();
 
   return (
@@ -11,7 +11,11 @@ const MyGames = () => {
       <ScrollView>
         <YStack space="$5" padding="12">
           {myGames.map((myGame) => (
-            <GameThumbnail game={myGame} key={myGame.id}/>
+            <GameThumbnail
+              navigation={navigation}
+              game={myGame}
+              key={myGame.id}
+            />
           ))}
         </YStack>
       </ScrollView>
