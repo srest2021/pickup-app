@@ -43,8 +43,8 @@ const AddGame = () => {
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [address, setAddress] = useState("");
-  const [latitude, setLatitude] = useState("0");
-  const [longitude, setLongitude] = useState("0");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [sport, setSport] = useState(sports[0].name);
   const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("1");
@@ -55,8 +55,8 @@ const AddGame = () => {
     setDate(new Date());
     setTime(new Date());
     setAddress("");
-    setLatitude("0");
-    setLongitude("0");
+    setLatitude("");
+    setLongitude("");
     setSport(sports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
@@ -136,7 +136,7 @@ const AddGame = () => {
         title,
         combinedDateTime,
         address,
-        latitude, 
+        latitude,
         longitude,
         sport,
         convertSkillLevel(),
