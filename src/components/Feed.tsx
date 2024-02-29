@@ -1,29 +1,28 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import FeedGameView from "./FeedGameView";
+import FeedGameView from "./game/GameView";
 import { Separator, SizableText, Tabs } from "tamagui";
 
-
+// 
 // add event listener so that page is constantly updating! 
 // add switch so that you can go between myGame and AllGames 
 // PICK A MINWIDTH SO THAT text always shown 
 const Feed = () => {
 
   const toMyGames = () => {
-    // Figure out a way to switch to MyGames
+    // Figure out a way to switch to MyGames (probably use Store)
   }
 
-  const toAllGames = () => {
-    // Figure out how to swtich to AllGames
+  const toJoinedGames = () => {
+    // Figure out how to swtich to AllGames (probably useStore) 
   }
 
   // can I use a store? 
   return (
     <View style={styles.container}>
-      
       <Tabs
-      defaultValue="AllGames"
+      defaultValue="MyGames"
       orientation="horizontal"
       flexDirection="column"
       height={150}
@@ -37,8 +36,8 @@ const Feed = () => {
           <Tabs.Tab value = "MyGames" onInteraction={toMyGames}>
           <SizableText>My Games</SizableText>
           </Tabs.Tab>
-          <Tabs.Tab value = "AllGames" onInteraction={toAllGames}>
-          <SizableText>All Games</SizableText>
+          <Tabs.Tab value = "JoinedGames" onInteraction={toJoinedGames}>
+          <SizableText>Joined Games</SizableText>
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>

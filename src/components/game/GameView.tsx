@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
-import { SkillLevel, Game as GameType } from "../lib/types";
-import useQueryGames from "../hooks/use-query-games";
-import {Card, H3,H4,H5, Separator} from 'tamagui';
+import { SkillLevel, Game as GameType } from "../../lib/types";
+import useQueryGames from "../../hooks/use-query-games";
+import {Button, Card, H3,H4,H5, Separator} from 'tamagui';
 
 
 export default function Game({ game }: { game: GameType }) {
@@ -17,8 +17,13 @@ export default function Game({ game }: { game: GameType }) {
         <Separator alignSelf= "stretch" vertical />
         <H5> `${time}`</H5>
         </Card.Header>
-        
-        <Card.Footer />
+        <Card.Footer padded> 
+
+        </Card.Footer>.
+        <Text>`${game.description}`</Text>
+        <Button>Edit Button </Button>
+        <Button>Delete Button</Button>
+
         {/** Add other components here for the game  */}
         <Card.Background />
     </Card> 
