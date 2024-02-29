@@ -1,4 +1,4 @@
-import { YStack, ScrollView, H4 } from "tamagui";
+import { YStack, ScrollView, H4, Spinner } from "tamagui";
 import { Alert, View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import { SizableText, Tabs } from "tamagui";
@@ -15,7 +15,7 @@ import { useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
   const [session] = useStore((state) => [state.session]);
-  const { myGames, fetchMyGames } = useQueryGames();
+  const { myGames, fetchMyGames, fetchAllGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
   //const [isErrorToastVisible, setErrorToastVisible] = useState(false);
@@ -23,9 +23,9 @@ const MyGames = ({ navigation }: { navigation: any }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     if (myGamesToggle === "myGames") {
-      toMyGames();
+      await toMyGames();
     } else if (myGamesToggle === "joinedGames") {
-      toJoinedGames();
+      await toJoinedGames();
     }
     setRefreshing(false);
   };
@@ -41,8 +41,14 @@ const MyGames = ({ navigation }: { navigation: any }) => {
     }
   };
 
-  const toJoinedGames = () => {
+  const toJoinedGames = async () => {
     setMyGamesToggle("joinedGames");
+    try {
+      await fetchAllGames(); // temporary for right now until we do query for joined games.
+    } catch (error) {
+      Alert.alert("Error fetching games! Please try again later.");
+      //setErrorToastVisible(true);
+    }
     // Figure out how to swtich to AllGames (probably useStore)
   };
 
@@ -54,8 +60,8 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             defaultValue="MyGames"
             orientation="horizontal"
             flexDirection="column"
-            borderRadius="$0.25"
-            borderWidth="$0.25"
+            borderRadius={0.25}
+            borderWidth={0.25}
             style={{ width: "100%" }}
           >
             <Tabs.List>
@@ -68,19 +74,18 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             </Tabs.List>
           </Tabs>
           <ScrollView
-            scrollEventThrottle={50}
+            scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             onScroll={(e) => {
               const { layoutMeasurement, contentOffset, contentSize } =
                 e.nativeEvent;
-              const isCloseToBottom =
-                layoutMeasurement.height + contentOffset.y >=
-                contentSize.height - 20; // Adjust this threshold as needed
-              if (isCloseToBottom && !refreshing) {
+              if (contentOffset.y < -50 && !refreshing) {
                 handleRefresh();
               }
             }}
+            contentContainerStyle={{ paddingTop: 20 }}
           >
+            {refreshing && <Spinner size='small' color = '#ff7403'/>}
             <YStack space="$5" paddingTop="$5" paddingBottom="$5">
               {myGames.map((myGame) => (
                 <GameThumbnail
