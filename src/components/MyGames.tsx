@@ -1,7 +1,7 @@
 import { YStack, ScrollView, H4, Spinner } from "tamagui";
 import { Alert, View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import { SizableText, Tabs } from "tamagui";
+import { SizableText, Tabs, Text } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import {
@@ -65,11 +65,11 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             style={{ width: "100%" }}
           >
             <Tabs.List>
-              <Tabs.Tab value="MyGames" onInteraction={toMyGames}>
-                <SizableText>My Games</SizableText>
+              <Tabs.Tab value="MyGames" onInteraction={()=>toMyGames}>
+                <Text>My Games</Text>
               </Tabs.Tab>
-              <Tabs.Tab value="JoinedGames" onInteraction={toJoinedGames}>
-                <SizableText>Joined Games</SizableText>
+              <Tabs.Tab value="JoinedGames" onInteraction={()=>toJoinedGames}>
+                <Text>Joined Games</Text>
               </Tabs.Tab>
             </Tabs.List>
           </Tabs>
@@ -86,7 +86,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             contentContainerStyle={{ paddingTop: 20 }}
           >
             {refreshing && <Spinner size='small' color = '#ff7403'/>}
-            <YStack space="$5" paddingTop="$5" paddingBottom="$5">
+            <YStack space="$5" paddingTop={5} paddingBottom="$5">
               {myGames.map((myGame) => (
                 <GameThumbnail
                   navigation={navigation}

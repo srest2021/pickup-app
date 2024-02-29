@@ -66,7 +66,7 @@ export default function GameThumbnail({
         </View>
         <Card.Footer padded>
           <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-            <H6>{game.sport.skillLevel}</H6>
+            <H6>{typeof(game.sport.skillLevel)}</H6>
             <H6>{game.maxPlayers}</H6>
           </View>
         </Card.Footer>

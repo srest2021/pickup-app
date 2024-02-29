@@ -1,0 +1,22 @@
+import { GameSport } from "../../lib/types";
+import {
+  View,
+  Circle,
+  XStack
+} from "tamagui";
+
+export default function GameThumbnail({ sport
+}: {
+  sport:GameSport
+}) {
+  const level = sport.skillLevel;
+  return (
+    <View>
+    <XStack>
+    <Circle></Circle>
+    <Circle></Circle>
+    <Circle></Circle>
+    </XStack>
+    </View>
+  );
+}
