@@ -3,7 +3,6 @@ import { View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import FeedGameView from "./game/GameThumbnail";
 import { Separator, SizableText, Tabs } from "tamagui";
-import Games from "./game/Games";
 import GameThumbnail from "./game/GameThumbnail";
 import { useState } from "react";
 
