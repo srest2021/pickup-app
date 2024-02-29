@@ -36,9 +36,9 @@ export type Game = {
 };
 
 export const sports = [
-  { name: "Soccer" },
-  { name: "Basketball" },
-  { name: "Tennis" },
-  { name: "Football" },
-  { name: "Volleyball" },
+  { name: "Soccer" , image: "https://png.pngtree.com/png-clipart/20230109/original/pngtree-cartoon-soccer-ball-png-image_8891769.png"},
+  { name: "Basketball", image: "https://static.vecteezy.com/system/resources/previews/010/171/336/original/basketball-ball-is-sports-equipment-file-free-png.png" },
+  { name: "Tennis", image: "https://www.pngall.com/wp-content/uploads/4/Tennis-Ball-Background-PNG-Image.png" },
+  { name: "Football", image: "https://static.vecteezy.com/system/resources/previews/009/858/266/original/football-clip-art-free-png.png" },
+  { name: "Volleyball", image: "https://i.pinimg.com/originals/8f/75/05/8f7505cd0a85092003023c5958e2a0fd.png" },
 ];

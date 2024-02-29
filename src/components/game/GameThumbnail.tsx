@@ -1,4 +1,4 @@
-import { Game } from "../../lib/types";
+import { Game, sports } from "../../lib/types";
 import { Button, Card, H3, H4, H5, H6, Separator, Text, Image } from 'tamagui';
 
 export default function GameThumbnail({
@@ -15,28 +15,41 @@ export default function GameThumbnail({
     hour12: true
   });
   const date = datetime.toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
+    weekday: "short",
     month: "numeric",
     day: "numeric",
   });
 
+  const sportName = game.sport.name;
+  let image=null
+  for (const sport of sports){
+    if(sport.name.toLowerCase() === sportName.toLowerCase()){
+      image = sport.image
+    }
+  }
+
   return (
     <Card elevate size="$5">
       <Card.Header padded>
-        <H3>{game.title}</H3>
-        <Separator alignSelf="stretch" vertical />
+        <H4>{game.title}</H4>
         <H4>{date}</H4>
-        <Separator alignSelf="stretch" vertical />
         <H5>{time}</H5>
       </Card.Header>
+      {<H6>{game.description}</H6>}
+      <Card.Footer padded>
       <Button onPress={() => navigation.navigate("MyGameView", { game })}>
         <H5>View</H5>
       </Button>
-      <Card.Footer padded>
-        <H6>{game.description}</H6>
       </Card.Footer>
       <Card.Background>
+        {image && (<Image
+          resizeMode="contain"
+          alignSelf="center"
+          source={{
+            width:225,
+            height:225,
+            uri:`${image}`}}
+        />)}
       </Card.Background>
     </Card>
   );
@@ -45,5 +58,8 @@ export default function GameThumbnail({
 /*<Image
           resizeMode="contain"
           alignSelf="center"
-          source={require('../../../assets/basketball.png')}
+          source={{
+            width:200,
+            height:200,
+            uri:require('../../../assets/basketball.png')}}
         />* */
