@@ -26,7 +26,9 @@ import {
 } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-const EditGame = (game: Game) => {
+const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
+  const { game } = route.params;
+
   const { user } = useMutationUser();
   const { editGameById } = useMutationGame();
 
@@ -43,12 +45,13 @@ const EditGame = (game: Game) => {
   // existing game attributes
   const [title, setTitle] = useState(game.title);
   // Make date picker show previously set date and time.
-  const dateComponent = new Date(game.datetime);
+  const datetime = new Date(game.datetime);
+  const dateComponent = datetime;
   dateComponent.setHours(0, 0, 0, 0);
   const timeComponent = new Date(0);
   timeComponent.setHours(
-    game.datetime.getHours(),
-    game.datetime.getMinutes(),
+    datetime.getHours(),
+    datetime.getMinutes(),
     0,
     0,
   );

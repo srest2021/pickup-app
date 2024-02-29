@@ -8,7 +8,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
 
   return (
     <View className="p-12">
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <YStack space="$5" padding="12">
           {myGames.map((myGame) => (
             <GameThumbnail

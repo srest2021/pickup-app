@@ -31,7 +31,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
         top={0}
         right={0}
         size="$2"
-        onPress={() => console.log("Edit game")}
+        onPress={() => navigation.navigate("EditGame", { game })}
       >
         Edit
       </Button>
