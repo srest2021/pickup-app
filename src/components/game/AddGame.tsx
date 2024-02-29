@@ -163,7 +163,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       return;
     }
     clearGameAttributes();
-    navigation.navigate("MyGames");
+    navigation.navigate("./MyGames");
   }
 
   return (
