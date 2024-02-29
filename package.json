@@ -26,6 +26,7 @@
     "@react-navigation/native": "^6.1.12",
     "@react-navigation/native-stack": "^6.9.20",
     "@supabase/supabase-js": "^2.39.7",
+    "@tamagui/card": "^1.90.9",
     "@tamagui/config": "^1.90.7",
     "@tamagui/font-inter": "^1.90.7",
     "@tamagui/lucide-icons": "^1.90.7",

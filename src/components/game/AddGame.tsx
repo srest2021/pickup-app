@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
@@ -12,6 +12,7 @@ import {
   TextArea,
   XStack,
   YStack,
+  H4,
 } from "tamagui";
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
@@ -26,13 +27,15 @@ import {
 } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-const AddGame = () => {
-  const { user } = useMutationUser();
+const AddGame = ({ navigation }: { navigation: any }) => {
   const { createGame } = useMutationGame();
-  const [loading] = useStore((state) => [state.loading]);
-  const [isErrorToastVisible, setErrorToastVisible] = useState(false);
-  const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
-  const [isSuccessToastVisible, setSuccessToastVisible] = useState(false);
+  const [loading, session] = useStore((state) => [
+    state.loading,
+    state.session,
+  ]);
+  // const [isErrorToastVisible, setErrorToastVisible] = useState(false);
+  // const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
+  // const [isSuccessToastVisible, setSuccessToastVisible] = useState(false);
   const [updateGameStatus, setUpdateGameStatus] = useStore((state) => [
     state.updateGameStatus,
     state.setUpdateGameStatus,
@@ -64,35 +67,35 @@ const AddGame = () => {
     setUpdateGameStatus(false);
   }
 
-  useEffect(() => {
-    let timer: number;
-    if (isErrorToastVisible) {
-      let timer = setTimeout(() => {
-        setErrorToastVisible(false);
-      }, 7000); // Hide toast after 7 seconds
-    }
-    return () => clearTimeout(timer);
-  }, [isErrorToastVisible]);
+  // useEffect(() => {
+  //   let timer: number;
+  //   if (isErrorToastVisible) {
+  //     let timer = setTimeout(() => {
+  //       setErrorToastVisible(false);
+  //     }, 7000); // Hide toast after 7 seconds
+  //   }
+  //   return () => clearTimeout(timer);
+  // }, [isErrorToastVisible]);
 
-  useEffect(() => {
-    let timer: number;
-    if (isDatetimeToastVisible) {
-      let timer = setTimeout(() => {
-        setDatetimeToastVisible(false);
-      }, 7000); // Hide toast after 7 seconds
-    }
-    return () => clearTimeout(timer);
-  }, [isDatetimeToastVisible]);
+  // useEffect(() => {
+  //   let timer: number;
+  //   if (isDatetimeToastVisible) {
+  //     let timer = setTimeout(() => {
+  //       setDatetimeToastVisible(false);
+  //     }, 7000); // Hide toast after 7 seconds
+  //   }
+  //   return () => clearTimeout(timer);
+  // }, [isDatetimeToastVisible]);
 
-  useEffect(() => {
-    let timer: number;
-    if (isSuccessToastVisible) {
-      let timer = setTimeout(() => {
-        setSuccessToastVisible(false);
-      }, 7000); // Hide toast after 7 seconds
-    }
-    return () => clearTimeout(timer);
-  }, [isSuccessToastVisible]);
+  // useEffect(() => {
+  //   let timer: number;
+  //   if (isSuccessToastVisible) {
+  //     let timer = setTimeout(() => {
+  //       setSuccessToastVisible(false);
+  //     }, 7000); // Hide toast after 7 seconds
+  //   }
+  //   return () => clearTimeout(timer);
+  // }, [isSuccessToastVisible]);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -116,8 +119,10 @@ const AddGame = () => {
       !skillLevel ||
       !playerLimit
     ) {
-      console.log("error toast")
-      setErrorToastVisible(true);
+      //console.log("error toast");
+      //console.log(title, date, time, address, sport, skillLevel, playerLimit)
+      Alert.alert("Error: Please fill out all required fields.");
+      //setErrorToastVisible(true);
       return;
     }
 
@@ -131,33 +136,40 @@ const AddGame = () => {
     );
 
     if (combinedDateTime < new Date()) {
-      console.log("datetime toast")
-      setDatetimeToastVisible(true);
+      Alert.alert("Error: Date and time are in the past.");
+      //console.log("datetime toast");
+      //setDatetimeToastVisible(true);
       return;
     }
 
-      createGame(
-        title,
-        combinedDateTime,
-        address,
-        latitude,
-        longitude,
-        sport,
-        convertSkillLevel(),
-        playerLimit,
-        description,
-      );
-      if (updateGameStatus) {
-        console.log("success toast")
-        setSuccessToastVisible(true);
-      }
-      clearGameAttributes();
+    createGame(
+      title,
+      combinedDateTime,
+      address,
+      latitude,
+      longitude,
+      sport,
+      convertSkillLevel(),
+      playerLimit,
+      description,
+    );
+    if (updateGameStatus) {
+      // console.log("success toast");
+      // setSuccessToastVisible(true);
+    } else {
+      Alert.alert("Error publishing game! Please try again later.");
+      // console.log("error toast");
+      // setErrorToastVisible(true);
+      return;
+    }
+    clearGameAttributes();
+    navigation.navigate("MyGames");
   }
 
   return (
     <ToastProvider>
       <View className="p-12">
-        {user ? (
+        {session && session.user ? (
           <ScrollView
             contentContainerStyle={{ paddingBottom: 100 }}
             showsVerticalScrollIndicator={false}
@@ -238,127 +250,131 @@ const AddGame = () => {
                 </XStack>
               </YStack>
 
-              <Label size="$5">Sport</Label>
-              <Select value={sport} onValueChange={setSport}>
-                <Select.Trigger iconAfter={ChevronDown}>
-                  <Select.Value placeholder="Select a sport..." />
-                </Select.Trigger>
-
-                <Adapt when="sm" platform="touch">
-                  <Sheet
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                      type: "spring",
-                      damping: 20,
-                      mass: 1.2,
-                      stiffness: 250,
-                    }}
-                  >
-                    <Sheet.Frame>
-                      <Sheet.ScrollView>
-                        <Adapt.Contents />
-                      </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                      animation="lazy"
-                      enterStyle={{ opacity: 0 }}
-                      exitStyle={{ opacity: 0 }}
-                    />
-                    <Sheet.Overlay />
-                  </Sheet>
-                </Adapt>
-
-                <Select.Content>
-                  <Select.ScrollUpButton />
-                  <Select.Viewport>
-                    <Select.Group>
-                      <Select.Label>Sports</Select.Label>
-                      {useMemo(
-                        () =>
-                          sports.map((sport, i) => {
-                            return (
-                              <Select.Item
-                                index={i}
-                                key={sport.name}
-                                value={sport.name.toLowerCase()}
-                              >
-                                <Select.ItemText>{sport.name}</Select.ItemText>
-                                <Select.ItemIndicator marginLeft="auto">
-                                  <Check size={16} />
-                                </Select.ItemIndicator>
-                              </Select.Item>
-                            );
-                          }),
-                        [sports],
-                      )}
-                    </Select.Group>
-                  </Select.Viewport>
-                  <Select.ScrollDownButton />
-                </Select.Content>
-              </Select>
-              
               <YStack>
-              <Label size="$5">Skill Level</Label>
-              <RadioGroup
-                aria-labelledby="Select one item"
-                defaultValue="3"
-                name="form"
-                value={skillLevel}
-                onValueChange={setSkillLevel}
-              >
-                <YStack>
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"0"}
-                      id={`skill-level-${SkillLevel.Beginner}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
+                <Label size="$5">Sport</Label>
+                <Select value={sport} onValueChange={setSport}>
+                  <Select.Trigger iconAfter={ChevronDown}>
+                    <Select.Value placeholder="Select a sport..." />
+                  </Select.Trigger>
 
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Beginner}`}
+                  <Adapt when="sm" platform="touch">
+                    <Sheet
+                      modal
+                      dismissOnSnapToBottom
+                      animationConfig={{
+                        type: "spring",
+                        damping: 20,
+                        mass: 1.2,
+                        stiffness: 250,
+                      }}
                     >
-                      {"Beginner"}
-                    </Label>
-                  </XStack>
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"1"}
-                      id={`skill-level-${SkillLevel.Intermediate}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
+                      <Sheet.Frame>
+                        <Sheet.ScrollView>
+                          <Adapt.Contents />
+                        </Sheet.ScrollView>
+                      </Sheet.Frame>
+                      <Sheet.Overlay
+                        animation="lazy"
+                        enterStyle={{ opacity: 0 }}
+                        exitStyle={{ opacity: 0 }}
+                      />
+                      <Sheet.Overlay />
+                    </Sheet>
+                  </Adapt>
 
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Intermediate}`}
-                    >
-                      {"Intermediate"}
-                    </Label>
-                  </XStack>
+                  <Select.Content>
+                    <Select.ScrollUpButton />
+                    <Select.Viewport>
+                      <Select.Group>
+                        <Select.Label>Sports</Select.Label>
+                        {useMemo(
+                          () =>
+                            sports.map((sport, i) => {
+                              return (
+                                <Select.Item
+                                  index={i}
+                                  key={sport.name}
+                                  value={sport.name.toLowerCase()}
+                                >
+                                  <Select.ItemText>
+                                    {sport.name}
+                                  </Select.ItemText>
+                                  <Select.ItemIndicator marginLeft="auto">
+                                    <Check size={16} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                              );
+                            }),
+                          [sports],
+                        )}
+                      </Select.Group>
+                    </Select.Viewport>
+                    <Select.ScrollDownButton />
+                  </Select.Content>
+                </Select>
+              </YStack>
 
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"2"}
-                      id={`skill-level-${SkillLevel.Advanced}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
+              <YStack>
+                <Label size="$5">Skill Level</Label>
+                <RadioGroup
+                  aria-labelledby="Select one item"
+                  defaultValue="3"
+                  name="form"
+                  value={skillLevel}
+                  onValueChange={setSkillLevel}
+                >
+                  <YStack>
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"0"}
+                        id={`skill-level-${SkillLevel.Beginner}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
 
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Advanced}`}
-                    >
-                      {"Advanced"}
-                    </Label>
-                  </XStack>
-                </YStack>
-              </RadioGroup>
+                      <Label
+                        size={2}
+                        htmlFor={`skill-level-${SkillLevel.Beginner}`}
+                      >
+                        {"Beginner"}
+                      </Label>
+                    </XStack>
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"1"}
+                        id={`skill-level-${SkillLevel.Intermediate}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+
+                      <Label
+                        size={2}
+                        htmlFor={`skill-level-${SkillLevel.Intermediate}`}
+                      >
+                        {"Intermediate"}
+                      </Label>
+                    </XStack>
+
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"2"}
+                        id={`skill-level-${SkillLevel.Advanced}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+
+                      <Label
+                        size={2}
+                        htmlFor={`skill-level-${SkillLevel.Advanced}`}
+                      >
+                        {"Advanced"}
+                      </Label>
+                    </XStack>
+                  </YStack>
+                </RadioGroup>
               </YStack>
 
               <XStack space="$4" alignItems="center">
@@ -379,7 +395,7 @@ const AddGame = () => {
                 <Label size="$5">Description</Label>
                 <TextArea
                   size="$5"
-                  placeholder="Enter your game details..."
+                  placeholder="Enter your game details (optional)"
                   value={description}
                   onChangeText={(text: string) => setDescription(text)}
                 />
@@ -398,9 +414,12 @@ const AddGame = () => {
             </YStack>
           </ScrollView>
         ) : (
-          <Text>Log in to create a new game!</Text>
+          <View className="p-12 text-center items-center flex-1 justify-center">
+            <H4>Log in to create a new game!</H4>
+          </View>
         )}
-        {isErrorToastVisible && (
+
+        {/* {isErrorToastVisible && (
           <Toast>
             <YStack>
               <Toast.Title>
@@ -440,7 +459,7 @@ const AddGame = () => {
             </YStack>
             <Toast.Close onPress={() => setDatetimeToastVisible(false)} />
           </Toast>
-        )}
+        )} */}
 
         <ToastViewport />
       </View>

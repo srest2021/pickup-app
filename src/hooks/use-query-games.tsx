@@ -41,7 +41,7 @@ function useQueryGames() {
           id: data[0].id,
           title: data[0].title,
           description: data[0].description,
-          datetime: data[0].datetime,
+          datetime: new Date(data[0].datetime),
           address: data[0].address,
           sport: {
             name: data[0].sport,
@@ -73,9 +73,13 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+
       const { data, error } = await supabase
         .from("games")
         .select("*")
+        .gt("datetime", oneDayAgo.toISOString())
         .eq("organizer_id", session.user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -135,8 +139,11 @@ function useQueryGames() {
     if (session?.user) {
       fetchMyGames();
     }
-    fetchAllGames();
   }, []);
+
+  // useEffect(() => {
+  //   fetchAllGames();
+  // }, [])
 
   return { game, myGames, fetchGameById, fetchMyGames, fetchAllGames };
 }

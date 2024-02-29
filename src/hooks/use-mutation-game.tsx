@@ -38,7 +38,7 @@ function useMutationGame() {
 
       let location = null;
       if (longitude !== "" && latitude !== "") {
-        location = `POINT(${longitude} ${latitude})`
+        location = `POINT(${longitude} ${latitude})`;
       }
 
       const { data, error } = await supabase
@@ -74,13 +74,11 @@ function useMutationGame() {
           maxPlayers: Number(playerLimit),
         };
         addMyGame(myNewGame);
-        // return myNewGame.id;
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
-      return null;
     } finally {
       setLoading(false);
     }
