@@ -6,7 +6,17 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "prettier": "prettier --write \"src/**/*.{ts,tsx}\" --config \".prettierrc\""
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\" --config \".prettierrc\"",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
+    ],
+    "setupFiles": [
+      "./jestSetupFile.js"
+    ]
   },
   "dependencies": {
     "@babel/runtime": "^7.23.9",
@@ -29,6 +39,8 @@
     "expo-status-bar": "~1.11.1",
     "expo-updates": "^0.24.11",
     "immer": "^10.0.3",
+    "jest": "^29.3.1",
+    "jest-expo": "~50.0.2",
     "nativewind": "^4.0.36",
     "react": "18.2.0",
     "react-native": "0.73.4",
@@ -44,6 +56,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
+    "@testing-library/react-native": "^12.4.3",
     "@types/react": "~18.2.58",
     "prettier": "3.2.5",
     "tailwindcss": "^3.4.1",
