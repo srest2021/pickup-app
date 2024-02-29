@@ -53,9 +53,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const [date, setDate] = useState(new Date(game.datetime));
   const [time, setTime] = useState(timeComponent);
   const [address, setAddress] = useState(game.address);
-  const [sport, setSport] = useState(
-    sports[sports.findIndex((sport) => sport.name === game.sport.name)].name,
-  );
+  const [sport, setSport] = useState(game.sport.name);
   const [skillLevel, setSkillLevel] = useState(`${game.sport.skillLevel}`);
   const [playerLimit, setPlayerLimit] = useState(`${game.maxPlayers}`);
   const [description, setDescription] = useState(game.description);
