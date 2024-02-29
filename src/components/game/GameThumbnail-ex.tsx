@@ -1,7 +1,7 @@
 import { Game } from "../../lib/types";
-import { Button, Card, H3, H4, H5, H6, Separator, Text, Image } from 'tamagui';
+import { Card, H3, H4, H5, Separator, Button } from "tamagui";
 
-export default function GameThumbnail({
+export default function GameThumbnail1({
   navigation,
   game,
 }: {
@@ -10,10 +10,11 @@ export default function GameThumbnail({
 }) {
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
   });
+
   const date = datetime.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -24,26 +25,20 @@ export default function GameThumbnail({
   return (
     <Card elevate size="$5">
       <Card.Header padded>
-        <H3>{game.title}</H3>
+        <H3>{`${game.title}`}</H3>
         <Separator alignSelf="stretch" vertical />
         <H4>{date}</H4>
         <Separator alignSelf="stretch" vertical />
         <H5>{time}</H5>
       </Card.Header>
+
       <Button onPress={() => navigation.navigate("MyGameView", { game })}>
-        <H5>View</H5>
+        View
       </Button>
-      <Card.Footer padded>
-        <H6>{game.description}</H6>
-      </Card.Footer>
-      <Card.Background>
-      </Card.Background>
+
+      <Card.Footer />
+      {/** Add other components here for the game  */}
+      <Card.Background />
     </Card>
   );
 }
-
-/*<Image
-          resizeMode="contain"
-          alignSelf="center"
-          source={require('../../../assets/basketball.png')}
-        />* */

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import FeedGameView from "./game/GameView";
+import FeedGameView from "./game/GameThumbnail";
 import { Separator, SizableText, Tabs } from "tamagui";
 
 // 

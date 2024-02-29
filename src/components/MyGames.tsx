@@ -1,17 +1,22 @@
 import { Text, Button, YStack, ScrollView } from "tamagui";
 import { View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import FeedGameView from "./game/GameView";
+import FeedGameView from "./game/GameThumbnail";
 import { Separator, SizableText, Tabs } from "tamagui";
 import Games from "./game/Games";
 import GameThumbnail from "./game/GameThumbnail";
+import { useState } from "react";
 
-// 
-// add event listener so that page is constantly updating! 
-// add switch so that you can go between myGame and AllGames 
-// PICK A MINWIDTH SO THAT text always shown 
+
 const MyGames = ({navigation}:{navigation:any}) => {
     const {myGames, fetchMyGames} = useQueryGames();
+    const [refreshing, setRefreshing] = useState(false);
+
+    const handleRefresh = async () => {
+      setRefreshing(true);
+      await fetchMyGames();
+      setRefreshing(false);
+    };
     // const fetchJoinedGames = useQueryGames();
 
 
@@ -24,26 +29,40 @@ const MyGames = ({navigation}:{navigation:any}) => {
    
   };
 
-  const toJoinedGames = () => {
+  /*const toJoinedGames = () => {
     // Figure out how to swtich to AllGames (probably useStore) 
-  }
+  }*/
 
   // Navigate to myGames view after create game 
 
   return (
-    <View className="p-12">
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <YStack space="$5" padding="12">
-          {myGames.map((myGame) => (
-            <GameThumbnail
-              navigation={navigation}
-              game={myGame}
-              key={myGame.id}
-            />
-          ))}
-        </YStack>
+    <View className="p-12" style={{ flex: 1 }}>
+      <ScrollView scrollEventThrottle={50} showsVerticalScrollIndicator={false}
+      onScroll={(e) => {
+        const { layoutMeasurement, contentOffset, contentSize } = e.nativeEvent;
+        const isCloseToBottom = layoutMeasurement.height + contentOffset.y
+          >= contentSize.height - 20; // Adjust this threshold as needed
+        if (isCloseToBottom && !refreshing) {
+          handleRefresh();
+        }
+      }}>
+      <YStack space="$5" padding="12">
+      {myGames.map((myGame) => (
+        <GameThumbnail
+          navigation={navigation}
+          game={myGame}
+          key={myGame.id}
+        />
+      ))}
+    </YStack>
       </ScrollView>
-      <Tabs
+    </View>
+  );
+};
+
+export default MyGames;
+
+/*<Tabs
       defaultValue="MyGames"
       orientation="horizontal"
       flexDirection="column"
@@ -63,9 +82,4 @@ const MyGames = ({navigation}:{navigation:any}) => {
           </Tabs.Tab>
         </Tabs.List>
       </Tabs>
-      <Games></Games>
-    </View>
-  );
-};
-
-export default MyGames;
+      <Games></Games>*/
