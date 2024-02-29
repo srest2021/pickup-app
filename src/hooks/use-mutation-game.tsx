@@ -36,10 +36,25 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
+      // API key hard coded in -- consider changing
+      const geolocationResponse = await fetch(`https://geocode.maps.co/search?q=${encodeURIComponent(address)}&api_key=65e0f4e8bc79e688163432osme79a3d`);
+      const geolocationData = await geolocationResponse.json();
+      //console.log(geolocationData[0].lat);
+
+      const latitude = geolocationData[0].lat;
+      const longitude = geolocationData[0].lon;
+      
+      if (!geolocationData || !geolocationData[0].lat || !geolocationData[0].lon) {
+        throw new Error("Unable to fetch geolocation details for the provided address.");
+      }
+
+
+
       let location = null;
       if (longitude !== "" && latitude !== "") {
         location = `POINT(${longitude} ${latitude})`;
       }
+      //console.log(location)
 
       const { data, error } = await supabase
         .from("games")
@@ -77,6 +92,7 @@ function useMutationGame() {
       }
     } catch (error) {
       if (error instanceof Error) {
+        console.log(error);
         Alert.alert(error.message);
       }
     } finally {
