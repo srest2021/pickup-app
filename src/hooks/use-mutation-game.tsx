@@ -94,6 +94,8 @@ function useMutationGame() {
 
       // remove from store
       removeMyGame(id);
+      // Successful game creation.
+      // setUpdateGameStatus(true);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

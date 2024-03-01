@@ -49,30 +49,46 @@ const MyGames = ({ navigation }: { navigation: any }) => {
     <>
       {session && session.user ? (
         <View style={{ flex: 1 }}>
-          <Tabs alignSelf="center" justifyContent = "center" flex={0} defaultValue="MyGames">
+          <Tabs
+            alignSelf="center"
+            justifyContent="center"
+            flex={0}
+            defaultValue="MyGames"
+          >
             <Tabs.List>
-              <Tabs.Tab width={200} value="MyGames" onInteraction={()=>{setMyGamesToggle("myGames")}}>
+              <Tabs.Tab
+                width={200}
+                value="MyGames"
+                onInteraction={() => {
+                  setMyGamesToggle("myGames");
+                }}
+              >
                 <Text>My Games</Text>
               </Tabs.Tab>
               <Separator vertical></Separator>
-              <Tabs.Tab width = {200} value="JoinedGames" onInteraction={()=>{setMyGamesToggle("joinedGames")}}>
+              <Tabs.Tab
+                width={200}
+                value="JoinedGames"
+                onInteraction={() => {
+                  setMyGamesToggle("joinedGames");
+                }}
+              >
                 <Text>Joined Games</Text>
               </Tabs.Tab>
-              </Tabs.List>
+            </Tabs.List>
           </Tabs>
           <ScrollView
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             onScroll={(e) => {
-              const { contentOffset} =
-                e.nativeEvent;
+              const { contentOffset } = e.nativeEvent;
               if (contentOffset.y < -50 && !refreshing) {
                 handleRefresh();
               }
             }}
             contentContainerStyle={{ paddingTop: 20 }}
           >
-            {refreshing && <Spinner size='small' color = '#ff7403'/>}
+            {refreshing && <Spinner size="small" color="#ff7403" />}
             <YStack space="$5" paddingTop={5} paddingBottom="$5">
               {myGames.map((myGame) => (
                 <GameThumbnail

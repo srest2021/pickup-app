@@ -14,12 +14,14 @@ import {
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import { SkillLevel } from "../../lib/types";
+import useMutationGame from "../../hooks/use-mutation-game";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { game } = route.params;
   const { title, description, datetime, address, sport, maxPlayers } = game;
 
   const [session, user] = useStore((state) => [state.session, state.user]);
+  const { removeGameById } = useMutationGame();
 
   // Convert datetime to a readable string
   const displayDate = new Date(datetime).toLocaleDateString("en-US", {
@@ -46,6 +48,14 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
       default:
         return "Unknown";
     }
+  }
+
+  function deleteGame() {
+    removeGameById(game.id);
+
+    // If successful navigate back to myGames list.
+    navigation.goBack();
+    // TODO: Add success toast
   }
 
   return (
@@ -119,10 +129,10 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   flex={1}
                   onPress={() => navigation.navigate("EditGame", { game })}
                 >
-                  Edit (FIX ME)
+                  Edit
                 </Button>
-                <Button theme="active" flex={1}>
-                  Delete (FIX ME)
+                <Button theme="active" flex={1} onPress={() => deleteGame()}>
+                  Delete
                 </Button>
               </XStack>
             </YStack>
