@@ -11,6 +11,7 @@ import {
   View,
   Paragraph,
 } from "tamagui";
+import GameSkillView from "./GameSkillView";
 
 export default function GameThumbnail({
   navigation,
@@ -66,19 +67,19 @@ export default function GameThumbnail({
         </View>
         <Card.Footer padded>
           <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-            <H6>{typeof(game.sport.skillLevel)}</H6>
+            <GameSkillView sport = {game.sport}/>
             <H6>{game.maxPlayers}</H6>
           </View>
         </Card.Footer>
         <Card.Background>
-          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+          <View style={{ flexDirection: "row", justifyContent:"flex-end" }}>
             {image && (
               <Image
                 resizeMode="contain"
                 alignSelf="center"
                 source={{
-                  width: 200,
-                  height: 200,
+                  width: 150,
+                  height: 150,
                   uri: `${image}`,
                 }}
                 style={{ opacity: 0.4 }}
