@@ -2,7 +2,6 @@ import { GameSport } from "../../lib/types";
 import {
   Circle,
   H6,
-  Text,
   XStack,
 } from 'tamagui';
 

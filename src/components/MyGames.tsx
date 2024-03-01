@@ -35,7 +35,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
       }
     } else if (myGamesToggle === "joinedGames") {
       try {
-        await fetchAllGames(); 
+        await fetchAllGames();
         // temporary for right now until we do query for joined games.
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
@@ -44,29 +44,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
     }
     setRefreshing(false);
   };
-  // const fetchJoinedGames = useQueryGames();
-
-  /*const toMyGames = async () => {
-    setMyGamesToggle("myGames");
-    try {
-      await fetchMyGames();
-    } catch (error) {
-      Alert.alert("Error fetching games! Please try again later.");
-      //setErrorToastVisible(true);
-    }
-  };
-
-  const toJoinedGames = async () => {
-    setMyGamesToggle("joinedGames");
-    try {
-      await fetchAllGames(); 
-      console.log("fetching games whore");// temporary for right now until we do query for joined games.
-    } catch (error) {
-      Alert.alert("Error fetching games! Please try again later.");
-      //setErrorToastVisible(true);
-    }
-    // Figure out how to swtich to AllGames (probably useStore)
-  }; */
 
   return (
     <>

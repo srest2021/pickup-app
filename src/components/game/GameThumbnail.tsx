@@ -76,8 +76,8 @@ export default function GameThumbnail({
                 resizeMode="contain"
                 alignSelf="center"
                 source={{
-                  width: 150,
-                  height: 150,
+                  width: 170,
+                  height: 170,
                   uri: `${image}`,
                 }}
                 style={{ opacity: 0.4 }}
