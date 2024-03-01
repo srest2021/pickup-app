@@ -1,14 +1,5 @@
 import { Game, sports } from "../../lib/types";
-import {
-  Button,
-  Card,
-  H4,
-  H5,
-  H6,
-  Image,
-  View,
-  Paragraph,
-} from "tamagui";
+import { Button, Card, H4, H5, H6, Image, View, Paragraph } from "tamagui";
 import GameSkillView from "./GameSkillView";
 
 export default function GameThumbnail({
@@ -61,16 +52,27 @@ export default function GameThumbnail({
           </View>
         </Card.Header>
         <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
-          <Paragraph fontWeight="500" marginRight={95}>{game.description}</Paragraph>
+          <Paragraph fontWeight="500" marginRight={95}>
+            {game.description}
+          </Paragraph>
         </View>
         <Card.Footer padded>
-          <View alignItems= 'center' style={{ flexDirection: "row", justifyContent: "space-between", flex:1 }}>
-            <GameSkillView sport = {game.sport}/>
-            <H6 style={{ position: "absolute", right: 0 }} >0/{game.maxPlayers} players</H6>
+          <View
+            alignItems="center"
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              flex: 1,
+            }}
+          >
+            <GameSkillView sport={game.sport} />
+            <H6 style={{ position: "absolute", right: 0 }}>
+              0/{game.maxPlayers} players
+            </H6>
           </View>
         </Card.Footer>
         <Card.Background>
-          <View style={{ flexDirection: "row", justifyContent:"flex-end" }}>
+          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
             {image && (
               <Image
                 resizeMode="contain"

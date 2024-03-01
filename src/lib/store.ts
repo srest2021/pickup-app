@@ -98,12 +98,7 @@ export const useStore = create<State & Action>()(
     editMyGame: (myGameId, updated) => {
       const newMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
-          let updatedGame = { ...myGame };
-          for (let key in updated) {
-            if (key in updatedGame) {
-              updatedGame[key] = updated[key];
-            }
-          }
+          let updatedGame = { ...updated };
           return updatedGame;
         }
         return myGame;
