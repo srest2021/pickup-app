@@ -77,6 +77,7 @@ export default function GameThumbnail({
               <Image
                 resizeMode="contain"
                 alignSelf="center"
+                data-testid="game-thumbnail-image"
                 source={{
                   width: 170,
                   height: 170,

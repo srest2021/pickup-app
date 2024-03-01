@@ -88,7 +88,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             }}
             contentContainerStyle={{ paddingTop: 20 }}
           >
-            {refreshing && <Spinner size="small" color="#ff7403" />}
+            {refreshing && <Spinner size="small" color="#ff7403" data-testid="spinner" />}
             <YStack space="$5" paddingTop={5} paddingBottom="$5">
               {myGames.map((myGame) => (
                 <GameThumbnail
