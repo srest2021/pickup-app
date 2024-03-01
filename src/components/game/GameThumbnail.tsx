@@ -2,15 +2,14 @@ import { Game, sports } from "../../lib/types";
 import {
   Button,
   Card,
-  H3,
   H4,
   H5,
   H6,
-  Text,
   Image,
   View,
   Paragraph,
 } from "tamagui";
+import GameSkillView from "./GameSkillView";
 
 export default function GameThumbnail({
   navigation,
@@ -46,7 +45,7 @@ export default function GameThumbnail({
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <View alignItems="Left" marginRight={30}>
+            <View alignItems="baseline" marginRight={30}>
               <H4>{game.title}</H4>
               <H4>{date}</H4>
               <H5>{time}</H5>
@@ -61,24 +60,24 @@ export default function GameThumbnail({
             </View>
           </View>
         </Card.Header>
-        <View alignSelf="left" marginLeft={25} style={{ flex: 0.5 }}>
-          <Paragraph fontWeight="500">{game.description}</Paragraph>
+        <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
+          <Paragraph fontWeight="500" marginRight={95}>{game.description}</Paragraph>
         </View>
         <Card.Footer padded>
-          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-            <H6>{game.sport.skillLevel}</H6>
-            <H6>{game.maxPlayers}</H6>
+          <View alignItems= 'center' style={{ flexDirection: "row", justifyContent: "space-between", flex:1 }}>
+            <GameSkillView sport = {game.sport}/>
+            <H6 style={{ position: "absolute", right: 0 }} >0/{game.maxPlayers} players</H6>
           </View>
         </Card.Footer>
         <Card.Background>
-          <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+          <View style={{ flexDirection: "row", justifyContent:"flex-end" }}>
             {image && (
               <Image
                 resizeMode="contain"
                 alignSelf="center"
                 source={{
-                  width: 200,
-                  height: 200,
+                  width: 170,
+                  height: 170,
                   uri: `${image}`,
                 }}
                 style={{ opacity: 0.4 }}
