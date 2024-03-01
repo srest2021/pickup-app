@@ -164,6 +164,8 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
         setSuccessToastVisible(true);
       }
       clearGameAttributes();
+      //go back to mygameview
+      navigation.goBack();
     }
   }
 
