@@ -115,12 +115,19 @@ function useQueryGames() {
   const fetchAllGames = async () => {
     try {
       setLoading(true);
+      const { data: games, error } = await supabase.rpc('nearby_games', {
+        lat: 39.3289357,
+        long: -76.6172978,
+      }).limit(20)
 
+      console.log(games);
       //TODO: ADD PAGINATION - right now only returning 20 most relevant games
+      /*
       const { data: games, error } = await supabase
         .from("games")
         .select("*")
         .limit(20);
+        */
       if (error) throw error;
 
       if (games) {

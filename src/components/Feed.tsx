@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import FeedGameView from "./game/GameThumbnail";
 import { Separator, SizableText, Tabs } from "tamagui";
+import { supabase } from "../lib/supabase";
 
 //
 // add event listener so that page is constantly updating!
@@ -12,6 +13,8 @@ const Feed = () => {
   const toMyGames = () => {
     // Figure out a way to switch to MyGames (probably use Store)
   };
+
+  const { allGames, fetchAllGames } = useQueryGames();
 
   const toJoinedGames = () => {
     // Figure out how to swtich to AllGames (probably useStore)
