@@ -1,29 +1,28 @@
-import { GameSport, getSkillLevelColor } from "../../lib/types";
-import { Circle, H6, XStack } from "tamagui";
+import { GameSport, getSkillLevelColors } from "../../lib/types";
+import { Circle, XStack } from "tamagui";
 
 export default function GameSkillView({ sport }: { sport: GameSport }) {
-  const color = getSkillLevelColor(sport.skillLevel);
+  const [color1, color2, color3] = getSkillLevelColors(sport.skillLevel);
 
   return (
-    <XStack padding="$1.5" space="$1.5" alignItems="center">
-      <H6>Skill:</H6>
+    <XStack space="$1.5" alignItems="center">
       <Circle
         size={8}
-        borderColor={color}
+        borderColor={"black"}
         borderWidth={1}
-        backgroundColor={color}
+        backgroundColor={color1}
       ></Circle>
       <Circle
         size={8}
-        borderColor={color}
+        borderColor={"black"}
         borderWidth={1}
-        backgroundColor={color}
+        backgroundColor={color2}
       ></Circle>
       <Circle
         size={8}
-        borderColor={color}
+        borderColor={"black"}
         borderWidth={1}
-        backgroundColor={color}
+        backgroundColor={color3}
       ></Circle>
     </XStack>
   );

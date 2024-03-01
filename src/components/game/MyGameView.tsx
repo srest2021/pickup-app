@@ -15,15 +15,14 @@ import {
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
-import { SkillLevel, getSkillLevelColor } from "../../lib/types";
+import { SkillLevel, getSkillLevelColors } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GameSkillView from "./GameSkillView";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { game } = route.params;
   const { title, description, datetime, address, sport, maxPlayers } = game;
-  const color = getSkillLevelColor(sport.skillLevel);
-
+  const [color1, color2, color3] = getSkillLevelColors(sport.skillLevel);
   const [session, user] = useStore((state) => [state.session, state.user]);
   const { removeGameById } = useMutationGame();
 
@@ -123,28 +122,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   <Label size="$5" width={90}>
                     <H6>Skill:</H6>
                   </Label>
-                  <Circle
-                    size={8}
-                    borderColor={color}
-                    borderWidth={1}
-                    backgroundColor={color}
-                  ></Circle>
-                  <Circle
-                    size={8}
-                    borderColor={color}
-                    borderWidth={1}
-                    backgroundColor={color}
-                  ></Circle>
-                  <Circle
-                    size={8}
-                    borderColor={color}
-                    borderWidth={1}
-                    backgroundColor={color}
-                  ></Circle>
+                  <GameSkillView sport={game.sport} />
                 </XStack>
               </YStack>
 
-              <XStack space="$3" paddingTop="$5">
+              <XStack space="$3" paddingTop="$6">
                 <Button
                   theme="active"
                   flex={1}

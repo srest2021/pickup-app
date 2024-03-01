@@ -1,5 +1,15 @@
 import { Game, sports } from "../../lib/types";
-import { Button, Card, H4, H5, H6, Image, View, Paragraph } from "tamagui";
+import {
+  Button,
+  Card,
+  H4,
+  H5,
+  H6,
+  Image,
+  View,
+  Paragraph,
+  XStack,
+} from "tamagui";
 import GameSkillView from "./GameSkillView";
 
 export default function GameThumbnail({
@@ -65,7 +75,11 @@ export default function GameThumbnail({
               flex: 1,
             }}
           >
-            <GameSkillView sport={game.sport} />
+            <XStack padding="$1.5" space="$1.5">
+              <H6>Skill:</H6>
+              <GameSkillView sport={game.sport} />
+            </XStack>
+
             <H6 style={{ position: "absolute", right: 0 }}>
               {game.currentPlayers}/{game.maxPlayers} players
             </H6>

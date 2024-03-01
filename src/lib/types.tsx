@@ -38,16 +38,16 @@ export function getSkillLevelString(skillLevel: SkillLevel): string {
   }
 }
 
-export function getSkillLevelColor(skillLevel: SkillLevel): string {
+export function getSkillLevelColors(skillLevel: SkillLevel) {
   switch (skillLevel) {
     case SkillLevel.Beginner:
-      return "green";
+      return ["green", "white", "white"];
     case SkillLevel.Intermediate:
-      return "yellow";
+      return ["orange", "orange", "white"];
     case SkillLevel.Advanced:
-      return "red";
+      return ["red", "red", "red"];
     default:
-      return "green";
+      return ["white", "white", "white"];
   }
 }
 
