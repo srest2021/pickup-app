@@ -1,4 +1,4 @@
-import { YStack, ScrollView, H4, Spinner } from "tamagui";
+import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
 import { Alert, View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import { SizableText, Tabs, Text } from "tamagui";
@@ -11,7 +11,7 @@ import {
   useToastController,
   useToastState,
 } from "@tamagui/toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
   const [session] = useStore((state) => [state.session]);
@@ -20,18 +20,33 @@ const MyGames = ({ navigation }: { navigation: any }) => {
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
   //const [isErrorToastVisible, setErrorToastVisible] = useState(false);
 
+  useEffect(() => {
+    handleRefresh();
+  }, []);
+
   const handleRefresh = async () => {
     setRefreshing(true);
     if (myGamesToggle === "myGames") {
-      await toMyGames();
+      try {
+        await fetchMyGames();
+      } catch (error) {
+        Alert.alert("Error fetching games! Please try again later.");
+        //setErrorToastVisible(true);
+      }
     } else if (myGamesToggle === "joinedGames") {
-      await toJoinedGames();
+      try {
+        await fetchAllGames(); 
+        console.log("fetching games whore");// temporary for right now until we do query for joined games.
+      } catch (error) {
+        Alert.alert("Error fetching games! Please try again later.");
+        //setErrorToastVisible(true);
+      }
     }
     setRefreshing(false);
   };
   // const fetchJoinedGames = useQueryGames();
 
-  const toMyGames = async () => {
+  /*const toMyGames = async () => {
     setMyGamesToggle("myGames");
     try {
       await fetchMyGames();
@@ -44,40 +59,35 @@ const MyGames = ({ navigation }: { navigation: any }) => {
   const toJoinedGames = async () => {
     setMyGamesToggle("joinedGames");
     try {
-      await fetchAllGames(); // temporary for right now until we do query for joined games.
+      await fetchAllGames(); 
+      console.log("fetching games whore");// temporary for right now until we do query for joined games.
     } catch (error) {
       Alert.alert("Error fetching games! Please try again later.");
       //setErrorToastVisible(true);
     }
     // Figure out how to swtich to AllGames (probably useStore)
-  };
+  }; */
 
   return (
     <>
       {session && session.user ? (
         <View style={{ flex: 1 }}>
-          <Tabs
-            defaultValue="MyGames"
-            orientation="horizontal"
-            flexDirection="column"
-            borderRadius={0.25}
-            borderWidth={0.25}
-            style={{ width: "100%" }}
-          >
+          <Tabs alignSelf="center" justifyContent = "center" flex={0} defaultValue="MyGames">
             <Tabs.List>
-              <Tabs.Tab value="MyGames" onInteraction={()=>toMyGames}>
+              <Tabs.Tab width={200} value="MyGames" onInteraction={()=>{setMyGamesToggle("myGames")}}>
                 <Text>My Games</Text>
               </Tabs.Tab>
-              <Tabs.Tab value="JoinedGames" onInteraction={()=>toJoinedGames}>
+              <Separator vertical></Separator>
+              <Tabs.Tab width = {200} value="JoinedGames" onInteraction={()=>{setMyGamesToggle("joinedGames")}}>
                 <Text>Joined Games</Text>
               </Tabs.Tab>
-            </Tabs.List>
+              </Tabs.List>
           </Tabs>
           <ScrollView
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             onScroll={(e) => {
-              const { layoutMeasurement, contentOffset, contentSize } =
+              const { contentOffset} =
                 e.nativeEvent;
               if (contentOffset.y < -50 && !refreshing) {
                 handleRefresh();
