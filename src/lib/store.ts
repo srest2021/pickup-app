@@ -6,7 +6,6 @@ import { Game, UserSport, User } from "./types";
 type State = {
   session: Session | null;
   loading: boolean;
-  updateGameStatus: boolean;
   user: User | null;
   userSports: UserSport[];
   myGames: Game[];
@@ -18,7 +17,6 @@ type Action = {
   setSession: (session: Session | null) => void;
 
   setLoading: (loading: boolean) => void;
-  setUpdateGameStatus: (loading: boolean) => void;
 
   setUser: (user: User) => void;
   editUser: (updated: any) => void;
@@ -47,7 +45,6 @@ const initialState: State = {
   myGames: [],
   feedGames: [],
   selectedGameId: null,
-  updateGameStatus: false,
 };
 
 export const useStore = create<State & Action>()(
@@ -57,8 +54,6 @@ export const useStore = create<State & Action>()(
     setSession: (session) => set({ session }),
 
     setLoading: (loading) => set({ loading }),
-
-    setUpdateGameStatus: (updateGameStatus) => set({ updateGameStatus }),
 
     setUser: (user) => set({ user }),
 

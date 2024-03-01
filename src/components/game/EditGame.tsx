@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
@@ -34,80 +34,32 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const loading = useStore((state) => state.loading);
 
-  const [isErrorToastVisible, setErrorToastVisible] = useState(false);
-  const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
-  const [isSuccessToastVisible, setSuccessToastVisible] = useState(false);
-  const [updateGameStatus, setUpdateGameStatus] = useStore((state) => [
-    state.updateGameStatus,
-    state.setUpdateGameStatus,
-  ]);
-
   // existing game attributes
   const [title, setTitle] = useState(game.title);
-  // Make date picker show previously set date and time.
-  const datetime = new Date(game.datetime);
-  const dateComponent = datetime;
-  dateComponent.setHours(0, 0, 0, 0);
-  const timeComponent = new Date(0);
-  timeComponent.setHours(datetime.getHours(), datetime.getMinutes(), 0, 0);
   const [date, setDate] = useState(new Date(game.datetime));
-  const [time, setTime] = useState(timeComponent);
+  const [time, setTime] = useState(new Date(game.datetime));
   const [address, setAddress] = useState(game.address);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
-  const [sport, setSport] = useState(
-    sports[sports.findIndex((sport) => sport.name === game.sport.name)].name,
-  );
+  const [sport, setSport] = useState(game.sport.name);
   const [skillLevel, setSkillLevel] = useState(`${game.sport.skillLevel}`);
   const [playerLimit, setPlayerLimit] = useState(`${game.maxPlayers}`);
   const [description, setDescription] = useState(game.description);
-  
 
-  function clearGameAttributes() {
-    setTitle("");
-    setDate(new Date());
-    setTime(new Date());
-    setAddress("");
-    setCity("");
-    setState("");
-    setZip("");
-    setSport(sports[0].name);
-    setSkillLevel("0");
-    setPlayerLimit("1");
-    setDescription("");
-    setUpdateGameStatus(false);
-  }
-
-  useEffect(() => {
-    let timer: number;
-    if (isErrorToastVisible) {
-      let timer = setTimeout(() => {
-        setErrorToastVisible(false);
-      }, 7000); // Hide toast after 7 seconds
-    }
-    return () => clearTimeout(timer);
-  }, [isErrorToastVisible]);
-
-  useEffect(() => {
-    let timer: number;
-    if (isDatetimeToastVisible) {
-      let timer = setTimeout(() => {
-        setDatetimeToastVisible(false);
-      }, 7000); // Hide toast after 7 seconds
-    }
-    return () => clearTimeout(timer);
-  }, [isDatetimeToastVisible]);
-
-  useEffect(() => {
-    let timer: number;
-    if (isSuccessToastVisible) {
-      let timer = setTimeout(() => {
-        setSuccessToastVisible(false);
-      }, 7000); // Hide toast after 7 seconds
-    }
-    return () => clearTimeout(timer);
-  }, [isSuccessToastVisible]);
+  // function clearGameAttributes() {
+  //   setTitle("");
+  //   setDate(new Date());
+  //   setTime(new Date());
+  //   setAddress("");
+  //   setCity("");
+  //   setState("");
+  //   setZip("");
+  //   setSport(sports[0].name);
+  //   setSkillLevel("0");
+  //   setPlayerLimit("1");
+  //   setDescription("");
+  // }
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -120,7 +72,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     }
   }
 
-  function editGame() {
+  const editGame = async () => {
     // Check that no fields are left blank (except description, optional)
     if (
       !title ||
@@ -131,7 +83,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       !skillLevel ||
       !playerLimit
     ) {
-      setErrorToastVisible(true);
+      Alert.alert("Please fill out all required fields first!");
       return;
     }
 
@@ -145,29 +97,28 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     );
 
     if (combinedDateTime < new Date()) {
-      setDatetimeToastVisible(true);
-    } else {
-      editGameById(
-        game.id,
-        title,
-        combinedDateTime,
-        address,
-        city,
-        state,
-        zip,
-        sport,
-        convertSkillLevel(),
-        playerLimit,
-        description,
-      );
-      if (updateGameStatus) {
-        setSuccessToastVisible(true);
-      }
-      clearGameAttributes();
-      //go back to mygameview
+      Alert.alert("Please enter a date and time in the future!");
+      return;
+    }
+
+    const myEditedGame = await editGameById(
+      game.id,
+      title,
+      combinedDateTime,
+      address,
+      city,
+      state,
+      zip,
+      sport,
+      convertSkillLevel(),
+      playerLimit,
+      description,
+    );
+    if (myEditedGame) {
+      //clearGameAttributes();
       navigation.goBack();
     }
-  }
+  };
 
   return (
     <ToastProvider>
@@ -423,45 +374,6 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
           </ScrollView>
         ) : (
           <Text>Log in to edit an existing game!</Text>
-        )}
-        {isErrorToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Sorry! Required fields cannot be empty! 🙁
-              </Toast.Title>
-              <Toast.Description>
-                Please enter all the content for your game.
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setErrorToastVisible(false)} />
-          </Toast>
-        )}
-
-        {isSuccessToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>Data successfully saved. 🙂</Toast.Title>
-              <Toast.Description>
-                We've got your game edits saved!
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setSuccessToastVisible(false)} />
-          </Toast>
-        )}
-
-        {isDatetimeToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Selected date and time cannot be in the past!
-              </Toast.Title>
-              <Toast.Description>
-                Please reenter your game's time.
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setDatetimeToastVisible(false)} />
-          </Toast>
         )}
 
         <ToastViewport />

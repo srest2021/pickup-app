@@ -10,15 +10,19 @@ import {
   Text,
   Button,
   ScrollView,
+  H6,
+  Circle,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
-import { SkillLevel } from "../../lib/types";
+import { SkillLevel, getSkillLevelColor } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
+import GameSkillView from "./GameSkillView";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { game } = route.params;
   const { title, description, datetime, address, sport, maxPlayers } = game;
+  const color = getSkillLevelColor(sport.skillLevel);
 
   const [session, user] = useStore((state) => [state.session, state.user]);
   const { removeGameById } = useMutationGame();
@@ -96,32 +100,49 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 </YStack>
               )}
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={90}>
-                  Address
-                </Label>
-                <SizableText flex={1} size="$5">
-                  {game.address}
-                </SizableText>
-              </XStack>
+              <YStack space="$4">
+                <XStack space="$2" alignItems="left">
+                  <Label size="$5" width={90}>
+                    <H6>Address:</H6>
+                  </Label>
+                  <SizableText flex={1} size="$5">
+                    {game.address}
+                  </SizableText>
+                </XStack>
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={90}>
-                  Sport
-                </Label>
-                <SizableText flex={1} size="$5">
-                  {game.sport.name}
-                </SizableText>
-              </XStack>
+                <XStack space="$2" alignItems="center">
+                  <Label size="$5" width={90}>
+                    <H6>Sport:</H6>
+                  </Label>
+                  <SizableText flex={1} size="$5">
+                    {game.sport.name}
+                  </SizableText>
+                </XStack>
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={90}>
-                  Skill Level
-                </Label>
-                <SizableText flex={1} size="$5">
-                  {getSkillLevelString(game.sport.skillLevel)}
-                </SizableText>
-              </XStack>
+                <XStack space="$2" alignItems="center">
+                  <Label size="$5" width={90}>
+                    <H6>Skill:</H6>
+                  </Label>
+                  <Circle
+                    size={8}
+                    borderColor={color}
+                    borderWidth={1}
+                    backgroundColor={color}
+                  ></Circle>
+                  <Circle
+                    size={8}
+                    borderColor={color}
+                    borderWidth={1}
+                    backgroundColor={color}
+                  ></Circle>
+                  <Circle
+                    size={8}
+                    borderColor={color}
+                    borderWidth={1}
+                    backgroundColor={color}
+                  ></Circle>
+                </XStack>
+              </YStack>
 
               <XStack space="$3" paddingTop="$5">
                 <Button

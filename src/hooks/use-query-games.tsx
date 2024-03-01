@@ -48,7 +48,7 @@ function useQueryGames() {
             skillLevel: data[0].skill_level,
           } as GameSport,
           maxPlayers: Number(data[0].max_players),
-          currentPlayers: Number(data[0].current_players)
+          currentPlayers: Number(data[0].current_players),
         };
 
         setGame(game);
@@ -97,7 +97,7 @@ function useQueryGames() {
             skillLevel: myGame.skill_level,
           } as GameSport,
           maxPlayers: Number(myGame.max_players),
-          currentPlayers: Number(myGame.current_players)
+          currentPlayers: Number(myGame.current_players),
         };
         return game;
       });
@@ -117,10 +117,12 @@ function useQueryGames() {
   const fetchAllGames = async () => {
     try {
       setLoading(true);
-      const { data: games, error } = await supabase.rpc('nearby_games', {
-        lat: 39.3289357,
-        long: -76.6172978,
-      }).limit(20)
+      const { data: games, error } = await supabase
+        .rpc("nearby_games", {
+          lat: 39.3289357,
+          long: -76.6172978,
+        })
+        .limit(20);
 
       //console.log(games);
       //TODO: ADD PAGINATION - right now only returning 20 most relevant games

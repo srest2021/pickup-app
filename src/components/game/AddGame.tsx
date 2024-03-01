@@ -1,5 +1,4 @@
-import { View, Text, ScrollView, Alert } from "react-native";
-import useMutationUser from "../../hooks/use-mutation-user";
+import { View, ScrollView, Alert } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
   Adapt,
@@ -33,13 +32,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     state.loading,
     state.session,
   ]);
-  // const [isErrorToastVisible, setErrorToastVisible] = useState(false);
-  // const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
-  // const [isSuccessToastVisible, setSuccessToastVisible] = useState(false);
-  const [updateGameStatus, setUpdateGameStatus] = useStore((state) => [
-    state.updateGameStatus,
-    state.setUpdateGameStatus,
-  ]);
 
   // game attributes
   const [title, setTitle] = useState("");
@@ -66,38 +58,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
-    setUpdateGameStatus(false);
   }
-
-  // useEffect(() => {
-  //   let timer: number;
-  //   if (isErrorToastVisible) {
-  //     let timer = setTimeout(() => {
-  //       setErrorToastVisible(false);
-  //     }, 7000); // Hide toast after 7 seconds
-  //   }
-  //   return () => clearTimeout(timer);
-  // }, [isErrorToastVisible]);
-
-  // useEffect(() => {
-  //   let timer: number;
-  //   if (isDatetimeToastVisible) {
-  //     let timer = setTimeout(() => {
-  //       setDatetimeToastVisible(false);
-  //     }, 7000); // Hide toast after 7 seconds
-  //   }
-  //   return () => clearTimeout(timer);
-  // }, [isDatetimeToastVisible]);
-
-  // useEffect(() => {
-  //   let timer: number;
-  //   if (isSuccessToastVisible) {
-  //     let timer = setTimeout(() => {
-  //       setSuccessToastVisible(false);
-  //     }, 7000); // Hide toast after 7 seconds
-  //   }
-  //   return () => clearTimeout(timer);
-  // }, [isSuccessToastVisible]);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -110,7 +71,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     }
   }
 
-  function createNewGame() {
+  const createNewGame = async () => {
     // Check that no fields are left blank (except description, optional)
     if (
       !title ||
@@ -121,10 +82,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !skillLevel ||
       !playerLimit
     ) {
-      //console.log("error toast");
-      //console.log(title, date, time, address, sport, skillLevel, playerLimit)
-      Alert.alert("Error: Please fill out all required fields.");
-      //setErrorToastVisible(true);
+      Alert.alert("Please fill out all required fields first!");
       return;
     }
 
@@ -138,13 +96,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (combinedDateTime < new Date()) {
-      Alert.alert("Error: Date and time are in the past.");
-      //console.log("datetime toast");
-      //setDatetimeToastVisible(true);
+      Alert.alert("Please enter a date and time in the future!");
       return;
     }
 
-    createGame(
+    const myNewGame = await createGame(
       title,
       combinedDateTime,
       address,
@@ -156,18 +112,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       playerLimit,
       description,
     );
-    if (updateGameStatus) {
-      // console.log("success toast");
-      // setSuccessToastVisible(true);
-    } else {
-      Alert.alert("Error publishing game! Please try again later.");
-      // console.log("error toast");
-      // setErrorToastVisible(true);
-      return;
+    if (myNewGame) {
+      clearGameAttributes();
+      navigation.navigate("MyGames");
     }
-    clearGameAttributes();
-    navigation.navigate("MyGames");
-  }
+  };
 
   return (
     <ToastProvider>
@@ -419,7 +368,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Button
                   theme="active"
                   disabled={loading}
-                  onPress={() => createNewGame()}
+                  onPress={createNewGame}
                   size="$5"
                 >
                   {loading ? "Loading..." : "Publish"}

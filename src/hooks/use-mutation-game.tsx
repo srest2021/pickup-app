@@ -5,21 +5,44 @@ import { Alert } from "react-native";
 import { Game, GameSport } from "../lib/types";
 
 function useMutationGame() {
-  const [
-    session,
-    setLoading,
-    setUpdateGameStatus,
-    addMyGame,
-    removeMyGame,
-    editMyGame,
-  ] = useStore((state) => [
-    state.session,
-    state.setLoading,
-    state.setUpdateGameStatus,
-    state.addMyGame,
-    state.removeMyGame,
-    state.editMyGame,
-  ]);
+  const [session, setLoading, addMyGame, removeMyGame, editMyGame] = useStore(
+    (state) => [
+      state.session,
+      state.setLoading,
+      state.addMyGame,
+      state.removeMyGame,
+      state.editMyGame,
+    ],
+  );
+
+  const getLocation = async (fullAddress: string) => {
+    // API key hard coded in -- consider changing
+    const geolocationResponse = await fetch(
+      `https://geocode.maps.co/search?q=${encodeURIComponent(fullAddress)}&api_key=65e0f4e8bc79e688163432osme79a3d`,
+    );
+    const geolocationData = await geolocationResponse.json();
+
+    if (geolocationData.length < 1) {
+      throw new Error(
+        "Unable to fetch geolocation details for the provided address.",
+      );
+    }
+
+    const latitude = geolocationData[0].lat;
+    const longitude = geolocationData[0].lon;
+    if (!latitude || !longitude) {
+      throw new Error(
+        "Unable to fetch geolocation details for the provided address.",
+      );
+    }
+
+    let location = null;
+    if (longitude !== "" && latitude !== "") {
+      location = `POINT(${longitude} ${latitude})`;
+    }
+
+    return location;
+  };
 
   const createGame = async (
     game_title: string,
@@ -38,26 +61,12 @@ function useMutationGame() {
       if (!session?.user) throw new Error("No user on the session!");
 
       const fullAddress = `${address} ${city} ${state} ${zip}`;
-
-      // API key hard coded in -- consider changing
-      const geolocationResponse = await fetch(`https://geocode.maps.co/search?q=${encodeURIComponent(fullAddress)}&api_key=65e0f4e8bc79e688163432osme79a3d`);
-      const geolocationData = await geolocationResponse.json();
-      
-
-      const latitude = geolocationData[0].lat;
-      const longitude = geolocationData[0].lon;
-      
-      if (!geolocationData || !geolocationData[0].lat || !geolocationData[0].lon) {
-        throw new Error("Unable to fetch geolocation details for the provided address.");
-      }
-
-
-
       let location = null;
-      if (longitude !== "" && latitude !== "") {
-        location = `POINT(${longitude} ${latitude})`;
+      try {
+        location = await getLocation(fullAddress);
+      } catch (error) {
+        throw error;
       }
-    
 
       const { data, error } = await supabase
         .from("games")
@@ -71,18 +80,14 @@ function useMutationGame() {
             skill_level: skillLevel,
             address: fullAddress,
             location,
-            current_players: 1, 
-            max_players: playerLimit
+            current_players: 1,
+            max_players: playerLimit,
           },
         ])
         .select();
       if (error) {
-       // console.log(error);
         throw error;
       }
-
-      // Successful game creation.
-      setUpdateGameStatus(true);
 
       if (data && data[0]) {
         // add game to store
@@ -94,13 +99,16 @@ function useMutationGame() {
           address: address,
           sport: { name: sport, skillLevel: skillLevel } as GameSport,
           maxPlayers: Number(playerLimit),
-          currentPlayers: 1
+          currentPlayers: 1,
         };
         addMyGame(myNewGame);
+        return myNewGame;
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+        //Alert.alert("Error publishing game! Please try again later.");
+        return null;
       }
     } finally {
       setLoading(false);
@@ -117,8 +125,6 @@ function useMutationGame() {
 
       // remove from store
       removeMyGame(id);
-      // Successful game creation.
-      // setUpdateGameStatus(true);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -147,21 +153,11 @@ function useMutationGame() {
       if (!session?.user) throw new Error("No user on the session!");
 
       const fullAddress = `${address} ${city} ${state} ${zip}`;
-      // API key hard coded in -- consider changing
-      const geolocationResponse = await fetch(`https://geocode.maps.co/search?q=${encodeURIComponent(fullAddress)}&api_key=65e0f4e8bc79e688163432osme79a3d`);
-      const geolocationData = await geolocationResponse.json();
-      
-
-      const latitude = geolocationData[0].lat;
-      const longitude = geolocationData[0].lon;
-      
-      if (!geolocationData || !geolocationData[0].lat || !geolocationData[0].lon) {
-        throw new Error("Unable to fetch geolocation details for the provided address.");
-      }
-
       let location = null;
-      if (longitude !== "" && latitude !== "") {
-        location = `POINT(${longitude} ${latitude})`;
+      try {
+        location = await getLocation(fullAddress);
+      } catch (error) {
+        throw error;
       }
 
       const { data, error } = await supabase
@@ -180,13 +176,12 @@ function useMutationGame() {
         .select();
 
       if (error) throw error;
-      // Successful game editing.
-      setUpdateGameStatus(true);
 
       // Edit game in store
       if (data && data[0]) {
         editMyGame(data[0], data);
       }
+      return data;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

@@ -25,6 +25,32 @@ export enum SkillLevel {
   Advanced = 2,
 }
 
+export function getSkillLevelString(skillLevel: SkillLevel): string {
+  switch (skillLevel) {
+    case SkillLevel.Beginner:
+      return "Beginner";
+    case SkillLevel.Intermediate:
+      return "Intermediate";
+    case SkillLevel.Advanced:
+      return "Advanced";
+    default:
+      return "Unknown";
+  }
+}
+
+export function getSkillLevelColor(skillLevel: SkillLevel): string {
+  switch (skillLevel) {
+    case SkillLevel.Beginner:
+      return "green";
+    case SkillLevel.Intermediate:
+      return "yellow";
+    case SkillLevel.Advanced:
+      return "red";
+    default:
+      return "green";
+  }
+}
+
 export type Game = {
   id: string;
   title: string;
