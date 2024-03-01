@@ -5,7 +5,7 @@ import Sport from "./Sport";
 export default function Sports({ sports }: { sports: any }) {
   return (
     <View>
-      <Text className="text-lg font-bold">My Sports</Text>
+      <Text className="text-lg font-bold" style={{paddingLeft: 12}}>My Sports</Text>
       <View>
         {sports ? (
           sports.map((sport: SportType) => (

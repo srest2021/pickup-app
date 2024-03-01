@@ -9,6 +9,7 @@ import { useStore } from "../../lib/store";
 import { Dimensions } from 'react-native';
 import { Edit3 } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
+import { SkillLevel, Sport } from "../../lib/types";
 
 
 
@@ -24,7 +25,28 @@ export default function Profile({ navigation }) {
   const [loading] = useStore((state) => [state.loading]);
   const [isAddSportOpen, setAddSportOpen] = useState(false);
 
-  const { user } = useMutationUser();
+  //const { user } = useMutationUser();
+  const { user, updateProfile } = useMutationUser();
+
+  useEffect(() => {
+    // Make sure user is not undefined to avoid unnecessary calls
+    if (user) {
+      // Your logic to update the user's profile
+      console.log('User updated:', user);
+    }
+  }, [user]);
+
+  const handleAddSport = (selectedSport: string) => {
+    console.log("entered");
+    // Check if the selected sport is not already in the user's sports array
+    if (!user.sports.some((sport) => sport.name === selectedSport)) {
+
+      const newSport: Sport = { id: "1", name: selectedSport, skillLevel: SkillLevel.Beginner };
+
+      // Call the updateUser mutation to update the user's data
+      updateProfile(undefined, undefined, undefined, [...user.sports, newSport]);
+    }
+  };
 
   const openAddSport = () => {
     setAddSportOpen(true);
@@ -85,7 +107,7 @@ export default function Profile({ navigation }) {
           </View>
 
           <Sports sports={user.sports} />
-          <AddSport />
+          <AddSport onSportSelect={handleAddSport} userSports={user.sports} />
           
         </View>
       ) : (

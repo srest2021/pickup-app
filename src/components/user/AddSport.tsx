@@ -18,6 +18,7 @@ import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
 import { View } from 'react-native';
 import { SkillLevel } from "../../lib/types";
 import { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 
 const sportsOptions = [
   { name: 'Football' },
@@ -31,14 +32,14 @@ const sportsOptions = [
 
 const AddSport = () => {
     const [skillLevel, setSkillLevel] = useState("0");
-    const [sport, setSport] = useState([]);
+    const [sport, setSport] = useState(sportsOptions[0].name);
     //const [sport, setSport] = useState(sports[0].name); //make sure this is the user sport not game sport!!
     //above the select trigger for choose a sport: <Select value={sport} onValueChange={setSport}>
-
-    const addSport = (sportName) => {
+    
+    //const addSport = (sportName) => {
       // Function to add a sport to the options
-      setSportsOptions([...sportsOptions, { name: sportName }]);
-    };
+      //setSportsOptions([...sportsOptions, { name: sportName }]);
+    //};
 
     function convertSkillLevel(): number {
       if (skillLevel === "0") {
@@ -52,6 +53,7 @@ const AddSport = () => {
 
     return (
       <Dialog modal>
+
         <Dialog.Trigger asChild>
           <Button size="$3" icon = {Plus} color="#ff7403" borderColor="#ff7403" variant="outlined" style={{ alignSelf: "flex-start"}}>Add Sport</Button>
         </Dialog.Trigger>
@@ -94,7 +96,7 @@ const AddSport = () => {
                 Select Sport
               </Label>
 
-            <Select>
+            <Select value={sport} onValueChange={(selectedSport) => setSport(selectedSport)} >
             <Select.Trigger iconAfter={ChevronDown}>
               <Select.Value placeholder="Select a sport..." />
             </Select.Trigger>
@@ -154,13 +156,63 @@ const AddSport = () => {
           </Select>
 
 
-            
+          <Label width={160} justifyContent="flex-end" htmlFor="name">
+                Select Skill Level
+          </Label>
+
             <Label width={160} justifyContent="flex-end" htmlFor="username">
+              
             <RadioGroup aria-labelledby="Select one item" defaultValue="3" name="form" value={skillLevel} onValueChange={setSkillLevel}>
-              <YStack width={300} alignItems="center" space="$2">
-                  <RadioGroup.Item size="$2" value={"Beginner"} id={`skill-level-${SkillLevel.Beginner}`} />
-                  <RadioGroup.Item size="$2" value={"Intermediate"} id={`skill-level-${SkillLevel.Intermediate}`} />
-                  <RadioGroup.Item size="$2" value={"Advanced"} id={`skill-level-${SkillLevel.Beginner}`} />
+              <YStack width={300} alignItems="center" space="$3">
+              <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"0"}
+                      id={`skill-level-${SkillLevel.Beginner}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Beginner}`}
+                    >
+                      {"Beginner"}
+                    </Label>
+                  </XStack>
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"1"}
+                      id={`skill-level-${SkillLevel.Intermediate}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Intermediate}`}
+                    >
+                      {"Intermediate"}
+                    </Label>
+                  </XStack>
+
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"2"}
+                      id={`skill-level-${SkillLevel.Advanced}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Advanced}`}
+                    >
+                      {"Advanced"}
+                    </Label>
+                  </XStack>
               </YStack>
               </RadioGroup>
             </Label>
