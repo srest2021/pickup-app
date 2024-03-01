@@ -53,16 +53,25 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const [date, setDate] = useState(new Date(game.datetime));
   const [time, setTime] = useState(timeComponent);
   const [address, setAddress] = useState(game.address);
-  const [sport, setSport] = useState(game.sport.name);
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zip, setZip] = useState("");
+  const [sport, setSport] = useState(
+    sports[sports.findIndex((sport) => sport.name === game.sport.name)].name,
+  );
   const [skillLevel, setSkillLevel] = useState(`${game.sport.skillLevel}`);
   const [playerLimit, setPlayerLimit] = useState(`${game.maxPlayers}`);
   const [description, setDescription] = useState(game.description);
+  
 
   function clearGameAttributes() {
     setTitle("");
     setDate(new Date());
     setTime(new Date());
     setAddress("");
+    setCity("");
+    setState("");
+    setZip("");
     setSport(sports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
@@ -143,6 +152,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
         title,
         combinedDateTime,
         address,
+        city,
+        state,
+        zip,
         sport,
         convertSkillLevel(),
         playerLimit,
@@ -217,6 +229,39 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
                 />
+              </YStack>
+
+              <YStack space="$1">
+                <Label size="$5">City</Label>
+                <Input
+                  flex={1}
+                  size="$5"
+                  placeholder="City"
+                  value={city}
+                  onChangeText={(text: string) => setCity(text)}
+                />
+              </YStack>
+
+              <YStack space="$1">
+                <Label size="$5">State/ZIP</Label>
+                <XStack space="$3">
+                  <Input
+                    flex={1}
+                    size="$5"
+                    placeholder="State"
+                    value={state}
+                    //keyboardType="numeric"
+                    onChangeText={(text: string) => setState(text)}
+                  />
+                  <Input
+                    flex={1}
+                    size="$5"
+                    placeholder="ZIP code"
+                    value={zip}
+                    keyboardType="numeric"
+                    onChangeText={(text: string) => setZip(text)}
+                  />
+                </XStack>
               </YStack>
 
               <Label size="$5">Sport</Label>

@@ -46,8 +46,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [address, setAddress] = useState("");
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zip, setZip] = useState("");
   const [sport, setSport] = useState(sports[0].name);
   const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("1");
@@ -58,8 +59,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setDate(new Date());
     setTime(new Date());
     setAddress("");
-    setLatitude("");
-    setLongitude("");
+    setCity("");
+    setState("");
+    setZip("");
     setSport(sports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
@@ -146,8 +148,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       title,
       combinedDateTime,
       address,
-      latitude,
-      longitude,
+      city,
+      state,
+      zip,
       sport,
       convertSkillLevel(),
       playerLimit,
@@ -229,23 +232,34 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               </YStack>
 
               <YStack space="$1">
-                <Label size="$5">Location</Label>
+                <Label size="$5">City</Label>
+                <Input
+                  flex={1}
+                  size="$5"
+                  placeholder="City"
+                  value={city}
+                  onChangeText={(text: string) => setCity(text)}
+                />
+              </YStack>
+
+              <YStack space="$1">
+                <Label size="$5">State/ZIP</Label>
                 <XStack space="$3">
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="Latitude"
-                    value={latitude}
+                    placeholder="State"
+                    value={state}
                     //keyboardType="numeric"
-                    onChangeText={(text: string) => setLatitude(text)}
+                    onChangeText={(text: string) => setState(text)}
                   />
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="Longitude"
-                    value={longitude}
-                    // keyboardType="numeric"
-                    onChangeText={(text: string) => setLongitude(text)}
+                    placeholder="ZIP code"
+                    value={zip}
+                    keyboardType="numeric"
+                    onChangeText={(text: string) => setZip(text)}
                   />
                 </XStack>
               </YStack>
