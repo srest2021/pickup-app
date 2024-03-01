@@ -71,7 +71,8 @@ function useMutationGame() {
             skill_level: skillLevel,
             address: fullAddress,
             location,
-            max_players: playerLimit,
+            current_players: 1, 
+            max_players: playerLimit
           },
         ])
         .select();
@@ -93,6 +94,7 @@ function useMutationGame() {
           address: address,
           sport: { name: sport, skillLevel: skillLevel } as GameSport,
           maxPlayers: Number(playerLimit),
+          currentPlayers: 1
         };
         addMyGame(myNewGame);
       }

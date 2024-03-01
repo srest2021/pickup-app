@@ -33,6 +33,7 @@ export type Game = {
   address: string;
   sport: GameSport;
   maxPlayers: number;
+  currentPlayers: number;
 };
 
 export const sports = [

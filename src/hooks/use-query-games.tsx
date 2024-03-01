@@ -48,6 +48,7 @@ function useQueryGames() {
             skillLevel: data[0].skill_level,
           } as GameSport,
           maxPlayers: Number(data[0].max_players),
+          currentPlayers: Number(data[0].current_players)
         };
 
         setGame(game);
@@ -96,6 +97,7 @@ function useQueryGames() {
             skillLevel: myGame.skill_level,
           } as GameSport,
           maxPlayers: Number(myGame.max_players),
+          currentPlayers: Number(myGame.current_players)
         };
         return game;
       });

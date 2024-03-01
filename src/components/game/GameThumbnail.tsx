@@ -67,7 +67,7 @@ export default function GameThumbnail({
           >
             <GameSkillView sport={game.sport} />
             <H6 style={{ position: "absolute", right: 0 }}>
-              0/{game.maxPlayers} players
+              {game.currentPlayers}/{game.maxPlayers} players
             </H6>
           </View>
         </Card.Footer>
