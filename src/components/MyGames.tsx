@@ -22,7 +22,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
 
   useEffect(() => {
     handleRefresh();
-  }, []);
+  }, [myGamesToggle]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -36,7 +36,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
     } else if (myGamesToggle === "joinedGames") {
       try {
         await fetchAllGames(); 
-        console.log("fetching games whore");// temporary for right now until we do query for joined games.
+        // temporary for right now until we do query for joined games.
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
         //setErrorToastVisible(true);
