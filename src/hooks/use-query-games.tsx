@@ -146,11 +146,11 @@ function useQueryGames() {
     }
   };
 
-  useEffect(() => {
-    if (session?.user) {
-      fetchMyGames();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (session?.user) {
+  //     fetchMyGames();
+  //   }
+  // }, []);
 
   // useEffect(() => {
   //   fetchAllGames();

@@ -54,7 +54,10 @@ export default function GameThumbnail({
             <View style={{ alignItems: "flex-end" }}>
               <Button
                 style={{ backgroundColor: "#ff7403" }}
-                onPress={() => navigation.navigate("MyGameView", { game })}
+                onPress={() => {
+                  const gameId = game.id;
+                  navigation.navigate("MyGameView", { gameId });
+                }}
               >
                 <H5>View</H5>
               </Button>

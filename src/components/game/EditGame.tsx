@@ -27,7 +27,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { game } = route.params;
+  const { myGame } = route.params;
 
   const { user } = useMutationUser();
   const { editGameById } = useMutationGame();
@@ -35,31 +35,17 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const loading = useStore((state) => state.loading);
 
   // existing game attributes
-  const [title, setTitle] = useState(game.title);
-  const [date, setDate] = useState(new Date(game.datetime));
-  const [time, setTime] = useState(new Date(game.datetime));
-  const [address, setAddress] = useState(game.address);
+  const [title, setTitle] = useState(myGame.title);
+  const [date, setDate] = useState(new Date(myGame.datetime));
+  const [time, setTime] = useState(new Date(myGame.datetime));
+  const [address, setAddress] = useState(myGame.address);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
-  const [sport, setSport] = useState(game.sport.name);
-  const [skillLevel, setSkillLevel] = useState(`${game.sport.skillLevel}`);
-  const [playerLimit, setPlayerLimit] = useState(`${game.maxPlayers}`);
-  const [description, setDescription] = useState(game.description);
-
-  // function clearGameAttributes() {
-  //   setTitle("");
-  //   setDate(new Date());
-  //   setTime(new Date());
-  //   setAddress("");
-  //   setCity("");
-  //   setState("");
-  //   setZip("");
-  //   setSport(sports[0].name);
-  //   setSkillLevel("0");
-  //   setPlayerLimit("1");
-  //   setDescription("");
-  // }
+  const [sport, setSport] = useState(myGame.sport.name);
+  const [skillLevel, setSkillLevel] = useState(`${myGame.sport.skillLevel}`);
+  const [playerLimit, setPlayerLimit] = useState(`${myGame.maxPlayers}`);
+  const [description, setDescription] = useState(myGame.description);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -102,7 +88,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     }
 
     const myEditedGame = await editGameById(
-      game.id,
+      myGame.id,
       title,
       combinedDateTime,
       address,
@@ -293,12 +279,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                       <RadioGroup.Indicator />
                     </RadioGroup.Item>
 
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Beginner}`}
-                    >
-                      {"Beginner"}
-                    </Label>
+                    <Label size={2}>{"Beginner"}</Label>
                   </XStack>
                   <XStack width={300} alignItems="center" space="$4">
                     <RadioGroup.Item
@@ -309,12 +290,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                       <RadioGroup.Indicator />
                     </RadioGroup.Item>
 
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Intermediate}`}
-                    >
-                      {"Intermediate"}
-                    </Label>
+                    <Label size={2}>{"Intermediate"}</Label>
                   </XStack>
 
                   <XStack width={300} alignItems="center" space="$4">
@@ -326,12 +302,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                       <RadioGroup.Indicator />
                     </RadioGroup.Item>
 
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Advanced}`}
-                    >
-                      {"Advanced"}
-                    </Label>
+                    <Label size={2}>{"Advanced"}</Label>
                   </XStack>
                 </YStack>
               </RadioGroup>

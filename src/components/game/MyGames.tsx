@@ -17,7 +17,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
 
   useEffect(() => {
     handleRefresh();
-  }, [myGamesToggle]);
+  }, [myGamesToggle, myGames]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
