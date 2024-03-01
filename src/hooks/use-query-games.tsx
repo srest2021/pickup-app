@@ -120,7 +120,7 @@ function useQueryGames() {
         long: -76.6172978,
       }).limit(20)
 
-      console.log(games);
+      //console.log(games);
       //TODO: ADD PAGINATION - right now only returning 20 most relevant games
       /*
       const { data: games, error } = await supabase

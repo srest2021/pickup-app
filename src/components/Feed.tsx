@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import FeedGameView from "./game/GameThumbnail";
@@ -14,7 +14,11 @@ const Feed = () => {
     // Figure out a way to switch to MyGames (probably use Store)
   };
 
-  const { allGames, fetchAllGames } = useQueryGames();
+  const { fetchAllGames } = useQueryGames();
+
+  useEffect(() => {
+    fetchAllGames();
+  }, []);
 
   const toJoinedGames = () => {
     // Figure out how to swtich to AllGames (probably useStore)

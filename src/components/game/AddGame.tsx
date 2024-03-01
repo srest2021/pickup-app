@@ -46,7 +46,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
   const [address, setAddress] = useState("");
-  const [addressLine2, setAddressLine2] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
@@ -60,7 +59,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setDate(new Date());
     setTime(new Date());
     setAddress("");
-    setAddressLine2("");
     setCity("");
     setState("");
     setZip("");
@@ -150,7 +148,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       title,
       combinedDateTime,
       address,
-      addressLine2,
       city,
       state,
       zip,
@@ -231,17 +228,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   placeholder="Address"
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
-                />
-              </YStack>
-
-              <YStack space="$1">
-                <Label size="$5">Address Line 2</Label>
-                <Input
-                  flex={1}
-                  size="$5"
-                  placeholder="Address Line 2"
-                  value={addressLine2}
-                  onChangeText={(text: string) => setAddressLine2(text)}
                 />
               </YStack>
 
