@@ -25,8 +25,10 @@ function useMutationGame() {
     game_title: string,
     datetime: Date,
     address: string,
-    latitude: string,
-    longitude: string,
+    addressLine2: string,
+    city: string,
+    state: string,
+    zip: string,
     sport: string,
     skillLevel: number,
     playerLimit: string,
@@ -36,8 +38,10 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
+      const fullAddress = `${address} ${addressLine2} ${city} ${state} ${zip}`;
+
       // API key hard coded in -- consider changing
-      const geolocationResponse = await fetch(`https://geocode.maps.co/search?q=${encodeURIComponent(address)}&api_key=65e0f4e8bc79e688163432osme79a3d`);
+      const geolocationResponse = await fetch(`https://geocode.maps.co/search?q=${encodeURIComponent(fullAddress)}&api_key=65e0f4e8bc79e688163432osme79a3d`);
       const geolocationData = await geolocationResponse.json();
       
 
@@ -72,7 +76,10 @@ function useMutationGame() {
           },
         ])
         .select();
-      if (error) throw error;
+      if (error) {
+        console.log(error);
+        throw error;
+      }
 
       // Successful game creation.
       setUpdateGameStatus(true);
