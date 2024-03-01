@@ -9,6 +9,7 @@ function useQueryGames() {
     session,
     setLoading,
     myGames,
+    feedGames,
     setMyGames,
     setFeedGames,
     setSelectedGameId,
@@ -17,6 +18,7 @@ function useQueryGames() {
     state.session,
     state.setLoading,
     state.myGames,
+    state.feedGames,
     state.setMyGames,
     state.setFeedGames,
     state.setSelectedGameId,
@@ -152,7 +154,7 @@ function useQueryGames() {
   //   fetchAllGames();
   // }, [])
 
-  return { game, myGames, fetchGameById, fetchMyGames, fetchAllGames };
+  return { game, myGames, feedGames, fetchGameById, fetchMyGames, fetchAllGames };
 }
 
 export default useQueryGames;

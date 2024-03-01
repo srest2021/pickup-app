@@ -15,9 +15,10 @@ import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
   const [session] = useStore((state) => [state.session]);
-  const { myGames, fetchMyGames, fetchAllGames } = useQueryGames();
+  const { myGames, feedGames, fetchMyGames, fetchAllGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
+  const [displayGames, setDisplayGames] = useState(myGames);
   //const [isErrorToastVisible, setErrorToastVisible] = useState(false);
 
   useEffect(() => {
@@ -29,16 +30,19 @@ const MyGames = ({ navigation }: { navigation: any }) => {
     if (myGamesToggle === "myGames") {
       try {
         await fetchMyGames();
+        setDisplayGames(myGames);
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
+        setDisplayGames([]);
         //setErrorToastVisible(true);
       }
     } else if (myGamesToggle === "joinedGames") {
       try {
         await fetchAllGames();
-        // temporary for right now until we do query for joined games.
+        // setDisplayGames(feedGames); Temporary for right now until someone fixes use-query-games so the timestamptz converts.
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
+        setDisplayGames([]);
         //setErrorToastVisible(true);
       }
     }
@@ -59,9 +63,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               <Tabs.Tab
                 width={200}
                 value="MyGames"
-                onInteraction={() => {
-                  setMyGamesToggle("myGames");
-                }}
+                onInteraction={()=>{setMyGamesToggle("myGames");}}
               >
                 <Text>My Games</Text>
               </Tabs.Tab>
@@ -90,7 +92,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
           >
             {refreshing && <Spinner size="small" color="#ff7403" />}
             <YStack space="$5" paddingTop={5} paddingBottom="$5">
-              {myGames.map((myGame) => (
+              {displayGames.map((myGame) => (
                 <GameThumbnail
                   navigation={navigation}
                   game={myGame}
