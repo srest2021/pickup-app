@@ -56,9 +56,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
-  const [sport, setSport] = useState(
-    sports[sports.findIndex((sport) => sport.name === game.sport.name)].name,
-  );
+  const [sport, setSport] = useState(game.name);
   const [skillLevel, setSkillLevel] = useState(`${game.sport.skillLevel}`);
   const [playerLimit, setPlayerLimit] = useState(`${game.maxPlayers}`);
   const [description, setDescription] = useState(game.description);
