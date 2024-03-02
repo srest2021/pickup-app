@@ -42,6 +42,8 @@ export default function GameThumbnail({
     }
   }
 
+  const abbrevDescription = (game.description.length > 100) ? game.description.substring(0, 100)+"..." : game.description
+
   return (
     <View paddingLeft="$5" paddingRight="$5">
       <Card elevate size="$5">
@@ -68,7 +70,7 @@ export default function GameThumbnail({
             </View>
           </XStack>
         </Card.Header>
-        <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
+        <View space="$2" alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
           <Paragraph fontWeight="600" fontSize="$6">
             X miles away
           </Paragraph>
@@ -77,7 +79,7 @@ export default function GameThumbnail({
             marginRight={95}
             testID="game-description"
           >
-            {game.description}
+            {abbrevDescription}
           </Paragraph>
         </View>
         <Card.Footer padded>
