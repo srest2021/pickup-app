@@ -38,6 +38,13 @@ Our app allows users to organize, find, and join pick-up games in a convenient a
     npx expo run:android
     ```
 
+6. To login as a test user to the app, use the following credentials:
+
+    ```shell
+    email: admin@example.com
+    password: password
+    ```
+
 ## Developing
 
 > Detailed and step-by-step documentation for setting up local development. For example, a new team member will use these instructions to start developing the project further. 
@@ -78,3 +85,12 @@ View the tutorial to set up Supabase local development [here](https://supabase.c
 5. To create a new migration file: `npx supabase migration new <migration-name>`. To reset the local database and run the migration: `npx supabase db reset`.
 
 6. To deploy a local database migration: `npx supabase db push`.
+
+### Create a development build
+
+Follow the instructions to cretae a build [here](https://docs.expo.dev/build/setup/) and [here](https://docs.expo.dev/develop/development-builds/create-a-build/).
+
+1. Prerequisites: install `expo-dev-client` (`npx expo install expo-dev-client`) and EAS CLI (`npm install -g eas-cli`). 
+2. Login to your EAS account: `eas login`.
+3. For iOS: run `eas build --profile development-simulator --platform ios`. For Android: run `eas build --profile development --platform android`.
+4. Run `npx expo start --dev-client`.
