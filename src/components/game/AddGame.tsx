@@ -1,4 +1,4 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Alert } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
   Adapt,
@@ -26,10 +26,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [loading, session] = useStore((state) => [
     state.loading,
     state.session,
-  ]);
-  const [updateGameStatus, setUpdateGameStatus] = useStore((state) => [
-    state.updateGameStatus,
-    state.setUpdateGameStatus,
   ]);
 
   // game attributes
@@ -60,7 +56,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
-    setUpdateGameStatus(false);
   }
 
   // Radio group value is only string. Convert string skill level to number
@@ -74,7 +69,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     }
   }
 
-  function createNewGame() {
+  const createNewGame = async () => {
     // Check that no fields are left blank (except description, optional)
     if (
       !title ||
@@ -85,7 +80,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !skillLevel ||
       !playerLimit
     ) {
-      // Alert.alert("Error: Please fill out all required fields.");
+      Alert.alert("Error: Please fill out all required fields.");
       toast.show("Error!", {
         message: "Please fill out all required fields.",
       });
@@ -102,14 +97,15 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (combinedDateTime < new Date()) {
-      // Alert.alert("Error: Date and time are in the past.");
+      Alert.alert("Error: Date and time are in the past.");
       toast.show("Error!", {
         message: "Date and time are in the past.",
       });
+
       return;
     }
 
-    createGame(
+    const myNewGame = await createGame(
       title,
       combinedDateTime,
       address,
@@ -121,21 +117,15 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       playerLimit,
       description,
     );
-    if (updateGameStatus) {
+
+    if (myNewGame) {
       toast.show("Successfully saved!", {
         message: "Don't worry, we've got your data.",
       });
-    } else {
-      // TODO: Bug with game being created despite error thrown.
-      // Alert.alert("Error publishing game! Please try again later.");
-      toast.show("Error toast!", {
-        message: "Worry! We don't got your data.",
-      });
-      return;
+      clearGameAttributes();
+      navigation.navigate("MyGames");
     }
-    clearGameAttributes();
-    navigation.navigate("MyGames");
-  }
+  };
 
   return (
     <View className="p-12">
@@ -217,182 +207,203 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="State"
-                  value={state}
-                  //keyboardType="numeric"
-                  onChangeText={(text: string) => setState(text)}
+                  placeholder="Homewood"
+                  value={address}
+                  onChangeText={(text: string) => setAddress(text)}
                 />
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="ZIP code"
-                  value={zip}
+
+                  placeholder="Baltimore"
+                  value={city}
+                  onChangeText={(text: string) => setCity(text)}
+                />
+              </YStack>
+
+              <YStack space="$1">
+                <Label size="$5">State/ZIP</Label>
+                <XStack space="$3">
+                  <Input
+                    flex={1}
+                    size="$5"
+                    placeholder="MD"
+                    value={state}
+                    //keyboardType="numeric"
+                    onChangeText={(text: string) => setState(text)}
+                  />
+                  <Input
+                    flex={1}
+                    size="$5"
+                    placeholder="21218"
+                    value={zip}
+                    keyboardType="numeric"
+                    onChangeText={(text: string) => setZip(text)}
+                  />
+                </XStack>
+              </YStack>
+
+              <YStack>
+                <Label size="$5">Sport</Label>
+                <Select value={sport} onValueChange={setSport}>
+                  <Select.Trigger iconAfter={ChevronDown}>
+                    <Select.Value placeholder="Select a sport..." />
+                  </Select.Trigger>
+
+                  <Adapt when="sm" platform="touch">
+                    <Sheet
+                      modal
+                      dismissOnSnapToBottom
+                      animationConfig={{
+                        type: "spring",
+                        damping: 20,
+                        mass: 1.2,
+                        stiffness: 250,
+                      }}
+                    >
+                      <Sheet.Frame>
+                        <Sheet.ScrollView>
+                          <Adapt.Contents />
+                        </Sheet.ScrollView>
+                      </Sheet.Frame>
+                      <Sheet.Overlay
+                        animation="lazy"
+                        enterStyle={{ opacity: 0 }}
+                        exitStyle={{ opacity: 0 }}
+                      />
+                      <Sheet.Overlay />
+                    </Sheet>
+                  </Adapt>
+
+                  <Select.Content>
+                    <Select.ScrollUpButton />
+                    <Select.Viewport>
+                      <Select.Group>
+                        <Select.Label>Sports</Select.Label>
+                        {useMemo(
+                          () =>
+                            sports.map((sport, i) => {
+                              return (
+                                <Select.Item
+                                  index={i}
+                                  key={sport.name}
+                                  value={sport.name}
+                                >
+                                  <Select.ItemText>
+                                    {sport.name}
+                                  </Select.ItemText>
+                                  <Select.ItemIndicator marginLeft="auto">
+                                    <Check size={16} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                              );
+                            }),
+                          [sports],
+                        )}
+                      </Select.Group>
+                    </Select.Viewport>
+                    <Select.ScrollDownButton />
+                  </Select.Content>
+                </Select>
+              </YStack>
+
+              <YStack>
+                <Label size="$5">Skill Level</Label>
+                <RadioGroup
+                  aria-labelledby="Select one item"
+                  defaultValue="3"
+                  name="form"
+                  value={skillLevel}
+                  onValueChange={setSkillLevel}
+                >
+                  <YStack>
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"0"}
+                        id={`skill-level-${SkillLevel.Beginner}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+
+                      <Label
+                        size={2}
+                        htmlFor={`skill-level-${SkillLevel.Beginner}`}
+                      >
+                        {"Beginner"}
+                      </Label>
+                    </XStack>
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"1"}
+                        id={`skill-level-${SkillLevel.Intermediate}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+
+                      <Label
+                        size={2}
+                        htmlFor={`skill-level-${SkillLevel.Intermediate}`}
+                      >
+                        {"Intermediate"}
+                      </Label>
+                    </XStack>
+
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"2"}
+                        id={`skill-level-${SkillLevel.Advanced}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+
+                      <Label
+                        size={2}
+                        htmlFor={`skill-level-${SkillLevel.Advanced}`}
+                      >
+                        {"Advanced"}
+                      </Label>
+                    </XStack>
+                  </YStack>
+                </RadioGroup>
+              </YStack>
+
+              <XStack space="$4" alignItems="center">
+                <Label flex={1} size="$5" width={90}>
+                  Player Limit
+                </Label>
+                <Input
+                  flex={1}
+                  size="$5"
+                  defaultValue="1"
                   keyboardType="numeric"
                   onChangeText={(text: string) => setZip(text)}
                 />
               </XStack>
+
+              <YStack space="$1">
+                <Label size="$5">Description</Label>
+                <TextArea
+                  size="$5"
+                  placeholder="Enter your game details (optional)"
+                  value={description}
+                  onChangeText={(text: string) => setDescription(text)}
+                />
+              </YStack>
+
+              <YStack paddingTop="$5">
+                <Button
+                  theme="active"
+                  disabled={loading}
+                  onPress={createNewGame}
+                  size="$5"
+                >
+                  {loading ? "Loading..." : "Publish"}
+                </Button>
+              </YStack>
             </YStack>
-
-            <YStack>
-              <Label size="$5">Sport</Label>
-              <Select value={sport} onValueChange={setSport}>
-                <Select.Trigger iconAfter={ChevronDown}>
-                  <Select.Value placeholder="Select a sport..." />
-                </Select.Trigger>
-
-                <Adapt when="sm" platform="touch">
-                  <Sheet
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                      type: "spring",
-                      damping: 20,
-                      mass: 1.2,
-                      stiffness: 250,
-                    }}
-                  >
-                    <Sheet.Frame>
-                      <Sheet.ScrollView>
-                        <Adapt.Contents />
-                      </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                      animation="lazy"
-                      enterStyle={{ opacity: 0 }}
-                      exitStyle={{ opacity: 0 }}
-                    />
-                    <Sheet.Overlay />
-                  </Sheet>
-                </Adapt>
-
-                <Select.Content>
-                  <Select.ScrollUpButton />
-                  <Select.Viewport>
-                    <Select.Group>
-                      <Select.Label>Sports</Select.Label>
-                      {useMemo(
-                        () =>
-                          sports.map((sport, i) => {
-                            return (
-                              <Select.Item
-                                index={i}
-                                key={sport.name}
-                                value={sport.name.toLowerCase()}
-                              >
-                                <Select.ItemText>{sport.name}</Select.ItemText>
-                                <Select.ItemIndicator marginLeft="auto">
-                                  <Check size={16} />
-                                </Select.ItemIndicator>
-                              </Select.Item>
-                            );
-                          }),
-                        [sports],
-                      )}
-                    </Select.Group>
-                  </Select.Viewport>
-                  <Select.ScrollDownButton />
-                </Select.Content>
-              </Select>
-            </YStack>
-
-            <YStack>
-              <Label size="$5">Skill Level</Label>
-              <RadioGroup
-                aria-labelledby="Select one item"
-                defaultValue="3"
-                name="form"
-                value={skillLevel}
-                onValueChange={setSkillLevel}
-              >
-                <YStack>
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"0"}
-                      id={`skill-level-${SkillLevel.Beginner}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
-
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Beginner}`}
-                    >
-                      {"Beginner"}
-                    </Label>
-                  </XStack>
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"1"}
-                      id={`skill-level-${SkillLevel.Intermediate}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
-
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Intermediate}`}
-                    >
-                      {"Intermediate"}
-                    </Label>
-                  </XStack>
-
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"2"}
-                      id={`skill-level-${SkillLevel.Advanced}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
-
-                    <Label
-                      size={2}
-                      htmlFor={`skill-level-${SkillLevel.Advanced}`}
-                    >
-                      {"Advanced"}
-                    </Label>
-                  </XStack>
-                </YStack>
-              </RadioGroup>
-            </YStack>
-
-            <XStack space="$4" alignItems="center">
-              <Label flex={1} size="$5" width={90}>
-                Player Limit
-              </Label>
-              <Input
-                flex={1}
-                size="$5"
-                defaultValue="1"
-                keyboardType="numeric"
-                value={playerLimit}
-                onChangeText={(text: string) => setPlayerLimit(text)}
-              />
-            </XStack>
-
-            <YStack space="$1">
-              <Label size="$5">Description</Label>
-              <TextArea
-                size="$5"
-                placeholder="Enter your game details (optional)"
-                value={description}
-                onChangeText={(text: string) => setDescription(text)}
-              />
-            </YStack>
-
-            <YStack paddingTop="$5">
-              <Button
-                theme="active"
-                disabled={loading}
-                onPress={() => createNewGame()}
-                size="$5"
-              >
-                {loading ? "Loading..." : "Publish"}
-              </Button>
-            </YStack>
-          </YStack>
         </ScrollView>
       ) : (
         <View className="p-12 text-center items-center flex-1 justify-center">

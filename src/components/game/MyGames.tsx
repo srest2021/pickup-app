@@ -1,49 +1,45 @@
 import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
 import { Alert, View } from "react-native";
-import useQueryGames from "../hooks/use-query-games";
-import { SizableText, Tabs, Text } from "tamagui";
-import GameThumbnail from "./game/GameThumbnail";
-import { useStore } from "../lib/store";
-import {
-  Toast,
-  ToastProvider,
-  ToastViewport,
-  useToastController,
-  useToastState,
-} from "@tamagui/toast";
+import useQueryGames from "../../hooks/use-query-games";
+import { Tabs, Text } from "tamagui";
+import GameThumbnail from "./GameThumbnail";
+import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [session] = useStore((state) => [state.session]);
-  const { myGames, feedGames, fetchMyGames, fetchAllGames } = useQueryGames();
+  const [session, myGames, clearMyGames] = useStore((state) => [
+    state.session,
+    state.myGames,
+    state.clearMyGames,
+  ]);
+  const { fetchMyGames, fetchAllGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
-  const [displayGames, setDisplayGames] = useState(myGames);
-  //const [isErrorToastVisible, setErrorToastVisible] = useState(false);
+
+  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
 
   useEffect(() => {
+    //console.log("the store in my games list: ",myGames)
     handleRefresh();
-  }, [myGamesToggle]);
+  }, [myGamesToggle, selectedMyGame]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     if (myGamesToggle === "myGames") {
       try {
+        //console.log("FETCHING GAMES")
         await fetchMyGames();
-        setDisplayGames(myGames);
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
-        setDisplayGames([]);
-        //setErrorToastVisible(true);
+        clearMyGames();
       }
     } else if (myGamesToggle === "joinedGames") {
       try {
         await fetchAllGames();
-        // setDisplayGames(feedGames); Temporary for right now until someone fixes use-query-games so the timestamptz converts.
+        // temporary for right now until we do query for joined games.
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
-        setDisplayGames([]);
-        //setErrorToastVisible(true);
+        clearMyGames();
       }
     }
     setRefreshing(false);
@@ -62,14 +58,18 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             <Tabs.List>
               <Tabs.Tab
                 width={200}
+                testID="my-games"
                 value="MyGames"
-                onInteraction={()=>{setMyGamesToggle("myGames");}}
+                onInteraction={() => {
+                  setMyGamesToggle("myGames");
+                }}
               >
                 <Text>My Games</Text>
               </Tabs.Tab>
               <Separator vertical></Separator>
               <Tabs.Tab
                 width={200}
+                testID="joined-games"
                 value="JoinedGames"
                 onInteraction={() => {
                   setMyGamesToggle("joinedGames");
@@ -90,16 +90,24 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             }}
             contentContainerStyle={{ paddingTop: 20 }}
           >
-            {refreshing && <Spinner size="small" color="#ff7403" />}
-            <YStack space="$5" paddingTop={5} paddingBottom="$5">
-              {displayGames.map((myGame) => (
-                <GameThumbnail
-                  navigation={navigation}
-                  game={myGame}
-                  key={myGame.id}
-                />
-              ))}
-            </YStack>
+            {refreshing && (
+              <Spinner size="small" color="#ff7403" testID="spinner" />
+            )}
+            {myGames.length > 0 ? (
+              <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                {myGames.map((myGame) => (
+                  <GameThumbnail
+                    navigation={navigation}
+                    game={myGame}
+                    key={myGame.id}
+                  />
+                ))}
+              </YStack>
+            ) : (
+              <View className="p-12 text-center items-center flex-1 justify-center">
+                <H4>No games yet</H4>
+              </View>
+            )}
           </ScrollView>
         </View>
       ) : (
@@ -107,19 +115,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
           <H4>Loading...</H4>
         </View>
       )}
-      {/* {isErrorToastVisible && (
-        <Toast>
-          <YStack>
-            <Toast.Title>
-              Error fetching games
-            </Toast.Title>
-            <Toast.Description>
-              Please try again later.
-            </Toast.Description>
-          </YStack>
-          <Toast.Close onPress={() => setErrorToastVisible(false)} />
-        </Toast>
-      )} */}
     </>
   );
 };

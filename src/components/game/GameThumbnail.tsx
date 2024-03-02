@@ -1,6 +1,17 @@
 import { Game, sports } from "../../lib/types";
-import { Button, Card, H4, H5, H6, Image, View, Paragraph } from "tamagui";
+import {
+  Button,
+  Card,
+  H4,
+  H5,
+  H6,
+  Image,
+  View,
+  Paragraph,
+  XStack,
+} from "tamagui";
 import GameSkillView from "./GameSkillView";
+import { useStore } from "../../lib/store";
 
 export default function GameThumbnail({
   navigation,
@@ -9,6 +20,8 @@ export default function GameThumbnail({
   navigation: any;
   game: Game;
 }) {
+  const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame]);
+
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
     hour: "numeric",
@@ -29,32 +42,52 @@ export default function GameThumbnail({
     }
   }
 
+  const abbrevDescription =
+    game.description.length > 100
+      ? game.description.substring(0, 100) + "..."
+      : game.description;
+
   return (
     <View paddingLeft="$5" paddingRight="$5">
       <Card elevate size="$5">
         <Card.Header padded>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          <XStack
+            style={{ justifyContent: "space-between", overflow: "hidden" }}
           >
-            <View alignItems="baseline" marginRight={30}>
-              <H4>{game.title}</H4>
-              <H4>{date}</H4>
+            <View style={{ flex: 1 }}>
+              <H4 testID="game-title">{game.title}</H4>
+              <H4 testID="game-date">{date}</H4>
               <H5>{time}</H5>
             </View>
-            <View style={{ alignItems: "flex-end" }}>
+            <View style={{ objectPosition: "absolute" }}>
               <Button
                 style={{ backgroundColor: "#ff7403" }}
-                onPress={() => navigation.navigate("MyGameView", { game })}
+                onPress={() => {
+                  const gameId = game.id;
+                  setSelectedMyGame(game);
+                  navigation.navigate("MyGameView", { gameId });
+                }}
               >
-                <H5>View</H5>
+                <H5 testID="view-button">View</H5>
               </Button>
             </View>
-          </View>
+          </XStack>
         </Card.Header>
-        <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
-          <Paragraph fontWeight="600" fontSize="$6">X Miles away</Paragraph>
-          <Paragraph fontWeight="500" marginRight={95}>
-            {game.description}
+        <View
+          space="$2"
+          alignSelf="baseline"
+          marginLeft={25}
+          style={{ flex: 0.5 }}
+        >
+          <Paragraph fontWeight="600" fontSize="$6">
+            X miles away
+          </Paragraph>
+          <Paragraph
+            fontWeight="500"
+            marginRight={95}
+            testID="game-description"
+          >
+            {abbrevDescription}
           </Paragraph>
         </View>
         <Card.Footer padded>
@@ -66,9 +99,13 @@ export default function GameThumbnail({
               flex: 1,
             }}
           >
-            <GameSkillView sport={game.sport} />
+            <XStack padding="$1.5" space="$1.5">
+              <H6>Skill:</H6>
+              <GameSkillView sport={game.sport} />
+            </XStack>
+
             <H6 style={{ position: "absolute", right: 0 }}>
-              0/{game.maxPlayers} players
+              {game.currentPlayers}/{game.maxPlayers} players
             </H6>
           </View>
         </Card.Footer>
@@ -78,6 +115,7 @@ export default function GameThumbnail({
               <Image
                 resizeMode="contain"
                 alignSelf="center"
+                testID="game-thumbnail-image"
                 source={{
                   width: 170,
                   height: 170,

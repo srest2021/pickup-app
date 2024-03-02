@@ -10,50 +10,37 @@ import {
   Text,
   Button,
   ScrollView,
+  H6,
+  Circle,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
-import { SkillLevel } from "../../lib/types";
+import { Game } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
+import GameSkillView from "./GameSkillView";
+import useQueryGames from "../../hooks/use-query-games";
+import { useEffect, useState } from "react";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { game } = route.params;
-  const { title, description, datetime, address, sport, maxPlayers } = game;
+  const { gameId } = route.params;
+  //console.log("GOING TO GAME VIEW");
 
+  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
+  const { fetchGameById } = useQueryGames();
   const { removeGameById } = useMutationGame();
 
-  // Convert datetime to a readable string
-  const displayDate = new Date(datetime).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-    // hour: "2-digit",
-    // minute: "2-digit",
-  });
-  const displayTime = new Date(datetime).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const getGame = async () => {
+    await fetchGameById(gameId);
+  };
 
-  function getSkillLevelString(skillLevel: SkillLevel): string {
-    switch (skillLevel) {
-      case SkillLevel.Beginner:
-        return "Beginner";
-      case SkillLevel.Intermediate:
-        return "Intermediate";
-      case SkillLevel.Advanced:
-        return "Advanced";
-      default:
-        return "Unknown";
-    }
-  }
+  useEffect(() => {
+    getGame();
+  }, [selectedMyGame]);
 
   function deleteGame() {
-    removeGameById(game.id);
-
-    // If successful navigate back to myGames list.
+    removeGameById(gameId);
+    // navigate back to myGames list.
     navigation.goBack();
     // TODO: Add success toast
   }
@@ -61,83 +48,112 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   return (
     <View>
       {session && session.user && user ? (
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="p-12">
-            <YStack>
-              <YStack alignItems="center">
-                <H4 textAlign="center">{game.title}</H4>
-              </YStack>
-
-              <YStack paddingTop="$3" alignItems="center">
-                <H5>{displayDate}</H5>
-                <H5>at {displayTime}</H5>
-              </YStack>
-
-              <YStack alignItems="center">
-                <SizableText alignItems="center" padding="$5" size="$4">
-                  by @{user.username}
-                </SizableText>
-              </YStack>
-
-              {description && (
-                <YStack paddingTop="$3" paddingBottom="$7">
-                  <Card elevate size="$5">
-                    <View marginLeft={25} marginRight={25}>
-                      <SizableText
-                        size="$5"
-                        fontWeight="500"
-                        paddingTop="$3"
-                        paddingBottom="$3"
-                      >
-                        {description}
-                      </SizableText>
-                    </View>
-                  </Card>
+        selectedMyGame ? (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="p-12">
+              <YStack>
+                <YStack alignItems="center">
+                  <H4 textAlign="center">{selectedMyGame.title}</H4>
                 </YStack>
-              )}
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={90}>
-                  Address
-                </Label>
-                <SizableText flex={1} size="$5">
-                  {game.address}
-                </SizableText>
-              </XStack>
+                <YStack paddingTop="$3" alignItems="center">
+                  <H5>
+                    {new Date(selectedMyGame.datetime).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        weekday: "short",
+                        // hour: "2-digit",
+                        // minute: "2-digit",
+                      },
+                    )}
+                  </H5>
+                  <H5>
+                    at{" "}
+                    {new Date(selectedMyGame.datetime).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      },
+                    )}
+                  </H5>
+                </YStack>
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={90}>
-                  Sport
-                </Label>
-                <SizableText flex={1} size="$5">
-                  {game.sport.name}
-                </SizableText>
-              </XStack>
+                <YStack alignItems="center">
+                  <SizableText alignItems="center" padding="$5" size="$4">
+                    by @{user.username}
+                  </SizableText>
+                </YStack>
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={90}>
-                  Skill Level
-                </Label>
-                <SizableText flex={1} size="$5">
-                  {getSkillLevelString(game.sport.skillLevel)}
-                </SizableText>
-              </XStack>
+                {selectedMyGame.description && (
+                  <YStack paddingTop="$3" paddingBottom="$7">
+                    <Card elevate size="$5">
+                      <View marginLeft={25} marginRight={25}>
+                        <SizableText
+                          size="$5"
+                          fontWeight="500"
+                          paddingTop="$3"
+                          paddingBottom="$3"
+                        >
+                          {selectedMyGame.description}
+                        </SizableText>
+                      </View>
+                    </Card>
+                  </YStack>
+                )}
 
-              <XStack space="$3" paddingTop="$5">
-                <Button
-                  theme="active"
-                  flex={1}
-                  onPress={() => navigation.navigate("EditGame", { game })}
-                >
-                  Edit
-                </Button>
-                <Button theme="active" flex={1} onPress={() => deleteGame()}>
-                  Delete
-                </Button>
-              </XStack>
-            </YStack>
+                <YStack space="$4">
+                  <XStack space="$2" alignItems="left">
+                    <Label size="$5" width={90}>
+                      <H6>Address:</H6>
+                    </Label>
+                    <SizableText flex={1} size="$5">
+                      {`${selectedMyGame.address}, ${selectedMyGame.city}, ${selectedMyGame.state} ${selectedMyGame.zip}`}
+                    </SizableText>
+                  </XStack>
+
+                  <XStack space="$2" alignItems="center">
+                    <Label size="$5" width={90}>
+                      <H6>Sport:</H6>
+                    </Label>
+                    <SizableText flex={1} size="$5">
+                      {selectedMyGame.sport.name}
+                    </SizableText>
+                  </XStack>
+
+                  <XStack space="$2" alignItems="center">
+                    <Label size="$5" width={90}>
+                      <H6>Skill:</H6>
+                    </Label>
+                    <GameSkillView sport={selectedMyGame.sport} />
+                  </XStack>
+                </YStack>
+
+                <XStack space="$3" paddingTop="$6">
+                  <Button
+                    theme="active"
+                    flex={1}
+                    onPress={() => {
+                      navigation.navigate("EditGame", { gameId });
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button theme="active" flex={1} onPress={() => deleteGame()}>
+                    Delete
+                  </Button>
+                </XStack>
+              </YStack>
+            </View>
+          </ScrollView>
+        ) : (
+          <View className="p-12 text-center items-center flex-1 justify-center">
+            <H4>Loading...</H4>
           </View>
-        </ScrollView>
+        )
       ) : (
         <View className="p-12 text-center items-center flex-1 justify-center">
           <H4>Log in to view and edit this game!</H4>
