@@ -7,18 +7,18 @@ import {
 import EditGame from "../../../src/components/game/EditGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
-// import { editGameById } from "../../../src/hooks/use-mutation-game";
+import "@testing-library/jest-dom";
+// import useMutationGame from "../../../src/hooks/use-mutation-game";
 
 // Mock dependencies
 jest.mock("../../../src/hooks/use-mutation-user", () => () => ({
   user: {}, // Mock user object as needed for the test
 }));
 const mockEditGameById = jest.fn();
-jest.mock("../../../src/hooks/use-mutation-game", () => ({
-  useMutationGame: jest.fn(() => ({
-    editGameById: mockEditGameById,
-  })),
+jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
+  editGameById: mockEditGameById,
 }));
+
 
 describe("EditGame", () => {
   it("should render successfully", () => {

@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import AddGame from "../../../src/components/game/AddGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
+import "@testing-library/jest-dom";
 
 
 jest.mock("../../../src/lib/store", () => ({
