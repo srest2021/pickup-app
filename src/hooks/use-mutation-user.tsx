@@ -2,10 +2,10 @@ import { useStore } from "../lib/store";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { User } from "../lib/types";
+import { SkillLevel, User, UserSport } from "../lib/types";
 
 function useMutationUser() {
-  const [session, user, setSession, setLoading, setUser, editUser] = useStore(
+  const [session, user, setSession, setLoading, setUser, editUser, addUserSport, setUserSports] = useStore(
     (state) => [
       state.session,
       state.user,
@@ -13,6 +13,8 @@ function useMutationUser() {
       state.setLoading,
       state.setUser,
       state.editUser,
+      state.addUserSport,
+      state.setUserSports
     ],
   );
 
@@ -66,9 +68,10 @@ function useMutationUser() {
             id: sport.id,
             name: sport.name,
             skillLevel: sport.skill_level,
-          })),
+          } as UserSport)),
         };
         setUser(user);
+        setUserSports(user.sports);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -78,6 +81,45 @@ function useMutationUser() {
       setLoading(false);
     }
   };
+
+  const addSport = async (
+    sportName: string,
+    sportSkillLevel: SkillLevel
+  ) => {
+    try {
+      console.log("ADDING SPORT")
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+      
+      const updates = {
+        user_id: session?.user.id,
+        name: sportName,
+        skill_level: Number(sportSkillLevel),
+      }
+      //console.log("UPDATES: ",updates)
+      const { data, error } = await supabase.from("sports").insert(updates).select();
+      //console.log("ERROR: ", error?.message)
+      if (error) {
+        throw error;
+      }
+      console.log("DATA: ",data)
+
+      if (data && data[0]) {
+        const userSport: UserSport = {
+            id: data[0].id,
+            name: data[0].name,
+            skillLevel: data[0].skill_level,
+        };
+        addUserSport(userSport);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const updateProfile = async (
     display_name: string,
@@ -106,7 +148,6 @@ function useMutationUser() {
         displayName: display_name,
         bio: bio,
         avatarUrl: avatar_url,
-        //sports
       };
       editUser(updatedUser);
     } catch (error) {
@@ -118,7 +159,7 @@ function useMutationUser() {
     }
   };
 
-  return { session, user, getProfile, updateProfile };
+  return { session, user, getProfile, updateProfile, addSport };
 }
 
 export default useMutationUser;

@@ -15,45 +15,23 @@ import {
     Select
   } from 'tamagui'
 import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
-import { View } from 'react-native';
-import { SkillLevel } from "../../lib/types";
-import { useState, useEffect, useMemo } from 'react';
-import React from 'react';
+import { SkillLevel, sports } from "../../lib/types";
+import { useState, useMemo } from 'react';
+import { useStore } from '../../lib/store';
+import { Alert } from 'react-native';
 
-const sportsOptions = [
-  { name: 'Football' },
-  { name: 'Basketball' },
-  { name: 'Soccer' },
-  { name: 'Baseball' },
-  // Add more sports options as needed
-];
-
-
-
-const AddSport = ({ sports, onSportSelect }) => {
+const AddSport = ({ onSportSelect }: {onSportSelect: any}) => {
     const [skillLevel, setSkillLevel] = useState("0");
-    const [sport, setSport] = useState(sportsOptions[0].name);
-    //const [sport, setSport] = useState(sports[0].name); //make sure this is the user sport not game sport!!
-    //above the select trigger for choose a sport: <Select value={sport} onValueChange={setSport}>
-    
-    //const addSport = (sportName) => {
-      // Function to add a sport to the options
-      //setSportsOptions([...sportsOptions, { name: sportName }]);
-    //};
-
-    const handleSportChange = (selectedSport) => {
-      setSport(selectedSport);
-    };
+    const [userSports] = useStore((state) => [state.userSports])
+    const [sportName, setSportName] = useState(sports[0].name);
 
     const handleSave = () => {
       // Check if the selected sport is not already in the user's sports array
-      if (!sports.some((userSport) => userSport.name === sport)) {
-        // Assuming SkillLevel is "0" for simplicity
-        const newSport = { name: sport, skill_level: "0" };
-  
+      if (!userSports.some((userSport) => userSport.name === sportName)) {
         // Call the onSportSelect prop with the selected sport
-        onSportSelect(newSport);
-        //setUserSports([...userSports, newSport]);
+        onSportSelect(sportName, convertSkillLevel());
+      } else {
+        Alert.alert("You already have this sport!");
       }
     };
 
@@ -112,7 +90,7 @@ const AddSport = ({ sports, onSportSelect }) => {
                 Select Sport
               </Label>
 
-            <Select value={sport} onValueChange={(selectedSport) => handleSportChange(selectedSport)} >
+            <Select value={sportName} onValueChange={(selectedSport) => setSportName(selectedSport)} >
             <Select.Trigger iconAfter={ChevronDown}>
               <Select.Value placeholder="Select a sport..." />
             </Select.Trigger>
@@ -149,7 +127,7 @@ const AddSport = ({ sports, onSportSelect }) => {
                 <Select.Label>Sports</Select.Label>
                   {useMemo(
                     () =>
-                      sportsOptions.map((sport, i) => {
+                      sports.map((sport, i) => {
                         return (
                         <Select.Item
                           index={i}
@@ -163,7 +141,7 @@ const AddSport = ({ sports, onSportSelect }) => {
                         </Select.Item>
                         );
                         }),
-                    [sportsOptions],
+                    [sports],
                   )}
                 </Select.Group>
               </Select.Viewport>

@@ -9,9 +9,6 @@ import { useStore } from "../../lib/store";
 import { Dimensions } from 'react-native';
 import { Edit3 } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
-import { SkillLevel, Sport } from "../../lib/types";
-
-
 
 // Get the height of the screen
 const windowHeight = Dimensions.get('window').height;
@@ -22,17 +19,14 @@ const windowHeight = Dimensions.get('window').height;
 const topThirdHeight = windowHeight / 4;
 
 export default function Profile({ navigation }) {
-  const [loading] = useStore((state) => [state.loading]);
-  const [isAddSportOpen, setAddSportOpen] = useState(false);
-  const [userSports, setUserSports] = useState([]);
+  const [loading, user, userSports] = useStore((state) => [state.loading, state.user, state.userSports]);
+  //const [user] = useStore((state) => [state.user]);
+  const { addSport } = useMutationUser();
 
-  //const { user } = useMutationUser();
-  const { user, updateProfile } = useMutationUser();
-
-  const handleSportSelect = (newSport) => {
+  const handleSportSelect = (sportName: string, sportSkillLevel: number) => {
     // Handle the new sport as needed
-    console.log("handlesportselect");
-    updateProfile(undefined, undefined, undefined, [...user.sports, newSport]);
+    console.log("HANDLE SPORT SELECT", sportName, sportSkillLevel);
+    addSport(sportName, sportSkillLevel)
   };
 
   /*
@@ -57,13 +51,13 @@ export default function Profile({ navigation }) {
   };
   */
 
-  const openAddSport = () => {
-    setAddSportOpen(true);
-  };
+  // const openAddSport = () => {
+  //   setAddSportOpen(true);
+  // };
 
-  const closeAddSport = () => {
-    setAddSportOpen(false);
-  };
+  // const closeAddSport = () => {
+  //   setAddSportOpen(false);
+  // };
 
   return (
     <View style={{ flex: 1 }}>
@@ -115,8 +109,8 @@ export default function Profile({ navigation }) {
             </Text>
           </View>
 
-          <Sports sports={user.sports} />
-          <AddSport sports={user.sports} onSportSelect={handleSportSelect}/>
+          <Sports sports={userSports} />
+          <AddSport onSportSelect={handleSportSelect}/>
           
         </View>
       ) : (

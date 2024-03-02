@@ -7,16 +7,17 @@ import { useStore } from "../../lib/store";
 import useMutationUser from "../../hooks/use-mutation-user";
 
 export default function EditProfile() {
-  const [loading] = useStore((state) => [state.loading]);
+  const [session, loading, user] = useStore((state) => [state.session, state.loading, state.user]);
 
-  const { session, user, updateProfile } = useMutationUser();
+  const { updateProfile } = useMutationUser();
 
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [bio, setBio] = useState(user?.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
 
   return (
-    <View style={{ backgroundColor: "white", flex: 1}}>
+    //<View className="p-12">
+    <View style={{ backgroundColor: "white", flex: 1, padding:35 }}>
       {user ? (
         <ScrollView
         style={{ flex: 1 }}
