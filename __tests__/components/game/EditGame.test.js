@@ -77,7 +77,7 @@ describe("EditGame", () => {
     fireEvent.press(getByText("Edit"));
 
     // Wait for the edit function to be called
-    await waitFor(() => () => {
+    await waitFor(() => {
       expect(editGameById).toHaveBeenCalledWith(
         "gameId", // Ensure that the correct game ID is passed
         expect.any(String), // Add more specific checks for other arguments as needed
