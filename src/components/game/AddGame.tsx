@@ -201,34 +201,13 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               />
             </YStack>
 
-            <YStack space="$1">
-              <Label size="$5">State/ZIP</Label>
-              <XStack space="$3">
-                <Input
-                  flex={1}
-                  size="$5"
-                  placeholder="Homewood"
-                  value={address}
-                  onChangeText={(text: string) => setAddress(text)}
-                />
-                <Input
-                  flex={1}
-                  size="$5"
-
-                  placeholder="Baltimore"
-                  value={city}
-                  onChangeText={(text: string) => setCity(text)}
-                />
-                </XStack>
-              </YStack>
-
               <YStack space="$1">
                 <Label size="$5">State/ZIP</Label>
                 <XStack space="$3">
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="MD"
+                    placeholder="State"
                     value={state}
                     //keyboardType="numeric"
                     onChangeText={(text: string) => setState(text)}
@@ -236,7 +215,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="21218"
+                    placeholder="Zip"
                     value={zip}
                     keyboardType="numeric"
                     onChangeText={(text: string) => setZip(text)}
