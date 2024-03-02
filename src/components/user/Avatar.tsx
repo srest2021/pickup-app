@@ -130,7 +130,7 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
             backgroundColor= "#d3d4d3"
             variant="outlined"
           >
-          Upload
+          {uploading ? "Uploading ..." : "Upload"}
           </Button>
           </View>
       )}

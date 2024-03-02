@@ -173,6 +173,7 @@ function useMutationUser() {
   } 
 
   const updateProfile = async (
+    username: string,
     display_name: string,
     bio: string,
     avatar_url: string,
@@ -183,12 +184,14 @@ function useMutationUser() {
 
       const updates = {
         id: session?.user.id,
+        username,
         display_name,
         bio,
         avatar_url,
         updated_at: new Date(),
       };
       const { error } = await supabase.from("profiles").upsert(updates);
+      //console.log(error)
 
       if (error) {
         throw error;

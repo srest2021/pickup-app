@@ -51,7 +51,7 @@ export default function EditProfile() {
               url={user.avatarUrl}
               onUpload={(url: string) => {
                 setAvatarUrl(url);
-                updateProfile(displayName, bio, avatarUrl);
+                updateProfile(user.username, displayName, bio, avatarUrl);
               }}
               allowUpload={true}
             />
@@ -64,7 +64,7 @@ export default function EditProfile() {
               borderColor="#ff7403"
               variant="outlined"
               disabled={loading}
-              onPress={() => updateProfile(displayName, bio, avatarUrl)}
+              onPress={() => updateProfile(user.username,  displayName, bio, avatarUrl)}
               size="$5"
               width="94%"
             >
