@@ -174,7 +174,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="Address"
+                  placeholder="Homewood"
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
                 />
@@ -185,7 +185,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="City"
+                  placeholder="Baltimore"
                   value={city}
                   onChangeText={(text: string) => setCity(text)}
                 />
@@ -197,7 +197,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="State"
+                    placeholder="MD"
                     value={state}
                     //keyboardType="numeric"
                     onChangeText={(text: string) => setState(text)}
@@ -205,7 +205,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="ZIP code"
+                    placeholder="21218"
                     value={zip}
                     keyboardType="numeric"
                     onChangeText={(text: string) => setZip(text)}

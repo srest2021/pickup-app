@@ -69,11 +69,8 @@ export default function GameThumbnail({
           </View>
         </Card.Header>
         <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
-          <Paragraph
-            fontWeight="500"
-            marginRight={95}
-            testID="game-description"
-          >
+          <Paragraph fontWeight="600" fontSize="$6">X miles away</Paragraph>
+          <Paragraph fontWeight="500" marginRight={95} testID="game-description">
             {game.description}
           </Paragraph>
         </View>
