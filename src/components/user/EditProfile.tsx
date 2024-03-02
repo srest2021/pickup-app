@@ -16,14 +16,21 @@ export default function EditProfile() {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
 
   return (
-    <View>
+    <View style={{ backgroundColor: "white", flex: 1}}>
       {user ? (
-        <ScrollView className="p-12 mt-0">
-          <View className="py-4 self-stretch">
+        <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          flexGrow: 1, 
+          justifyContent: 'space-between', 
+          backgroundColor: "#ffffff",
+        }}
+      >
+          <View className="self-stretch py-4">
             <Input label="Email" value={session?.user?.email} disabled />
           </View>
 
-          <View className="py-4 self-stretch">
+          <View className="self-stretch py-4">
             <Input
               label="Display Name"
               value={displayName}
@@ -31,7 +38,7 @@ export default function EditProfile() {
             />
           </View>
 
-          <View className="py-4 self-stretch">
+          <View className="self-stretch py-4">
             <Input
               label="Bio"
               value={bio}
@@ -50,12 +57,16 @@ export default function EditProfile() {
             />
           </View>
 
-          <YStack space="$6" paddingTop="$5">
+          <YStack space="$6" paddingTop="$5" alignItems="center">
             <Button
               theme="active"
+              color="#ff7403"
+              borderColor="#ff7403"
+              variant="outlined"
               disabled={loading}
               onPress={() => updateProfile(displayName, bio, avatarUrl)}
               size="$5"
+              width="94%"
             >
               {loading ? "Loading..." : "Update"}
             </Button>

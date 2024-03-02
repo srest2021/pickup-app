@@ -30,7 +30,7 @@ const sportsOptions = [
 
 
 
-const AddSport = () => {
+const AddSport = ({ sports, onSportSelect }) => {
     const [skillLevel, setSkillLevel] = useState("0");
     const [sport, setSport] = useState(sportsOptions[0].name);
     //const [sport, setSport] = useState(sports[0].name); //make sure this is the user sport not game sport!!
@@ -40,6 +40,22 @@ const AddSport = () => {
       // Function to add a sport to the options
       //setSportsOptions([...sportsOptions, { name: sportName }]);
     //};
+
+    const handleSportChange = (selectedSport) => {
+      setSport(selectedSport);
+    };
+
+    const handleSave = () => {
+      // Check if the selected sport is not already in the user's sports array
+      if (!sports.some((userSport) => userSport.name === sport)) {
+        // Assuming SkillLevel is "0" for simplicity
+        const newSport = { name: sport, skill_level: "0" };
+  
+        // Call the onSportSelect prop with the selected sport
+        onSportSelect(newSport);
+        //setUserSports([...userSports, newSport]);
+      }
+    };
 
     function convertSkillLevel(): number {
       if (skillLevel === "0") {
@@ -96,7 +112,7 @@ const AddSport = () => {
                 Select Sport
               </Label>
 
-            <Select value={sport} onValueChange={(selectedSport) => setSport(selectedSport)} >
+            <Select value={sport} onValueChange={(selectedSport) => handleSportChange(selectedSport)} >
             <Select.Trigger iconAfter={ChevronDown}>
               <Select.Value placeholder="Select a sport..." />
             </Select.Trigger>
@@ -219,7 +235,7 @@ const AddSport = () => {
   
             <XStack alignSelf="flex-end" gap="$4">
               <Dialog.Close displayWhenAdapted asChild>
-                <Button theme="active" aria-label="Close">
+                <Button theme="active" aria-label="Close" onPress={handleSave}>
                   Save
                 </Button>
               </Dialog.Close>

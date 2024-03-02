@@ -24,10 +24,18 @@ const topThirdHeight = windowHeight / 4;
 export default function Profile({ navigation }) {
   const [loading] = useStore((state) => [state.loading]);
   const [isAddSportOpen, setAddSportOpen] = useState(false);
+  const [userSports, setUserSports] = useState([]);
 
   //const { user } = useMutationUser();
   const { user, updateProfile } = useMutationUser();
 
+  const handleSportSelect = (newSport) => {
+    // Handle the new sport as needed
+    console.log("handlesportselect");
+    updateProfile(undefined, undefined, undefined, [...user.sports, newSport]);
+  };
+
+  /*
   useEffect(() => {
     // Make sure user is not undefined to avoid unnecessary calls
     if (user) {
@@ -47,6 +55,7 @@ export default function Profile({ navigation }) {
       updateProfile(undefined, undefined, undefined, [...user.sports, newSport]);
     }
   };
+  */
 
   const openAddSport = () => {
     setAddSportOpen(true);
@@ -107,7 +116,7 @@ export default function Profile({ navigation }) {
           </View>
 
           <Sports sports={user.sports} />
-          <AddSport onSportSelect={handleAddSport} userSports={user.sports} />
+          <AddSport sports={user.sports} onSportSelect={handleSportSelect}/>
           
         </View>
       ) : (
