@@ -21,43 +21,13 @@ const topThirdHeight = windowHeight / 4;
 export default function Profile({ navigation }) {
   const [loading, user, userSports] = useStore((state) => [state.loading, state.user, state.userSports]);
   //const [user] = useStore((state) => [state.user]);
-  const { addSport } = useMutationUser();
+  const { setSport } = useMutationUser();
 
   const handleSportSelect = (sportName: string, sportSkillLevel: number) => {
     // Handle the new sport as needed
     console.log("HANDLE SPORT SELECT", sportName, sportSkillLevel);
-    addSport(sportName, sportSkillLevel)
+    setSport(sportName, sportSkillLevel)
   };
-
-  /*
-  useEffect(() => {
-    // Make sure user is not undefined to avoid unnecessary calls
-    if (user) {
-      // Your logic to update the user's profile
-      console.log('User updated:', user);
-    }
-  }, [user]);
-
-  const handleAddSport = (selectedSport: string) => {
-    console.log("entered");
-    // Check if the selected sport is not already in the user's sports array
-    if (!user.sports.some((sport) => sport.name === selectedSport)) {
-
-      const newSport: Sport = { id: "1", name: selectedSport, skillLevel: SkillLevel.Beginner };
-
-      // Call the updateUser mutation to update the user's data
-      updateProfile(undefined, undefined, undefined, [...user.sports, newSport]);
-    }
-  };
-  */
-
-  // const openAddSport = () => {
-  //   setAddSportOpen(true);
-  // };
-
-  // const closeAddSport = () => {
-  //   setAddSportOpen(false);
-  // };
 
   return (
     <View style={{ flex: 1 }}>

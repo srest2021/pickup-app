@@ -27,12 +27,13 @@ const AddSport = ({ onSportSelect }: {onSportSelect: any}) => {
 
     const handleSave = () => {
       // Check if the selected sport is not already in the user's sports array
-      if (!userSports.some((userSport) => userSport.name === sportName)) {
-        // Call the onSportSelect prop with the selected sport
-        onSportSelect(sportName, convertSkillLevel());
-      } else {
-        Alert.alert("You already have this sport!");
-      }
+      // if (!userSports.some((userSport) => userSport.name === sportName)) {
+      //   // Call the onSportSelect prop with the selected sport
+      //   onSportSelect(sportName, convertSkillLevel());
+      // } else {
+      //   Alert.alert("You already have this sport!");
+      // }
+      onSportSelect(sportName, convertSkillLevel());
     };
 
     function convertSkillLevel(): number {
