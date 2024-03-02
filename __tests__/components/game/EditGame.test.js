@@ -19,6 +19,11 @@ jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
   editGameById: mockEditGameById,
 }));
 
+const testSport = {
+  name: "Basketball",
+  skillLevel: "Beginner"
+}
+
 const mockSelectedMyGame = {
   id: "gameId",
   title: "Test Title",
@@ -27,7 +32,7 @@ const mockSelectedMyGame = {
   city: "Baltimore",
   state: "MD",
   zip: "21218",
-  sport: { name: "Basketball", skillLevel: "Beginner" },
+  sport: testSport,
   maxPlayers: 20,
   description: "Test Description",
 };
