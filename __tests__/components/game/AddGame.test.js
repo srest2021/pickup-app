@@ -1,4 +1,3 @@
-import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import AddGame from "../../../src/components/game/AddGame";
 import { TamaguiProvider } from "tamagui";
@@ -20,7 +19,9 @@ describe("AddGame", () => {
 
     const { getByPlaceholderText, getByText } = render(
       <TamaguiProvider config={appConfig}>
+        <ToastProvider>
         <AddGame navigation={navigation} />
+        </ToastProvider>
       </TamaguiProvider>
     );
 

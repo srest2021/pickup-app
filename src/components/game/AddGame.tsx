@@ -145,6 +145,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="Title"
+                testID="titleInput"
                 value={title}
                 onChangeText={(text: string) => setTitle(text)}
               />
@@ -159,6 +160,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 minimumDate={new Date()}
                 mode="date"
                 display="calendar"
+                testID="dateInput"
                 onChange={(event, datetime) => {
                   if (datetime) setDate(datetime);
                 }}
@@ -173,6 +175,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 value={time}
                 mode="time"
                 display="clock"
+                testID="timeInput"
                 onChange={(event, datetime) => {
                   if (datetime) setTime(datetime);
                 }}
@@ -185,6 +188,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="Address"
+                testID="addressInput"
                 value={address}
                 onChangeText={(text: string) => setAddress(text)}
               />
@@ -196,6 +200,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="City"
+                testID="cityInput"
                 value={city}
                 onChangeText={(text: string) => setCity(text)}
               />
@@ -208,6 +213,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   flex={1}
                   size="$5"
                   placeholder="Homewood"
+                  testID="addressInput"
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
                 />
