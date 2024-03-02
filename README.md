@@ -38,7 +38,7 @@ Our app allows users to organize, find, and join pick-up games in a convenient a
     npx expo run:android
     ```
 
-6. To login as a test user, use the following credentials:
+6. To login as a test user to the app, use the following credentials:
 
     ```shell
     email: admin@example.com
@@ -85,3 +85,10 @@ View the tutorial to set up Supabase local development [here](https://supabase.c
 5. To create a new migration file: `npx supabase migration new <migration-name>`. To reset the local database and run the migration: `npx supabase db reset`.
 
 6. To deploy a local database migration: `npx supabase db push`.
+
+### Create a development build
+
+Follow the instructions to cretae a build [here](https://docs.expo.dev/develop/development-builds/create-a-build/).
+
+1. For iOS: run `eas build --profile development-simulator --platform ios`. For Android: run `eas build --profile development --platform android`.
+2. Run `npx expo start --dev-client`.

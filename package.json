@@ -52,7 +52,8 @@
     "react-native-svg": "^14.1.0",
     "react-native-url-polyfill": "^2.0.0",
     "tamagui": "^1.90.7",
-    "zustand": "^4.5.1"
+    "zustand": "^4.5.1",
+    "expo-dev-client": "~3.3.9"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",
