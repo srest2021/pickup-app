@@ -16,7 +16,6 @@ export default function EditProfile() {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
 
   return (
-    //<View className="p-12">
     <View style={{ backgroundColor: "white", flex: 1, padding:35 }}>
       {user ? (
         <ScrollView

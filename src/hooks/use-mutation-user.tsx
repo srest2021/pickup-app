@@ -88,7 +88,7 @@ function useMutationUser() {
     sport: UserSport
   ) => {
     try {
-      console.log("EDITING SPORT")
+      //console.log("EDITING SPORT")
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
       
@@ -98,13 +98,13 @@ function useMutationUser() {
         name: sport.name,
         skill_level: sport.skillLevel,
       }
-      console.log("UPDATES: ",updates)
+      //console.log("UPDATES: ",updates)
       const { data, error } = await supabase.from("sports").upsert(updates).select();
-      console.log("ERROR: ", error?.message)
+      //console.log("ERROR: ", error?.message)
       if (error) {
         throw error;
       }
-      console.log("DATA: ",data)
+      //console.log("DATA: ",data)
 
       if (data && data[0]) {
         const userSport: UserSport = {
@@ -128,7 +128,6 @@ function useMutationUser() {
     sportSkillLevel: SkillLevel
   ) => {
     try {
-      console.log("ADDING SPORT")
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
       
@@ -137,13 +136,10 @@ function useMutationUser() {
         name: sportName,
         skill_level: Number(sportSkillLevel),
       }
-      //console.log("UPDATES: ",updates)
       const { data, error } = await supabase.from("sports").insert(updates).select();
-      //console.log("ERROR: ", error?.message)
       if (error) {
         throw error;
       }
-      console.log("DATA: ",data)
 
       if (data && data[0]) {
         const userSport: UserSport = {
@@ -180,7 +176,6 @@ function useMutationUser() {
     display_name: string,
     bio: string,
     avatar_url: string,
-    //sports: Sport[]
   ) => {
     try {
       setLoading(true);

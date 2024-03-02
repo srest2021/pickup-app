@@ -20,12 +20,10 @@ const topThirdHeight = windowHeight / 4;
 
 export default function Profile({ navigation }) {
   const [loading, user, userSports] = useStore((state) => [state.loading, state.user, state.userSports]);
-  //const [user] = useStore((state) => [state.user]);
   const { setSport } = useMutationUser();
 
   const handleSportSelect = (sportName: string, sportSkillLevel: number) => {
     // Handle the new sport as needed
-    console.log("HANDLE SPORT SELECT", sportName, sportSkillLevel);
     setSport(sportName, sportSkillLevel)
   };
 

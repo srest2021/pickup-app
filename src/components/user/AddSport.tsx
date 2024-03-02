@@ -17,22 +17,12 @@ import {
 import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
 import { useState, useMemo } from 'react';
-import { useStore } from '../../lib/store';
-import { Alert } from 'react-native';
 
 const AddSport = ({ onSportSelect }: {onSportSelect: any}) => {
     const [skillLevel, setSkillLevel] = useState("0");
-    const [userSports] = useStore((state) => [state.userSports])
     const [sportName, setSportName] = useState(sports[0].name);
 
     const handleSave = () => {
-      // Check if the selected sport is not already in the user's sports array
-      // if (!userSports.some((userSport) => userSport.name === sportName)) {
-      //   // Call the onSportSelect prop with the selected sport
-      //   onSportSelect(sportName, convertSkillLevel());
-      // } else {
-      //   Alert.alert("You already have this sport!");
-      // }
       onSportSelect(sportName, convertSkillLevel());
     };
 

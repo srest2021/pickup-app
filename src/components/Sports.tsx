@@ -10,9 +10,6 @@ export default function Sports({ sports }: { sports: any }) {
   const initialLoading = useStore((state) => state.loading);
   const initialUser = useStore((state) => state.user);
   const initialSports = useStore((state) => state.sports);
-
-  console.log("sports");
-  console.log(sports);
   return (
     <View>
       <Text className="text-lg font-bold" style={{paddingLeft: 12}}>My Sports</Text>
