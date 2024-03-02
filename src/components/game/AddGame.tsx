@@ -214,197 +214,194 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Input
                   flex={1}
                   size="$5"
-
                   placeholder="Baltimore"
                   value={city}
                   onChangeText={(text: string) => setCity(text)}
                 />
-                </XStack>
-              </YStack>
+              </XStack>
+            </YStack>
 
-              <YStack space="$1">
-                <Label size="$5">State/ZIP</Label>
-                <XStack space="$3">
-                  <Input
-                    flex={1}
-                    size="$5"
-                    placeholder="MD"
-                    value={state}
-                    //keyboardType="numeric"
-                    onChangeText={(text: string) => setState(text)}
-                  />
-                  <Input
-                    flex={1}
-                    size="$5"
-                    placeholder="21218"
-                    value={zip}
-                    keyboardType="numeric"
-                    onChangeText={(text: string) => setZip(text)}
-                  />
-                </XStack>
-              </YStack>
-
-              <YStack>
-                <Label size="$5">Sport</Label>
-                <Select value={sport} onValueChange={setSport}>
-                  <Select.Trigger iconAfter={ChevronDown}>
-                    <Select.Value placeholder="Select a sport..." />
-                  </Select.Trigger>
-
-                  <Adapt when="sm" platform="touch">
-                    <Sheet
-                      modal
-                      dismissOnSnapToBottom
-                      animationConfig={{
-                        type: "spring",
-                        damping: 20,
-                        mass: 1.2,
-                        stiffness: 250,
-                      }}
-                    >
-                      <Sheet.Frame>
-                        <Sheet.ScrollView>
-                          <Adapt.Contents />
-                        </Sheet.ScrollView>
-                      </Sheet.Frame>
-                      <Sheet.Overlay
-                        animation="lazy"
-                        enterStyle={{ opacity: 0 }}
-                        exitStyle={{ opacity: 0 }}
-                      />
-                      <Sheet.Overlay />
-                    </Sheet>
-                  </Adapt>
-
-                  <Select.Content>
-                    <Select.ScrollUpButton />
-                    <Select.Viewport>
-                      <Select.Group>
-                        <Select.Label>Sports</Select.Label>
-                        {useMemo(
-                          () =>
-                            sports.map((sport, i) => {
-                              return (
-                                <Select.Item
-                                  index={i}
-                                  key={sport.name}
-                                  value={sport.name}
-                                >
-                                  <Select.ItemText>
-                                    {sport.name}
-                                  </Select.ItemText>
-                                  <Select.ItemIndicator marginLeft="auto">
-                                    <Check size={16} />
-                                  </Select.ItemIndicator>
-                                </Select.Item>
-                              );
-                            }),
-                          [sports],
-                        )}
-                      </Select.Group>
-                    </Select.Viewport>
-                    <Select.ScrollDownButton />
-                  </Select.Content>
-                </Select>
-              </YStack>
-
-              <YStack>
-                <Label size="$5">Skill Level</Label>
-                <RadioGroup
-                  aria-labelledby="Select one item"
-                  defaultValue="3"
-                  name="form"
-                  value={skillLevel}
-                  onValueChange={setSkillLevel}
-                >
-                  <YStack>
-                    <XStack width={300} alignItems="center" space="$4">
-                      <RadioGroup.Item
-                        value={"0"}
-                        id={`skill-level-${SkillLevel.Beginner}`}
-                        size={2}
-                      >
-                        <RadioGroup.Indicator />
-                      </RadioGroup.Item>
-
-                      <Label
-                        size={2}
-                        htmlFor={`skill-level-${SkillLevel.Beginner}`}
-                      >
-                        {"Beginner"}
-                      </Label>
-                    </XStack>
-                    <XStack width={300} alignItems="center" space="$4">
-                      <RadioGroup.Item
-                        value={"1"}
-                        id={`skill-level-${SkillLevel.Intermediate}`}
-                        size={2}
-                      >
-                        <RadioGroup.Indicator />
-                      </RadioGroup.Item>
-
-                      <Label
-                        size={2}
-                        htmlFor={`skill-level-${SkillLevel.Intermediate}`}
-                      >
-                        {"Intermediate"}
-                      </Label>
-                    </XStack>
-
-                    <XStack width={300} alignItems="center" space="$4">
-                      <RadioGroup.Item
-                        value={"2"}
-                        id={`skill-level-${SkillLevel.Advanced}`}
-                        size={2}
-                      >
-                        <RadioGroup.Indicator />
-                      </RadioGroup.Item>
-
-                      <Label
-                        size={2}
-                        htmlFor={`skill-level-${SkillLevel.Advanced}`}
-                      >
-                        {"Advanced"}
-                      </Label>
-                    </XStack>
-                  </YStack>
-                </RadioGroup>
-              </YStack>
-
-              <XStack space="$4" alignItems="center">
-                <Label flex={1} size="$5" width={90}>
-                  Player Limit
-                </Label>
+            <YStack space="$1">
+              <Label size="$5">State/ZIP</Label>
+              <XStack space="$3">
                 <Input
                   flex={1}
                   size="$5"
-                  defaultValue="1"
+                  placeholder="MD"
+                  value={state}
+                  //keyboardType="numeric"
+                  onChangeText={(text: string) => setState(text)}
+                />
+                <Input
+                  flex={1}
+                  size="$5"
+                  placeholder="21218"
+                  value={zip}
                   keyboardType="numeric"
                   onChangeText={(text: string) => setZip(text)}
                 />
               </XStack>
-
-              <YStack space="$1">
-                <Label size="$5">Description</Label>
-                <TextArea
-                  size="$5"
-                  placeholder="Enter your game details (optional)"
-                  value={description}
-                  onChangeText={(text: string) => setDescription(text)}
-                />
-              </YStack>
-
-              <YStack paddingTop="$5">
-                <Button
-                  theme="active"
-                  disabled={loading}
-                  onPress={createNewGame}
-                  size="$5"
-                >
-                  {loading ? "Loading..." : "Publish"}
-                </Button>
-              </YStack>
             </YStack>
+
+            <YStack>
+              <Label size="$5">Sport</Label>
+              <Select value={sport} onValueChange={setSport}>
+                <Select.Trigger iconAfter={ChevronDown}>
+                  <Select.Value placeholder="Select a sport..." />
+                </Select.Trigger>
+
+                <Adapt when="sm" platform="touch">
+                  <Sheet
+                    modal
+                    dismissOnSnapToBottom
+                    animationConfig={{
+                      type: "spring",
+                      damping: 20,
+                      mass: 1.2,
+                      stiffness: 250,
+                    }}
+                  >
+                    <Sheet.Frame>
+                      <Sheet.ScrollView>
+                        <Adapt.Contents />
+                      </Sheet.ScrollView>
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                      animation="lazy"
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+                    <Sheet.Overlay />
+                  </Sheet>
+                </Adapt>
+
+                <Select.Content>
+                  <Select.ScrollUpButton />
+                  <Select.Viewport>
+                    <Select.Group>
+                      <Select.Label>Sports</Select.Label>
+                      {useMemo(
+                        () =>
+                          sports.map((sport, i) => {
+                            return (
+                              <Select.Item
+                                index={i}
+                                key={sport.name}
+                                value={sport.name}
+                              >
+                                <Select.ItemText>{sport.name}</Select.ItemText>
+                                <Select.ItemIndicator marginLeft="auto">
+                                  <Check size={16} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                            );
+                          }),
+                        [sports],
+                      )}
+                    </Select.Group>
+                  </Select.Viewport>
+                  <Select.ScrollDownButton />
+                </Select.Content>
+              </Select>
+            </YStack>
+
+            <YStack>
+              <Label size="$5">Skill Level</Label>
+              <RadioGroup
+                aria-labelledby="Select one item"
+                defaultValue="3"
+                name="form"
+                value={skillLevel}
+                onValueChange={setSkillLevel}
+              >
+                <YStack>
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"0"}
+                      id={`skill-level-${SkillLevel.Beginner}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Beginner}`}
+                    >
+                      {"Beginner"}
+                    </Label>
+                  </XStack>
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"1"}
+                      id={`skill-level-${SkillLevel.Intermediate}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Intermediate}`}
+                    >
+                      {"Intermediate"}
+                    </Label>
+                  </XStack>
+
+                  <XStack width={300} alignItems="center" space="$4">
+                    <RadioGroup.Item
+                      value={"2"}
+                      id={`skill-level-${SkillLevel.Advanced}`}
+                      size={2}
+                    >
+                      <RadioGroup.Indicator />
+                    </RadioGroup.Item>
+
+                    <Label
+                      size={2}
+                      htmlFor={`skill-level-${SkillLevel.Advanced}`}
+                    >
+                      {"Advanced"}
+                    </Label>
+                  </XStack>
+                </YStack>
+              </RadioGroup>
+            </YStack>
+
+            <XStack space="$4" alignItems="center">
+              <Label flex={1} size="$5" width={90}>
+                Player Limit
+              </Label>
+              <Input
+                flex={1}
+                size="$5"
+                defaultValue="1"
+                keyboardType="numeric"
+                onChangeText={(text: string) => setZip(text)}
+              />
+            </XStack>
+
+            <YStack space="$1">
+              <Label size="$5">Description</Label>
+              <TextArea
+                size="$5"
+                placeholder="Enter your game details (optional)"
+                value={description}
+                onChangeText={(text: string) => setDescription(text)}
+              />
+            </YStack>
+
+            <YStack paddingTop="$5">
+              <Button
+                theme="active"
+                disabled={loading}
+                onPress={createNewGame}
+                size="$5"
+              >
+                {loading ? "Loading..." : "Publish"}
+              </Button>
+            </YStack>
+          </YStack>
         </ScrollView>
       ) : (
         <View className="p-12 text-center items-center flex-1 justify-center">
