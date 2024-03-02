@@ -60,7 +60,8 @@ describe('EditGame', () => {
   
     // getByTestId to select the input field
     fireEvent.changeText(getByTestId("titleInput"), "New Title");
-    fireEvent.press(getByText("Edit"));
+    const editButton = await findByText("Edit");
+    fireEvent.press(editButton);
   
     await waitFor(() => {
       expect(mockEditGameById).toHaveBeenCalledWith(
