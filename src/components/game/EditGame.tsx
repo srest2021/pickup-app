@@ -113,9 +113,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     );
     if (myEditedGame) {
       //clearGameAttributes();
-      //navigation.goBack();
+      navigation.goBack();
       //const gameId = gameParams.id;
-      navigation.navigate("MyGameView", { gameId });
+      //navigation.navigate("MyGameView", { gameId });
     }
   };
 

@@ -85,7 +85,7 @@ function useQueryGames() {
         .select("*")
         .gt("datetime", oneDayAgo.toISOString())
         .eq("organizer_id", session.user.id)
-        .order("datetime", { ascending: false });
+        .order("datetime", { ascending: true });
       if (error) throw error;
 
       const games = data.map((myGame) => {
@@ -151,16 +151,6 @@ function useQueryGames() {
       setLoading(false);
     }
   };
-
-  // useEffect(() => {
-  //   if (session?.user) {
-  //     fetchMyGames();
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   fetchAllGames();
-  // }, [])
 
   return {
     selectedMyGame,

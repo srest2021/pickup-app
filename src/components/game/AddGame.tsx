@@ -382,48 +382,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
           </View>
         )}
 
-        {/* {isErrorToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Sorry! Required fields cannot be empty! 🙁
-              </Toast.Title>
-              <Toast.Description>
-                Please enter all the content for your game.
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setErrorToastVisible(false)} />
-          </Toast>
-        )}
-
-        {isSuccessToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Congrats! You just created a new game 🙂
-              </Toast.Title>
-              <Toast.Description>
-                Navigate to "My Games" to see your new game!
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setSuccessToastVisible(false)} />
-          </Toast>
-        )}
-
-        {isDatetimeToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Selected date and time cannot be in the past!
-              </Toast.Title>
-              <Toast.Description>
-                Please reenter your game's time.
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setDatetimeToastVisible(false)} />
-          </Toast>
-        )} */}
-
         <ToastViewport />
       </View>
     </ToastProvider>
