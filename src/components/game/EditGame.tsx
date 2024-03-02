@@ -58,6 +58,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   );
   const [description, setDescription] = useState(selectedMyGame.description);
 
+
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
     if (skillLevel === "0") {

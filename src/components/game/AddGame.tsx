@@ -13,18 +13,13 @@ import {
   YStack,
   H4,
 } from "tamagui";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
-import {
-  Toast,
-  ToastProvider,
-  ToastViewport,
-  useToastController,
-  useToastState,
-} from "@tamagui/toast";
+import { ToastViewport, useToastController } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { ToastDemo } from "../Toast";
 
 const AddGame = ({ navigation }: { navigation: any }) => {
   const { createGame } = useMutationGame();
@@ -45,6 +40,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("1");
   const [description, setDescription] = useState("");
+
+  // Toasts
+  const toast = useToastController();
 
   function clearGameAttributes() {
     setTitle("");
@@ -82,7 +80,10 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !skillLevel ||
       !playerLimit
     ) {
-      Alert.alert("Please fill out all required fields first!");
+      Alert.alert("Error: Please fill out all required fields.");
+      toast.show("Error!", {
+        message: "Please fill out all required fields.",
+      });
       return;
     }
 
@@ -96,7 +97,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (combinedDateTime < new Date()) {
-      Alert.alert("Please enter a date and time in the future!");
+      Alert.alert("Error: Date and time are in the past.");
+      toast.show("Error!", {
+        message: "Date and time are in the past.",
+      });
+
       return;
     }
 
@@ -112,65 +117,93 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       playerLimit,
       description,
     );
+
     if (myNewGame) {
+      toast.show("Successfully saved!", {
+        message: "Don't worry, we've got your data.",
+      });
       clearGameAttributes();
       navigation.navigate("MyGames");
     }
   };
 
   return (
-    <ToastProvider>
-      <View className="p-12">
-        {session && session.user ? (
-          <ScrollView
-            contentContainerStyle={{ paddingBottom: 100 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <YStack space="$4" paddingBottom="$4">
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60}>
-                  Title
-                </Label>
-                <Input
-                  flex={1}
-                  size="$5"
-                  placeholder="Title"
-                  value={title}
-                  onChangeText={(text: string) => setTitle(text)}
-                />
-              </XStack>
+    <View className="p-12">
+      <ToastViewport />
+      <ToastDemo />
+      {session && session.user ? (
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <YStack space="$4" paddingBottom="$4">
+            <XStack space="$2" alignItems="center">
+              <Label size="$5" width={60}>
+                Title
+              </Label>
+              <Input
+                flex={1}
+                size="$5"
+                placeholder="Title"
+                value={title}
+                onChangeText={(text: string) => setTitle(text)}
+              />
+            </XStack>
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60}>
-                  Date
-                </Label>
-                <DateTimePicker
-                  value={date}
-                  minimumDate={new Date()}
-                  mode="date"
-                  display="calendar"
-                  onChange={(event, datetime) => {
-                    if (datetime) setDate(datetime);
-                  }}
-                />
-              </XStack>
+            <XStack space="$2" alignItems="center">
+              <Label size="$5" width={60}>
+                Date
+              </Label>
+              <DateTimePicker
+                value={date}
+                minimumDate={new Date()}
+                mode="date"
+                display="calendar"
+                onChange={(event, datetime) => {
+                  if (datetime) setDate(datetime);
+                }}
+              />
+            </XStack>
 
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60}>
-                  Time
-                </Label>
-                <DateTimePicker
-                  value={time}
-                  mode="time"
-                  display="clock"
-                  onChange={(event, datetime) => {
-                    if (datetime) setTime(datetime);
-                  }}
-                />
-              </XStack>
+            <XStack space="$2" alignItems="center">
+              <Label size="$5" width={60}>
+                Time
+              </Label>
+              <DateTimePicker
+                value={time}
+                mode="time"
+                display="clock"
+                onChange={(event, datetime) => {
+                  if (datetime) setTime(datetime);
+                }}
+              />
+            </XStack>
 
-              <YStack space="$1">
-                <Label size="$5">Address</Label>
+            <YStack space="$1">
+              <Label size="$5">Address</Label>
+              <Input
+                flex={1}
+                size="$5"
+                placeholder="Address"
+                value={address}
+                onChangeText={(text: string) => setAddress(text)}
+              />
+            </YStack>
+
+            <YStack space="$1">
+              <Label size="$5">City</Label>
+              <Input
+                flex={1}
+                size="$5"
+                placeholder="City"
+                value={city}
+                onChangeText={(text: string) => setCity(text)}
+              />
+            </YStack>
+
+            <YStack space="$1">
+              <Label size="$5">State/ZIP</Label>
+              <XStack space="$3">
                 <Input
                   flex={1}
                   size="$5"
@@ -178,13 +211,10 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
                 />
-              </YStack>
-
-              <YStack space="$1">
-                <Label size="$5">City</Label>
                 <Input
                   flex={1}
                   size="$5"
+
                   placeholder="Baltimore"
                   value={city}
                   onChangeText={(text: string) => setCity(text)}
@@ -349,8 +379,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   size="$5"
                   defaultValue="1"
                   keyboardType="numeric"
-                  value={playerLimit}
-                  onChangeText={(text: string) => setPlayerLimit(text)}
+                  onChangeText={(text: string) => setZip(text)}
                 />
               </XStack>
 
@@ -375,16 +404,13 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 </Button>
               </YStack>
             </YStack>
-          </ScrollView>
-        ) : (
-          <View className="p-12 text-center items-center flex-1 justify-center">
-            <H4>Log in to create a new game!</H4>
-          </View>
-        )}
-
-        <ToastViewport />
-      </View>
-    </ToastProvider>
+        </ScrollView>
+      ) : (
+        <View className="p-12 text-center items-center flex-1 justify-center">
+          <H4>Log in to create a new game!</H4>
+        </View>
+      )}
+    </View>
   );
 };
 
