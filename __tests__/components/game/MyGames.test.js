@@ -3,7 +3,7 @@ import {
   screen,
   fireEvent,
   getByText,
-  waitFor
+  waitFor,
 } from "@testing-library/react-native";
 import MyGames from "../../../src/components/game/MyGames";
 import { TamaguiProvider } from "tamagui";
@@ -13,7 +13,11 @@ import "@testing-library/jest-dom";
 describe("MyGames", () => {
   test("renders MyGames component without crashing", async () => {
     const navigation = {}; // Mock navigation object
-    const {root} = render(<TamaguiProvider config={appConfig}><MyGames navigation={navigation} /></TamaguiProvider>);
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <MyGames navigation={navigation} />
+      </TamaguiProvider>,
+    );
     await waitFor(() => {
       expect(root).toBeTruthy();
     });
@@ -34,7 +38,7 @@ describe("MyGames", () => {
 
     const joinedGamesTab = getByText("Joined Games");
     //const joinedGamesTab = screen.getByTestId("joined-games")
-    console.log(joinedGamesTab)
+    console.log(joinedGamesTab);
     fireEvent.press(joinedGamesTab);
 
     const myGamesTab = getByText("Joined Games");
@@ -52,7 +56,11 @@ describe("MyGames", () => {
 
   test("Spinner displays properly on refresh", () => {
     const navigation = {}; // Mock navigation object
-    const { root } = render(<TamaguiProvider config={appConfig}><MyGames navigation={navigation} /></TamaguiProvider>);
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <MyGames navigation={navigation} />
+      </TamaguiProvider>,
+    );
     const spinner = screen.getByTestId("spinner");
     expect(spinner).toBeTruthy();
   });

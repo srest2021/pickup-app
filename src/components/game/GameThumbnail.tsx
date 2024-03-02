@@ -46,15 +46,15 @@ export default function GameThumbnail({
     <View paddingLeft="$5" paddingRight="$5">
       <Card elevate size="$5">
         <Card.Header padded>
-          <View
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          <XStack
+            style={{ justifyContent: "space-between", overflow: "hidden" }}
           >
-            <View alignItems="baseline" marginRight={30}>
+            <View style={{ flex: 1 }}>
               <H4 testID="game-title">{game.title}</H4>
               <H4 testID="game-date">{date}</H4>
               <H5>{time}</H5>
             </View>
-            <View style={{ alignItems: "flex-end" }}>
+            <View style={{ objectPosition: "absolute" }}>
               <Button
                 style={{ backgroundColor: "#ff7403" }}
                 onPress={() => {
@@ -66,11 +66,17 @@ export default function GameThumbnail({
                 <H5 testID="view-button">View</H5>
               </Button>
             </View>
-          </View>
+          </XStack>
         </Card.Header>
         <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
-          <Paragraph fontWeight="600" fontSize="$6">X miles away</Paragraph>
-          <Paragraph fontWeight="500" marginRight={95} testID="game-description">
+          <Paragraph fontWeight="600" fontSize="$6">
+            X miles away
+          </Paragraph>
+          <Paragraph
+            fontWeight="500"
+            marginRight={95}
+            testID="game-description"
+          >
             {game.description}
           </Paragraph>
         </View>
