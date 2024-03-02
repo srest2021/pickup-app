@@ -50,7 +50,7 @@ describe("EditGame", () => {
     const navigation = { goBack: jest.fn() };
     const route = { params: { gameId: "gameId" } };
 
-    const { root } = render(
+    const { root, getByTestId } = render(
         <TamaguiProvider config={appConfig}>
           <ToastProvider>
           <EditGame navigation={navigation} route={route} />
