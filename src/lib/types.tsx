@@ -57,6 +57,9 @@ export type Game = {
   description: string;
   datetime: Date;
   address: string;
+  city: string;
+  state: string;
+  zip: string;
   sport: GameSport;
   maxPlayers: number;
   currentPlayers: number;

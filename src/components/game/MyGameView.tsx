@@ -105,7 +105,7 @@ const MyGameView = ({ navigation, route }: { navigation: any, route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedMyGame.address}
+                      {`${selectedMyGame.address}, ${selectedMyGame.city}, ${selectedMyGame.state} ${selectedMyGame.zip}`}
                     </SizableText>
                   </XStack>
 
@@ -131,16 +131,6 @@ const MyGameView = ({ navigation, route }: { navigation: any, route: any }) => {
                     theme="active"
                     flex={1}
                     onPress={() => {
-                      // const gameParams = {
-                      //   id: selectedMyGame.id,
-                      //   title: selectedMyGame.title,
-                      //   address: selectedMyGame.address,
-                      //   description: selectedMyGame.description,
-                      //   datetime: selectedMyGame.datetime,
-                      //   sport: selectedMyGame.sport.name,
-                      //   skillLevel: selectedMyGame.sport.skillLevel,
-                      //   maxPlayers: selectedMyGame.maxPlayers
-                      // }
                       navigation.navigate("EditGame", { gameId })
                     }}
                   >

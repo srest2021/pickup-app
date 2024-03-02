@@ -43,6 +43,9 @@ function useQueryGames() {
           description: data[0].description,
           datetime: new Date(data[0].datetime),
           address: data[0].address,
+          city: data[0].city,
+          state: data[0].state,
+          zip: data[0].zip,
           sport: {
             name: data[0].sport,
             skillLevel: data[0].skill_level,
@@ -90,6 +93,9 @@ function useQueryGames() {
           description: myGame.description,
           datetime: myGame.datetime,
           address: myGame.address,
+          city: myGame.city,
+          state: myGame.state,
+          zip: myGame.zip,
           sport: {
             name: myGame.sport,
             skillLevel: myGame.skill_level,
