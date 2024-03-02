@@ -18,7 +18,7 @@ const windowHeight = Dimensions.get('window').height;
 // Calculate the height for the top third
 const topThirdHeight = windowHeight / 4;
 
-export default function Profile({ navigation }) {
+export default function Profile({ navigation } : {navigation: any}) {
   const [loading, user, userSports] = useStore((state) => [state.loading, state.user, state.userSports]);
   const { setSport } = useMutationUser();
 
