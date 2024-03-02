@@ -219,6 +219,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   value={city}
                   onChangeText={(text: string) => setCity(text)}
                 />
+                </XStack>
               </YStack>
 
               <YStack space="$1">
