@@ -20,6 +20,7 @@ jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
 }));
 
 const mockSelectedMyGame = {
+  id: "gameId",
   title: "Test Title",
   datetime: new Date("Sun Mar 13 2025 15:42:33 GMT+0000 (Coordinated Universal Time)"),
   address: "3339 North Charles St",
