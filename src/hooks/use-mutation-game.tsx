@@ -5,16 +5,21 @@ import { Alert } from "react-native";
 import { Game, GameSport } from "../lib/types";
 
 function useMutationGame() {
-  const [session, setLoading, addMyGame, removeMyGame, editMyGame, clearSelectedMyGame] = useStore(
-    (state) => [
-      state.session,
-      state.setLoading,
-      state.addMyGame,
-      state.removeMyGame,
-      state.editMyGame,
-      state.clearSelectedMyGame
-    ],
-  );
+  const [
+    session,
+    setLoading,
+    addMyGame,
+    removeMyGame,
+    editMyGame,
+    clearSelectedMyGame,
+  ] = useStore((state) => [
+    state.session,
+    state.setLoading,
+    state.addMyGame,
+    state.removeMyGame,
+    state.editMyGame,
+    state.clearSelectedMyGame,
+  ]);
 
   const getLocation = async (fullAddress: string) => {
     // API key hard coded in -- consider changing
@@ -81,7 +86,7 @@ function useMutationGame() {
             skill_level: skillLevel,
             address: address,
             city: city,
-            state: state, 
+            state: state,
             zip: zip,
             location,
             current_players: 1,
@@ -102,7 +107,7 @@ function useMutationGame() {
           datetime,
           address,
           city,
-          state, 
+          state,
           zip,
           sport: { name: sport, skillLevel: skillLevel } as GameSport,
           maxPlayers: Number(playerLimit),
@@ -178,7 +183,7 @@ function useMutationGame() {
           skill_level: skillLevel,
           address,
           city,
-          state, 
+          state,
           zip,
           location,
           max_players: playerLimit,

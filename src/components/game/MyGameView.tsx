@@ -21,7 +21,7 @@ import GameSkillView from "./GameSkillView";
 import useQueryGames from "../../hooks/use-query-games";
 import { useEffect, useState } from "react";
 
-const MyGameView = ({ navigation, route }: { navigation: any, route: any }) => {
+const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
   //console.log("GOING TO GAME VIEW");
 
@@ -32,7 +32,7 @@ const MyGameView = ({ navigation, route }: { navigation: any, route: any }) => {
 
   const getGame = async () => {
     await fetchGameById(gameId);
-  }
+  };
 
   useEffect(() => {
     getGame();
@@ -58,21 +58,27 @@ const MyGameView = ({ navigation, route }: { navigation: any, route: any }) => {
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>
-                    {new Date(selectedMyGame.datetime).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      weekday: "short",
-                      // hour: "2-digit",
-                      // minute: "2-digit",
-                    })}
+                    {new Date(selectedMyGame.datetime).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        weekday: "short",
+                        // hour: "2-digit",
+                        // minute: "2-digit",
+                      },
+                    )}
                   </H5>
                   <H5>
                     at{" "}
-                    {new Date(selectedMyGame.datetime).toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {new Date(selectedMyGame.datetime).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      },
+                    )}
                   </H5>
                 </YStack>
 
@@ -131,7 +137,7 @@ const MyGameView = ({ navigation, route }: { navigation: any, route: any }) => {
                     theme="active"
                     flex={1}
                     onPress={() => {
-                      navigation.navigate("EditGame", { gameId })
+                      navigation.navigate("EditGame", { gameId });
                     }}
                   >
                     Edit

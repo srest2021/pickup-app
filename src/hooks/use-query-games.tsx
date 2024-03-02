@@ -106,7 +106,7 @@ function useQueryGames() {
         return game;
       });
 
-      if (games) { 
+      if (games) {
         setMyGames(games);
       }
     } catch (error) {
@@ -160,7 +160,13 @@ function useQueryGames() {
   //   fetchAllGames();
   // }, [])
 
-  return { selectedMyGame, myGames, fetchGameById, fetchMyGames, fetchAllGames };
+  return {
+    selectedMyGame,
+    myGames,
+    fetchGameById,
+    fetchMyGames,
+    fetchAllGames,
+  };
 }
 
 export default useQueryGames;

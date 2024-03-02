@@ -88,14 +88,14 @@ export const useStore = create<State & Action>()(
         (myGame) => myGame.id !== myGameId,
       );
       set({ myGames: newMyGames });
-      set({selectedMyGame: null});
+      set({ selectedMyGame: null });
     },
 
     editMyGame: (myGameId, updated) => {
       const newMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
           let updatedGame = { ...updated };
-          set({ selectedMyGame : updatedGame })
+          set({ selectedMyGame: updatedGame });
           return updatedGame;
         }
         return myGame;

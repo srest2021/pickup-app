@@ -27,7 +27,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import useQueryGames from "../../hooks/use-query-games";
 
-const EditGame = ({ navigation, route }: { navigation: any, route: any }) => {
+const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   //const { selectedMyGame } = route.params;
   const { gameId } = route.params;
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
@@ -50,8 +50,12 @@ const EditGame = ({ navigation, route }: { navigation: any, route: any }) => {
   const [state, setState] = useState(selectedMyGame.state);
   const [zip, setZip] = useState(selectedMyGame.zip);
   const [sport, setSport] = useState(selectedMyGame.sport.name);
-  const [skillLevel, setSkillLevel] = useState(`${selectedMyGame.sport.skillLevel}`);
-  const [playerLimit, setPlayerLimit] = useState(`${selectedMyGame.maxPlayers}`);
+  const [skillLevel, setSkillLevel] = useState(
+    `${selectedMyGame.sport.skillLevel}`,
+  );
+  const [playerLimit, setPlayerLimit] = useState(
+    `${selectedMyGame.maxPlayers}`,
+  );
   const [description, setDescription] = useState(selectedMyGame.description);
 
   // Radio group value is only string. Convert string skill level to number
@@ -111,7 +115,7 @@ const EditGame = ({ navigation, route }: { navigation: any, route: any }) => {
       //clearGameAttributes();
       //navigation.goBack();
       //const gameId = gameParams.id;
-      navigation.navigate("MyGameView", {gameId})
+      navigation.navigate("MyGameView", { gameId });
     }
   };
 

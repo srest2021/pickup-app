@@ -20,7 +20,7 @@ export default function GameThumbnail({
   navigation: any;
   game: Game;
 }) {
-  const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame])
+  const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame]);
 
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
@@ -58,9 +58,9 @@ export default function GameThumbnail({
               <Button
                 style={{ backgroundColor: "#ff7403" }}
                 onPress={() => {
-                  const gameId = game.id
+                  const gameId = game.id;
                   setSelectedMyGame(game);
-                  navigation.navigate("MyGameView", {gameId});
+                  navigation.navigate("MyGameView", { gameId });
                 }}
               >
                 <H5 testID="view-button">View</H5>
@@ -69,7 +69,11 @@ export default function GameThumbnail({
           </View>
         </Card.Header>
         <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
-          <Paragraph fontWeight="500" marginRight={95} testID="game-description">
+          <Paragraph
+            fontWeight="500"
+            marginRight={95}
+            testID="game-description"
+          >
             {game.description}
           </Paragraph>
         </View>

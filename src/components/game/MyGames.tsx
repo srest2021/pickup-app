@@ -58,6 +58,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             <Tabs.List>
               <Tabs.Tab
                 width={200}
+                testID="my-games"
                 value="MyGames"
                 onInteraction={() => {
                   setMyGamesToggle("myGames");
@@ -68,6 +69,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               <Separator vertical></Separator>
               <Tabs.Tab
                 width={200}
+                testID="joined-games"
                 value="JoinedGames"
                 onInteraction={() => {
                   setMyGamesToggle("joinedGames");
@@ -88,7 +90,9 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             }}
             contentContainerStyle={{ paddingTop: 20 }}
           >
-            {refreshing && <Spinner size="small" color="#ff7403" testID="spinner" />}
+            {refreshing && (
+              <Spinner size="small" color="#ff7403" testID="spinner" />
+            )}
             {myGames.length > 0 ? (
               <YStack space="$5" paddingTop={5} paddingBottom="$5">
                 {myGames.map((myGame) => (
