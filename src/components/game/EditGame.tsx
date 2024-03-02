@@ -28,35 +28,31 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import useQueryGames from "../../hooks/use-query-games";
 
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
-  //const { selectedMyGame } = route.params;
   const { gameId } = route.params;
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   //console.log("selected my game: ",selectedMyGame.title)
 
   const { user } = useMutationUser();
-  //const { fetchGameById } = useQueryGames();
   const { editGameById } = useMutationGame();
-
-  //const game = await fetchGameById(gameId);
 
   const loading = useStore((state) => state.loading);
 
   // existing game attributes
-  const [title, setTitle] = useState(selectedMyGame.title);
-  const [date, setDate] = useState(new Date(selectedMyGame.datetime));
-  const [time, setTime] = useState(new Date(selectedMyGame.datetime));
-  const [address, setAddress] = useState(selectedMyGame.address);
-  const [city, setCity] = useState(selectedMyGame.city);
-  const [state, setState] = useState(selectedMyGame.state);
-  const [zip, setZip] = useState(selectedMyGame.zip);
-  const [sport, setSport] = useState(selectedMyGame.sport.name);
+  const [title, setTitle] = useState(selectedMyGame ? selectedMyGame.title : "");
+  const [date, setDate] = useState(selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date());
+  const [time, setTime] = useState(selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date());
+  const [address, setAddress] = useState(selectedMyGame ? selectedMyGame.address : "");
+  const [city, setCity] = useState(selectedMyGame ? selectedMyGame.city : "");
+  const [state, setState] = useState(selectedMyGame ? selectedMyGame.state : "");
+  const [zip, setZip] = useState(selectedMyGame ? selectedMyGame.zip : "");
+  const [sport, setSport] = useState(selectedMyGame ? selectedMyGame.sport.name : "");
   const [skillLevel, setSkillLevel] = useState(
-    `${selectedMyGame.sport.skillLevel}`,
+    `${selectedMyGame?.sport.skillLevel}`,
   );
   const [playerLimit, setPlayerLimit] = useState(
-    `${selectedMyGame.maxPlayers}`,
+    `${selectedMyGame?.maxPlayers}`,
   );
-  const [description, setDescription] = useState(selectedMyGame.description);
+  const [description, setDescription] = useState(selectedMyGame?.description);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {

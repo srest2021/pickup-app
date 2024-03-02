@@ -38,6 +38,13 @@ Our app allows users to organize, find, and join pick-up games in a convenient a
     npx expo run:android
     ```
 
+6. To login as a test user, use the following credentials:
+
+    ```shell
+    email: admin@example.com
+    password: password
+    ```
+
 ## Developing
 
 > Detailed and step-by-step documentation for setting up local development. For example, a new team member will use these instructions to start developing the project further. 
