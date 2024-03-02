@@ -134,6 +134,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   size="$5"
                   placeholder="Title"
                   value={title}
+                  testID="titleInput"
                   onChangeText={(text: string) => setTitle(text)}
                 />
               </XStack>
