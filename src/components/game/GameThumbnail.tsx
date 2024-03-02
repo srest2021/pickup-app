@@ -50,8 +50,8 @@ export default function GameThumbnail({
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <View alignItems="baseline" marginRight={30}>
-              <H4>{game.title}</H4>
-              <H4>{date}</H4>
+              <H4 testID="game-title">{game.title}</H4>
+              <H4 testID="game-date">{date}</H4>
               <H5>{time}</H5>
             </View>
             <View style={{ alignItems: "flex-end" }}>
@@ -63,13 +63,13 @@ export default function GameThumbnail({
                   navigation.navigate("MyGameView", {gameId});
                 }}
               >
-                <H5>View</H5>
+                <H5 testID="view-button">View</H5>
               </Button>
             </View>
           </View>
         </Card.Header>
         <View alignSelf="baseline" marginLeft={25} style={{ flex: 0.5 }}>
-          <Paragraph fontWeight="500" marginRight={95}>
+          <Paragraph fontWeight="500" marginRight={95} testID="game-description">
             {game.description}
           </Paragraph>
         </View>
@@ -98,6 +98,7 @@ export default function GameThumbnail({
               <Image
                 resizeMode="contain"
                 alignSelf="center"
+                testID="game-thumbnail-image"
                 source={{
                   width: 170,
                   height: 170,
