@@ -346,6 +346,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 <Button
                   theme="active"
                   disabled={loading}
+                  testID="editButton"
                   onPress={() => editGame()}
                   size="$5"
                 >

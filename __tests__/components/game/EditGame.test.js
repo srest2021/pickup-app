@@ -60,7 +60,7 @@ describe('EditGame', () => {
   
     // getByTestId to select the input field
     fireEvent.changeText(getByTestId("titleInput"), "New Title");
-    const editButton = await getByText("Edit");
+    const editButton = getByTestId("editButton");
     fireEvent.press(editButton);
   
     await waitFor(() => {
