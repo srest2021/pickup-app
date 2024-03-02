@@ -88,7 +88,8 @@ View the tutorial to set up Supabase local development [here](https://supabase.c
 
 ### Create a development build
 
-Follow the instructions to cretae a build [here](https://docs.expo.dev/develop/development-builds/create-a-build/).
+Follow the instructions to cretae a build [here](https://docs.expo.dev/build/setup/) and [here](https://docs.expo.dev/develop/development-builds/create-a-build/).
 
-1. For iOS: run `eas build --profile development-simulator --platform ios`. For Android: run `eas build --profile development --platform android`.
-2. Run `npx expo start --dev-client`.
+1. Install `expo-dev-client`: `npx expo install expo-dev-client`.
+2. For iOS: run `eas build --profile development-simulator --platform ios`. For Android: run `eas build --profile development --platform android`.
+3. Run `npx expo start --dev-client`.
