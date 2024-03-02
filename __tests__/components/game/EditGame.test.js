@@ -7,14 +7,17 @@ import {
 import EditGame from "../../../src/components/game/EditGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
-import { editGameById } from "../../../src/hooks/use-mutation-game";
+// import { editGameById } from "../../../src/hooks/use-mutation-game";
 
 // Mock dependencies
 jest.mock("../../../src/hooks/use-mutation-user", () => () => ({
   user: {}, // Mock user object as needed for the test
 }));
-jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
-  editGameById: jest.fn(),
+const mockEditGameById = jest.fn();
+jest.mock("../../../src/hooks/use-mutation-game", () => ({
+  useMutationGame: jest.fn(() => ({
+    editGameById: mockEditGameById,
+  })),
 }));
 
 describe("EditGame", () => {
@@ -78,7 +81,7 @@ describe("EditGame", () => {
 
     // Wait for the edit function to be called
     await waitFor(() => {
-      expect(editGameById).toHaveBeenCalledWith(
+      expect(mockEditGameById).toHaveBeenCalledWith(
         "gameId", // Ensure that the correct game ID is passed
         expect.any(String), // Add more specific checks for other arguments as needed
         expect.any(Date),
