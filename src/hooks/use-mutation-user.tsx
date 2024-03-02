@@ -2,7 +2,7 @@ import { useStore } from "../lib/store";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Sport, User } from "../lib/types";
+import { User } from "../lib/types";
 
 function useMutationUser() {
   const [session, user, setSession, setLoading, setUser, editUser] = useStore(

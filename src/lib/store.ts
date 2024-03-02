@@ -1,13 +1,16 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { Sport, User } from "./types";
+import { Game, UserSport, User } from "./types";
 
 type State = {
   session: Session | null;
   loading: boolean;
   user: User | null;
-  sports: Sport[];
+  userSports: UserSport[];
+  myGames: Game[];
+  selectedMyGame: Game | null;
+  feedGames: Game[];
 };
 
 type Action = {
@@ -16,17 +19,32 @@ type Action = {
   setLoading: (loading: boolean) => void;
 
   setUser: (user: User) => void;
-  editUser: (updated) => void;
+  editUser: (updated: any) => void;
 
-  setSports: (sports: Sport[]) => void;
-  clearSports: () => void;
+  setUserSports: (userSports: UserSport[]) => void;
+  clearUserSports: () => void;
+
+  setMyGames: (myGames: Game[]) => void;
+  clearMyGames: () => void;
+  addMyGame: (myGame: Game) => void;
+  removeMyGame: (myGameId: string) => void;
+  editMyGame: (myGameId: string, updated: any) => void;
+
+  setFeedGames: (feedGames: Game[]) => void;
+  clearFeedGames: () => void;
+
+  setSelectedMyGame: (myGame: Game) => void;
+  clearSelectedMyGame: () => void;
 };
 
 const initialState: State = {
   session: null,
   loading: false,
   user: null,
-  sports: [],
+  userSports: [],
+  myGames: [],
+  selectedMyGame: null,
+  feedGames: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -42,12 +60,51 @@ export const useStore = create<State & Action>()(
     editUser: (updated) => {
       let updatedUser = { ...get().user };
       for (let key in updated) {
-        updatedUser[key] = updated[key];
+        if (key in updatedUser) {
+          updatedUser[key] = updated[key];
+        }
       }
       set({ user: updatedUser });
     },
 
-    setSports: (sports) => set({ sports }),
-    clearSports: () => set({ sports: [] }),
+    setUserSports: (userSports) => set({ userSports }),
+
+    clearUserSports: () => set({ userSports: [] }),
+
+    setFeedGames: (feedGames) => set({ feedGames }),
+
+    clearFeedGames: () => set({ feedGames: [] }),
+
+    setMyGames: (myGames) => set({ myGames }),
+
+    clearMyGames: () => set({ myGames: [] }),
+
+    addMyGame: (myGame) => {
+      set({ myGames: [myGame, ...get().myGames] });
+    },
+
+    removeMyGame: (myGameId) => {
+      const newMyGames = get().myGames.filter(
+        (myGame) => myGame.id !== myGameId,
+      );
+      set({ myGames: newMyGames });
+      set({ selectedMyGame: null });
+    },
+
+    editMyGame: (myGameId, updated) => {
+      const newMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === myGameId) {
+          let updatedGame = { ...updated };
+          set({ selectedMyGame: updatedGame });
+          return updatedGame;
+        }
+        return myGame;
+      });
+      set({ myGames: newMyGames });
+    },
+
+    setSelectedMyGame: (myGame) => set({ selectedMyGame: myGame }),
+
+    clearSelectedMyGame: () => set({ selectedMyGame: null }),
   })),
 );

@@ -16,7 +16,7 @@ AppState.addEventListener("change", (state) => {
   }
 });
 
-export default function Login({ navigation }) {
+export default function Login({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useStore((state) => [
@@ -43,6 +43,7 @@ export default function Login({ navigation }) {
 
       <YStack overflow="hidden" space="$2" paddingBottom="$2">
         <Input
+          testID="email-input"
           size="$5"
           placeholder="email@address.com"
           value={email}
@@ -51,6 +52,7 @@ export default function Login({ navigation }) {
         />
 
         <Input
+          testID="password-input"
           size="$5"
           placeholder={`Password`}
           secureTextEntry={true}
@@ -62,6 +64,7 @@ export default function Login({ navigation }) {
 
       <YStack space="$6" paddingTop="$2">
         <Button
+          testID="signin-button"
           theme="active"
           disabled={loading}
           onPress={() => signInWithEmail()}
@@ -71,6 +74,7 @@ export default function Login({ navigation }) {
         </Button>
 
         <Button
+          testID="register-button"
           variant="outlined"
           disabled={loading}
           onPress={() => navigation.navigate("Register")}

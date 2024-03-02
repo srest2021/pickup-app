@@ -1,20 +1,11 @@
 import { View, Text } from "react-native";
-import { SkillLevel, Sport as SportType } from "../lib/types";
+import {
+  getSkillLevelString,
+  SkillLevel,
+  UserSport as SportType,
+} from "../lib/types";
 
 export default function Sport({ sport }: { sport: SportType }) {
-  function getSkillLevelString(skillLevel: SkillLevel): string {
-    switch (skillLevel) {
-      case SkillLevel.Beginner:
-        return "Beginner";
-      case SkillLevel.Intermediate:
-        return "Intermediate";
-      case SkillLevel.Advanced:
-        return "Advanced";
-      default:
-        return "Unknown";
-    }
-  }
-
   return (
     <View className="flex flex-row p-2">
       <View className="flex flex-grow">
