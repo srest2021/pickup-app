@@ -39,7 +39,10 @@ const mockSelectedMyGame = {
 
 // Mock Selected Game in Store
 jest.mock('../../../src/lib/store', () => ({
-  useStore: jest.fn(() => [{ selectedMyGame: mockSelectedMyGame }, {loading: false}, jest.fn()]),
+  useStore: jest.fn(() => [{
+     selectedMyGame: mockSelectedMyGame,
+     loading: false, 
+    }, jest.fn()]),
 }));
 
 
