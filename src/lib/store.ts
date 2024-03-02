@@ -9,8 +9,8 @@ type State = {
   user: User | null;
   userSports: UserSport[];
   myGames: Game[];
+  selectedMyGame: Game | null;
   feedGames: Game[];
-  selectedGameId: string | null;
 };
 
 type Action = {
@@ -33,8 +33,8 @@ type Action = {
   setFeedGames: (feedGames: Game[]) => void;
   clearFeedGames: () => void;
 
-  setSelectedGameId: (id: string) => void;
-  clearSelectedGameId: () => void;
+  setSelectedMyGame: (myGame: Game) => void;
+  clearSelectedMyGame: () => void;
 };
 
 const initialState: State = {
@@ -43,8 +43,8 @@ const initialState: State = {
   user: null,
   userSports: [],
   myGames: [],
+  selectedMyGame: null,
   feedGames: [],
-  selectedGameId: null,
 };
 
 export const useStore = create<State & Action>()(
@@ -88,12 +88,14 @@ export const useStore = create<State & Action>()(
         (myGame) => myGame.id !== myGameId,
       );
       set({ myGames: newMyGames });
+      set({selectedMyGame: null});
     },
 
     editMyGame: (myGameId, updated) => {
       const newMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
           let updatedGame = { ...updated };
+          set({ selectedMyGame : updatedGame })
           return updatedGame;
         }
         return myGame;
@@ -101,8 +103,8 @@ export const useStore = create<State & Action>()(
       set({ myGames: newMyGames });
     },
 
-    setSelectedGameId: (id) => set({ selectedGameId: id }),
+    setSelectedMyGame: (myGame) => set({ selectedMyGame: myGame }),
 
-    clearSelectedGameId: () => set({ selectedGameId: null }),
+    clearSelectedMyGame: () => set({ selectedMyGame: null }),
   })),
 );

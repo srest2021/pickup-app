@@ -16,7 +16,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
-import { Game, SkillLevel, sports } from "../../lib/types";
+import { Game, SkillLevel, sports, getSkillLevelString } from "../../lib/types";
 import {
   Toast,
   ToastProvider,
@@ -25,27 +25,34 @@ import {
   useToastState,
 } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import useQueryGames from "../../hooks/use-query-games";
 
-const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { myGame } = route.params;
+const EditGame = ({ navigation, route }: { navigation: any, route: any }) => {
+  //const { selectedMyGame } = route.params;
+  const { gameId } = route.params;
+  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
+  //console.log("selected my game: ",selectedMyGame.title)
 
   const { user } = useMutationUser();
+  //const { fetchGameById } = useQueryGames();
   const { editGameById } = useMutationGame();
+
+  //const game = await fetchGameById(gameId);
 
   const loading = useStore((state) => state.loading);
 
   // existing game attributes
-  const [title, setTitle] = useState(myGame.title);
-  const [date, setDate] = useState(new Date(myGame.datetime));
-  const [time, setTime] = useState(new Date(myGame.datetime));
-  const [address, setAddress] = useState(myGame.address);
+  const [title, setTitle] = useState(selectedMyGame.title);
+  const [date, setDate] = useState(new Date(selectedMyGame.datetime));
+  const [time, setTime] = useState(new Date(selectedMyGame.datetime));
+  const [address, setAddress] = useState(selectedMyGame.address);
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
-  const [sport, setSport] = useState(myGame.sport.name);
-  const [skillLevel, setSkillLevel] = useState(`${myGame.sport.skillLevel}`);
-  const [playerLimit, setPlayerLimit] = useState(`${myGame.maxPlayers}`);
-  const [description, setDescription] = useState(myGame.description);
+  const [sport, setSport] = useState(selectedMyGame.sport.name);
+  const [skillLevel, setSkillLevel] = useState(`${selectedMyGame.sport.skillLevel}`);
+  const [playerLimit, setPlayerLimit] = useState(`${selectedMyGame.maxPlayers}`);
+  const [description, setDescription] = useState(selectedMyGame.description);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -88,7 +95,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     }
 
     const myEditedGame = await editGameById(
-      myGame.id,
+      gameId,
       title,
       combinedDateTime,
       address,
@@ -102,7 +109,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     );
     if (myEditedGame) {
       //clearGameAttributes();
-      navigation.goBack();
+      //navigation.goBack();
+      //const gameId = gameParams.id;
+      navigation.navigate("MyGameView", {gameId})
     }
   };
 
@@ -273,7 +282,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   <XStack width={300} alignItems="center" space="$4">
                     <RadioGroup.Item
                       value={"0"}
-                      id={`skill-level-${SkillLevel.Beginner}`}
+                      //id={`skill-level-${SkillLevel.Beginner}`}
                       size={2}
                     >
                       <RadioGroup.Indicator />
@@ -284,7 +293,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   <XStack width={300} alignItems="center" space="$4">
                     <RadioGroup.Item
                       value={"1"}
-                      id={`skill-level-${SkillLevel.Intermediate}`}
+                      //id={`skill-level-${SkillLevel.Intermediate}`}
                       size={2}
                     >
                       <RadioGroup.Indicator />
@@ -296,7 +305,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   <XStack width={300} alignItems="center" space="$4">
                     <RadioGroup.Item
                       value={"2"}
-                      id={`skill-level-${SkillLevel.Advanced}`}
+                      //id={`skill-level-${SkillLevel.Advanced}`}
                       size={2}
                     >
                       <RadioGroup.Indicator />

@@ -5,13 +5,14 @@ import { Alert } from "react-native";
 import { Game, GameSport } from "../lib/types";
 
 function useMutationGame() {
-  const [session, setLoading, addMyGame, removeMyGame, editMyGame] = useStore(
+  const [session, setLoading, addMyGame, removeMyGame, editMyGame, clearSelectedMyGame] = useStore(
     (state) => [
       state.session,
       state.setLoading,
       state.addMyGame,
       state.removeMyGame,
       state.editMyGame,
+      state.clearSelectedMyGame
     ],
   );
 
@@ -124,7 +125,9 @@ function useMutationGame() {
       if (error) throw error;
 
       // remove from store
+      //console.log("data 2 update store remove: ", id)
       removeMyGame(id);
+      clearSelectedMyGame();
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -173,11 +176,12 @@ function useMutationGame() {
         })
         .eq("id", id)
         .select();
-
+      //console.log("got here too ", error)
       if (error) throw error;
 
       // Edit game in store
       if (data && data[0]) {
+        //console.log("data 2 update store edit: ", data)
         editMyGame(data[0], data);
       }
       return data;

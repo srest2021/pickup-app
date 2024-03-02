@@ -257,7 +257,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                                 <Select.Item
                                   index={i}
                                   key={sport.name}
-                                  value={sport.name.toLowerCase()}
+                                  value={sport.name}
                                 >
                                   <Select.ItemText>
                                     {sport.name}

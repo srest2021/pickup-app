@@ -11,6 +11,7 @@ import {
   XStack,
 } from "tamagui";
 import GameSkillView from "./GameSkillView";
+import { useStore } from "../../lib/store";
 
 export default function GameThumbnail({
   navigation,
@@ -19,6 +20,8 @@ export default function GameThumbnail({
   navigation: any;
   game: Game;
 }) {
+  const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame])
+
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
     hour: "numeric",
@@ -55,8 +58,9 @@ export default function GameThumbnail({
               <Button
                 style={{ backgroundColor: "#ff7403" }}
                 onPress={() => {
-                  const gameId = game.id;
-                  navigation.navigate("MyGameView", { gameId });
+                  const gameId = game.id
+                  setSelectedMyGame(game);
+                  navigation.navigate("MyGameView", {gameId});
                 }}
               >
                 <H5>View</H5>

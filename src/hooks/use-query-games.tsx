@@ -11,19 +11,19 @@ function useQueryGames() {
     myGames,
     setMyGames,
     setFeedGames,
-    setSelectedGameId,
-    clearSelectedGameId,
+    selectedMyGame,
+    setSelectedMyGame,
+    clearSelectedMyGame,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
     state.myGames,
     state.setMyGames,
     state.setFeedGames,
-    state.setSelectedGameId,
-    state.clearSelectedGameId,
+    state.selectedMyGame,
+    state.setSelectedMyGame,
+    state.clearSelectedMyGame,
   ]);
-
-  const [game, setGame] = useState<Game | null>(null);
 
   const fetchGameById = async (id: string) => {
     try {
@@ -51,15 +51,13 @@ function useQueryGames() {
           currentPlayers: Number(data[0].current_players),
         };
 
-        setGame(game);
-        setSelectedGameId(game.id);
+        setSelectedMyGame(game);
         return game;
       } else {
         throw new Error("Error loading game; please try again");
       }
     } catch (error) {
-      setGame(null);
-      clearSelectedGameId();
+      clearSelectedMyGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
@@ -82,7 +80,7 @@ function useQueryGames() {
         .select("*")
         .gt("datetime", oneDayAgo.toISOString())
         .eq("organizer_id", session.user.id)
-        .order("created_at", { ascending: false });
+        .order("datetime", { ascending: false });
       if (error) throw error;
 
       const games = data.map((myGame) => {
@@ -102,7 +100,7 @@ function useQueryGames() {
         return game;
       });
 
-      if (games) {
+      if (games) { 
         setMyGames(games);
       }
     } catch (error) {
@@ -156,7 +154,7 @@ function useQueryGames() {
   //   fetchAllGames();
   // }, [])
 
-  return { game, myGames, fetchGameById, fetchMyGames, fetchAllGames };
+  return { selectedMyGame, myGames, fetchGameById, fetchMyGames, fetchAllGames };
 }
 
 export default useQueryGames;

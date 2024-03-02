@@ -7,22 +7,27 @@ import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [session, clearMyGames] = useStore((state) => [
+  const [session, myGames, clearMyGames] = useStore((state) => [
     state.session,
+    state.myGames,
     state.clearMyGames,
   ]);
-  const { myGames, fetchMyGames, fetchAllGames } = useQueryGames();
+  const { fetchMyGames, fetchAllGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
 
+  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
+
   useEffect(() => {
+    //console.log("the store in my games list: ",myGames)
     handleRefresh();
-  }, [myGamesToggle, myGames]);
+  }, [myGamesToggle, selectedMyGame]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     if (myGamesToggle === "myGames") {
       try {
+        //console.log("FETCHING GAMES")
         await fetchMyGames();
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");

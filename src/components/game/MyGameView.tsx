@@ -21,30 +21,22 @@ import GameSkillView from "./GameSkillView";
 import useQueryGames from "../../hooks/use-query-games";
 import { useEffect, useState } from "react";
 
-const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
+const MyGameView = ({ navigation, route }: { navigation: any, route: any }) => {
   const { gameId } = route.params;
-  console.log("GOING TO GAME VIEW");
+  //console.log("GOING TO GAME VIEW");
 
+  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
+  const [session, user] = useStore((state) => [state.session, state.user]);
   const { fetchGameById } = useQueryGames();
-  const [myGames] = useStore((state) => [state.myGames]);
-  const [myGame, setMyGame] = useState<Game | null>(null);
+  const { removeGameById } = useMutationGame();
 
-  const getMyGame = async (gameId: string) => {
-    const myGame = await fetchGameById(gameId);
-    if (!myGame) {
-      navigation.goBack();
-    } else {
-      setMyGame(myGame);
-    }
-  };
+  const getGame = async () => {
+    await fetchGameById(gameId);
+  }
 
   useEffect(() => {
-    console.log("FETCHING GAME");
-    getMyGame(gameId);
-  }, [myGames]);
-
-  const [session, user] = useStore((state) => [state.session, state.user]);
-  const { removeGameById } = useMutationGame();
+    getGame();
+  }, [selectedMyGame]);
 
   function deleteGame() {
     removeGameById(gameId);
@@ -56,17 +48,17 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   return (
     <View>
       {session && session.user && user ? (
-        myGame ? (
+        selectedMyGame ? (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View className="p-12">
               <YStack>
                 <YStack alignItems="center">
-                  <H4 textAlign="center">{myGame.title}</H4>
+                  <H4 textAlign="center">{selectedMyGame.title}</H4>
                 </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>
-                    {new Date(myGame.datetime).toLocaleDateString("en-US", {
+                    {new Date(selectedMyGame.datetime).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -77,7 +69,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </H5>
                   <H5>
                     at{" "}
-                    {new Date(myGame.datetime).toLocaleTimeString("en-US", {
+                    {new Date(selectedMyGame.datetime).toLocaleTimeString("en-US", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
@@ -90,7 +82,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </SizableText>
                 </YStack>
 
-                {myGame.description && (
+                {selectedMyGame.description && (
                   <YStack paddingTop="$3" paddingBottom="$7">
                     <Card elevate size="$5">
                       <View marginLeft={25} marginRight={25}>
@@ -100,7 +92,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                           paddingTop="$3"
                           paddingBottom="$3"
                         >
-                          {myGame.description}
+                          {selectedMyGame.description}
                         </SizableText>
                       </View>
                     </Card>
@@ -113,7 +105,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {myGame.address}
+                      {selectedMyGame.address}
                     </SizableText>
                   </XStack>
 
@@ -122,7 +114,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {myGame.sport.name}
+                      {selectedMyGame.sport.name}
                     </SizableText>
                   </XStack>
 
@@ -130,7 +122,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Skill:</H6>
                     </Label>
-                    <GameSkillView sport={myGame.sport} />
+                    <GameSkillView sport={selectedMyGame.sport} />
                   </XStack>
                 </YStack>
 
@@ -138,7 +130,19 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   <Button
                     theme="active"
                     flex={1}
-                    onPress={() => navigation.navigate("EditGame", { myGame })}
+                    onPress={() => {
+                      // const gameParams = {
+                      //   id: selectedMyGame.id,
+                      //   title: selectedMyGame.title,
+                      //   address: selectedMyGame.address,
+                      //   description: selectedMyGame.description,
+                      //   datetime: selectedMyGame.datetime,
+                      //   sport: selectedMyGame.sport.name,
+                      //   skillLevel: selectedMyGame.sport.skillLevel,
+                      //   maxPlayers: selectedMyGame.maxPlayers
+                      // }
+                      navigation.navigate("EditGame", { gameId })
+                    }}
                   >
                     Edit
                   </Button>
