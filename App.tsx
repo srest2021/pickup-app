@@ -10,7 +10,7 @@ import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Feed from "./src/components/Feed";
 import AddGame from "./src/components/game/AddGame";
-import MyGames from "./src/components/MyGames";
+import MyGames from "./src/components/game/MyGames";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
@@ -21,6 +21,7 @@ import {
   GalleryVerticalEnd,
 } from "@tamagui/lucide-icons";
 import MyGamesNavigator from "./src/components/MyGamesNavigator";
+import { ToastProvider } from "@tamagui/toast";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,6 +45,7 @@ export default function App() {
 
   return (
     <TamaguiProvider config={appConfig}>
+      <ToastProvider>
       {session && session.user ? (
         <NavigationContainer>
           <Tab.Navigator
@@ -117,6 +119,7 @@ export default function App() {
           </Stack.Navigator>
         </NavigationContainer>
       )}
+      </ToastProvider>
     </TamaguiProvider>
   );
 }

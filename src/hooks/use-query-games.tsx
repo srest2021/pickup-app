@@ -12,8 +12,9 @@ function useQueryGames() {
     feedGames,
     setMyGames,
     setFeedGames,
-    setSelectedGameId,
-    clearSelectedGameId,
+    selectedMyGame,
+    setSelectedMyGame,
+    clearSelectedMyGame,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -21,11 +22,10 @@ function useQueryGames() {
     state.feedGames,
     state.setMyGames,
     state.setFeedGames,
-    state.setSelectedGameId,
-    state.clearSelectedGameId,
+    state.selectedMyGame,
+    state.setSelectedMyGame,
+    state.clearSelectedMyGame,
   ]);
-
-  const [game, setGame] = useState<Game | null>(null);
 
   const fetchGameById = async (id: string) => {
     try {
@@ -45,22 +45,24 @@ function useQueryGames() {
           description: data[0].description,
           datetime: new Date(data[0].datetime),
           address: data[0].address,
+          city: data[0].city,
+          state: data[0].state,
+          zip: data[0].zip,
           sport: {
             name: data[0].sport,
             skillLevel: data[0].skill_level,
           } as GameSport,
           maxPlayers: Number(data[0].max_players),
+          currentPlayers: Number(data[0].current_players),
         };
 
-        setGame(game);
-        setSelectedGameId(game.id);
+        setSelectedMyGame(game);
         return game;
       } else {
         throw new Error("Error loading game; please try again");
       }
     } catch (error) {
-      setGame(null);
-      clearSelectedGameId();
+      clearSelectedMyGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
@@ -83,7 +85,7 @@ function useQueryGames() {
         .select("*")
         .gt("datetime", oneDayAgo.toISOString())
         .eq("organizer_id", session.user.id)
-        .order("created_at", { ascending: false });
+        .order("datetime", { ascending: true });
       if (error) throw error;
 
       const games = data.map((myGame) => {
@@ -93,11 +95,15 @@ function useQueryGames() {
           description: myGame.description,
           datetime: myGame.datetime,
           address: myGame.address,
+          city: myGame.city,
+          state: myGame.state,
+          zip: myGame.zip,
           sport: {
             name: myGame.sport,
             skillLevel: myGame.skill_level,
           } as GameSport,
           maxPlayers: Number(myGame.max_players),
+          currentPlayers: Number(myGame.current_players),
         };
         return game;
       });
@@ -117,10 +123,12 @@ function useQueryGames() {
   const fetchAllGames = async () => {
     try {
       setLoading(true);
-      const { data: games, error } = await supabase.rpc('nearby_games', {
-        lat: 39.3289357,
-        long: -76.6172978,
-      }).limit(20)
+      const { data: games, error } = await supabase
+        .rpc("nearby_games", {
+          lat: 39.3289357,
+          long: -76.6172978,
+        })
+        .limit(20);
 
       //console.log(games);
       //TODO: ADD PAGINATION - right now only returning 20 most relevant games
@@ -144,17 +152,13 @@ function useQueryGames() {
     }
   };
 
-  useEffect(() => {
-    if (session?.user) {
-      fetchMyGames();
-    }
-  }, []);
-
-  // useEffect(() => {
-  //   fetchAllGames();
-  // }, [])
-
-  return { game, myGames, feedGames, fetchGameById, fetchMyGames, fetchAllGames };
+  return {
+    selectedMyGame,
+    myGames,
+    fetchGameById,
+    fetchMyGames,
+    fetchAllGames,
+  };
 }
 
 export default useQueryGames;

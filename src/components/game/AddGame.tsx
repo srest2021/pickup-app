@@ -1,5 +1,4 @@
-import { View, Text, ScrollView, Alert } from "react-native";
-import useMutationUser from "../../hooks/use-mutation-user";
+import { View, ScrollView, Alert } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
   Adapt,
@@ -14,31 +13,19 @@ import {
   YStack,
   H4,
 } from "tamagui";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
-import {
-  Toast,
-  ToastProvider,
-  ToastViewport,
-  useToastController,
-  useToastState,
-} from "@tamagui/toast";
+import { ToastViewport, useToastController } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { ToastDemo } from "../Toast";
 
 const AddGame = ({ navigation }: { navigation: any }) => {
   const { createGame } = useMutationGame();
   const [loading, session] = useStore((state) => [
     state.loading,
     state.session,
-  ]);
-  // const [isErrorToastVisible, setErrorToastVisible] = useState(false);
-  // const [isDatetimeToastVisible, setDatetimeToastVisible] = useState(false);
-  // const [isSuccessToastVisible, setSuccessToastVisible] = useState(false);
-  const [updateGameStatus, setUpdateGameStatus] = useStore((state) => [
-    state.updateGameStatus,
-    state.setUpdateGameStatus,
   ]);
 
   // game attributes
@@ -54,6 +41,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [playerLimit, setPlayerLimit] = useState("1");
   const [description, setDescription] = useState("");
 
+  // Toasts
+  const toast = useToastController();
+
   function clearGameAttributes() {
     setTitle("");
     setDate(new Date());
@@ -66,38 +56,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
-    setUpdateGameStatus(false);
   }
-
-  // useEffect(() => {
-  //   let timer: number;
-  //   if (isErrorToastVisible) {
-  //     let timer = setTimeout(() => {
-  //       setErrorToastVisible(false);
-  //     }, 7000); // Hide toast after 7 seconds
-  //   }
-  //   return () => clearTimeout(timer);
-  // }, [isErrorToastVisible]);
-
-  // useEffect(() => {
-  //   let timer: number;
-  //   if (isDatetimeToastVisible) {
-  //     let timer = setTimeout(() => {
-  //       setDatetimeToastVisible(false);
-  //     }, 7000); // Hide toast after 7 seconds
-  //   }
-  //   return () => clearTimeout(timer);
-  // }, [isDatetimeToastVisible]);
-
-  // useEffect(() => {
-  //   let timer: number;
-  //   if (isSuccessToastVisible) {
-  //     let timer = setTimeout(() => {
-  //       setSuccessToastVisible(false);
-  //     }, 7000); // Hide toast after 7 seconds
-  //   }
-  //   return () => clearTimeout(timer);
-  // }, [isSuccessToastVisible]);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -110,7 +69,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     }
   }
 
-  function createNewGame() {
+  const createNewGame = async () => {
     // Check that no fields are left blank (except description, optional)
     if (
       !title ||
@@ -121,10 +80,10 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !skillLevel ||
       !playerLimit
     ) {
-      //console.log("error toast");
-      //console.log(title, date, time, address, sport, skillLevel, playerLimit)
       Alert.alert("Error: Please fill out all required fields.");
-      //setErrorToastVisible(true);
+      toast.show("Error!", {
+        message: "Please fill out all required fields.",
+      });
       return;
     }
 
@@ -139,12 +98,14 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
     if (combinedDateTime < new Date()) {
       Alert.alert("Error: Date and time are in the past.");
-      //console.log("datetime toast");
-      //setDatetimeToastVisible(true);
+      toast.show("Error!", {
+        message: "Date and time are in the past.",
+      });
+
       return;
     }
 
-    createGame(
+    const myNewGame = await createGame(
       title,
       combinedDateTime,
       address,
@@ -156,87 +117,105 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       playerLimit,
       description,
     );
-    if (updateGameStatus) {
-      // console.log("success toast");
-      // setSuccessToastVisible(true);
-    } else {
-      Alert.alert("Error publishing game! Please try again later.");
-      // console.log("error toast");
-      // setErrorToastVisible(true);
-      return;
+
+    if (myNewGame) {
+      toast.show("Successfully saved!", {
+        message: "Don't worry, we've got your data.",
+      });
+      clearGameAttributes();
+      navigation.navigate("MyGames");
     }
-    clearGameAttributes();
-    navigation.navigate("MyGames");
-  }
+  };
 
   return (
-    <ToastProvider>
-      <View className="p-12">
-        {session && session.user ? (
-          <ScrollView
-            contentContainerStyle={{ paddingBottom: 100 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <YStack space="$4" paddingBottom="$4">
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60}>
-                  Title
-                </Label>
+    <View className="p-12">
+      <ToastViewport />
+      <ToastDemo />
+      {session && session.user ? (
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <YStack space="$4" paddingBottom="$4">
+            <XStack space="$2" alignItems="center">
+              <Label size="$5" width={60}>
+                Title
+              </Label>
+              <Input
+                flex={1}
+                size="$5"
+                placeholder="Title"
+                value={title}
+                onChangeText={(text: string) => setTitle(text)}
+              />
+            </XStack>
+
+            <XStack space="$2" alignItems="center">
+              <Label size="$5" width={60}>
+                Date
+              </Label>
+              <DateTimePicker
+                value={date}
+                minimumDate={new Date()}
+                mode="date"
+                display="calendar"
+                onChange={(event, datetime) => {
+                  if (datetime) setDate(datetime);
+                }}
+              />
+            </XStack>
+
+            <XStack space="$2" alignItems="center">
+              <Label size="$5" width={60}>
+                Time
+              </Label>
+              <DateTimePicker
+                value={time}
+                mode="time"
+                display="clock"
+                onChange={(event, datetime) => {
+                  if (datetime) setTime(datetime);
+                }}
+              />
+            </XStack>
+
+            <YStack space="$1">
+              <Label size="$5">Address</Label>
+              <Input
+                flex={1}
+                size="$5"
+                placeholder="Address"
+                value={address}
+                onChangeText={(text: string) => setAddress(text)}
+              />
+            </YStack>
+
+            <YStack space="$1">
+              <Label size="$5">City</Label>
+              <Input
+                flex={1}
+                size="$5"
+                placeholder="City"
+                value={city}
+                onChangeText={(text: string) => setCity(text)}
+              />
+            </YStack>
+
+            <YStack space="$1">
+              <Label size="$5">State/ZIP</Label>
+              <XStack space="$3">
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="Title"
-                  value={title}
-                  onChangeText={(text: string) => setTitle(text)}
-                />
-              </XStack>
-
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60}>
-                  Date
-                </Label>
-                <DateTimePicker
-                  value={date}
-                  minimumDate={new Date()}
-                  mode="date"
-                  display="calendar"
-                  onChange={(event, datetime) => {
-                    if (datetime) setDate(datetime);
-                  }}
-                />
-              </XStack>
-
-              <XStack space="$2" alignItems="center">
-                <Label size="$5" width={60}>
-                  Time
-                </Label>
-                <DateTimePicker
-                  value={time}
-                  mode="time"
-                  display="clock"
-                  onChange={(event, datetime) => {
-                    if (datetime) setTime(datetime);
-                  }}
-                />
-              </XStack>
-
-              <YStack space="$1">
-                <Label size="$5">Address</Label>
-                <Input
-                  flex={1}
-                  size="$5"
-                  placeholder="Address"
+                  placeholder="Homewood"
                   value={address}
                   onChangeText={(text: string) => setAddress(text)}
                 />
-              </YStack>
-
-              <YStack space="$1">
-                <Label size="$5">City</Label>
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="City"
+
+                  placeholder="Baltimore"
                   value={city}
                   onChangeText={(text: string) => setCity(text)}
                 />
@@ -248,7 +227,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="State"
+                    placeholder="MD"
                     value={state}
                     //keyboardType="numeric"
                     onChangeText={(text: string) => setState(text)}
@@ -256,7 +235,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   <Input
                     flex={1}
                     size="$5"
-                    placeholder="ZIP code"
+                    placeholder="21218"
                     value={zip}
                     keyboardType="numeric"
                     onChangeText={(text: string) => setZip(text)}
@@ -308,7 +287,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                                 <Select.Item
                                   index={i}
                                   key={sport.name}
-                                  value={sport.name.toLowerCase()}
+                                  value={sport.name}
                                 >
                                   <Select.ItemText>
                                     {sport.name}
@@ -400,8 +379,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   size="$5"
                   defaultValue="1"
                   keyboardType="numeric"
-                  value={playerLimit}
-                  onChangeText={(text: string) => setPlayerLimit(text)}
+                  onChangeText={(text: string) => setZip(text)}
                 />
               </XStack>
 
@@ -419,65 +397,20 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Button
                   theme="active"
                   disabled={loading}
-                  onPress={() => createNewGame()}
+                  onPress={createNewGame}
                   size="$5"
                 >
                   {loading ? "Loading..." : "Publish"}
                 </Button>
               </YStack>
             </YStack>
-          </ScrollView>
-        ) : (
-          <View className="p-12 text-center items-center flex-1 justify-center">
-            <H4>Log in to create a new game!</H4>
-          </View>
-        )}
-
-        {/* {isErrorToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Sorry! Required fields cannot be empty! 🙁
-              </Toast.Title>
-              <Toast.Description>
-                Please enter all the content for your game.
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setErrorToastVisible(false)} />
-          </Toast>
-        )}
-
-        {isSuccessToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Congrats! You just created a new game 🙂
-              </Toast.Title>
-              <Toast.Description>
-                Navigate to "My Games" to see your new game!
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setSuccessToastVisible(false)} />
-          </Toast>
-        )}
-
-        {isDatetimeToastVisible && (
-          <Toast>
-            <YStack>
-              <Toast.Title>
-                Selected date and time cannot be in the past!
-              </Toast.Title>
-              <Toast.Description>
-                Please reenter your game's time.
-              </Toast.Description>
-            </YStack>
-            <Toast.Close onPress={() => setDatetimeToastVisible(false)} />
-          </Toast>
-        )} */}
-
-        <ToastViewport />
-      </View>
-    </ToastProvider>
+        </ScrollView>
+      ) : (
+        <View className="p-12 text-center items-center flex-1 justify-center">
+          <H4>Log in to create a new game!</H4>
+        </View>
+      )}
+    </View>
   );
 };
 
