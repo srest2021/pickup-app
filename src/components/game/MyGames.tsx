@@ -19,7 +19,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
 
   useEffect(() => {
-    //console.log("the store in my games list: ",myGames)
     handleRefresh();
   }, [myGamesToggle, selectedMyGame]);
 
@@ -27,7 +26,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
     setRefreshing(true);
     if (myGamesToggle === "myGames") {
       try {
-        //console.log("FETCHING GAMES")
         await fetchMyGames();
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
@@ -104,14 +102,14 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 ))}
               </YStack>
             ) : (
-              <View className="p-12 text-center items-center flex-1 justify-center">
+              <View className="items-center justify-center flex-1 p-12 text-center">
                 <H4>No games yet</H4>
               </View>
             )}
           </ScrollView>
         </View>
       ) : (
-        <View className="p-12 text-center items-center flex-1 justify-center">
+        <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Loading...</H4>
         </View>
       )}

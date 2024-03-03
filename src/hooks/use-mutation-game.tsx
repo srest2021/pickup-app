@@ -135,8 +135,6 @@ function useMutationGame() {
       const { error } = await supabase.from("games").delete().eq("id", id);
       if (error) throw error;
 
-      // remove from store
-      //console.log("data 2 update store remove: ", id)
       removeMyGame(id);
       clearSelectedMyGame();
     } catch (error) {
@@ -190,12 +188,10 @@ function useMutationGame() {
         })
         .eq("id", id)
         .select();
-      //console.log("got here too ", error)
       if (error) throw error;
 
       // Edit game in store
       if (data && data[0]) {
-        //console.log("data 2 update store edit: ", data)
         editMyGame(data[0], data);
       }
       return data;

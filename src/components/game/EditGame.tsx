@@ -31,7 +31,6 @@ import { ToastDemo } from "../Toast";
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
-  //console.log("selected my game: ",selectedMyGame.title)
 
   const { user } = useMutationUser();
   const { editGameById } = useMutationGame();
@@ -369,7 +368,6 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 value={description}
                 onChangeText={(text: string) => setDescription(text)}
               />
-
             </YStack>
 
             <YStack paddingTop="$5">

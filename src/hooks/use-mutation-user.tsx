@@ -98,7 +98,6 @@ function useMutationUser() {
 
   const editSport = async (sport: UserSport) => {
     try {
-      //console.log("EDITING SPORT")
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
@@ -108,16 +107,13 @@ function useMutationUser() {
         name: sport.name,
         skill_level: sport.skillLevel,
       };
-      //console.log("UPDATES: ",updates)
       const { data, error } = await supabase
         .from("sports")
         .upsert(updates)
         .select();
-      //console.log("ERROR: ", error?.message)
       if (error) {
         throw error;
       }
-      //console.log("DATA: ",data)
 
       if (data && data[0]) {
         const userSport: UserSport = {
@@ -203,7 +199,6 @@ function useMutationUser() {
         updated_at: new Date(),
       };
       const { error } = await supabase.from("profiles").upsert(updates);
-      //console.log(error)
 
       if (error) {
         throw error;

@@ -23,7 +23,6 @@ import { useEffect, useState } from "react";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
-  //console.log("GOING TO GAME VIEW");
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
@@ -150,12 +149,12 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
             </View>
           </ScrollView>
         ) : (
-          <View className="p-12 text-center items-center flex-1 justify-center">
+          <View className="items-center justify-center flex-1 p-12 text-center">
             <H4>Loading...</H4>
           </View>
         )
       ) : (
-        <View className="p-12 text-center items-center flex-1 justify-center">
+        <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Log in to view and edit this game!</H4>
         </View>
       )}

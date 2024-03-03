@@ -13,8 +13,6 @@ import AddSport from "./AddSport";
 // Get the height of the screen
 const windowHeight = Dimensions.get("window").height;
 
-//const avatarMidpoint = avatarHeight / 2;
-
 // Calculate the height for the top third
 const topThirdHeight = windowHeight / 4;
 

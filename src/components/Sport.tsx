@@ -8,8 +8,15 @@ import {
 export default function Sport({ sport }: { sport: SportType }) {
   return (
     <View className="flex flex-row p-2">
-      <View className="flex flex-grow">
-        <Text className="text-lg" style={{ color: "#e90d52", paddingLeft: 12 }}>
+      <View
+        style={{
+          backgroundColor: '#e90d52',
+          borderRadius: 50,
+          padding: 8,
+          marginRight: 10, // Adjust margin as needed
+        }}
+      >
+        <Text className="text-lg" style={{ color: "white"}}>
           {sport.name}
         </Text>
       </View>
