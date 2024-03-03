@@ -231,7 +231,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack>
               <Label size="$5">Sport</Label>
-              <Select value={sport} onValueChange={setSport}>
+              <Select value={sport} onValueChange={setSport} id="sportInput">
                 <Select.Trigger iconAfter={ChevronDown}>
                   <Select.Value placeholder="Select a sport..." />
                 </Select.Trigger>

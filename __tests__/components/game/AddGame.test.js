@@ -3,6 +3,7 @@ import AddGame from "../../../src/components/game/AddGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
+import { ToastProvider } from "@tamagui/toast";
 
 
 jest.mock("../../../src/lib/store", () => ({
@@ -17,7 +18,7 @@ describe("AddGame", () => {
   it("should create a new game and navigate to 'MyGames' when 'Publish' button is pressed", async () => {
     const navigation = { navigate: jest.fn() };
 
-    const { getByPlaceholderText, getByText } = render(
+    const { getByTestId } = render(
       <TamaguiProvider config={appConfig}>
         <ToastProvider>
         <AddGame navigation={navigation} />
@@ -26,30 +27,39 @@ describe("AddGame", () => {
     );
 
     // Simulate user input changes
-    fireEvent.changeText(getByPlaceholderText("Title"), "New Game Title");
-    //fireEvent.changeText(getByPlaceholderText("Time"), "Sun Mar 13 2025 15:42:33 GMT+0000 (Coordinated Universal Time)");
-    fireEvent.changeText(getByPlaceholderText("Address"), "3339 North Charles Street");
-    fireEvent.changeText(getByPlaceholderText("City"), "Baltimore");
-    fireEvent.changeText(getByPlaceholderText("State"), "MD");
-    fireEvent.changeText(getByPlaceholderText("ZIP code"), "21218");
+    fireEvent.changeText(getByTestId("titleInput"), "New Game Title");
+    fireEvent.changeText(getByTestId("dateInput"), new Date());
+    fireEvent.changeText(getByTestId("timeInput"), new Date());
+    fireEvent.changeText(getByTestId("addressInput"), "3339 North Charles Street");
+    fireEvent.changeText(getByTestId("cityInput"), "Baltimore");
+    fireEvent.changeText(getByTestId("stateInput"), "MD");
+    fireEvent.changeText(getByTestId("zipInput"), "21218");
+    // Simulate changing the value of the Select component
+    fireEvent(getByTestId("sportInput"), 'onValueChange', "Basketball");
+    // Simulate changing the value of the RadioGroup component
+    fireEvent(getByTestId("skillInput"), 'onValueChange', "1");
+    fireEvent.changeText(getByTestId("maxPlayerInput"), "10");
+    fireEvent.changeText(getByTestId("descriptionInput"), "Test Description");
 
-    // Simulate other required user inputs
 
     // Simulate button press to create a new game
-    fireEvent.press(getByText("Publish"));
+    fireEvent.press(getByTestId("addGameButton"));
 
     // Wait for the createGame function to be called
     await waitFor(() => () => {
       expect(createGame).toHaveBeenCalledWith(
-        "New Game Title", // Ensure that the correct title is passed
+        "New Game Title",
         expect.any(Date),
         "3339 North Charles Street",
         "Baltimore",
         "MD",
-        "21218"
-
-        // Add more arguments as needed
+        "21218",
+        "Basketball",
+        1,
+        "10",
+        "Test Description"
       );
+      
       // Ensure navigation to 'MyGames' is triggered after creating the game
       expect(navigation.navigate).toHaveBeenCalledWith("MyGames");
     });
