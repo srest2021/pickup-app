@@ -15,6 +15,55 @@ jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
 }));
 
 describe("AddGame", () => {
+  it("Should render component successfully", () => {
+    const navigation = { navigate: jest.fn() };
+
+    const { getByTestId } = render(
+      <TamaguiProvider config={appConfig}>
+        <ToastProvider>
+        <AddGame navigation={navigation} />
+        </ToastProvider>
+      </TamaguiProvider>
+    );
+
+    // Check form elements are rendered.  
+    const titleInput = getByTestId("titleInput");
+    expect(titleInput).toBeTruthy();
+
+    const datePicker = getByTestId("dateInput");
+    expect(datePicker).toBeTruthy();
+
+    const timePicker = getByTestId("timeInput");
+    expect(timePicker).toBeTruthy();
+
+    const addressInput = getByTestId("addressInput");
+    expect(addressInput).toBeTruthy();
+
+    const cityInput = getByTestId("cityInput");
+    expect(cityInput).toBeTruthy();
+
+    const stateInput = getByTestId("stateInput");
+    expect(stateInput).toBeTruthy();
+
+    const zipInput = getByTestId("zipInput");
+    expect(zipInput).toBeTruthy();
+
+    const skillInput = getByTestId("skillInput");
+    expect(skillInput).toBeTruthy();
+
+    const maxPlayerInput = getByTestId("maxPlayerInput");
+    expect(maxPlayerInput).toBeTruthy();
+
+    const descriptionInput = getByTestId("descriptionInput");
+    expect(descriptionInput).toBeTruthy();
+    
+    const publishButton = getByTestId("addGameButton");
+    expect(publishButton).toBeTruthy();
+
+    expect(root).toBeTruthy();
+  });
+
+describe("AddGame", () => {
   it("should create a new game and navigate to 'MyGames' when 'Publish' button is pressed", async () => {
     const navigation = { navigate: jest.fn() };
 
@@ -59,7 +108,7 @@ describe("AddGame", () => {
         "10",
         "Test Description"
       );
-      
+
       // Ensure navigation to 'MyGames' is triggered after creating the game
       expect(navigation.navigate).toHaveBeenCalledWith("MyGames");
     });
