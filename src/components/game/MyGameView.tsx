@@ -1,25 +1,21 @@
 import {
   YStack,
   Card,
-  Paragraph,
   H4,
   H5,
   SizableText,
   XStack,
   Label,
-  Text,
   Button,
   ScrollView,
   H6,
-  Circle,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
-import { Game } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
-import GameSkillView from "./GameSkillView";
+import SportSkill from "../SportSkill";
 import useQueryGames from "../../hooks/use-query-games";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -125,7 +121,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Skill:</H6>
                     </Label>
-                    <GameSkillView sport={selectedMyGame.sport} />
+                    <SportSkill sport={selectedMyGame.sport} />
                   </XStack>
                 </YStack>
 

@@ -218,7 +218,6 @@ function useMutationUser() {
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
-      return null;
     } finally {
       setLoading(false);
     }

@@ -10,7 +10,7 @@ import {
   Paragraph,
   XStack,
 } from "tamagui";
-import GameSkillView from "./GameSkillView";
+import SportSkill from "../SportSkill";
 import { useStore } from "../../lib/store";
 
 export default function GameThumbnail({
@@ -101,7 +101,7 @@ export default function GameThumbnail({
           >
             <XStack padding="$1.5" space="$1.5">
               <H6>Skill:</H6>
-              <GameSkillView sport={game.sport} />
+              <SportSkill sport={game.sport} />
             </XStack>
 
             <H6 style={{ position: "absolute", right: 0 }}>

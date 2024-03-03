@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { UserSport } from "../../lib/types";
-import GameSkillView from "../game/GameSkillView";
+import SportSkill from "../SportSkill";
 import { XStack } from "tamagui";
 
 export default function Sport({ sport }: { sport: UserSport }) {
@@ -19,7 +19,7 @@ export default function Sport({ sport }: { sport: UserSport }) {
             {sport.name}
           </Text>
         </View>
-        <GameSkillView sport={sport} />
+        <SportSkill sport={sport} />
       </XStack>
     </View>
   );
