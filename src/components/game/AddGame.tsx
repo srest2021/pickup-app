@@ -139,7 +139,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
         >
           <YStack space="$4" paddingBottom="$4">
             <XStack space="$2" alignItems="center">
-              <Label size="$5" width={60}>
+              <Label size="$5" width={60} color={"#08348c"}>
                 Title
               </Label>
               <Input
@@ -152,7 +152,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </XStack>
 
             <XStack space="$2" alignItems="center">
-              <Label size="$5" width={60}>
+              <Label size="$5" width={60} color={"#08348c"}>
                 Date
               </Label>
               <DateTimePicker
@@ -167,7 +167,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </XStack>
 
             <XStack space="$2" alignItems="center">
-              <Label size="$5" width={60}>
+              <Label size="$5" width={60} color={"#08348c"}>
                 Time
               </Label>
               <DateTimePicker
@@ -181,7 +181,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </XStack>
 
             <YStack space="$1">
-              <Label size="$5">Address</Label>
+              <Label size="$5" color={"#08348c"}>
+                Address
+              </Label>
               <Input
                 flex={1}
                 size="$5"
@@ -192,7 +194,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </YStack>
 
             <YStack space="$1">
-              <Label size="$5">City</Label>
+              <Label size="$5" color={"#08348c"}>
+                City
+              </Label>
               <Input
                 flex={1}
                 size="$5"
@@ -203,7 +207,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </YStack>
 
             <YStack space="$1">
-              <Label size="$5">State/ZIP</Label>
+              <Label size="$5" color={"#08348c"}>
+                State/ZIP
+              </Label>
               <XStack space="$3">
                 <Input
                   flex={1}
@@ -225,7 +231,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </YStack>
 
             <YStack>
-              <Label size="$5">Sport</Label>
+              <Label size="$5" color={"#08348c"}>
+                Sport
+              </Label>
               <Select value={sport} onValueChange={setSport}>
                 <Select.Trigger iconAfter={ChevronDown}>
                   <Select.Value placeholder="Select a sport..." />
@@ -260,7 +268,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   <Select.ScrollUpButton />
                   <Select.Viewport>
                     <Select.Group>
-                      <Select.Label>Sports</Select.Label>
+                      <Select.Label color={"orange"}>Sports</Select.Label>
                       {useMemo(
                         () =>
                           sports.map((sport, i) => {
@@ -287,7 +295,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </YStack>
 
             <YStack>
-              <Label size="$5">Skill Level</Label>
+              <Label size="$5" color={"#08348c"}>
+                Skill Level
+              </Label>
               <RadioGroup
                 aria-labelledby="Select one item"
                 defaultValue="3"
@@ -350,7 +360,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </YStack>
 
             <XStack space="$4" alignItems="center">
-              <Label flex={1} size="$5" width={90}>
+              <Label flex={1} size="$5" width={90} color={"#08348c"}>
                 Player Limit
               </Label>
               <Input
@@ -363,7 +373,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
             </XStack>
 
             <YStack space="$1">
-              <Label size="$5">Description</Label>
+              <Label size="$5" color={"#08348c"}>
+                Description
+              </Label>
               <TextArea
                 size="$5"
                 placeholder="Enter your game details (optional)"
@@ -378,6 +390,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 disabled={loading}
                 onPress={createNewGame}
                 size="$5"
+                color="#ff7403"
+                borderColor="#ff7403"
+                variant="outlined"
               >
                 {loading ? "Loading..." : "Publish"}
               </Button>

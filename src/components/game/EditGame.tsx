@@ -146,7 +146,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
         >
           <YStack space="$4" paddingBottom="$4">
             <XStack space="$2" alignItems="center">
-              <Label size="$5" width={60}>
+              <Label size="$5" width={60} color={"#08348c"}>
                 Title
               </Label>
               <Input
@@ -159,7 +159,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </XStack>
 
             <XStack space="$2" alignItems="center">
-              <Label size="$5" width={60}>
+              <Label size="$5" width={60} color={"#08348c"}>
                 Date
               </Label>
               <DateTimePicker
@@ -174,7 +174,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </XStack>
 
             <XStack space="$2" alignItems="center">
-              <Label size="$5" width={60}>
+              <Label size="$5" width={60} color={"#08348c"}>
                 Time
               </Label>
               <DateTimePicker
@@ -188,7 +188,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </XStack>
 
             <YStack space="$1">
-              <Label size="$5">Address</Label>
+              <Label size="$5" color={"#08348c"}>
+                Address
+              </Label>
               <Input
                 flex={1}
                 size="$5"
@@ -199,7 +201,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </YStack>
 
             <YStack space="$1">
-              <Label size="$5">City</Label>
+              <Label size="$5" color={"#08348c"}>
+                City
+              </Label>
               <Input
                 flex={1}
                 size="$5"
@@ -210,7 +214,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </YStack>
 
             <YStack space="$1">
-              <Label size="$5">State/ZIP</Label>
+              <Label size="$5" color={"#08348c"}>
+                State/ZIP
+              </Label>
               <XStack space="$3">
                 <Input
                   flex={1}
@@ -231,7 +237,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               </XStack>
             </YStack>
 
-            <Label size="$5">Sport</Label>
+            <Label size="$5" color={"#08348c"}>
+              Sport
+            </Label>
             <Select value={sport} onValueChange={setSport}>
               <Select.Trigger iconAfter={ChevronDown}>
                 <Select.Value placeholder="Select a sport..." />
@@ -266,7 +274,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 <Select.ScrollUpButton />
                 <Select.Viewport>
                   <Select.Group>
-                    <Select.Label>Sports</Select.Label>
+                    <Select.Label color={`orange`}>Sports</Select.Label>
                     {useMemo(
                       () =>
                         sports.map((sport, i) => {
@@ -291,7 +299,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               </Select.Content>
             </Select>
 
-            <Label size="$5">Skill Level</Label>
+            <Label size="$5" color={"#08348c"}>
+              Skill Level
+            </Label>
             <RadioGroup
               aria-labelledby="Select one item"
               defaultValue="3"
@@ -301,22 +311,14 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             >
               <YStack>
                 <XStack width={300} alignItems="center" space="$4">
-                  <RadioGroup.Item
-                    value={"0"}
-                    //id={`skill-level-${SkillLevel.Beginner}`}
-                    size={2}
-                  >
+                  <RadioGroup.Item value={"0"} size={2}>
                     <RadioGroup.Indicator />
                   </RadioGroup.Item>
 
                   <Label size={2}>{"Beginner"}</Label>
                 </XStack>
                 <XStack width={300} alignItems="center" space="$4">
-                  <RadioGroup.Item
-                    value={"1"}
-                    //id={`skill-level-${SkillLevel.Intermediate}`}
-                    size={2}
-                  >
+                  <RadioGroup.Item value={"1"} size={2}>
                     <RadioGroup.Indicator />
                   </RadioGroup.Item>
 
@@ -324,11 +326,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 </XStack>
 
                 <XStack width={300} alignItems="center" space="$4">
-                  <RadioGroup.Item
-                    value={"2"}
-                    //id={`skill-level-${SkillLevel.Advanced}`}
-                    size={2}
-                  >
+                  <RadioGroup.Item value={"2"} size={2}>
                     <RadioGroup.Indicator />
                   </RadioGroup.Item>
 
@@ -338,7 +336,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </RadioGroup>
 
             <XStack space="$4" alignItems="center">
-              <Label flex={1} size="$5" width={90}>
+              <Label flex={1} size="$5" width={90} color={"#08348c"}>
                 Player Limit
               </Label>
               <Input
@@ -352,7 +350,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </XStack>
 
             <YStack space="$1">
-              <Label size="$5">Description</Label>
+              <Label size="$5" color={"#08348c"}>
+                Description
+              </Label>
               <TextArea
                 size="$5"
                 placeholder="Enter your game details..."
@@ -367,6 +367,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 disabled={loading}
                 onPress={() => editGame()}
                 size="$5"
+                color="#ff7403"
+                borderColor="#ff7403"
+                variant="outlined"
               >
                 {loading ? "Loading..." : "Edit"}
               </Button>
