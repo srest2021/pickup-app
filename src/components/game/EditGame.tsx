@@ -57,10 +57,12 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   );
   const [zip, setZip] = useState(selectedMyGame ? selectedMyGame.zip : "");
   const [sport, setSport] = useState(
-    selectedMyGame ? selectedMyGame.sport.name : "",
+    selectedMyGame && selectedMyGame.sport ? selectedMyGame.sport.name : "",
   );
   const [skillLevel, setSkillLevel] = useState(
-    `${selectedMyGame?.sport.skillLevel}`,
+    selectedMyGame && selectedMyGame.sport
+      ? `${selectedMyGame?.sport.skillLevel}`
+      : "",
   );
   const [playerLimit, setPlayerLimit] = useState(
     `${selectedMyGame?.maxPlayers}`,
@@ -153,6 +155,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="Title"
+                testID="titleInput"
                 value={title}
                 onChangeText={(text: string) => setTitle(text)}
               />
@@ -167,6 +170,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 minimumDate={new Date()}
                 mode="date"
                 display="calendar"
+                testID="datePicker"
                 onChange={(event, datetime) => {
                   if (datetime) setDate(datetime);
                 }}
@@ -181,6 +185,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 value={time}
                 mode="time"
                 display="clock"
+                testID="timePicker"
                 onChange={(event, datetime) => {
                   if (datetime) setTime(datetime);
                 }}
@@ -195,6 +200,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="Address"
+                testID="addressInput"
                 value={address}
                 onChangeText={(text: string) => setAddress(text)}
               />
@@ -208,6 +214,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="City"
+                testID="cityInput"
                 value={city}
                 onChangeText={(text: string) => setCity(text)}
               />
@@ -223,7 +230,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   size="$5"
                   placeholder="State"
                   value={state}
-                  //keyboardType="numeric"
+                  testID="stateInput"
                   onChangeText={(text: string) => setState(text)}
                 />
                 <Input
@@ -231,6 +238,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   size="$5"
                   placeholder="ZIP code"
                   value={zip}
+                  testID="zipInput"
                   keyboardType="numeric"
                   onChangeText={(text: string) => setZip(text)}
                 />
@@ -306,6 +314,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               aria-labelledby="Select one item"
               defaultValue="3"
               name="form"
+              testID="skillInput"
               value={skillLevel}
               onValueChange={setSkillLevel}
             >
@@ -329,7 +338,6 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   <RadioGroup.Item value={"2"} size={2}>
                     <RadioGroup.Indicator />
                   </RadioGroup.Item>
-
                   <Label size={2}>{"Advanced"}</Label>
                 </XStack>
               </YStack>
@@ -344,6 +352,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 size="$5"
                 defaultValue="1"
                 keyboardType="numeric"
+                testID="maxPlayerInput"
                 value={playerLimit}
                 onChangeText={(text: string) => setPlayerLimit(text)}
               />
@@ -356,9 +365,11 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               <TextArea
                 size="$5"
                 placeholder="Enter your game details..."
+                testID="descriptionInput"
                 value={description}
                 onChangeText={(text: string) => setDescription(text)}
               />
+
             </YStack>
 
             <YStack paddingTop="$5">
@@ -369,6 +380,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 size="$5"
                 color="#ff7403"
                 borderColor="#ff7403"
+                testID="editButton"
                 variant="outlined"
               >
                 {loading ? "Loading..." : "Edit"}

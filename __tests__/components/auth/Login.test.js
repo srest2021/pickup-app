@@ -9,6 +9,7 @@ import appConfig from "../../../tamagui.config";
 import Login from "../../../src/components/auth/Login";
 import { supabase } from "../../../src/lib/supabase";
 import { NavigationContainer } from "@react-navigation/native";
+import "@testing-library/jest-dom";
 
 describe("Login", () => {
   it("should render successfully", () => {

@@ -8,6 +8,7 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import Register from "../../../src/components/auth/Register";
 import { supabase } from "../../../src/lib/supabase";
+import "@testing-library/jest-dom";
 
 describe("Register", () => {
   it("should render successfully", () => {

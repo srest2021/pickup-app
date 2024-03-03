@@ -146,6 +146,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="Title"
+                testID="titleInput"
                 value={title}
                 onChangeText={(text: string) => setTitle(text)}
               />
@@ -160,6 +161,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 minimumDate={new Date()}
                 mode="date"
                 display="calendar"
+                testID="dateInput"
                 onChange={(event, datetime) => {
                   if (datetime) setDate(datetime);
                 }}
@@ -174,6 +176,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 value={time}
                 mode="time"
                 display="clock"
+                testID="timeInput"
                 onChange={(event, datetime) => {
                   if (datetime) setTime(datetime);
                 }}
@@ -188,6 +191,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="Address"
+                testID="addressInput"
                 value={address}
                 onChangeText={(text: string) => setAddress(text)}
               />
@@ -201,6 +205,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 flex={1}
                 size="$5"
                 placeholder="City"
+                testID="cityInput"
                 value={city}
                 onChangeText={(text: string) => setCity(text)}
               />
@@ -216,7 +221,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   size="$5"
                   placeholder="State"
                   value={state}
-                  //keyboardType="numeric"
+                  testID="stateInput"
                   onChangeText={(text: string) => setState(text)}
                 />
                 <Input
@@ -225,6 +230,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   placeholder="Zip"
                   value={zip}
                   keyboardType="numeric"
+                  testID="zipInput"
                   onChangeText={(text: string) => setZip(text)}
                 />
               </XStack>
@@ -302,6 +308,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 aria-labelledby="Select one item"
                 defaultValue="3"
                 name="form"
+                testID="skillInput"
                 value={skillLevel}
                 onValueChange={setSkillLevel}
               >
@@ -368,6 +375,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 defaultValue="1"
                 keyboardType="numeric"
+                testID="maxPlayerInput"
                 onChangeText={(text: string) => setZip(text)}
               />
             </XStack>
@@ -379,6 +387,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               <TextArea
                 size="$5"
                 placeholder="Enter your game details (optional)"
+                testID="descriptionInput"
                 value={description}
                 onChangeText={(text: string) => setDescription(text)}
               />
@@ -389,6 +398,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 theme="active"
                 disabled={loading}
                 onPress={createNewGame}
+                testID="addGameButton"
                 size="$5"
                 color="#ff7403"
                 borderColor="#ff7403"
