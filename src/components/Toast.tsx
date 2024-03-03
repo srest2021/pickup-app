@@ -32,7 +32,7 @@ const CurrentToast = () => {
   return (
     <Toast
       key={currentToast.id}
-      duration={currentToast.duration}
+      duration={5000}
       enterStyle={{ opacity: 0, scale: 0.5, y: -25 }}
       exitStyle={{ opacity: 0, scale: 1, y: -20 }}
       y={0}

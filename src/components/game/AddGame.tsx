@@ -78,9 +78,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !address ||
       !sport ||
       !skillLevel ||
-      !playerLimit
+      !playerLimit ||
+      !city ||
+      !state ||
+      !zip
     ) {
-      Alert.alert("Error: Please fill out all required fields.");
       toast.show("Error!", {
         message: "Please fill out all required fields.",
       });
@@ -97,7 +99,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (combinedDateTime < new Date()) {
-      Alert.alert("Error: Date and time are in the past.");
       toast.show("Error!", {
         message: "Date and time are in the past.",
       });
@@ -120,7 +121,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
     if (myNewGame) {
       toast.show("Successfully saved!", {
-        message: "Don't worry, we've got your data.",
+        message: "You'll be rerouted to your games list!",
       });
       clearGameAttributes();
       navigation.navigate("MyGames");
