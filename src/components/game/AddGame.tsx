@@ -120,9 +120,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (myNewGame) {
-      toast.show("Successfully saved!", {
-        message: "You'll be rerouted to your games list!",
-      });
       clearGameAttributes();
       navigation.navigate("MyGames");
     }
@@ -376,7 +373,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 defaultValue="1"
                 keyboardType="numeric"
                 testID="maxPlayerInput"
-                onChangeText={(text: string) => setZip(text)}
+                onChangeText={(text: string) => setPlayerLimit(text)}
               />
             </XStack>
 
