@@ -23,7 +23,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
   const [sportName, setSportName] = useState(sports[0].name);
 
   const handleSave = () => {
-    onSportSelect(sportName, convertSkillLevel()); 
+    onSportSelect(sportName, convertSkillLevel());
   };
 
   function convertSkillLevel(): number {

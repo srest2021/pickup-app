@@ -1,4 +1,4 @@
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
+import { render, fireEvent, waitFor, screen } from "@testing-library/react-native";
 import EditGame from "../../../src/components/game/EditGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
@@ -9,6 +9,7 @@ import { ToastProvider } from "@tamagui/toast";
 jest.mock("../../../src/hooks/use-mutation-user", () => () => ({
   user: {}, // Mock user object as needed for the test
 }));
+
 const mockEditGameById = jest.fn();
 jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
   editGameById: mockEditGameById,
@@ -50,7 +51,7 @@ describe("EditGame", () => {
     const navigation = { goBack: jest.fn() };
     const route = { params: { gameId: "gameId" } };
 
-    const { root, getByTestId } = render(
+    const { root } = render(
       <TamaguiProvider config={appConfig}>
         <ToastProvider>
           <EditGame navigation={navigation} route={route} />
@@ -59,37 +60,37 @@ describe("EditGame", () => {
     );
 
     // Check form elements are rendered.
-    const titleInput = getByTestId("titleInput");
+    const titleInput = screen.getByTestId("titleInput");
     expect(titleInput).toBeTruthy();
 
-    const datePicker = getByTestId("datePicker");
+    const datePicker = screen.getByTestId("datePicker");
     expect(datePicker).toBeTruthy();
 
-    const timePicker = getByTestId("timePicker");
+    const timePicker = screen.getByTestId("timePicker");
     expect(timePicker).toBeTruthy();
 
-    const addressInput = getByTestId("addressInput");
+    const addressInput = screen.getByTestId("addressInput");
     expect(addressInput).toBeTruthy();
 
-    const cityInput = getByTestId("cityInput");
+    const cityInput = screen.getByTestId("cityInput");
     expect(cityInput).toBeTruthy();
 
-    const stateInput = getByTestId("stateInput");
+    const stateInput = screen.getByTestId("stateInput");
     expect(stateInput).toBeTruthy();
 
-    const zipInput = getByTestId("zipInput");
+    const zipInput = screen.getByTestId("zipInput");
     expect(zipInput).toBeTruthy();
 
-    const skillInput = getByTestId("skillInput");
+    const skillInput = screen.getByTestId("skillInput");
     expect(skillInput).toBeTruthy();
 
-    const maxPlayerInput = getByTestId("maxPlayerInput");
+    const maxPlayerInput = screen.getByTestId("maxPlayerInput");
     expect(maxPlayerInput).toBeTruthy();
 
-    const descriptionInput = getByTestId("descriptionInput");
+    const descriptionInput = screen.getByTestId("descriptionInput");
     expect(descriptionInput).toBeTruthy();
 
-    const editButton = getByTestId("editButton");
+    const editButton = screen.getByTestId("editButton");
     expect(editButton).toBeTruthy();
 
     expect(root).toBeTruthy();
@@ -100,7 +101,7 @@ describe("EditGame", () => {
       const navigation = { goBack: jest.fn() };
       const route = { params: { gameId: "gameId" } };
 
-      const { getByTestId } = render(
+      const { root } = render(
         <TamaguiProvider config={appConfig}>
           <ToastProvider>
             <EditGame navigation={navigation} route={route} />
@@ -109,8 +110,8 @@ describe("EditGame", () => {
       );
 
       // getByTestId to select the input field
-      fireEvent.changeText(getByTestId("titleInput"), "New Title");
-      const editButton = getByTestId("editButton");
+      fireEvent.changeText(screen.getByTestId("titleInput"), "New Title");
+      const editButton = screen.getByTestId("editButton");
       fireEvent.press(editButton);
 
       await waitFor(() => {
