@@ -212,38 +212,18 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="Homewood"
-                  testID="addressInput"
-                  value={address}
-                  onChangeText={(text: string) => setAddress(text)}
-                />
-                <Input
-                  flex={1}
-                  size="$5"
-                  placeholder="Baltimore"
-                  value={city}
-                  onChangeText={(text: string) => setCity(text)}
-                />
-              </XStack>
-            </YStack>
-
-            <YStack space="$1">
-              <Label size="$5">State/ZIP</Label>
-              <XStack space="$3">
-                <Input
-                  flex={1}
-                  size="$5"
-                  placeholder="MD"
+                  placeholder="State"
                   value={state}
-                  //keyboardType="numeric"
+                  testID="stateInput"
                   onChangeText={(text: string) => setState(text)}
                 />
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="21218"
+                  placeholder="Zip"
                   value={zip}
                   keyboardType="numeric"
+                  testID="zipInput"
                   onChangeText={(text: string) => setZip(text)}
                 />
               </XStack>
@@ -317,6 +297,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 aria-labelledby="Select one item"
                 defaultValue="3"
                 name="form"
+                testID="skillInput"
                 value={skillLevel}
                 onValueChange={setSkillLevel}
               >
@@ -383,6 +364,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 defaultValue="1"
                 keyboardType="numeric"
+                testID="maxPlayerInput"
                 onChangeText={(text: string) => setZip(text)}
               />
             </XStack>
@@ -392,6 +374,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               <TextArea
                 size="$5"
                 placeholder="Enter your game details (optional)"
+                testID="descriptionInput"
                 value={description}
                 onChangeText={(text: string) => setDescription(text)}
               />
@@ -402,6 +385,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 theme="active"
                 disabled={loading}
                 onPress={createNewGame}
+                testID="addGameButton"
                 size="$5"
               >
                 {loading ? "Loading..." : "Publish"}
