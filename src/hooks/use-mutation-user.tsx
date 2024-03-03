@@ -5,20 +5,29 @@ import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
 
 function useMutationUser() {
-  const [session, user, userSports, setSession, setLoading, setUser, editUser, addUserSport, editUserSport, setUserSports] = useStore(
-    (state) => [
-      state.session,
-      state.user,
-      state.userSports,
-      state.setSession,
-      state.setLoading,
-      state.setUser,
-      state.editUser,
-      state.addUserSport,
-      state.editUserSport,
-      state.setUserSports
-    ],
-  );
+  const [
+    session,
+    user,
+    userSports,
+    setSession,
+    setLoading,
+    setUser,
+    editUser,
+    addUserSport,
+    editUserSport,
+    setUserSports,
+  ] = useStore((state) => [
+    state.session,
+    state.user,
+    state.userSports,
+    state.setSession,
+    state.setLoading,
+    state.setUser,
+    state.editUser,
+    state.addUserSport,
+    state.editUserSport,
+    state.setUserSports,
+  ]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -66,11 +75,14 @@ function useMutationUser() {
           displayName: data.display_name,
           bio: data.bio,
           avatarUrl: data.avatar_url,
-          sports: data.sports.map((sport) => ({
-            id: sport.id,
-            name: sport.name,
-            skillLevel: sport.skill_level,
-          } as UserSport)),
+          sports: data.sports.map(
+            (sport) =>
+              ({
+                id: sport.id,
+                name: sport.name,
+                skillLevel: sport.skill_level,
+              }) as UserSport,
+          ),
         };
         setUser(user);
         setUserSports(user.sports);
@@ -84,22 +96,23 @@ function useMutationUser() {
     }
   };
 
-  const editSport = async (
-    sport: UserSport
-  ) => {
+  const editSport = async (sport: UserSport) => {
     try {
       //console.log("EDITING SPORT")
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-      
+
       const updates = {
         id: sport.id,
         user_id: session?.user.id,
         name: sport.name,
         skill_level: sport.skillLevel,
-      }
+      };
       //console.log("UPDATES: ",updates)
-      const { data, error } = await supabase.from("sports").upsert(updates).select();
+      const { data, error } = await supabase
+        .from("sports")
+        .upsert(updates)
+        .select();
       //console.log("ERROR: ", error?.message)
       if (error) {
         throw error;
@@ -108,9 +121,9 @@ function useMutationUser() {
 
       if (data && data[0]) {
         const userSport: UserSport = {
-            id: data[0].id,
-            name: data[0].name,
-            skillLevel: data[0].skill_level,
+          id: data[0].id,
+          name: data[0].name,
+          skillLevel: data[0].skill_level,
         };
         editUserSport(userSport);
       }
@@ -121,31 +134,31 @@ function useMutationUser() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const addSport = async (
-    sportName: string,
-    sportSkillLevel: SkillLevel
-  ) => {
+  const addSport = async (sportName: string, sportSkillLevel: SkillLevel) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-      
+
       const updates = {
         user_id: session?.user.id,
         name: sportName,
         skill_level: Number(sportSkillLevel),
-      }
-      const { data, error } = await supabase.from("sports").insert(updates).select();
+      };
+      const { data, error } = await supabase
+        .from("sports")
+        .insert(updates)
+        .select();
       if (error) {
         throw error;
       }
 
       if (data && data[0]) {
         const userSport: UserSport = {
-            id: data[0].id,
-            name: data[0].name,
-            skillLevel: data[0].skill_level,
+          id: data[0].id,
+          name: data[0].name,
+          skillLevel: data[0].skill_level,
         };
         addUserSport(userSport);
       }
@@ -156,13 +169,12 @@ function useMutationUser() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const setSport = async(
-    sportName: string,
-    sportSkillLevel: SkillLevel
-  ) => {
-    const userSport = userSports.find(userSport => userSport.name === sportName);
+  const setSport = async (sportName: string, sportSkillLevel: SkillLevel) => {
+    const userSport = userSports.find(
+      (userSport) => userSport.name === sportName,
+    );
     if (!userSport) {
       addSport(sportName, sportSkillLevel);
     } else {
@@ -170,7 +182,7 @@ function useMutationUser() {
       updatedSport.skillLevel = sportSkillLevel;
       editSport(updatedSport);
     }
-  } 
+  };
 
   const updateProfile = async (
     username: string,

@@ -5,14 +5,18 @@ import Sport from "./Sport";
 export default function Sports({ sports }: { sports: any }) {
   return (
     <View>
-      <Text className="text-lg font-bold" style={{paddingLeft: 12}}>My Sports</Text>
+      <Text className="text-lg font-bold" style={{ paddingLeft: 12 }}>
+        My Sports
+      </Text>
       <View>
         {sports && sports.length > 0 ? (
           sports.map((sport: UserSport) => (
             <Sport key={sport.id} sport={sport} />
           ))
         ) : (
-          <Text className="text-lg" style={{ paddingLeft: 12 }}>No sports yet</Text>
+          <Text className="text-lg" style={{ paddingLeft: 12 }}>
+            No sports yet
+          </Text>
         )}
       </View>
     </View>

@@ -7,7 +7,11 @@ import { useStore } from "../../lib/store";
 import useMutationUser from "../../hooks/use-mutation-user";
 
 export default function EditProfile() {
-  const [session, loading, user] = useStore((state) => [state.session, state.loading, state.user]);
+  const [session, loading, user] = useStore((state) => [
+    state.session,
+    state.loading,
+    state.user,
+  ]);
 
   const { updateProfile } = useMutationUser();
 
@@ -16,16 +20,16 @@ export default function EditProfile() {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
 
   return (
-    <View style={{ backgroundColor: "white", flex: 1, padding:35 }}>
+    <View style={{ backgroundColor: "white", flex: 1, padding: 35 }}>
       {user ? (
         <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          flexGrow: 1, 
-          justifyContent: 'space-between', 
-          backgroundColor: "#ffffff",
-        }}
-      >
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "space-between",
+            backgroundColor: "#ffffff",
+          }}
+        >
           <View className="self-stretch py-4">
             <Input label="Email" value={session?.user?.email} disabled />
           </View>
@@ -64,7 +68,9 @@ export default function EditProfile() {
               borderColor="#ff7403"
               variant="outlined"
               disabled={loading}
-              onPress={() => updateProfile(user.username,  displayName, bio, avatarUrl)}
+              onPress={() =>
+                updateProfile(user.username, displayName, bio, avatarUrl)
+              }
               size="$5"
               width="94%"
             >

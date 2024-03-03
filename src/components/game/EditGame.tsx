@@ -38,14 +38,26 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const loading = useStore((state) => state.loading);
 
   // existing game attributes
-  const [title, setTitle] = useState(selectedMyGame ? selectedMyGame.title : "");
-  const [date, setDate] = useState(selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date());
-  const [time, setTime] = useState(selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date());
-  const [address, setAddress] = useState(selectedMyGame ? selectedMyGame.address : "");
+  const [title, setTitle] = useState(
+    selectedMyGame ? selectedMyGame.title : "",
+  );
+  const [date, setDate] = useState(
+    selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date(),
+  );
+  const [time, setTime] = useState(
+    selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date(),
+  );
+  const [address, setAddress] = useState(
+    selectedMyGame ? selectedMyGame.address : "",
+  );
   const [city, setCity] = useState(selectedMyGame ? selectedMyGame.city : "");
-  const [state, setState] = useState(selectedMyGame ? selectedMyGame.state : "");
+  const [state, setState] = useState(
+    selectedMyGame ? selectedMyGame.state : "",
+  );
   const [zip, setZip] = useState(selectedMyGame ? selectedMyGame.zip : "");
-  const [sport, setSport] = useState(selectedMyGame ? selectedMyGame.sport.name : "");
+  const [sport, setSport] = useState(
+    selectedMyGame ? selectedMyGame.sport.name : "",
+  );
   const [skillLevel, setSkillLevel] = useState(
     `${selectedMyGame?.sport.skillLevel}`,
   );
@@ -53,7 +65,6 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     `${selectedMyGame?.maxPlayers}`,
   );
   const [description, setDescription] = useState(selectedMyGame?.description);
-
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {

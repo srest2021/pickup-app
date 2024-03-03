@@ -71,7 +71,8 @@ export const useStore = create<State & Action>()(
 
     setUserSports: (userSports) => set({ userSports }),
 
-    addUserSport: (newUserSport) => set({ userSports: [newUserSport, ...get().userSports] }),
+    addUserSport: (newUserSport) =>
+      set({ userSports: [newUserSport, ...get().userSports] }),
 
     editUserSport: (newUserSport) => {
       const newUserSports = get().userSports.map((userSport) => {
