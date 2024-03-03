@@ -7,13 +7,17 @@ import {
 
 export default function Sport({ sport }: { sport: SportType }) {
   return (
-    <View className="p-2 flex flex-row">
+    <View className="flex flex-row p-2">
       <View className="flex flex-grow">
-        <Text className="text-lg">{sport.name}</Text>
+        <Text className="text-lg" style={{ color: "#e90d52", paddingLeft: 12 }}>
+          {sport.name}
+        </Text>
       </View>
 
       <View className="flex flex-none">
-        <Text className="text-lg">{getSkillLevelString(sport.skillLevel)}</Text>
+        <Text className="text-lg" style={{ color: "#e90d52" }}>
+          {getSkillLevelString(sport.skillLevel)}
+        </Text>
       </View>
     </View>
   );

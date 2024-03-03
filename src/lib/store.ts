@@ -21,6 +21,8 @@ type Action = {
   setUser: (user: User) => void;
   editUser: (updated: any) => void;
 
+  addUserSport: (userSport: UserSport) => void;
+  editUserSport: (userSport: UserSport) => void;
   setUserSports: (userSports: UserSport[]) => void;
   clearUserSports: () => void;
 
@@ -68,6 +70,19 @@ export const useStore = create<State & Action>()(
     },
 
     setUserSports: (userSports) => set({ userSports }),
+
+    addUserSport: (newUserSport) =>
+      set({ userSports: [newUserSport, ...get().userSports] }),
+
+    editUserSport: (newUserSport) => {
+      const newUserSports = get().userSports.map((userSport) => {
+        if (userSport.id === newUserSport.id) {
+          return newUserSport;
+        }
+        return userSport;
+      });
+      set({ userSports: newUserSports });
+    },
 
     clearUserSports: () => set({ userSports: [] }),
 
