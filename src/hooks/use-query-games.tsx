@@ -130,14 +130,6 @@ function useQueryGames() {
         })
         .limit(20);
 
-      //console.log(games);
-      //TODO: ADD PAGINATION - right now only returning 20 most relevant games
-      /*
-      const { data: games, error } = await supabase
-        .from("games")
-        .select("*")
-        .limit(20);
-        */
       if (error) throw error;
 
       if (games) {

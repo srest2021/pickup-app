@@ -37,12 +37,11 @@ describe("MyGames", () => {
     const { getByText } = render(<MyGames navigation={navigation} />);
 
     const joinedGamesTab = getByText("Joined Games");
-    //const joinedGamesTab = screen.getByTestId("joined-games")
+
     console.log(joinedGamesTab);
     fireEvent.press(joinedGamesTab);
 
     const myGamesTab = getByText("Joined Games");
-    //const myGamesTab = screen.getByTestId("my-games")
     fireEvent.press(myGamesTab);
     expect(fetchMyGames).toHaveBeenCalled();
   });
