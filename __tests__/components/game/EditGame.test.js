@@ -1,8 +1,4 @@
-import {
-    render,
-    fireEvent,
-    waitFor,
-  } from "@testing-library/react-native";
+import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import EditGame from "../../../src/components/game/EditGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
@@ -20,13 +16,15 @@ jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
 
 const mockSport = {
   name: "Basketball",
-  skillLevel: "Beginner"
-}
+  skillLevel: "Beginner",
+};
 
 const mockSelectedMyGame = {
   id: "gameId",
   title: "Test Title",
-  datetime: new Date("Sun Mar 13 2025 15:42:33 GMT+0000 (Coordinated Universal Time)"),
+  datetime: new Date(
+    "Sun Mar 13 2025 15:42:33 GMT+0000 (Coordinated Universal Time)",
+  ),
   address: "3339 North Charles St",
   city: "Baltimore",
   state: "MD",
@@ -37,13 +35,15 @@ const mockSelectedMyGame = {
 };
 
 // Mock Selected Game in Store
-jest.mock('../../../src/lib/store', () => ({
-  useStore: jest.fn(() => [{
-     selectedMyGame: mockSelectedMyGame,
-     loading: false, 
-    }, jest.fn()]),
+jest.mock("../../../src/lib/store", () => ({
+  useStore: jest.fn(() => [
+    {
+      selectedMyGame: mockSelectedMyGame,
+      loading: false,
+    },
+    jest.fn(),
+  ]),
 }));
-
 
 describe("EditGame", () => {
   it("Should render component successfully", () => {
@@ -51,14 +51,14 @@ describe("EditGame", () => {
     const route = { params: { gameId: "gameId" } };
 
     const { root, getByTestId } = render(
-        <TamaguiProvider config={appConfig}>
-          <ToastProvider>
+      <TamaguiProvider config={appConfig}>
+        <ToastProvider>
           <EditGame navigation={navigation} route={route} />
-          </ToastProvider>
-        </TamaguiProvider>,
-      );
+        </ToastProvider>
+      </TamaguiProvider>,
+    );
 
-    // Check form elements are rendered.  
+    // Check form elements are rendered.
     const titleInput = getByTestId("titleInput");
     expect(titleInput).toBeTruthy();
 
@@ -88,52 +88,48 @@ describe("EditGame", () => {
 
     const descriptionInput = getByTestId("descriptionInput");
     expect(descriptionInput).toBeTruthy();
-    
+
     const editButton = getByTestId("editButton");
     expect(editButton).toBeTruthy();
 
     expect(root).toBeTruthy();
   });
 
+  describe("EditGame", () => {
+    it('should call editGameById with updated title attribute and navigate back when "Edit" button is pressed', async () => {
+      const navigation = { goBack: jest.fn() };
+      const route = { params: { gameId: "gameId" } };
 
-
-describe('EditGame', () => {
-  it('should call editGameById with updated title attribute and navigate back when "Edit" button is pressed', async () => {
-    const navigation = { goBack: jest.fn() };
-    const route = { params: { gameId: "gameId" } };
-
-    const { getByTestId } = render(
-      <TamaguiProvider config={appConfig}>
-        <ToastProvider>
-        <EditGame navigation={navigation} route={route} />
-        </ToastProvider>
-      </TamaguiProvider>
-    );
-  
-    // getByTestId to select the input field
-    fireEvent.changeText(getByTestId("titleInput"), "New Title");
-    const editButton = getByTestId("editButton");
-    fireEvent.press(editButton);
-  
-    await waitFor(() => {
-      expect(mockEditGameById).toHaveBeenCalledWith(
-        "gameId",
-        "New Title", // only updating title
-        expect.any(Date),
-        mockSelectedMyGame.address,
-        mockSelectedMyGame.city,
-        mockSelectedMyGame.state,
-        mockSelectedMyGame.zip,
-        mockSelectedMyGame.sport.name,
-        expect.any(Number), 
-        mockSelectedMyGame.maxPlayers.toString(),
-        mockSelectedMyGame.description,
+      const { getByTestId } = render(
+        <TamaguiProvider config={appConfig}>
+          <ToastProvider>
+            <EditGame navigation={navigation} route={route} />
+          </ToastProvider>
+        </TamaguiProvider>,
       );
+
+      // getByTestId to select the input field
+      fireEvent.changeText(getByTestId("titleInput"), "New Title");
+      const editButton = getByTestId("editButton");
+      fireEvent.press(editButton);
+
+      await waitFor(() => {
+        expect(mockEditGameById).toHaveBeenCalledWith(
+          "gameId",
+          "New Title", // only updating title
+          expect.any(Date),
+          mockSelectedMyGame.address,
+          mockSelectedMyGame.city,
+          mockSelectedMyGame.state,
+          mockSelectedMyGame.zip,
+          mockSelectedMyGame.sport.name,
+          expect.any(Number),
+          mockSelectedMyGame.maxPlayers.toString(),
+          mockSelectedMyGame.description,
+        );
+      });
+
+      expect(navigation.goBack).toHaveBeenCalled();
     });
-  
-    expect(navigation.goBack).toHaveBeenCalled();
   });
 });
-
-});
-

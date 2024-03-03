@@ -1,7 +1,7 @@
-import { GameSport, getSkillLevelColors } from "../../lib/types";
+import { Sport, getSkillLevelColors } from "../../lib/types";
 import { Circle, XStack } from "tamagui";
 
-export default function GameSkillView({ sport }: { sport: GameSport }) {
+export default function GameSkillView({ sport }: { sport: Sport }) {
   const [color1, color2, color3] = getSkillLevelColors(sport.skillLevel);
 
   return (

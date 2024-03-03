@@ -46,79 +46,79 @@ export default function App() {
   return (
     <TamaguiProvider config={appConfig}>
       <ToastProvider>
-      {session && session.user ? (
-        <NavigationContainer>
-          <Tab.Navigator
-            initialRouteName="Feed"
-            screenOptions={{
-              tabBarActiveTintColor: "black",
-              tabBarInactiveTintColor: "gray",
-            }}
-          >
-            <Tab.Screen
-              name="Feed"
-              component={Feed}
-              options={{
-                tabBarLabel: "Feed",
-                tabBarIcon: ({ color, size, focused }) => (
-                  <GalleryVerticalEnd color={focused ? "black" : "gray"} />
-                ),
+        {session && session.user ? (
+          <NavigationContainer>
+            <Tab.Navigator
+              initialRouteName="Feed"
+              screenOptions={{
+                tabBarActiveTintColor: "black",
+                tabBarInactiveTintColor: "gray",
               }}
-              initialParams={{ key: session.user.id }}
-            />
-            <Tab.Screen
-              name="My Games"
-              component={MyGamesNavigator}
-              options={{
-                tabBarLabel: "My Games",
-                tabBarIcon: ({ color, size, focused }) => (
-                  <AlignJustify color={focused ? "black" : "gray"} />
-                ),
-                headerShown: false,
-              }}
-              initialParams={{ key: session.user.id }}
-            />
-            <Tab.Screen
-              name="Add Game"
-              component={AddGame}
-              options={{
-                tabBarLabel: "Add Game",
-                tabBarIcon: ({ color, size, focused }) => (
-                  <PlusCircle color={focused ? "black" : "gray"} />
-                ),
-              }}
-              initialParams={{ key: session.user.id }}
-            />
-            <Tab.Screen
-              name="My Profile"
-              component={EditProfileNavigator}
-              options={{
-                tabBarLabel: "Profile",
-                tabBarIcon: ({ color, size, focused }) => (
-                  <CircleUser color={focused ? "black" : "gray"} />
-                ),
-                headerShown: false,
-              }}
-              initialParams={{ key: session.user.id }}
-            />
-          </Tab.Navigator>
-        </NavigationContainer>
-      ) : (
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{ title: "Login" }}
-            />
-            <Stack.Screen
-              name="Register"
-              component={Register}
-              options={{ title: "Register" }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      )}
+            >
+              <Tab.Screen
+                name="Feed"
+                component={Feed}
+                options={{
+                  tabBarLabel: "Feed",
+                  tabBarIcon: ({ color, size, focused }) => (
+                    <GalleryVerticalEnd color={focused ? "black" : "gray"} />
+                  ),
+                }}
+                initialParams={{ key: session.user.id }}
+              />
+              <Tab.Screen
+                name="My Games"
+                component={MyGamesNavigator}
+                options={{
+                  tabBarLabel: "My Games",
+                  tabBarIcon: ({ color, size, focused }) => (
+                    <AlignJustify color={focused ? "black" : "gray"} />
+                  ),
+                  headerShown: false,
+                }}
+                initialParams={{ key: session.user.id }}
+              />
+              <Tab.Screen
+                name="Add Game"
+                component={AddGame}
+                options={{
+                  tabBarLabel: "Add Game",
+                  tabBarIcon: ({ color, size, focused }) => (
+                    <PlusCircle color={focused ? "black" : "gray"} />
+                  ),
+                }}
+                initialParams={{ key: session.user.id }}
+              />
+              <Tab.Screen
+                name="My Profile"
+                component={EditProfileNavigator}
+                options={{
+                  tabBarLabel: "Profile",
+                  tabBarIcon: ({ color, size, focused }) => (
+                    <CircleUser color={focused ? "black" : "gray"} />
+                  ),
+                  headerShown: false,
+                }}
+                initialParams={{ key: session.user.id }}
+              />
+            </Tab.Navigator>
+          </NavigationContainer>
+        ) : (
+          <NavigationContainer>
+            <Stack.Navigator>
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ title: "Login" }}
+              />
+              <Stack.Screen
+                name="Register"
+                component={Register}
+                options={{ title: "Register" }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        )}
       </ToastProvider>
     </TamaguiProvider>
   );

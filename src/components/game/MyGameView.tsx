@@ -64,8 +64,6 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                         month: "long",
                         day: "numeric",
                         weekday: "short",
-                        // hour: "2-digit",
-                        // minute: "2-digit",
                       },
                     )}
                   </H5>

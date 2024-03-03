@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
+import { Users } from "@tamagui/lucide-icons";
 
 function useMutationUser() {
   const [
@@ -122,6 +123,7 @@ function useMutationUser() {
           skillLevel: data[0].skill_level,
         };
         editUserSport(userSport);
+        return userSport;
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -157,6 +159,7 @@ function useMutationUser() {
           skillLevel: data[0].skill_level,
         };
         addUserSport(userSport);
+        return userSport;
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -172,11 +175,11 @@ function useMutationUser() {
       (userSport) => userSport.name === sportName,
     );
     if (!userSport) {
-      addSport(sportName, sportSkillLevel);
+      return addSport(sportName, sportSkillLevel);
     } else {
       let updatedSport = userSport;
       updatedSport.skillLevel = sportSkillLevel;
-      editSport(updatedSport);
+      return editSport(updatedSport);
     }
   };
 
@@ -210,10 +213,12 @@ function useMutationUser() {
         avatarUrl: avatar_url,
       };
       editUser(updatedUser);
+      return updatedUser;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
+      return null;
     } finally {
       setLoading(false);
     }
