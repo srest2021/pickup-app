@@ -1,4 +1,9 @@
-import { render, fireEvent, waitFor, screen } from "@testing-library/react-native";
+import {
+  render,
+  fireEvent,
+  waitFor,
+  screen,
+} from "@testing-library/react-native";
 import EditGame from "../../../src/components/game/EditGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";

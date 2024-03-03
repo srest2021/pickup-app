@@ -1,4 +1,10 @@
-import { render, fireEvent, waitFor, screen, act } from "@testing-library/react-native";
+import {
+  render,
+  fireEvent,
+  waitFor,
+  screen,
+  act,
+} from "@testing-library/react-native";
 import AddGame from "../../../src/components/game/AddGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
@@ -6,8 +12,8 @@ import "@testing-library/jest-dom";
 import { ToastProvider } from "@tamagui/toast";
 
 jest.mock("../../../src/lib/store", () => ({
-    useStore: jest.fn(() => [false, { user: { id: "mockUserId" } }]),
-  }));
+  useStore: jest.fn(() => [false, { user: { id: "mockUserId" } }]),
+}));
 // Mock useMutationGame hook
 jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
   createGame: jest.fn(),
@@ -20,9 +26,9 @@ describe("AddGame", () => {
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <ToastProvider>
-        <AddGame navigation={navigation} />
+          <AddGame navigation={navigation} />
         </ToastProvider>
-      </TamaguiProvider>
+      </TamaguiProvider>,
     );
 
     // Check form elements are rendered.
@@ -70,25 +76,31 @@ describe("AddGame", () => {
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <ToastProvider>
-        <AddGame navigation={navigation} />
+          <AddGame navigation={navigation} />
         </ToastProvider>
-      </TamaguiProvider>
+      </TamaguiProvider>,
     );
 
     // Simulate user input changes
     fireEvent.changeText(screen.getByTestId("titleInput"), "New Game Title");
     fireEvent.changeText(screen.getByTestId("dateInput"), new Date());
     fireEvent.changeText(screen.getByTestId("timeInput"), new Date());
-    fireEvent.changeText(screen.getByTestId("addressInput"), "3339 North Charles Street");
+    fireEvent.changeText(
+      screen.getByTestId("addressInput"),
+      "3339 North Charles Street",
+    );
     fireEvent.changeText(screen.getByTestId("cityInput"), "Baltimore");
     fireEvent.changeText(screen.getByTestId("stateInput"), "MD");
     fireEvent.changeText(screen.getByTestId("zipInput"), "21218");
     // Simulate changing the value of the Select component
-    fireEvent(screen.getByTestId("sportInput"), 'onValueChange', "basketball");
+    fireEvent(screen.getByTestId("sportInput"), "onValueChange", "basketball");
     // Simulate changing the value of the RadioGroup component
-    fireEvent(screen.getByTestId("skillInput"), 'onValueChange', "1");
+    fireEvent(screen.getByTestId("skillInput"), "onValueChange", "1");
     fireEvent.changeText(screen.getByTestId("maxPlayerInput"), "10");
-    fireEvent.changeText(screen.getByTestId("descriptionInput"), "Test Description");
+    fireEvent.changeText(
+      screen.getByTestId("descriptionInput"),
+      "Test Description",
+    );
 
     // Simulate button press to create a new game
     act(() => {
@@ -107,7 +119,7 @@ describe("AddGame", () => {
         "basketball",
         1,
         "10",
-        "Test Description"
+        "Test Description",
       );
 
       // Ensure navigation to 'MyGames' is triggered after creating the game

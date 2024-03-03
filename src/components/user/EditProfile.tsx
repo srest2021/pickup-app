@@ -4,8 +4,6 @@ import Avatar from "./Avatar";
 import { Input, Button, Text, YStack, XStack, Label, TextArea } from "tamagui";
 import { useStore } from "../../lib/store";
 import useMutationUser from "../../hooks/use-mutation-user";
-import { ToastViewport, useToastController } from "@tamagui/toast";
-import { ToastDemo } from "../Toast";
 
 export default function EditProfile({ navigation }: { navigation: any }) {
   const [session, loading, user] = useStore((state) => [
@@ -20,37 +18,18 @@ export default function EditProfile({ navigation }: { navigation: any }) {
   const [bio, setBio] = useState(user?.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
 
-  // const toast = useToastController();
-
   const handleUpdate = async (
     username: string,
     displayName: string,
     bio: string,
     avatarUrl: string,
   ) => {
-    const updatedUser = await updateProfile(
-      username,
-      displayName,
-      bio,
-      avatarUrl,
-    );
+    await updateProfile(username, displayName, bio, avatarUrl);
     navigation.goBack();
-
-    // if (updatedUser) {
-    //   toast.show("Success!", {
-    //     message: "Your profile was updated.",
-    //   });
-    // } else {
-    //   toast.show("Error updating profile!", {
-    //     message: "Please try again later",
-    //   });
-    // }
   };
 
   return (
     <View style={{ backgroundColor: "white", flex: 1, padding: 35 }}>
-      <ToastViewport />
-      <ToastDemo />
       {user ? (
         <ScrollView
           style={{ flex: 1 }}
