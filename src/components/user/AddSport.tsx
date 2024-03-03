@@ -23,7 +23,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
   const [sportName, setSportName] = useState(sports[0].name);
 
   const handleSave = () => {
-    onSportSelect(sportName, convertSkillLevel());
+    onSportSelect(sportName, convertSkillLevel()); 
   };
 
   function convertSkillLevel(): number {
@@ -154,7 +154,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
             Select Skill Level
           </Label>
 
-          <Label width={160} justifyContent="flex-end" htmlFor="username">
+          <Label width={160} justifyContent="flex-end">
             <RadioGroup
               aria-labelledby="Select one item"
               defaultValue="3"

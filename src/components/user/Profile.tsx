@@ -48,7 +48,6 @@ export default function Profile({ navigation }: { navigation: any }) {
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "space-between",
-          //backgroundColor: "#ffffff",
         }}
       >
         <View

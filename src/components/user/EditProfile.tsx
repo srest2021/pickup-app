@@ -7,7 +7,7 @@ import useMutationUser from "../../hooks/use-mutation-user";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 
-export default function EditProfile() {
+export default function EditProfile({ navigation }: { navigation: any }) {
   const [session, loading, user] = useStore((state) => [
     state.session,
     state.loading,
@@ -20,7 +20,7 @@ export default function EditProfile() {
   const [bio, setBio] = useState(user?.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
 
-  const toast = useToastController();
+  // const toast = useToastController();
 
   const handleUpdate = async (
     username: string,
@@ -34,16 +34,17 @@ export default function EditProfile() {
       bio,
       avatarUrl,
     );
+    navigation.goBack();
 
-    if (updatedUser) {
-      toast.show("Success!", {
-        message: "Your profile was updated.",
-      });
-    } else {
-      toast.show("Error!", {
-        message: "Please try again later",
-      });
-    }
+    // if (updatedUser) {
+    //   toast.show("Success!", {
+    //     message: "Your profile was updated.",
+    //   });
+    // } else {
+    //   toast.show("Error updating profile!", {
+    //     message: "Please try again later",
+    //   });
+    // }
   };
 
   return (
@@ -89,7 +90,7 @@ export default function EditProfile() {
             </Label>
             <TextArea
               size="$5"
-              placeholder="Enter your game details (optional)"
+              placeholder="Enter your bio"
               testID="descriptionInput"
               value={bio}
               onChangeText={(text: string) => setBio(text)}
