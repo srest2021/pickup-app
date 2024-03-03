@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "expo-supabase-4",
-    "slug": "expo-supabase-4",
+    "name": "Pickup!",
+    "slug": "pickup",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/pickup-logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/pickup-splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#E6E6EA"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,13 +21,22 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#E6E6EA"
       },
       "package": "io.expo.client"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "64fde3f9-1dc6-4bf0-9a09-d1eca8dee903"
+      }
+    },
+    "owner": "oose-team-01"
   }
 }

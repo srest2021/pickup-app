@@ -1,28 +1,125 @@
-import 'react-native-url-polyfill/auto'
-import { useState, useEffect } from 'react'
-import { supabase } from './src/lib/supabase'
-import Auth from './src/components/Auth'
-import Account from './src/components/Account'
-import { View } from 'react-native'
-import { Session } from '@supabase/supabase-js'
-import "./global.css"
+import "react-native-url-polyfill/auto";
+import "./global.css";
+import Login from "./src/components/auth/Login";
+import Register from "./src/components/auth/Register";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { TamaguiProvider } from "tamagui";
+import appConfig from "./tamagui.config";
+import useMutationUser from "./src/hooks/use-mutation-user";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Feed from "./src/components/Feed";
+import AddGame from "./src/components/game/AddGame";
+import MyGames from "./src/components/game/MyGames";
+import EditProfileNavigator from "./src/components/EditProfileNavigator";
+import { useFonts } from "expo-font";
+import { useEffect } from "react";
+import {
+  PlusCircle,
+  AlignJustify,
+  CircleUser,
+  GalleryVerticalEnd,
+} from "@tamagui/lucide-icons";
+import MyGamesNavigator from "./src/components/MyGamesNavigator";
+import { ToastProvider } from "@tamagui/toast";
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null)
+  const { session } = useMutationUser();
+  const [loaded] = useFonts({
+    Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
+    InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
+  });
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+    if (loaded) {
+      // can hide splash screen here
+    }
+  }, [loaded]);
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
+  if (!loaded) {
+    return null;
+  }
 
   return (
-    <View>
-      {session && session.user ? <Account key={session.user.id} session={session} /> : <Auth />}
-    </View>
-  )
+    <TamaguiProvider config={appConfig}>
+      <ToastProvider>
+      {session && session.user ? (
+        <NavigationContainer>
+          <Tab.Navigator
+            initialRouteName="Feed"
+            screenOptions={{
+              tabBarActiveTintColor: "black",
+              tabBarInactiveTintColor: "gray",
+            }}
+          >
+            <Tab.Screen
+              name="Feed"
+              component={Feed}
+              options={{
+                tabBarLabel: "Feed",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <GalleryVerticalEnd color={focused ? "black" : "gray"} />
+                ),
+              }}
+              initialParams={{ key: session.user.id }}
+            />
+            <Tab.Screen
+              name="My Games"
+              component={MyGamesNavigator}
+              options={{
+                tabBarLabel: "My Games",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <AlignJustify color={focused ? "black" : "gray"} />
+                ),
+                headerShown: false,
+              }}
+              initialParams={{ key: session.user.id }}
+            />
+            <Tab.Screen
+              name="Add Game"
+              component={AddGame}
+              options={{
+                tabBarLabel: "Add Game",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <PlusCircle color={focused ? "black" : "gray"} />
+                ),
+              }}
+              initialParams={{ key: session.user.id }}
+            />
+            <Tab.Screen
+              name="My Profile"
+              component={EditProfileNavigator}
+              options={{
+                tabBarLabel: "Profile",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <CircleUser color={focused ? "black" : "gray"} />
+                ),
+                headerShown: false,
+              }}
+              initialParams={{ key: session.user.id }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      ) : (
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ title: "Login" }}
+            />
+            <Stack.Screen
+              name="Register"
+              component={Register}
+              options={{ title: "Register" }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      )}
+      </ToastProvider>
+    </TamaguiProvider>
+  );
 }
