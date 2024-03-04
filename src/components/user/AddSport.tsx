@@ -154,7 +154,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
             Select Skill Level
           </Label>
 
-          <Label width={160} justifyContent="flex-end" htmlFor="username">
+          <Label width={160} justifyContent="flex-end">
             <RadioGroup
               aria-labelledby="Select one item"
               defaultValue="3"
@@ -174,7 +174,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
 
                   <Label
                     size={2}
-                    htmlFor={`skill-level-${SkillLevel.Beginner}`}
+                    //htmlFor={`skill-level-${SkillLevel.Beginner}`}
                   >
                     {"Beginner"}
                   </Label>
@@ -190,7 +190,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
 
                   <Label
                     size={2}
-                    htmlFor={`skill-level-${SkillLevel.Intermediate}`}
+                    //htmlFor={`skill-level-${SkillLevel.Intermediate}`}
                   >
                     {"Intermediate"}
                   </Label>
@@ -207,7 +207,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
 
                   <Label
                     size={2}
-                    htmlFor={`skill-level-${SkillLevel.Advanced}`}
+                    //htmlFor={`skill-level-${SkillLevel.Advanced}`}
                   >
                     {"Advanced"}
                   </Label>

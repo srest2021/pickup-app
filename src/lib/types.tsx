@@ -6,18 +6,16 @@ export type User = {
   sports: UserSport[];
 };
 
-// displayed on user profile
-export type UserSport = {
-  id: string;
+export interface Sport {
   name: string;
   skillLevel: SkillLevel;
-};
+}
+
+// displayed on user profile
+export type UserSport = Sport & { id: string };
 
 // displayed on games
-export type GameSport = {
-  name: string;
-  skillLevel: SkillLevel;
-};
+export type GameSport = Sport;
 
 export enum SkillLevel {
   Beginner = 0,
