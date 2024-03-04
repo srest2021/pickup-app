@@ -102,7 +102,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       toast.show("Error!", {
         message: "Date and time are in the past.",
       });
-
       return;
     }
 
@@ -120,6 +119,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (myNewGame) {
+      toast.show("Success!", {
+        message: "Game added.",
+      });
       clearGameAttributes();
       navigation.navigate("MyGames");
     }
@@ -270,7 +272,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Select.Content>
                   <Select.ScrollUpButton />
                   <Select.Viewport>
-                    <Select.Group>
+                    <Select.Group testID="sportInput">
                       <Select.Label color={"orange"}>Sports</Select.Label>
                       {useMemo(
                         () =>

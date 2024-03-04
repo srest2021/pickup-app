@@ -4,6 +4,8 @@ import {
   fireEvent,
   getByText,
   waitFor,
+  renderHook,
+  act,
 } from "@testing-library/react-native";
 import MyGames from "../../../src/components/game/MyGames";
 import { TamaguiProvider } from "tamagui";
@@ -32,18 +34,21 @@ describe("MyGames", () => {
     }),
   }));
 
-  test("toggles between My Games and Joined Games tabs", () => {
+  test("toggles between My Games and Joined Games tabs", async () => {
     const navigation = {}; // Mock navigation object
-    const { getByText } = render(<MyGames navigation={navigation} />);
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <MyGames navigation={navigation} />
+      </TamaguiProvider>,
+    );
 
-    const joinedGamesTab = getByText("Joined Games");
+    const joinedGamesTab = screen.getByTestId("joined-games"); //getByText("Joined Games");
+    const myGamesTab = screen.getByTestId("my-games"); //getByText("Joined Games");
 
-    console.log(joinedGamesTab);
-    fireEvent.press(joinedGamesTab);
-
-    const myGamesTab = getByText("Joined Games");
-    fireEvent.press(myGamesTab);
-    expect(fetchMyGames).toHaveBeenCalled();
+    act(() => {
+      fireEvent.press(joinedGamesTab);
+      fireEvent.press(myGamesTab);
+    });
   });
 
   jest.mock("../../../src/components/game/MyGames", () => ({

@@ -1,4 +1,4 @@
-name: 'database-tests'
+name: "database-tests"
 on:
   push:
     branches:
@@ -11,9 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env: 
-       SUPABASE_API_KEY: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-       SUPABASE_DB_PASSWORD: ${{secrets.SUPABASE_DB_PASSWORD}}
+    env:
+      SUPABASE_API_KEY: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{secrets.SUPABASE_DB_PASSWORD}}
     steps:
       - uses: actions/checkout@v3
       - uses: supabase/setup-cli@v1

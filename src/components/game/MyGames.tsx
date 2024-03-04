@@ -7,7 +7,8 @@ import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [session, myGames, clearMyGames] = useStore((state) => [
+  const [selectedMyGame, session, myGames, clearMyGames] = useStore((state) => [
+    state.selectedMyGame,
     state.session,
     state.myGames,
     state.clearMyGames,
@@ -15,8 +16,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
   const { fetchMyGames, fetchAllGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
-
-  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
 
   useEffect(() => {
     handleRefresh();
