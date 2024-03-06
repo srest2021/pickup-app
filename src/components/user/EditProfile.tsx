@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import Avatar from "./Avatar";
 import { Input, Button, Text, YStack, XStack, Label, TextArea } from "tamagui";
@@ -17,6 +17,9 @@ export default function EditProfile({ navigation }: { navigation: any }) {
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [bio, setBio] = useState(user?.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
+
+  useEffect(() => {
+  }, [avatarUrl]);
 
   const handleUpdate = async (
     username: string,
@@ -81,7 +84,7 @@ export default function EditProfile({ navigation }: { navigation: any }) {
               url={user.avatarUrl}
               onUpload={(url: string) => {
                 setAvatarUrl(url);
-                handleUpdate(user.username, displayName, bio, avatarUrl);
+                handleUpdate(user.username, displayName, bio, url); //avatarUrl
               }}
               allowUpload={true}
             />

@@ -106,25 +106,24 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
           backgroundColor: "#d3d4d3",
         }}
       >
-        {avatarUrl ? (
-          <Image
-            source={{ uri: avatarUrl }}
-            accessibilityLabel="Avatar"
-            style={{ flex: 1, width: null, height: null, borderRadius: 150 }}
-          />
-        ) : (
+        {avatarUrl === null ? (
           <View
             style={{
               flex: 1,
-              backgroundColor: "bg-slate-200", // Set the background color
+              backgroundColor: "bg-slate-200",
               borderRadius: 150,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {/* Your default content goes here */}
-            <Text style={{ color: "grey" }}>No Avatar</Text>
+            <Text style={{ color: "grey" }}>Loading...</Text>
           </View>
+        ) : (
+          <Image
+            source={{ uri: avatarUrl }}
+            accessibilityLabel="Avatar"
+            style={{ flex: 1, width: null, height: null, borderRadius: 150 }}
+          />
         )}
       </View>
 
