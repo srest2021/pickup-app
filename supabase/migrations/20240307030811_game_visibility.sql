@@ -319,6 +319,23 @@ create policy "Users can access location if they've joined the game." on game_lo
     )
 );
 
+create or replace function can_user_update_location(game_id "uuid")
+returns boolean AS $$
+declare
+  is_allowed boolean;
+begin
+  select
+    (g.organizer_id = auth.uid())
+  into is_allowed
+  from games g
+  where g.id = game_id;
+  return is_allowed;
+end;
+$$ language plpgsql;
+
+create policy "Organizers can update the location for their game." on game_locations
+  for update with check (can_user_update_location(game_id));
+
 -- create or replace function add_location()
 -- returns trigger
 -- language 'plpgsql'
@@ -755,9 +772,9 @@ returns table(id "uuid", organizer_id "uuid", title text, description text, date
     LANGUAGE "sql"
     AS $$
   select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip
-  where g.id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   FROM public.games AS g
   JOIN public.game_locations AS gl ON g.id = gl.id
+  where g.id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
 
