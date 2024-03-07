@@ -123,9 +123,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (myNewGame) {
-      toast.show("Success!", {
-        message: "Game added.",
-      });
+      // toast.show("Success!", {
+      //   message: "Game added.",
+      // });
       clearGameAttributes();
       navigation.navigate("MyGames");
     }

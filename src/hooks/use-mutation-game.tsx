@@ -134,15 +134,16 @@ function useMutationGame() {
         state,
         zip,
         sport,
-        skillLevel,
-        maxPlayers: playerLimit,
-        isPublic,
+        skill_level: skillLevel,
+        max_players: playerLimit,
+        is_public: isPublic,
       });
+      console.log("EDITGAME ",data,error);
       if (error) throw error;
 
-      if (data && data[0]) {
+      if (data && data["row"]) {
         // edit game in store
-        editMyGame(data[0], data);
+        editMyGame(data["row"], data);
       } else {
         throw new Error("Error editing game! Please try again later.");
       }

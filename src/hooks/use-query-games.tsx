@@ -66,14 +66,14 @@ function useQueryGames() {
         setSelectedFeedGame(game);
         return game;
       } else {
-        throw new Error("Error loading game! Please try again later.");
+        throw new Error("Error loading feed game! Please try again later.");
       }
     } catch (error) {
       clearSelectedFeedGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
-        Alert.alert("Error loading game! Please try again later.");
+        Alert.alert("Error loading feed game! Please try again later.");
       }
       return null;
     } finally {
@@ -116,14 +116,14 @@ function useQueryGames() {
         setSelectedJoinedGame(game);
         return game;
       } else {
-        throw new Error("Error loading game! Please try again later.");
+        throw new Error("Error loading joined game! Please try again later.");
       }
     } catch (error) {
       clearSelectedJoinedGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
-        Alert.alert("Error loading game! Please try again later.");
+        Alert.alert("Error loading joined game! Please try again later.");
       }
       return null;
     } finally {
@@ -139,41 +139,42 @@ function useQueryGames() {
       const { data, error } = await supabase.rpc("get_game_with_address", {
         game_id: id,
       });
+      console.log("FETCHMYGAME",data,error);
       if (error) throw error;
 
-      if (data && data[0]) {
+      if (data && data["row"]) {
         const game: GameWithAddress = {
-          id: data[0].id,
-          organizerId: data[0].organizer_id,
-          title: data[0].title,
-          description: data[0].description,
-          datetime: new Date(data[0].datetime),
+          id: data["row"].f1,
+          organizerId: data["row"].f2,
+          title: data["row"].f3,
+          description: data["row"].f4,
+          datetime: new Date(data["row"].f5),
           address: {
-            street: data[0].street,
-            city: data[0].city,
-            state: data[0].state,
-            zip: data[0].zip,
+            street: data["row"].f6,
+            city: data["row"].f7,
+            state: data["row"].f8,
+            zip: data["row"].f9,
           },
           sport: {
-            name: data[0].sport,
-            skillLevel: data[0].skill_level,
+            name: data["row"].f10,
+            skillLevel: data["row"].f11,
           } as GameSport,
-          maxPlayers: Number(data[0].max_players),
-          currentPlayers: Number(data[0].current_players),
-          isPublic: data[0].is_public,
+          maxPlayers: Number(data["row"].f12),
+          currentPlayers: Number(data["row"].f13),
+          isPublic: data["row"].f14,
         };
 
         setSelectedMyGame(game);
         return game;
       } else {
-        throw new Error("Error loading game! Please try again later.");
+        throw new Error("Error loading my game! Please try again later.");
       }
     } catch (error) {
       clearSelectedMyGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
-        Alert.alert("Error loading game! Please try again later.")
+        Alert.alert("Error loading my game! Please try again later.")
       }
       return null;
     } finally {
@@ -187,7 +188,6 @@ function useQueryGames() {
       if (!session?.user) throw new Error("Please sign in to view games");
 
       const { data, error } = await supabase.rpc("my_games");
-      console.log("hello", data, error);
       if (error) throw error;
 
       if (data) {

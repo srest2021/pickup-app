@@ -25,13 +25,13 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { fetchMyGameById } = useQueryGames();
   const { removeMyGameById } = useMutationGame();
 
-  const getGame = async () => {
-    await fetchMyGameById(gameId);
-  };
+  // const getGame = async () => {
+  //   await fetchMyGameById(gameId);
+  // };
 
-  useEffect(() => {
-    getGame();
-  }, [selectedMyGame]);
+  // useEffect(() => {
+  //   getGame();
+  // }, [selectedMyGame]);
 
   function deleteGame() {
     removeMyGameById(gameId);

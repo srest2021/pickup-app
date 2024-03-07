@@ -627,7 +627,7 @@ begin
     --st_distance(coords, st_point(long, lat)::geography) as distanceAway
   )
   from public.games as g
-  join public.game_locations as gl on g.id = gl.id
+  join public.game_locations as gl on g.id = gl.game_id
   into data;
   return data;
 end;
@@ -689,34 +689,34 @@ begin
   -- update row in games
   update games
   set 
-    title = title,
-    description = description,
-    datetime = datetime,
-    sport = sport,
-    skill_level = skill_level,
-    max_players = max_players,
-    is_public = is_public
-  where game.id = game_id;
+    title = edit_game.title,
+    description = edit_game.description,
+    datetime = edit_game.datetime,
+    sport = edit_game.sport,
+    skill_level = edit_game.skill_level,
+    max_players = edit_game.max_players,
+    is_public = edit_game.is_public
+  where games.id = edit_game.game_id;
 
   -- update row in game_locations
   update game_locations
   set
-    street = street,
-    city = city,
-    state = state,
-    zip = zip,
+    street = edit_game.street,
+    city = edit_game.city,
+    state = edit_game.state,
+    zip = edit_game.zip,
     loc = coords
-  where game_id = game_id;
+  where game_locations.game_id = edit_game.game_id;
 
   select 
     g.current_players
-  from public.games as g
   into current_players
-  where g.id = game_id;
+  from public.games as g
+  where g.id = edit_game.game_id;
 
   -- return updated data
   select (
-    game_id,
+    edit_game.game_id,
     auth.uid(), 
     title, 
     description, 
@@ -754,8 +754,8 @@ returns table(id "uuid", organizer_id "uuid", title text, description text, date
     AS $$
   select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip
   FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.id
-  where g.id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
+  JOIN public.game_locations AS gl ON g.id = gl.game_id
+  where g.organizer_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
 
