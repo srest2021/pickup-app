@@ -58,14 +58,15 @@ export type Address = {
 
 export interface Game {
   id: string;
-  organizer_id: string;
+  organizerId: string;
   title: string;
   description: string;
   datetime: Date;
   sport: GameSport;
   maxPlayers: number;
   currentPlayers: number;
-  distanceAway: number;
+  isPublic: boolean;
+  //distanceAway: number;
 }
 
 export type GameWithoutAddress = Game;

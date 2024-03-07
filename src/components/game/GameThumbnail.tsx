@@ -1,4 +1,4 @@
-import { Game, sports } from "../../lib/types";
+import { Game, GameWithAddress, sports } from "../../lib/types";
 import {
   Button,
   Card,
@@ -18,7 +18,7 @@ export default function GameThumbnail({
   game,
 }: {
   navigation: any;
-  game: Game;
+  game: GameWithAddress;
 }) {
   const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame]);
 

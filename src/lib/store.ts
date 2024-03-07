@@ -1,21 +1,23 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import {
-  UserSport,
-  User,
-  GameWithAddress,
-  GameWithoutAddress,
-} from "./types";
+import { UserSport, User, GameWithAddress, GameWithoutAddress } from "./types";
 
 type State = {
   session: Session | null;
   loading: boolean;
+
   user: User | null;
   userSports: UserSport[];
+
   myGames: GameWithAddress[];
   selectedMyGame: GameWithAddress | null;
+
+  joinedGames: GameWithAddress[];
+  selectedJoinedGame: GameWithAddress | null;
+
   feedGames: GameWithoutAddress[];
+  selectedFeedGame: GameWithoutAddress | null;
 };
 
 type Action = {
@@ -31,17 +33,34 @@ type Action = {
   setUserSports: (userSports: UserSport[]) => void;
   clearUserSports: () => void;
 
+  // my games
+
   setMyGames: (myGames: GameWithAddress[]) => void;
   clearMyGames: () => void;
   addMyGame: (myGame: GameWithAddress) => void;
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
+  setSelectedMyGame: (myGame: GameWithAddress) => void;
+  clearSelectedMyGame: () => void;
+
+  // feed games
+
   setFeedGames: (feedGames: GameWithoutAddress[]) => void;
   clearFeedGames: () => void;
 
-  setSelectedMyGame: (myGame: GameWithAddress) => void;
-  clearSelectedMyGame: () => void;
+  setSelectedFeedGame: (feedGame: GameWithoutAddress) => void;
+  clearSelectedFeedGame: () => void;
+
+  // joined games
+
+  setJoinedGames: (feedGames: GameWithAddress[]) => void;
+  clearJoinedGames: () => void;
+  addJoinedGame: (joinedGame: GameWithAddress) => void;
+  removeJoinedGame: (joinedGameId: string) => void;
+
+  setSelectedJoinedGame: (joinedGame: GameWithAddress) => void;
+  clearSelectedJoinedGame: () => void;
 };
 
 const initialState: State = {
@@ -52,6 +71,9 @@ const initialState: State = {
   myGames: [],
   selectedMyGame: null,
   feedGames: [],
+  selectedFeedGame: null,
+  joinedGames: [],
+  selectedJoinedGame: null,
 };
 
 export const useStore = create<State & Action>()(
@@ -91,9 +113,17 @@ export const useStore = create<State & Action>()(
 
     clearUserSports: () => set({ userSports: [] }),
 
+    // feed games
+
     setFeedGames: (feedGames) => set({ feedGames }),
 
     clearFeedGames: () => set({ feedGames: [] }),
+
+    setSelectedFeedGame: (feedGame) => set({ selectedFeedGame: feedGame }),
+
+    clearSelectedFeedGame: () => set({ selectedFeedGame: null }),
+
+    // my games
 
     setMyGames: (myGames) => set({ myGames }),
 
@@ -124,5 +154,28 @@ export const useStore = create<State & Action>()(
     setSelectedMyGame: (myGame) => set({ selectedMyGame: myGame }),
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
+
+    // joined games
+
+    setJoinedGames: (joinedGames) => set({ joinedGames }),
+
+    clearJoinedGames: () => set({ joinedGames: [] }),
+
+    addJoinedGame: (joinedGame) => {
+      set({ joinedGames: [joinedGame, ...get().joinedGames] });
+    },
+
+    removeJoinedGame: (joinedGameId) => {
+      const newJoinedGames = get().joinedGames.filter(
+        (joinedGame) => joinedGame.id !== joinedGameId,
+      );
+      set({ joinedGames: newJoinedGames });
+      set({ selectedJoinedGame: null });
+    },
+
+    setSelectedJoinedGame: (joinedGame) =>
+      set({ selectedJoinedGame: joinedGame }),
+
+    clearSelectedJoinedGame: () => set({ selectedJoinedGame: null }),
   })),
 );

@@ -2,7 +2,7 @@ import { useStore } from "../lib/store";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Game, GameSport } from "../lib/types";
+import { Address, Game, GameSport, GameWithAddress } from "../lib/types";
 
 function useMutationGame() {
   const [
@@ -21,39 +21,10 @@ function useMutationGame() {
     state.clearSelectedMyGame,
   ]);
 
-  const getLocation = async (fullAddress: string) => {
-    // API key hard coded in -- consider changing
-    const geolocationResponse = await fetch(
-      `https://geocode.maps.co/search?q=${encodeURIComponent(fullAddress)}&api_key=65e0f4e8bc79e688163432osme79a3d`,
-    );
-    const geolocationData = await geolocationResponse.json();
-
-    if (geolocationData.length < 1) {
-      throw new Error(
-        "Unable to fetch geolocation details for the provided address.",
-      );
-    }
-
-    const latitude = geolocationData[0].lat;
-    const longitude = geolocationData[0].lon;
-    if (!latitude || !longitude) {
-      throw new Error(
-        "Unable to fetch geolocation details for the provided address.",
-      );
-    }
-
-    let location = null;
-    if (longitude !== "" && latitude !== "") {
-      location = `POINT(${longitude} ${latitude})`;
-    }
-
-    return location;
-  };
-
   const createGame = async (
-    game_title: string,
+    title: string,
     datetime: Date,
-    address: string,
+    street: string,
     city: string,
     state: string,
     zip: string,
@@ -61,65 +32,50 @@ function useMutationGame() {
     skillLevel: number,
     playerLimit: string,
     description: string = "",
+    isPublic: boolean,
   ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const fullAddress = `${address} ${city} ${state} ${zip}`;
-      let location = null;
-      try {
-        location = await getLocation(fullAddress);
-      } catch (error) {
-        throw error;
-      }
-
-      const { data, error } = await supabase
-        .from("games")
-        .insert([
-          {
-            organizer_id: session?.user.id,
-            title: game_title,
-            description: description,
-            datetime: datetime,
-            sport: sport,
-            skill_level: skillLevel,
-            address: address,
-            city: city,
-            state: state,
-            zip: zip,
-            location,
-            current_players: 1,
-            max_players: playerLimit,
-          },
-        ])
-        .select();
-      if (error) {
-        throw error;
-      }
+      const { data, error } = await supabase.rpc("create_game", {
+        title,
+        description,
+        datetime,
+        street,
+        city,
+        state,
+        zip,
+        sport,
+        skillLevel,
+        maxPlayers: playerLimit,
+        isPublic,
+      });
+      if (error) throw error;
 
       if (data && data[0]) {
         // add game to store
-        const myNewGame: Game = {
+        const myNewGame: GameWithAddress = {
           id: data[0].id,
-          title: game_title,
+          organizerId: data[0].organizer_id,
+          title,
           description,
           datetime,
-          address,
-          city,
-          state,
-          zip,
+          address: { street, city, state, zip } as Address,
           sport: { name: sport, skillLevel: skillLevel } as GameSport,
           maxPlayers: Number(playerLimit),
           currentPlayers: 1,
+          isPublic,
+          //distanceAway
         };
         addMyGame(myNewGame);
         return myNewGame;
+      } else {
+        throw new Error("Error publishing game! Please try again later.");
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
-        //Alert.alert("Error publishing game! Please try again later.");
         return null;
       }
     } finally {
@@ -127,7 +83,7 @@ function useMutationGame() {
     }
   };
 
-  const removeGameById = async (id: string) => {
+  const removeMyGameById = async (id: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -148,9 +104,9 @@ function useMutationGame() {
 
   const editGameById = async (
     id: string,
-    game_title: string,
+    title: string,
     datetime: Date,
-    address: string,
+    street: string,
     city: string,
     state: string,
     zip: string,
@@ -158,41 +114,33 @@ function useMutationGame() {
     skillLevel: number,
     playerLimit: string,
     description: string = "",
+    isPublic: boolean,
   ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const fullAddress = `${address} ${city} ${state} ${zip}`;
-      let location = null;
-      try {
-        location = await getLocation(fullAddress);
-      } catch (error) {
-        throw error;
-      }
-
-      const { data, error } = await supabase
-        .from("games")
-        .update({
-          title: game_title,
-          description,
-          datetime,
-          sport,
-          skill_level: skillLevel,
-          address,
-          city,
-          state,
-          zip,
-          location,
-          max_players: playerLimit,
-        })
-        .eq("id", id)
-        .select();
+      const { data, error } = await supabase.rpc("edit_game", {
+        game_id: id,
+        title,
+        description,
+        datetime,
+        street,
+        city,
+        state,
+        zip,
+        sport,
+        skillLevel,
+        maxPlayers: playerLimit,
+        isPublic,
+      });
       if (error) throw error;
 
-      // Edit game in store
       if (data && data[0]) {
+        // edit game in store
         editMyGame(data[0], data);
+      } else {
+        throw new Error("Error editing game! Please try again later.");
       }
       return data;
     } catch (error) {
@@ -205,7 +153,7 @@ function useMutationGame() {
     }
   };
 
-  return { createGame, removeGameById, editGameById };
+  return { createGame, removeMyGameById, editGameById };
 }
 
 export default useMutationGame;

@@ -22,11 +22,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
-  const { fetchGameById } = useQueryGames();
-  const { removeGameById } = useMutationGame();
+  const { fetchMyGameById } = useQueryGames();
+  const { removeMyGameById } = useMutationGame();
 
   const getGame = async () => {
-    await fetchGameById(gameId);
+    await fetchMyGameById(gameId);
   };
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   }, [selectedMyGame]);
 
   function deleteGame() {
-    removeGameById(gameId);
+    removeMyGameById(gameId);
     // navigate back to myGames list.
     navigation.goBack();
     // TODO: Add success toast
@@ -104,7 +104,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedMyGame.address}, ${selectedMyGame.city}, ${selectedMyGame.state} ${selectedMyGame.zip}`}
+                      {`${selectedMyGame.address.state}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`}
                     </SizableText>
                   </XStack>
 

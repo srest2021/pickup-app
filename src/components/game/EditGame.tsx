@@ -47,14 +47,18 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const [time, setTime] = useState(
     selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date(),
   );
-  const [address, setAddress] = useState(
-    selectedMyGame ? selectedMyGame.address : "",
+  const [street, setStreet] = useState(
+    selectedMyGame ? selectedMyGame.address.street : "",
   );
-  const [city, setCity] = useState(selectedMyGame ? selectedMyGame.city : "");
+  const [city, setCity] = useState(
+    selectedMyGame ? selectedMyGame.address.city : "",
+  );
   const [state, setState] = useState(
-    selectedMyGame ? selectedMyGame.state : "",
+    selectedMyGame ? selectedMyGame.address.state : "",
   );
-  const [zip, setZip] = useState(selectedMyGame ? selectedMyGame.zip : "");
+  const [zip, setZip] = useState(
+    selectedMyGame ? selectedMyGame.address.zip : "",
+  );
   const [sport, setSport] = useState(
     selectedMyGame && selectedMyGame.sport ? selectedMyGame.sport.name : "",
   );
@@ -67,6 +71,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     `${selectedMyGame?.maxPlayers}`,
   );
   const [description, setDescription] = useState(selectedMyGame?.description);
+  const [isPublic, setIsPublic] = useState(selectedMyGame?.isPublic);
 
   // Toasts
   const toast = useToastController();
@@ -88,13 +93,14 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       !title ||
       !date ||
       !time ||
-      !address ||
+      !street ||
       !sport ||
       !skillLevel ||
       !playerLimit ||
       !city ||
       !state ||
-      !zip
+      !zip ||
+      !isPublic
     ) {
       toast.show("Error!", {
         message: "Please fill out all required fields.",
@@ -122,7 +128,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       gameId,
       title,
       combinedDateTime,
-      address,
+      street,
       city,
       state,
       zip,
@@ -130,6 +136,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       convertSkillLevel(),
       playerLimit,
       description,
+      isPublic, // TODO fix isPublic
     );
     if (myEditedGame) {
       navigation.goBack();
@@ -193,15 +200,15 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
 
             <YStack space="$1">
               <Label size="$5" color={"#08348c"}>
-                Address
+                Street
               </Label>
               <Input
                 flex={1}
                 size="$5"
                 placeholder="Address"
                 testID="addressInput"
-                value={address}
-                onChangeText={(text: string) => setAddress(text)}
+                value={street}
+                onChangeText={(text: string) => setStreet(text)}
               />
             </YStack>
 

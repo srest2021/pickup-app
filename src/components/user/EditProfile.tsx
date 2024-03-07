@@ -18,8 +18,7 @@ export default function EditProfile({ navigation }: { navigation: any }) {
   const [bio, setBio] = useState(user?.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
 
-  useEffect(() => {
-  }, [avatarUrl]);
+  useEffect(() => {}, [avatarUrl]);
 
   const handleUpdate = async (
     username: string,
