@@ -1,16 +1,21 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { Game, UserSport, User } from "./types";
+import {
+  UserSport,
+  User,
+  GameWithAddress,
+  GameWithoutAddress,
+} from "./types";
 
 type State = {
   session: Session | null;
   loading: boolean;
   user: User | null;
   userSports: UserSport[];
-  myGames: Game[];
-  selectedMyGame: Game | null;
-  feedGames: Game[];
+  myGames: GameWithAddress[];
+  selectedMyGame: GameWithAddress | null;
+  feedGames: GameWithoutAddress[];
 };
 
 type Action = {
@@ -26,16 +31,16 @@ type Action = {
   setUserSports: (userSports: UserSport[]) => void;
   clearUserSports: () => void;
 
-  setMyGames: (myGames: Game[]) => void;
+  setMyGames: (myGames: GameWithAddress[]) => void;
   clearMyGames: () => void;
-  addMyGame: (myGame: Game) => void;
+  addMyGame: (myGame: GameWithAddress) => void;
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
-  setFeedGames: (feedGames: Game[]) => void;
+  setFeedGames: (feedGames: GameWithoutAddress[]) => void;
   clearFeedGames: () => void;
 
-  setSelectedMyGame: (myGame: Game) => void;
+  setSelectedMyGame: (myGame: GameWithAddress) => void;
   clearSelectedMyGame: () => void;
 };
 
@@ -106,11 +111,9 @@ export const useStore = create<State & Action>()(
       set({ selectedMyGame: null });
     },
 
-    editMyGame: (myGameId, updated) => {
+    editMyGame: (myGameId, updatedGame) => {
       const newMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
-          let updatedGame = { ...updated };
-          set({ selectedMyGame: updatedGame });
           return updatedGame;
         }
         return myGame;
