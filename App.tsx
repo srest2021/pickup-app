@@ -10,7 +10,7 @@ import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Feed from "./src/components/Feed";
 import AddGame from "./src/components/game/AddGame";
-import MyGames from "./src/components/game/MyGames";
+import MyGames from "./src/components/MyGames";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";

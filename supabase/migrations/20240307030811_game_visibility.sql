@@ -237,13 +237,13 @@ using btree (player_id);
 create policy "Joined games are viewable by everyone." on joined_game
   for select using (true);
 
-create or replace function can_user_join_game(game_id "uuid")
+create or replace function can_user_join_game(game_id "uuid", player_id "uuid")
 returns boolean AS $$
 declare
   is_allowed boolean;
 begin
   select
-    (g.organizer_id = auth.uid() and (g.current_players + 1) <= g.max_players)
+    (g.organizer_id = auth.uid() and player_id = auth.uid()) or (g.organizer_id = auth.uid() and (g.current_players + 1) <= g.max_players)
   into is_allowed
   from games g
   where g.id = game_id;
@@ -252,7 +252,7 @@ end;
 $$ language plpgsql;
 
 create policy "Only organizers can accept a user's join request." on joined_game
-  for insert with check (can_user_join_game(game_id));
+  for insert with check (can_user_join_game(game_id, player_id));
 
 create or replace function can_user_leave_game(player_id "uuid", game_id "uuid")
 returns boolean AS $$
@@ -319,7 +319,7 @@ create policy "Users can access location if they've joined the game." on game_lo
     )
 );
 
-create or replace function can_user_update_location(game_id "uuid")
+create or replace function can_user_insert_and_update_location(game_id "uuid")
 returns boolean AS $$
 declare
   is_allowed boolean;
@@ -334,7 +334,10 @@ end;
 $$ language plpgsql;
 
 create policy "Organizers can update the location for their game." on game_locations
-  for update with check (can_user_update_location(game_id));
+  for update with check (can_user_insert_and_update_location(game_id));
+
+create policy "Organizers can insert the location for their game." on game_locations
+  for insert with check (can_user_insert_and_update_location(game_id));
 
 -- create or replace function add_location()
 -- returns trigger
@@ -538,128 +541,89 @@ begin
 end;
 $$;
 
--- custom type for creating or editing game
-create type game as (
-  title text,
-  description text,
-  datetime timestamp with time zone,
-  street text,
-  city text,
-  state text,
-  zip text,
-  sport text,
-  skillLevel int,
-  maxPlayers bigint, 
-  isPublic boolean
-);
-
--- custom type for returning game with address
-create type game_with_address as (
-  id "uuid",
-  organizerId "uuid",
-  title text,
-  description text,
-  datetime timestamp with time zone,
-  street text,
-  city text,
-  state text,
-  zip text,
-  sport text,
-  skillLevel int,
-  maxPlayers bigint, 
-  currentPlayers bigint,
-  --distanceAway double precision,
-  isPublic boolean
-);
-
--- custom type for returning game without address
-create type game_without_address as (
-  id "uuid",
-  organizerId "uuid",
-  title text,
-  description text,
-  datetime timestamp with time zone,
-  sport text,
-  skillLevel int,
-  maxPlayers bigint, 
-  currentPlayers bigint,
-  --distanceAway double precision,
-  isPublic boolean
-);
-
 -- miscellaneous functions
 
-create or replace function create_game(data game)
-returns record as $$
+create or replace function public.create_game(
+  city text,
+  datetime timestamp with time zone,
+  description text,
+  is_public boolean,
+  max_players bigint, 
+  skill_level int,
+  sport text,
+  street text,
+  state text,
+  title text,
+  zip text
+) returns record as $$
 declare
   coords "extensions"."geography"(Point,4326);
   game_id "uuid";
-  inserted_data game_with_address;
+  inserted_data record;
 begin
   -- get location
-  select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
+  select public.get_coordinates(street, city, state, zip) into coords;
 
   -- insert row to games
   game_id := uuid_generate_v4();
   insert into games (id, organizer_id, title, description, datetime, sport, skill_level, max_players, current_players, is_public)
-  values (game_id, auth.uid(), data.title, data.description, data.datetime, data.sport, data.skillLevel, data.maxPlayers, 1, data.isPublic);
+  values (game_id, auth.uid(), title, description, datetime, sport, skill_level, max_players, 1, is_public);
 
   -- insert row to game_locations
   insert into game_locations (id, game_id, street, city, state, zip, loc)
-  values (uuid_generate_v4(), game_id, data.street, data.city, data.state, data.zip, coords);
+  values (uuid_generate_v4(), game_id, street, city, state, zip, coords);
 
   -- add organizer to joined_game
   insert into joined_game (id, player_id, game_id)
   values (uuid_generate_v4(), auth.uid(), game_id);
 
-  commit;
-
   -- return added data
   select (
-    game_id, -- as id, 
-    auth.uid(), -- as organizerId, 
-    data.title, -- as title, 
-    data.description, -- as description, 
-    data.datetime, -- as datetime, 
-    data.street, -- as street, 
-    data.city, -- as city, 
-    data.zip, -- as zip, 
-    data.sport, -- as sport, 
-    data.skillLevel, -- as skillLevel, 
-    data.maxPlayers, -- as maxPlayers, 
-    1, -- as currentPlayers, 
+    game_id,
+    auth.uid(), 
+    title,
+    description,
+    datetime,
+    street,
+    state,
+    city,
+    zip,
+    sport, 
+    skill_level,
+    max_players,
+    1::bigint,
     --st_distance(coords, st_point(long, lat)::geography) as distanceAway,
-    data.isPublic -- as isPublic
+    is_public -- as isPublic
   ) into inserted_data;
   return inserted_data;
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql;
 
 create or replace function get_game_with_address(game_id "uuid") --"lat" double precision, "long" double precision)
 returns record as $$
 declare
   --coords "extensions"."geography"(Point,4326);
-  data game_with_address;
+  data record;
 begin
   -- get location
   -- select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
 
   -- get games and game_locations rows by joining tables
   select (
-    g.id, -- as id,
-    g.organizer_id, -- as organizerId, 
-    g.title, -- as title,
-    g.description, -- as description,
-    g.datetime, -- as datetime,
-    gl.street, -- as street,
-    gl.city, -- as city,
-    gl.state, -- as state,
-    gl.zip, -- as zip,
-    g.sport, -- as sport,
-    g.skill_level, -- as skillLevel,
-    g.max_players, -- as maxPlayers,
-    g.current_players, -- as currentPlayers,
-    g.is_public-- as isPublic
+    g.id,
+    g.organizer_id, 
+    g.title,
+    g.description, 
+    g.datetime,
+    gl.street,
+    gl.city,
+    gl.state,
+    gl.zip,
+    g.sport,
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public
     --st_distance(coords, st_point(long, lat)::geography) as distanceAway
   )
   from public.games as g
@@ -673,22 +637,22 @@ create or replace function get_game_without_address(game_id "uuid") --"lat" doub
 returns record as $$
 declare
   --coords "extensions"."geography"(Point,4326);
-  data game_without_address;
+  data record;
 begin
   -- get location
   -- select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
 
   select (
-    g.id, -- as id,
-    g.organizer_id, -- as organizerId, 
-    g.title, -- as title,
-    g.description, -- as description,
-    g.datetime, -- as datetime,
-    g.sport, -- as sport,
-    g.skill_level, -- as skillLevel,
-    g.max_players, -- as maxPlayers,
-    g.current_players, -- as currentPlayers,
-    g.is_public -- as isPublic
+    g.id,
+    g.organizer_id, 
+    g.title,
+    g.description, 
+    g.datetime,
+    g.sport,
+    g.skill_level,
+    g.max_players,
+    g.current_players, 
+    g.is_public
     --st_distance(coords, st_point(long, lat)::geography) as distanceAway
   )
   from public.games as g
@@ -698,57 +662,74 @@ end;
 $$ language plpgsql;
 
 -- edit game by getting location, updating games and game_locations tables
-create or replace function edit_game(game_id "uuid", data game)
-returns record as $$
+create or replace function edit_game(
+  game_id "uuid", 
+  city text,
+  datetime timestamp with time zone,
+  description text,
+  is_public boolean,
+  max_players bigint, 
+  skill_level int,
+  sport text,
+  street text,
+  state text,
+  title text,
+  zip text
+) returns record as $$
 declare
+  current_players bigint;
   coords "extensions"."geography"(Point,4326);
-  updated_data game_with_address;
+  updated_data record;
 begin
    -- get location
   select
-    public.get_coordinates(data.street, data.city, data.state, data.zip)
+    public.get_coordinates(street, city, state, zip)
   into coords;
 
   -- update row in games
   update games
   set 
-    title = data.title,
-    description = data.description,
-    datetime = data.datetime,
-    sport = data.sport,
-    skill_level = data.skillLevel,
-    max_players = data.maxPlayers,
-    is_public = data.isPublic
+    title = title,
+    description = description,
+    datetime = datetime,
+    sport = sport,
+    skill_level = skill_level,
+    max_players = max_players,
+    is_public = is_public
   where game.id = game_id;
 
   -- update row in game_locations
   update game_locations
   set
-    street = data.street,
-    city = data.city,
-    state = data.state,
-    zip = data.zip,
+    street = street,
+    city = city,
+    state = state,
+    zip = zip,
     loc = coords
   where game_id = game_id;
 
-  commit;
+  select 
+    g.current_players
+  from public.games as g
+  into current_players
+  where g.id = game_id;
 
   -- return updated data
   select (
-    game_id, -- as id, 
-    auth.uid(), -- as organizerId, 
-    data.title, -- as title, 
-    data.description, -- as description, 
-    data.datetime, -- as datetime, 
-    data.street, -- as street, 
-    data.city, -- as city, 
-    data.zip, -- as zip, 
-    data.sport, -- as sport, 
-    data.skillLevel, -- as skillLevel, 
-    data.maxPlayers, -- as maxPlayers, 
-    1, -- as currentPlayers, 
+    game_id,
+    auth.uid(), 
+    title, 
+    description, 
+    datetime,
+    street, 
+    city, 
+    zip,
+    sport,
+    skill_level,
+    max_players,
+    current_players,
     --st_distance(coords, st_point(long, lat)::geography) as distanceAway,
-    data.isPublic -- as isPublic
+    is_public 
   )
   into updated_data;
   return updated_data;

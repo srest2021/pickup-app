@@ -66,12 +66,14 @@ function useQueryGames() {
         setSelectedFeedGame(game);
         return game;
       } else {
-        throw new Error("Error loading game; please try again");
+        throw new Error("Error loading game! Please try again later.");
       }
     } catch (error) {
       clearSelectedFeedGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error loading game! Please try again later.");
       }
       return null;
     } finally {
@@ -114,12 +116,14 @@ function useQueryGames() {
         setSelectedJoinedGame(game);
         return game;
       } else {
-        throw new Error("Error loading game; please try again");
+        throw new Error("Error loading game! Please try again later.");
       }
     } catch (error) {
       clearSelectedJoinedGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error loading game! Please try again later.");
       }
       return null;
     } finally {
@@ -162,12 +166,14 @@ function useQueryGames() {
         setSelectedMyGame(game);
         return game;
       } else {
-        throw new Error("Error loading game; please try again");
+        throw new Error("Error loading game! Please try again later.");
       }
     } catch (error) {
       clearSelectedMyGame();
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error loading game! Please try again later.")
       }
       return null;
     } finally {
@@ -181,6 +187,7 @@ function useQueryGames() {
       if (!session?.user) throw new Error("Please sign in to view games");
 
       const { data, error } = await supabase.rpc("my_games");
+      console.log("hello", data, error);
       if (error) throw error;
 
       if (data) {
@@ -214,6 +221,8 @@ function useQueryGames() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching my games! Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -238,6 +247,8 @@ function useQueryGames() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching feed games! Please try again later.")
       }
     } finally {
       setLoading(false);

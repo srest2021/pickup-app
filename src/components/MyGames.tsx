@@ -1,9 +1,9 @@
 import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
 import { Alert, View } from "react-native";
-import useQueryGames from "../../hooks/use-query-games";
+import useQueryGames from "../hooks/use-query-games";
 import { Tabs, Text } from "tamagui";
-import GameThumbnail from "./GameThumbnail";
-import { useStore } from "../../lib/store";
+import GameThumbnail from "./game/GameThumbnail";
+import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {

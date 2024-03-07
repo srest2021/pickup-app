@@ -47,17 +47,17 @@ function useMutationGame() {
         state,
         zip,
         sport,
-        skillLevel,
-        maxPlayers: playerLimit,
-        isPublic,
+        skill_level: skillLevel,
+        max_players: playerLimit,
+        is_public: isPublic,
       });
       if (error) throw error;
 
-      if (data && data[0]) {
+      if (data && data["row"]) {
         // add game to store
         const myNewGame: GameWithAddress = {
-          id: data[0].id,
-          organizerId: data[0].organizer_id,
+          id: data["row"].f1,
+          organizerId: data["row"].f2,
           title,
           description,
           datetime,
@@ -76,8 +76,10 @@ function useMutationGame() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
-        return null;
+      } else {
+        Alert.alert("Error publishing game! Please try again later.");
       }
+      return null;
     } finally {
       setLoading(false);
     }
@@ -96,6 +98,8 @@ function useMutationGame() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error deleting game! Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -146,6 +150,8 @@ function useMutationGame() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error editing game! Please try again later.");
       }
       return null;
     } finally {
