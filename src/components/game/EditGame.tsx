@@ -136,7 +136,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       convertSkillLevel(),
       playerLimit,
       description,
-      isPublic, // TODO fix isPublic
+      isPublic,
     );
     if (myEditedGame) {
       navigation.goBack();

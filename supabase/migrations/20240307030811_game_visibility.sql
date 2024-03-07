@@ -723,6 +723,7 @@ begin
     datetime,
     street, 
     city, 
+    state,
     zip,
     sport,
     skill_level,

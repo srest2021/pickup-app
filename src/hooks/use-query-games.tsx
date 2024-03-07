@@ -16,7 +16,9 @@ function useQueryGames() {
     setLoading,
     myGames,
     setMyGames,
+    clearMyGames,
     setFeedGames,
+    clearFeedGames,
     setSelectedFeedGame,
     clearSelectedFeedGame,
     setSelectedMyGame,
@@ -28,7 +30,9 @@ function useQueryGames() {
     state.setLoading,
     state.myGames,
     state.setMyGames,
+    state.clearMyGames,
     state.setFeedGames,
+    state.clearFeedGames,
     state.setSelectedFeedGame,
     state.clearSelectedFeedGame,
     state.setSelectedMyGame,
@@ -139,7 +143,6 @@ function useQueryGames() {
       const { data, error } = await supabase.rpc("get_game_with_address", {
         game_id: id,
       });
-      console.log("FETCHMYGAME",data,error);
       if (error) throw error;
 
       if (data && data["row"]) {
@@ -154,7 +157,7 @@ function useQueryGames() {
             city: data["row"].f7,
             state: data["row"].f8,
             zip: data["row"].f9,
-          },
+          } as Address,
           sport: {
             name: data["row"].f10,
             skillLevel: data["row"].f11,
@@ -224,6 +227,7 @@ function useQueryGames() {
       } else {
         Alert.alert("Error fetching my games! Please try again later.");
       }
+      clearMyGames();
     } finally {
       setLoading(false);
     }
@@ -250,6 +254,7 @@ function useQueryGames() {
       } else {
         Alert.alert("Error fetching feed games! Please try again later.")
       }
+      clearFeedGames();
     } finally {
       setLoading(false);
     }

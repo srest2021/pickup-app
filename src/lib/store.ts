@@ -131,6 +131,7 @@ export const useStore = create<State & Action>()(
 
     addMyGame: (myGame) => {
       set({ myGames: [myGame, ...get().myGames] });
+      set({ selectedMyGame: myGame });
     },
 
     removeMyGame: (myGameId) => {
@@ -148,6 +149,7 @@ export const useStore = create<State & Action>()(
         }
         return myGame;
       });
+      set({ selectedMyGame: updatedGame });
       set({ myGames: newMyGames });
     },
 

@@ -138,12 +138,31 @@ function useMutationGame() {
         max_players: playerLimit,
         is_public: isPublic,
       });
-      console.log("EDITGAME ",data,error);
       if (error) throw error;
 
       if (data && data["row"]) {
         // edit game in store
-        editMyGame(data["row"], data);
+        const myUpdatedGame: GameWithAddress = {
+          id: data["row"].f1,
+          organizerId: data["row"].f2,
+          title: data["row"].f3,
+          description: data["row"].f4,
+          datetime: new Date(data["row"].f5),
+          address: {
+            street: data["row"].f6,
+            city: data["row"].f7,
+            state: data["row"].f8,
+            zip: data["row"].f9,
+          } as Address,
+          sport: {
+            name: data["row"].f10,
+            skillLevel: data["row"].f11,
+          } as GameSport,
+          maxPlayers: Number(data["row"].f12),
+          currentPlayers: Number(data["row"].f13),
+          isPublic: data["row"].f14,
+        };
+        editMyGame(myUpdatedGame.id, myUpdatedGame);
       } else {
         throw new Error("Error editing game! Please try again later.");
       }

@@ -22,16 +22,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
-  const { fetchMyGameById } = useQueryGames();
   const { removeMyGameById } = useMutationGame();
 
-  // const getGame = async () => {
-  //   await fetchMyGameById(gameId);
-  // };
-
-  // useEffect(() => {
-  //   getGame();
-  // }, [selectedMyGame]);
+  useEffect(() => {
+    console.log("state updated: ",selectedMyGame)
+  }, [selectedMyGame]);
 
   function deleteGame() {
     removeMyGameById(gameId);
