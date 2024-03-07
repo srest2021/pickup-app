@@ -760,6 +760,18 @@ returns table(id "uuid", organizer_id "uuid", title text, description text, date
   order by datetime ASC;
 $$;
 
+create or replace function joined_games() 
+returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text)
+    LANGUAGE "sql"
+    AS $$
+  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip
+  FROM public.games AS g
+  JOIN public.game_locations AS gl ON g.id = gl.game_id
+  join public.joined_game as jg on g.id = jg.game_id
+  where jg.player_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
+  order by datetime ASC;
+$$;
+
 -- accept player join request
 create or replace function accept_join_request(game_id "uuid", player_id "uuid")
 returns void as $$

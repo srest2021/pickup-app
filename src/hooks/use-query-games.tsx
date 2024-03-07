@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
@@ -23,6 +22,8 @@ function useQueryGames() {
     clearSelectedFeedGame,
     setSelectedMyGame,
     clearSelectedMyGame,
+    setJoinedGames,
+    clearJoinedGames,
     setSelectedJoinedGame,
     clearSelectedJoinedGame,
   ] = useStore((state) => [
@@ -37,6 +38,8 @@ function useQueryGames() {
     state.clearSelectedFeedGame,
     state.setSelectedMyGame,
     state.clearSelectedMyGame,
+    state.setJoinedGames,
+    state.clearJoinedGames,
     state.setSelectedJoinedGame,
     state.clearSelectedJoinedGame,
   ]);
@@ -233,6 +236,55 @@ function useQueryGames() {
     }
   };
 
+  const fetchJoinedGames = async () => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("Please sign in to view games");
+
+      const { data, error } = await supabase.rpc("joined_games");
+      if (error) throw error;
+
+      if (data) {
+        const games = data.map((myGame: any) => {
+          const game: GameWithAddress = {
+            id: myGame.id,
+            organizerId: myGame.organizer_id,
+            title: myGame.title,
+            description: myGame.description,
+            datetime: myGame.datetime,
+            address: {
+              street: myGame.street,
+              city: myGame.city,
+              state: myGame.state,
+              zip: myGame.zip,
+            } as Address,
+            sport: {
+              name: myGame.sport,
+              skillLevel: myGame.skill_level,
+            } as GameSport,
+            maxPlayers: Number(myGame.max_players),
+            currentPlayers: Number(myGame.current_players),
+            isPublic: myGame.is_public,
+          };
+          return game;
+        });
+        setJoinedGames(games);
+      } else {
+        throw new Error("Error fetching joined games! Please try again later.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching joined games! Please try again later.");
+      }
+      clearJoinedGames();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const fetchAllGames = async () => {
     try {
       setLoading(true);
@@ -266,6 +318,7 @@ function useQueryGames() {
     fetchJoinedGameById,
     fetchFeedGameById,
     fetchMyGames,
+    fetchJoinedGames,
     fetchAllGames,
   };
 }

@@ -7,12 +7,14 @@ import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [session, myGames, clearMyGames] = useStore((state) => [
+  const [session, myGames, joinedGames, clearMyGames, clearJoinedGames] = useStore((state) => [
     state.session,
     state.myGames,
+    state.joinedGames,
     state.clearMyGames,
+    state.clearJoinedGames
   ]);
-  const { fetchMyGames, fetchAllGames } = useQueryGames();
+  const { fetchMyGames, fetchJoinedGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
 
@@ -31,11 +33,11 @@ const MyGames = ({ navigation }: { navigation: any }) => {
       }
     } else if (myGamesToggle === "joinedGames") {
       try {
-        await fetchAllGames();
+        await fetchJoinedGames();
         // temporary for right now until we do query for joined games.
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
-        clearMyGames();
+        clearJoinedGames();
       }
     }
     setRefreshing(false);
