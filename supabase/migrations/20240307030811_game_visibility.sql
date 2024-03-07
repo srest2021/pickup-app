@@ -738,14 +738,14 @@ end;
 $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
--- TODO: table returned should include all remaining game fields in type game_without_address
 create or replace function nearby_games("lat" double precision, "long" double precision) 
-returns table("id" "uuid", "title" "text", "lat" double precision, "long" double precision, "dist_meters" double precision)
+returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, "lat" double precision, "long" double precision, "dist_meters" double precision)
     LANGUAGE "sql"
     AS $$
-  select g.id, g.title, st_y(gl.loc::geometry) as lat, st_x(gl.loc::geometry) as long, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
+  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, st_y(gl.loc::geometry) as lat, st_x(gl.loc::geometry) as long, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
   FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.id
+  JOIN public.game_locations AS gl ON g.id = gl.game_id
+  where g.organizer_id != auth.uid()
   order by gl.loc <-> st_point(long, lat)::geography;
 $$;
 

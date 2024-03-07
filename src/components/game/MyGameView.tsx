@@ -25,7 +25,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { removeMyGameById } = useMutationGame();
 
   useEffect(() => {
-    console.log("state updated: ",selectedMyGame)
+    console.log("state updated: ", selectedMyGame);
   }, [selectedMyGame]);
 
   function deleteGame() {

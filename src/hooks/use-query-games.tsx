@@ -68,6 +68,7 @@ function useQueryGames() {
           maxPlayers: Number(data[0].max_players),
           currentPlayers: Number(data[0].current_players),
           isPublic: data[0].is_public,
+          distanceAway: data[0].dist_meters
         };
 
         setSelectedFeedGame(game);
@@ -180,7 +181,7 @@ function useQueryGames() {
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
-        Alert.alert("Error loading my game! Please try again later.")
+        Alert.alert("Error loading my game! Please try again later.");
       }
       return null;
     } finally {
@@ -284,27 +285,43 @@ function useQueryGames() {
     }
   };
 
-
-  const fetchAllGames = async () => {
+  const fetchFeedGames = async () => {
     try {
       setLoading(true);
-      const { data: games, error } = await supabase
+      const { data, error } = await supabase
         .rpc("nearby_games", {
           lat: 39.3289357,
           long: -76.6172978,
         })
         .limit(20);
-
       if (error) throw error;
 
-      if (games) {
+      if (data) {
+        const games = data.map((myGame: any) => {
+          const game: GameWithoutAddress = {
+            id: myGame.id,
+            organizerId: myGame.organizer_id,
+            title: myGame.title,
+            description: myGame.description,
+            datetime: myGame.datetime,
+            sport: {
+              name: myGame.sport,
+              skillLevel: myGame.skill_level,
+            } as GameSport,
+            maxPlayers: Number(myGame.max_players),
+            currentPlayers: Number(myGame.current_players),
+            isPublic: myGame.is_public,
+            distanceAway: myGame.dist_meters,
+          };
+          return game;
+        });
         setFeedGames(games);
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
-        Alert.alert("Error fetching feed games! Please try again later.")
+        Alert.alert("Error fetching feed games! Please try again later.");
       }
       clearFeedGames();
     } finally {
@@ -319,7 +336,7 @@ function useQueryGames() {
     fetchFeedGameById,
     fetchMyGames,
     fetchJoinedGames,
-    fetchAllGames,
+    fetchFeedGames,
   };
 }
 

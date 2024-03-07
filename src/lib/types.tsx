@@ -69,7 +69,7 @@ export interface Game {
   //distanceAway: number;
 }
 
-export type GameWithoutAddress = Game;
+export type GameWithoutAddress = Game & { distanceAway: number };
 
 export type GameWithAddress = Game & { address: Address };
 
