@@ -13,7 +13,7 @@ const Feed = () => {
   // const toMyGames = () => {
   //   // Figure out a way to switch to MyGames (probably use Store)
   // };
-  
+
   const { fetchFeedGames } = useQueryGames();
 
   useEffect(() => {

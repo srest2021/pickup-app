@@ -52,7 +52,7 @@ function useQueryGames() {
       const { data, error } = await supabase.rpc("get_game_without_address", {
         game_id: id,
         lat: 39.3289357,
-          long: -76.6172978,
+        long: -76.6172978,
       });
       if (error) throw error;
 
@@ -70,7 +70,7 @@ function useQueryGames() {
           maxPlayers: Number(data["row"].f8),
           currentPlayers: Number(data["row"].f9),
           isPublic: data["row"].f10,
-          distanceAway: Number(data["row"].f11)
+          distanceAway: Number(data["row"].f11),
         };
 
         setSelectedFeedGame(game);
@@ -99,7 +99,7 @@ function useQueryGames() {
       const { data, error } = await supabase.rpc("get_game_with_address", {
         game_id: id,
         lat: 39.3289357,
-          long: -76.6172978,
+        long: -76.6172978,
       });
       if (error) throw error;
 
@@ -123,7 +123,7 @@ function useQueryGames() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
-          distanceAway: Number(data["row"].f15)
+          distanceAway: Number(data["row"].f15),
         };
 
         setSelectedJoinedGame(game);
@@ -151,8 +151,8 @@ function useQueryGames() {
 
       const { data, error } = await supabase.rpc("get_game_with_address", {
         game_id: id,
-          lat: 39.3289357,
-          long: -76.6172978,
+        lat: 39.3289357,
+        long: -76.6172978,
       });
       if (error) throw error;
 
@@ -176,7 +176,7 @@ function useQueryGames() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
-          distanceAway: Number(data["row"].f15)
+          distanceAway: Number(data["row"].f15),
         };
 
         setSelectedMyGame(game);
@@ -229,7 +229,7 @@ function useQueryGames() {
             maxPlayers: Number(myGame.max_players),
             currentPlayers: Number(myGame.current_players),
             isPublic: myGame.is_public,
-            distanceAway: Number(myGame.dist_meters)
+            distanceAway: Number(myGame.dist_meters),
           };
           return game;
         });
@@ -281,7 +281,7 @@ function useQueryGames() {
             maxPlayers: Number(myGame.max_players),
             currentPlayers: Number(myGame.current_players),
             isPublic: myGame.is_public,
-            distanceAway: Number(myGame.dist_meters)
+            distanceAway: Number(myGame.dist_meters),
           };
           return game;
         });

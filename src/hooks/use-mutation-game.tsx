@@ -68,7 +68,7 @@ function useMutationGame() {
           maxPlayers: Number(playerLimit),
           currentPlayers: 1,
           isPublic,
-          distanceAway: Number(data["row"].f15)
+          distanceAway: Number(data["row"].f15),
         };
         addMyGame(myNewGame);
         return myNewGame;
@@ -165,7 +165,7 @@ function useMutationGame() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
-          distanceAway: Number(data["row"].f15)
+          distanceAway: Number(data["row"].f15),
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
       } else {

@@ -772,7 +772,7 @@ returns table(id "uuid", organizer_id "uuid", title text, description text, date
   FROM public.games AS g
   JOIN public.game_locations AS gl ON g.id = gl.game_id
   join public.joined_game as jg on g.id = jg.game_id
-  where jg.player_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
+  where jg.player_id = auth.uid() and g.organizer_id != auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
 
