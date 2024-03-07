@@ -80,7 +80,7 @@ export default function GameThumbnail({
           style={{ flex: 0.5 }}
         >
           <Paragraph fontWeight="600" fontSize="$6">
-            X miles away
+            {game.distanceAway} meters away
           </Paragraph>
           <Paragraph
             fontWeight="500"

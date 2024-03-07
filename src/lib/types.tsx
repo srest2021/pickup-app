@@ -66,10 +66,10 @@ export interface Game {
   maxPlayers: number;
   currentPlayers: number;
   isPublic: boolean;
-  //distanceAway: number;
+  distanceAway: number;
 }
 
-export type GameWithoutAddress = Game & { distanceAway: number };
+export type GameWithoutAddress = Game;
 
 export type GameWithAddress = Game & { address: Address };
 

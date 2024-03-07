@@ -554,7 +554,9 @@ create or replace function public.create_game(
   street text,
   state text,
   title text,
-  zip text
+  zip text,
+  "lat" double precision, 
+  "long" double precision
 ) returns record as $$
 declare
   coords "extensions"."geography"(Point,4326);
@@ -592,21 +594,21 @@ begin
     skill_level,
     max_players,
     1::bigint,
-    --st_distance(coords, st_point(long, lat)::geography) as distanceAway,
-    is_public -- as isPublic
+    is_public,
+    st_distance(coords, st_point(long, lat)::geography)
   ) into inserted_data;
   return inserted_data;
 end;
 $$ language plpgsql;
 
-create or replace function get_game_with_address(game_id "uuid") --"lat" double precision, "long" double precision)
+create or replace function get_game_with_address(game_id "uuid", "lat" double precision, "long" double precision)
 returns record as $$
 declare
-  --coords "extensions"."geography"(Point,4326);
+  coords "extensions"."geography"(Point,4326);
   data record;
 begin
-  -- get location
-  -- select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
+  get location
+  select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
 
   -- get games and game_locations rows by joining tables
   select (
@@ -623,8 +625,8 @@ begin
     g.skill_level, 
     g.max_players, 
     g.current_players, 
-    g.is_public
-    --st_distance(coords, st_point(long, lat)::geography) as distanceAway
+    g.is_public,
+    st_distance(coords, st_point(long, lat)::geography)
   )
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
@@ -633,14 +635,14 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function get_game_without_address(game_id "uuid") --"lat" double precision, "long" double precision)
+create or replace function get_game_without_address(game_id "uuid", "lat" double precision, "long" double precision)
 returns record as $$
 declare
-  --coords "extensions"."geography"(Point,4326);
+  coords "extensions"."geography"(Point,4326);
   data record;
 begin
-  -- get location
-  -- select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
+  get location
+  select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
 
   select (
     g.id,
@@ -652,8 +654,8 @@ begin
     g.skill_level,
     g.max_players,
     g.current_players, 
-    g.is_public
-    --st_distance(coords, st_point(long, lat)::geography) as distanceAway
+    g.is_public,
+    st_distance(coords, st_point(long, lat)::geography) 
   )
   from public.games as g
   into data;
@@ -674,7 +676,9 @@ create or replace function edit_game(
   street text,
   state text,
   title text,
-  zip text
+  zip text,
+  "lat" double precision, 
+  "long" double precision
 ) returns record as $$
 declare
   current_players bigint;
@@ -729,8 +733,8 @@ begin
     skill_level,
     max_players,
     current_players,
-    --st_distance(coords, st_point(long, lat)::geography) as distanceAway,
-    is_public 
+    is_public,
+    st_distance(coords, st_point(long, lat)::geography)
   )
   into updated_data;
   return updated_data;
@@ -739,7 +743,7 @@ $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
 create or replace function nearby_games("lat" double precision, "long" double precision) 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, "lat" double precision, "long" double precision, "dist_meters" double precision)
+returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, "dist_meters" double precision)
     LANGUAGE "sql"
     AS $$
   select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, st_y(gl.loc::geometry) as lat, st_x(gl.loc::geometry) as long, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
@@ -749,22 +753,22 @@ returns table(id "uuid", organizer_id "uuid", title text, description text, date
   order by gl.loc <-> st_point(long, lat)::geography;
 $$;
 
-create or replace function my_games() 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text)
+create or replace function my_games("lat" double precision, "long" double precision) 
+returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text,  "dist_meters" double precision)
     LANGUAGE "sql"
     AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip
+  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
   FROM public.games AS g
   JOIN public.game_locations AS gl ON g.id = gl.game_id
   where g.organizer_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
 
-create or replace function joined_games() 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text)
+create or replace function joined_games("lat" double precision, "long" double precision) 
+returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text, "dist_meters" double precision)
     LANGUAGE "sql"
     AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip
+  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
   FROM public.games AS g
   JOIN public.game_locations AS gl ON g.id = gl.game_id
   join public.joined_game as jg on g.id = jg.game_id

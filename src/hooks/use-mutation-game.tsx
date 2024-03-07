@@ -50,6 +50,8 @@ function useMutationGame() {
         skill_level: skillLevel,
         max_players: playerLimit,
         is_public: isPublic,
+        lat: 39.3289357,
+        long: -76.6172978,
       });
       if (error) throw error;
 
@@ -66,7 +68,7 @@ function useMutationGame() {
           maxPlayers: Number(playerLimit),
           currentPlayers: 1,
           isPublic,
-          //distanceAway
+          distanceAway: Number(data["row"].f15)
         };
         addMyGame(myNewGame);
         return myNewGame;
@@ -137,6 +139,8 @@ function useMutationGame() {
         skill_level: skillLevel,
         max_players: playerLimit,
         is_public: isPublic,
+        lat: 39.3289357,
+        long: -76.6172978,
       });
       if (error) throw error;
 
@@ -161,6 +165,7 @@ function useMutationGame() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
+          distanceAway: Number(data["row"].f15)
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
       } else {

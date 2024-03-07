@@ -51,24 +51,26 @@ function useQueryGames() {
 
       const { data, error } = await supabase.rpc("get_game_without_address", {
         game_id: id,
+        lat: 39.3289357,
+          long: -76.6172978,
       });
       if (error) throw error;
 
       if (data && data[0]) {
         const game: GameWithoutAddress = {
-          id: data[0].id,
-          organizerId: data[0].organizer_id,
-          title: data[0].title,
-          description: data[0].description,
-          datetime: new Date(data[0].datetime),
+          id: data["row"].f1,
+          organizerId: data["row"].f2,
+          title: data["row"].f3,
+          description: data["row"].f4,
+          datetime: new Date(data["row"].f5),
           sport: {
-            name: data[0].sport,
-            skillLevel: data[0].skill_level,
+            name: data["row"].f6,
+            skillLevel: data["row"].f7,
           } as GameSport,
-          maxPlayers: Number(data[0].max_players),
-          currentPlayers: Number(data[0].current_players),
-          isPublic: data[0].is_public,
-          distanceAway: data[0].dist_meters
+          maxPlayers: Number(data["row"].f8),
+          currentPlayers: Number(data["row"].f9),
+          isPublic: data["row"].f10,
+          distanceAway: Number(data["row"].f11)
         };
 
         setSelectedFeedGame(game);
@@ -96,29 +98,32 @@ function useQueryGames() {
 
       const { data, error } = await supabase.rpc("get_game_with_address", {
         game_id: id,
+        lat: 39.3289357,
+          long: -76.6172978,
       });
       if (error) throw error;
 
-      if (data && data[0]) {
+      if (data && data["row"]) {
         const game: GameWithAddress = {
-          id: data[0].id,
-          organizerId: data[0].organizer_id,
-          title: data[0].title,
-          description: data[0].description,
-          datetime: new Date(data[0].datetime),
+          id: data["row"].f1,
+          organizerId: data["row"].f2,
+          title: data["row"].f3,
+          description: data["row"].f4,
+          datetime: new Date(data["row"].f5),
           address: {
-            street: data[0].street,
-            city: data[0].city,
-            state: data[0].state,
-            zip: data[0].zip,
-          },
+            street: data["row"].f6,
+            city: data["row"].f7,
+            state: data["row"].f8,
+            zip: data["row"].f9,
+          } as Address,
           sport: {
-            name: data[0].sport,
-            skillLevel: data[0].skill_level,
+            name: data["row"].f10,
+            skillLevel: data["row"].f11,
           } as GameSport,
-          maxPlayers: Number(data[0].max_players),
-          currentPlayers: Number(data[0].current_players),
-          isPublic: data[0].is_public,
+          maxPlayers: Number(data["row"].f12),
+          currentPlayers: Number(data["row"].f13),
+          isPublic: data["row"].f14,
+          distanceAway: Number(data["row"].f15)
         };
 
         setSelectedJoinedGame(game);
@@ -146,6 +151,8 @@ function useQueryGames() {
 
       const { data, error } = await supabase.rpc("get_game_with_address", {
         game_id: id,
+          lat: 39.3289357,
+          long: -76.6172978,
       });
       if (error) throw error;
 
@@ -169,6 +176,7 @@ function useQueryGames() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
+          distanceAway: Number(data["row"].f15)
         };
 
         setSelectedMyGame(game);
@@ -194,7 +202,10 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
-      const { data, error } = await supabase.rpc("my_games");
+      const { data, error } = await supabase.rpc("my_games", {
+        lat: 39.3289357,
+        long: -76.6172978,
+      });
       if (error) throw error;
 
       if (data) {
@@ -218,6 +229,7 @@ function useQueryGames() {
             maxPlayers: Number(myGame.max_players),
             currentPlayers: Number(myGame.current_players),
             isPublic: myGame.is_public,
+            distanceAway: Number(myGame.dist_meters)
           };
           return game;
         });
@@ -242,7 +254,10 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
-      const { data, error } = await supabase.rpc("joined_games");
+      const { data, error } = await supabase.rpc("joined_games", {
+        lat: 39.3289357,
+        long: -76.6172978,
+      });
       if (error) throw error;
 
       if (data) {
@@ -266,6 +281,7 @@ function useQueryGames() {
             maxPlayers: Number(myGame.max_players),
             currentPlayers: Number(myGame.current_players),
             isPublic: myGame.is_public,
+            distanceAway: Number(myGame.dist_meters)
           };
           return game;
         });
