@@ -7,39 +7,25 @@ import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [session, myGames, joinedGames, clearMyGames, clearJoinedGames] =
-    useStore((state) => [
-      state.session,
-      state.myGames,
-      state.joinedGames,
-      state.clearMyGames,
-      state.clearJoinedGames,
-    ]);
+  const [session, myGames, joinedGames] = useStore((state) => [
+    state.session,
+    state.myGames,
+    state.joinedGames,
+  ]);
   const { fetchMyGames, fetchJoinedGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
 
   useEffect(() => {
     handleRefresh();
-  }, [myGamesToggle]); //, selectedMyGame]);
+  }, [myGamesToggle]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     if (myGamesToggle === "myGames") {
-      try {
-        await fetchMyGames();
-      } catch (error) {
-        Alert.alert("Error fetching games! Please try again later.");
-        clearMyGames();
-      }
+      await fetchMyGames(); // error handling happens inside
     } else if (myGamesToggle === "joinedGames") {
-      try {
-        await fetchJoinedGames();
-        // temporary for right now until we do query for joined games.
-      } catch (error) {
-        Alert.alert("Error fetching games! Please try again later.");
-        clearJoinedGames();
-      }
+      await fetchJoinedGames(); // error handling happens inside
     }
     setRefreshing(false);
   };
@@ -92,19 +78,30 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             {refreshing && (
               <Spinner size="small" color="#ff7403" testID="spinner" />
             )}
-            {myGames.length > 0 ? (
-              <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                {myGames.map((myGame) => (
-                  <GameThumbnail
-                    navigation={navigation}
-                    game={myGame}
-                    key={myGame.id}
-                  />
-                ))}
-              </YStack>
+
+            {myGamesToggle === "myGames" ? (
+              myGames.length > 0 ? (
+                <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                  {myGames.map((myGame) => (
+                    <GameThumbnail
+                      navigation={navigation}
+                      game={myGame}
+                      key={myGame.id}
+                    />
+                  ))}
+                </YStack>
+              ) : (
+                <View className="items-center justify-center flex-1 p-12 text-center">
+                  <H4>No published games yet</H4>
+                </View>
+              )
+            ) : joinedGames.length > 0 ? (
+              <View className="items-center justify-center flex-1 p-12 text-center">
+                <H4>joined games thumbnails here</H4>
+              </View>
             ) : (
               <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No games yet</H4>
+                <H4>No joined games yet</H4>
               </View>
             )}
           </ScrollView>

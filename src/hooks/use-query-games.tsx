@@ -1,13 +1,7 @@
 import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import {
-  Address,
-  GameSport,
-  MyGame,
-  JoinedGame,
-  FeedGame,
-} from "../lib/types";
+import { Address, GameSport, MyGame, JoinedGame, FeedGame } from "../lib/types";
 
 function useQueryGames() {
   const [
