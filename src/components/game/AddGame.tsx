@@ -74,6 +74,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
   const createNewGame = async () => {
     // Check that no fields are left blank (except description, optional)
+    // No need to check isPublic. It is never empty, always public by default.
     if (
       !title ||
       !date ||
