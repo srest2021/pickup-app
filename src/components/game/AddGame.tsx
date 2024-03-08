@@ -109,8 +109,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       return;
     }
 
-    console.log(isPublic);
-
     const myNewGame = await createGame(
       title,
       combinedDateTime,
@@ -194,8 +192,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 paddingRight="$0"
                 minWidth={90}
                 justifyContent="flex-end"
-                size={3}
+                size="$5"
                 htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? '#08348c' : 'black',
+                }}
               >
                 Public
               </Label>
@@ -205,15 +206,21 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 onCheckedChange={(checked: boolean) => {
                   setIsPublic(!checked);
                 }}
+                style={{
+                  backgroundColor:'#018de9',
+                }}
               >
-                <Switch.Thumb animation="bouncy" />
+                <Switch.Thumb style={{ backgroundColor: '#08348c' }}animation="bouncy" />
               </Switch>
               <Label
                 paddingLeft="$6"
                 minWidth={90}
                 justifyContent="flex-end"
-                size={3}
+                size="$5"
                 htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? 'black' : '#08348c',
+                }}
               >
                 Friends-Only
               </Label>
