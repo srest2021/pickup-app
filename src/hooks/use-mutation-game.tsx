@@ -75,8 +75,8 @@ function useMutationGame() {
           currentPlayers: 1,
           isPublic,
           distanceAway: Number(data["row"].f15),
-          joinRequests: data["row"].f16,
-          acceptedPlayers: data["row"].f17,
+          joinRequests: [],
+          acceptedPlayers: [],
         };
         addMyGame(myNewGame);
         return myNewGame;
@@ -154,7 +154,7 @@ function useMutationGame() {
 
       if (data && data["row"]) {
         // edit game in store
-        const myUpdatedGame: MyGame = {
+        const myUpdatedGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title: data["row"].f3,
@@ -173,9 +173,7 @@ function useMutationGame() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
-          distanceAway: Number(data["row"].f15),
-          joinRequests: data["row"].f16,
-          acceptedPlayers: data["row"].f17,
+          distanceAway: Number(data["row"].f15)
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
       } else {

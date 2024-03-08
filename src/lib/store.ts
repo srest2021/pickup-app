@@ -149,7 +149,11 @@ export const useStore = create<State & Action>()(
     editMyGame: (myGameId, updatedGame) => {
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
-          return updatedGame;
+          return { 
+            ...updatedGame, 
+            joinRequests: myGame.joinRequests, 
+            acceptedPlayers: myGame.acceptedPlayers
+          };
         }
         return myGame;
       });
