@@ -2,6 +2,7 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Address, GameSport, MyGame, JoinedGame, FeedGame } from "../lib/types";
+import useQueryUsers from "./use-query-users";
 
 function useQueryGames() {
   const [
@@ -37,6 +38,8 @@ function useQueryGames() {
     state.setSelectedJoinedGame,
     state.clearSelectedJoinedGame,
   ]);
+
+  const { getOtherProfile } = useQueryUsers();
 
   const fetchFeedGameById = async (id: string) => {
     try {
