@@ -1,8 +1,7 @@
 import { useStore } from "../lib/store";
-import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Address, MyGame, JoinedGame, FeedGame, GameSport } from "../lib/types";
+import { Address, MyGame, GameSport } from "../lib/types";
 
 function useMutationGame() {
   const [
@@ -173,7 +172,7 @@ function useMutationGame() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
-          distanceAway: Number(data["row"].f15)
+          distanceAway: Number(data["row"].f15),
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
       } else {
