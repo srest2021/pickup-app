@@ -43,70 +43,78 @@ export default function EditProfile({ navigation }: { navigation: any }) {
           }}
         >
           <YStack space="$3">
-          <XStack space="$5" alignItems="center" justifyContent="space-between">
-            <Label size="$5" color={"#08348c"}>
-              Email
-            </Label>
-            <Input
-              disabled={true}
-              flex={1}
-              size="$5"
-              value={session?.user?.email}
-            />
-          </XStack>
-
-          <XStack space="$5" alignItems="center" justifyContent="space-between">
-            <Label size="$5" color={"#08348c"}>
-              Display Name
-            </Label>
-            <Input
-              flex={1}
-              size="$5"
-              value={displayName}
-              onChangeText={(text: string) => setDisplayName(text)}
-            />
-          </XStack>
-
-          <YStack space="$1">
-            <Label size="$5" color={"#08348c"}>
-              Bio
-            </Label>
-            <TextArea
-              size="$5"
-              placeholder="Enter your bio"
-              testID="descriptionInput"
-              value={bio}
-              onChangeText={(text: string) => setBio(text)}
-            />
-          </YStack>
-
-          <View className="items-center pt-5">
-            <Avatar
-              url={user.avatarUrl}
-              onUpload={(url: string) => {
-                setAvatarUrl(url);
-                handleUpdate(user.username, displayName, bio, url); //avatarUrl
-              }}
-              allowUpload={true}
-            />
-          </View>
-
-          <YStack space="$6" paddingTop="$5" alignItems="center">
-            <Button
-              theme="active"
-              color="#ff7403"
-              borderColor="#ff7403"
-              variant="outlined"
-              disabled={loading}
-              onPress={() =>
-                handleUpdate(user.username, displayName, bio, avatarUrl)
-              }
-              size="$5"
-              width="94%"
+            <XStack
+              space="$5"
+              alignItems="center"
+              justifyContent="space-between"
             >
-              {loading ? "Loading..." : "Update"}
-            </Button>
-          </YStack>
+              <Label size="$5" color={"#08348c"}>
+                Email
+              </Label>
+              <Input
+                disabled={true}
+                flex={1}
+                size="$5"
+                value={session?.user?.email}
+              />
+            </XStack>
+
+            <XStack
+              space="$5"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Label size="$5" color={"#08348c"}>
+                Display Name
+              </Label>
+              <Input
+                flex={1}
+                size="$5"
+                value={displayName}
+                onChangeText={(text: string) => setDisplayName(text)}
+              />
+            </XStack>
+
+            <YStack space="$1">
+              <Label size="$5" color={"#08348c"}>
+                Bio
+              </Label>
+              <TextArea
+                size="$5"
+                placeholder="Enter your bio"
+                testID="descriptionInput"
+                value={bio}
+                onChangeText={(text: string) => setBio(text)}
+              />
+            </YStack>
+
+            <View className="items-center pt-5">
+              <Avatar
+                url={user.avatarUrl}
+                onUpload={(url: string) => {
+                  setAvatarUrl(url);
+                  handleUpdate(user.username, displayName, bio, url); //avatarUrl
+                }}
+                allowUpload={true}
+              />
+            </View>
+
+            <YStack space="$6" paddingTop="$5" alignItems="center">
+              <Button
+                theme="active"
+                color="#ff7403"
+                borderColor="#ff7403"
+                variant="outlined"
+                disabled={loading}
+                onPress={() =>
+                  handleUpdate(user.username, displayName, bio, avatarUrl)
+                }
+                size="$5"
+                width="94%"
+              >
+                {loading ? "Loading..." : "Update"}
+              </Button>
+            </YStack>
           </YStack>
         </ScrollView>
       ) : (

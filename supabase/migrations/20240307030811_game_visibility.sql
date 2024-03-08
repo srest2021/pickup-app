@@ -180,7 +180,6 @@ create table games (
   "max_players" bigint not null,
   "current_players" bigint default '0'::bigint not null,
   "is_public" boolean default '1'::boolean not null,
-  --"distance_away" "extensions"."geography"(Point,4326),
   constraint game_skill_level_range check (skill_level >= 0 and skill_level <= 2),
   constraint games_description_check check ((length(description) < 500)),
   constraint games_max_players_check check ((max_players >= 1))
@@ -195,14 +194,10 @@ alter table games
   enable row level security;
 
 create policy "Public games are viewable by everyone." on games
-  for select using (
-    is_public
-  );
+  for select using (is_public);
 
--- create policy "Friends-only games are viewable by the organizer's friends." on games
---   for select using (
---      (is not public) and (auth.id() is organizer's friend)
---   );
+create policy "Friends-only games are viewable by the organizer's friends." on games
+  for select using ((not is_public) and true); --(auth.id() is organizer's friend)
 
 create policy "Users can insert their own games." on games
   for insert with check (auth.uid() = organizer_id);

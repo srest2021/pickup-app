@@ -41,6 +41,10 @@ type Action = {
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
+  acceptJoinRequest: (gameId: string, playerId: string) => void;
+  rejectJoinRequest: (gameId: string, playerId: string) => void;
+  removePlayer: (gameId: string, playerId: string) => void;
+
   setSelectedMyGame: (myGame: MyGame) => void;
   clearSelectedMyGame: () => void;
 
@@ -135,27 +139,89 @@ export const useStore = create<State & Action>()(
     },
 
     removeMyGame: (myGameId) => {
-      const newMyGames = get().myGames.filter(
+      const updatedMyGames = get().myGames.filter(
         (myGame) => myGame.id !== myGameId,
       );
-      set({ myGames: newMyGames });
+      set({ myGames: updatedMyGames });
       set({ selectedMyGame: null });
     },
 
     editMyGame: (myGameId, updatedGame) => {
-      const newMyGames = get().myGames.map((myGame) => {
+      const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
           return updatedGame;
         }
         return myGame;
       });
       set({ selectedMyGame: updatedGame });
-      set({ myGames: newMyGames });
+      set({ myGames: updatedMyGames });
     },
 
     setSelectedMyGame: (myGame) => set({ selectedMyGame: myGame }),
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
+
+    acceptJoinRequest: (gameId, playerId) => {
+      const updatedMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === gameId) {
+          myGame.joinRequests = myGame.joinRequests.filter(
+            (id) => id != playerId,
+          );
+          myGame.acceptedPlayers.push(playerId);
+        }
+        return myGame;
+      });
+      set({ myGames: updatedMyGames });
+
+      let updatedGame = get().selectedMyGame;
+      if (updatedGame && updatedGame.id === gameId) {
+        updatedGame.joinRequests = updatedGame.joinRequests.filter(
+          (id) => id != playerId,
+        );
+        updatedGame.acceptedPlayers.push(playerId);
+        set({ selectedMyGame: updatedGame });
+      }
+    },
+
+    rejectJoinRequest: (gameId, playerId) => {
+      const updatedMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === gameId) {
+          myGame.joinRequests = myGame.joinRequests.filter(
+            (id) => id != playerId,
+          );
+        }
+        return myGame;
+      });
+      set({ myGames: updatedMyGames });
+
+      let updatedGame = get().selectedMyGame;
+      if (updatedGame && updatedGame.id === gameId) {
+        updatedGame.joinRequests = updatedGame.joinRequests.filter(
+          (id) => id != playerId,
+        );
+        set({ selectedMyGame: updatedGame });
+      }
+    },
+
+    removePlayer: (gameId, playerId) => {
+      const updatedMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === gameId) {
+          myGame.acceptedPlayers = myGame.joinRequests.filter(
+            (id) => id != playerId,
+          );
+        }
+        return myGame;
+      });
+      set({ myGames: updatedMyGames });
+
+      let updatedGame = get().selectedMyGame;
+      if (updatedGame && updatedGame.id === gameId) {
+        updatedGame.acceptedPlayers = updatedGame.joinRequests.filter(
+          (id) => id != playerId,
+        );
+        set({ selectedMyGame: updatedGame });
+      }
+    },
 
     // joined games
 
@@ -165,6 +231,7 @@ export const useStore = create<State & Action>()(
 
     addJoinedGame: (joinedGame) => {
       set({ joinedGames: [joinedGame, ...get().joinedGames] });
+      set({ selectedJoinedGame: joinedGame });
     },
 
     removeJoinedGame: (joinedGameId) => {

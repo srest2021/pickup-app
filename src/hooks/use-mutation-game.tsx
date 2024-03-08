@@ -70,7 +70,7 @@ function useMutationGame() {
           isPublic,
           distanceAway: Number(data["row"].f15),
           joinRequests: data["row"].f16,
-          acceptedPlayers: data["row"].f17
+          acceptedPlayers: data["row"].f17,
         };
         addMyGame(myNewGame);
         return myNewGame;
@@ -169,7 +169,7 @@ function useMutationGame() {
           isPublic: data["row"].f14,
           distanceAway: Number(data["row"].f15),
           joinRequests: data["row"].f16,
-          acceptedPlayers: data["row"].f17
+          acceptedPlayers: data["row"].f17,
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
       } else {
@@ -188,7 +188,20 @@ function useMutationGame() {
     }
   };
 
-  return { createGame, removeMyGameById, editGameById };
+  const acceptJoinRequest = async () => {};
+
+  const rejectJoinRequest = async () => {};
+
+  const removePlayer = async () => {};
+
+  return {
+    createGame,
+    removeMyGameById,
+    editGameById,
+    acceptJoinRequest,
+    rejectJoinRequest,
+    removePlayer,
+  };
 }
 
 export default useMutationGame;

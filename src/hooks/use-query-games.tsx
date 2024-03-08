@@ -1,13 +1,7 @@
 import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import {
-  Address,
-  GameSport,
-  MyGame,
-  JoinedGame,
-  FeedGame
-} from "../lib/types";
+import { Address, GameSport, MyGame, JoinedGame, FeedGame } from "../lib/types";
 
 function useQueryGames() {
   const [
@@ -71,7 +65,7 @@ function useQueryGames() {
           currentPlayers: Number(data["row"].f9),
           isPublic: data["row"].f10,
           distanceAway: Number(data["row"].f11),
-          acceptedPlayers: data["row"].f12
+          acceptedPlayers: data["row"].f12,
         };
 
         setSelectedFeedGame(game);
@@ -111,11 +105,11 @@ function useQueryGames() {
           title: data["row"].f3,
           description: data["row"].f4,
           datetime: new Date(data["row"].f5),
-          address: { 
+          address: {
             street: data["row"].f6,
             city: data["row"].f7,
             state: data["row"].f8,
-            zip: data["row"].f9, 
+            zip: data["row"].f9,
           } as Address,
           sport: {
             name: data["row"].f10,
@@ -125,7 +119,7 @@ function useQueryGames() {
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
           distanceAway: Number(data["row"].f15),
-          acceptedPlayers: data["row"].f16
+          acceptedPlayers: data["row"].f16,
         };
 
         setSelectedJoinedGame(game);
@@ -155,8 +149,8 @@ function useQueryGames() {
         game_id: id,
         lat: 39.3289357,
         long: -76.6172978,
-      }); 
-      console.log(data,error);
+      });
+      console.log(data, error);
       if (error) throw error;
 
       if (data && data["row"]) {
@@ -181,7 +175,7 @@ function useQueryGames() {
           isPublic: data["row"].f14,
           distanceAway: Number(data["row"].f15),
           joinRequests: data["row"].f16,
-          acceptedPlayers: data["row"].f17
+          acceptedPlayers: data["row"].f17,
         };
 
         setSelectedMyGame(game);
@@ -211,7 +205,7 @@ function useQueryGames() {
         lat: 39.3289357,
         long: -76.6172978,
       });
-      console.log("fetching my games:", data[2],error)
+      console.log("fetching my games:", data, error);
       if (error) throw error;
 
       if (data) {

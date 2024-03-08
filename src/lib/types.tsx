@@ -73,16 +73,16 @@ export type MyGame = Game & {
   address: Address;
   joinRequests: string[];
   acceptedPlayers: string[];
-}
+};
 
 export type JoinedGame = Game & {
   address: Address;
   acceptedPlayers: string[];
-}
+};
 
 export type FeedGame = Game & {
   acceptedPlayers: string[];
-}
+};
 
 export const sports = [
   {
