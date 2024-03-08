@@ -5,15 +5,12 @@ import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
 
 function useQueryUsers() {
-  const [
-    session,
-    setLoading
-  ] = useStore((state) => [
+  const [session, setLoading] = useStore((state) => [
     state.session,
-    state.setLoading
+    state.setLoading,
   ]);
 
-  const getOtherProfile = async () => {
+  const getOtherProfile = async (userId: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -22,6 +19,7 @@ function useQueryUsers() {
         .from("profiles")
         .select(
           `
+            id,
             username, 
             display_name, 
             bio, 
@@ -33,7 +31,7 @@ function useQueryUsers() {
             )
         `,
         )
-        .eq("id", session?.user.id)
+        .eq("id", userId)
         .single();
       if (error && status !== 406) {
         throw error;
@@ -41,6 +39,7 @@ function useQueryUsers() {
 
       if (data) {
         const user: User = {
+          id: data.id,
           username: data.username,
           displayName: data.display_name,
           bio: data.bio,

@@ -1,4 +1,5 @@
 export type User = {
+  id: string;
   username: string;
   displayName: string;
   bio: string;
@@ -71,17 +72,17 @@ export interface Game {
 
 export type MyGame = Game & {
   address: Address;
-  joinRequests: string[];
-  acceptedPlayers: string[];
+  joinRequests: User[];
+  acceptedPlayers: User[];
 };
 
 export type JoinedGame = Game & {
   address: Address;
-  acceptedPlayers: string[];
+  acceptedPlayers: User[];
 };
 
 export type FeedGame = Game & {
-  acceptedPlayers: string[];
+  acceptedPlayers: User[];
 };
 
 export const sports = [

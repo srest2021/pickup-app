@@ -162,12 +162,16 @@ export const useStore = create<State & Action>()(
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
     acceptJoinRequest: (gameId, playerId) => {
+      const newPlayer = get()
+        .myGames.find((game) => game.id === gameId)
+        ?.joinRequests.find((user) => user.id === playerId);
+
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === gameId) {
           myGame.joinRequests = myGame.joinRequests.filter(
-            (id) => id != playerId,
+            (user) => user.id != playerId,
           );
-          myGame.acceptedPlayers.push(playerId);
+          if (newPlayer) myGame.acceptedPlayers.push(newPlayer);
         }
         return myGame;
       });
@@ -176,9 +180,9 @@ export const useStore = create<State & Action>()(
       let updatedGame = get().selectedMyGame;
       if (updatedGame && updatedGame.id === gameId) {
         updatedGame.joinRequests = updatedGame.joinRequests.filter(
-          (id) => id != playerId,
+          (user) => user.id != playerId,
         );
-        updatedGame.acceptedPlayers.push(playerId);
+        if (newPlayer) updatedGame.acceptedPlayers.push(newPlayer);
         set({ selectedMyGame: updatedGame });
       }
     },
@@ -187,7 +191,7 @@ export const useStore = create<State & Action>()(
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === gameId) {
           myGame.joinRequests = myGame.joinRequests.filter(
-            (id) => id != playerId,
+            (user) => user.id != playerId,
           );
         }
         return myGame;
@@ -197,7 +201,7 @@ export const useStore = create<State & Action>()(
       let updatedGame = get().selectedMyGame;
       if (updatedGame && updatedGame.id === gameId) {
         updatedGame.joinRequests = updatedGame.joinRequests.filter(
-          (id) => id != playerId,
+          (user) => user.id != playerId,
         );
         set({ selectedMyGame: updatedGame });
       }
@@ -207,7 +211,7 @@ export const useStore = create<State & Action>()(
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === gameId) {
           myGame.acceptedPlayers = myGame.joinRequests.filter(
-            (id) => id != playerId,
+            (user) => user.id != playerId,
           );
         }
         return myGame;
@@ -217,7 +221,7 @@ export const useStore = create<State & Action>()(
       let updatedGame = get().selectedMyGame;
       if (updatedGame && updatedGame.id === gameId) {
         updatedGame.acceptedPlayers = updatedGame.joinRequests.filter(
-          (id) => id != playerId,
+          (user) => user.id != playerId,
         );
         set({ selectedMyGame: updatedGame });
       }

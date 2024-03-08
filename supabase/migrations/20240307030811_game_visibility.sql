@@ -769,7 +769,7 @@ returns table(
   current_players bigint, 
   is_public boolean, 
   "dist_meters" double precision,
-  accepted_players uuid[]
+  accepted_players jsonb
 ) language "sql" as $$
   select 
     g.id, 
@@ -783,11 +783,32 @@ returns table(
     g.current_players, 
     g.is_public, 
     st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters,
-    array (
-      select jg.player_id 
-      from public.joined_game as jg 
-      where jg.game_id = g.id and jg.player_id != g.organizer_id
-    ) as accepted_players
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = jg.player_id
+          )
+        )
+      )
+      FROM public.joined_game AS jg
+      JOIN public.profiles AS p ON jg.player_id = p.id
+      WHERE jg.game_id = g.id
+    ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id != auth.uid()
@@ -811,8 +832,8 @@ returns table(
   state text, 
   zip text, 
   "dist_meters" double precision, 
-  join_requests uuid[],
-  accepted_players uuid[]
+  join_requests jsonb,
+  accepted_players jsonb
 ) language "sql" as $$
   select 
     g.id,
@@ -830,16 +851,58 @@ returns table(
     gl.state, 
     gl.zip, 
     st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters, 
-    array (
-      select gr.player_id 
-      from public.game_requests as gr 
-      where gr.game_id = g.id
-    ) as join_requests,
-    array (
-      select jg.player_id 
-      from public.joined_game as jg 
-      where jg.game_id = g.id and jg.player_id != g.organizer_id
-    ) as accepted_players
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = gr.player_id
+          )
+        )
+      )
+      FROM public.game_requests AS gr
+      JOIN public.profiles AS p ON gr.player_id = p.id
+      WHERE gr.game_id = g.id
+    ) AS join_requests,
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = jg.player_id
+          )
+        )
+      )
+      FROM public.joined_game AS jg
+      JOIN public.profiles AS p ON jg.player_id = p.id
+      WHERE jg.game_id = g.id
+    ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
@@ -863,7 +926,7 @@ returns table(
   state text, 
   zip text, 
   "dist_meters" double precision,
-  accepted_players uuid[]
+  accepted_players jsonb
 ) language "sql" as $$
   select 
     g.id, 
@@ -881,11 +944,32 @@ returns table(
     gl.state, 
     gl.zip, 
     st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters,
-    array (
-      select jg.player_id 
-      from public.joined_game as jg 
-      where jg.game_id = g.id and jg.player_id != g.organizer_id
-    ) as accepted_players
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = jg.player_id
+          )
+        )
+      )
+      FROM public.joined_game AS jg
+      JOIN public.profiles AS p ON jg.player_id = p.id
+      WHERE jg.game_id = g.id
+    ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   join public.joined_game as jg on g.id = jg.game_id

@@ -14,7 +14,7 @@ function useMutationGame() {
     clearSelectedMyGame,
     acceptJoinRequest,
     rejectJoinRequest,
-    removePlayer
+    removePlayer,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -24,7 +24,7 @@ function useMutationGame() {
     state.clearSelectedMyGame,
     state.acceptJoinRequest,
     state.rejectJoinRequest,
-    state.removePlayer
+    state.removePlayer,
   ]);
 
   const createGame = async (
@@ -194,17 +194,14 @@ function useMutationGame() {
     }
   };
 
-  const acceptJoinRequestById = async (
-    gameId: string,
-    playerId: string
-  ) => {
+  const acceptJoinRequestById = async (gameId: string, playerId: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
       const { error } = await supabase.rpc("accept_join_request", {
         game_id: gameId,
-        player_id: playerId
+        player_id: playerId,
       });
       if (error) throw error;
 
@@ -221,17 +218,14 @@ function useMutationGame() {
     }
   };
 
-  const rejectJoinRequestById = async (
-    gameId: string,
-    playerId: string
-  ) => {
+  const rejectJoinRequestById = async (gameId: string, playerId: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
       const { error } = await supabase.rpc("reject_join_request", {
         game_id: gameId,
-        player_id: playerId
+        player_id: playerId,
       });
       if (error) throw error;
 
@@ -248,17 +242,14 @@ function useMutationGame() {
     }
   };
 
-  const removePlayerById = async (
-    gameId: string,
-    playerId: string
-  ) => {
+  const removePlayerById = async (gameId: string, playerId: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
       const { error } = await supabase.rpc("remove_player", {
         game_id: gameId,
-        player_id: playerId
+        player_id: playerId,
       });
       if (error) throw error;
 
