@@ -12,6 +12,7 @@ import {
   XStack,
   YStack,
   H4,
+  Switch,
 } from "tamagui";
 import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
@@ -83,8 +84,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !playerLimit ||
       !city ||
       !state ||
-      !zip ||
-      !isPublic
+      !zip
     ) {
       toast.show("Error!", {
         message: "Please fill out all required fields.",
@@ -107,6 +107,8 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       });
       return;
     }
+
+    console.log(isPublic);
 
     const myNewGame = await createGame(
       title,
@@ -184,6 +186,36 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   if (datetime) setTime(datetime);
                 }}
               />
+            </XStack>
+
+            <XStack width={200} alignItems="center" padding="$2">
+              <Label
+                paddingRight="$0"
+                minWidth={90}
+                justifyContent="flex-end"
+                size={3}
+                htmlFor={"switch-public-friends-only"}
+              >
+                Public
+              </Label>
+              <Switch
+                size="$4"
+                defaultChecked={false}
+                onCheckedChange={(checked: boolean) => {
+                  setIsPublic(!checked);
+                }}
+              >
+                <Switch.Thumb animation="bouncy" />
+              </Switch>
+              <Label
+                paddingLeft="$6"
+                minWidth={90}
+                justifyContent="flex-end"
+                size={3}
+                htmlFor={"switch-public-friends-only"}
+              >
+                Friends-Only
+              </Label>
             </XStack>
 
             <YStack space="$1">
