@@ -22,19 +22,14 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
-  const { fetchGameById } = useQueryGames();
-  const { removeGameById } = useMutationGame();
-
-  const getGame = async () => {
-    await fetchGameById(gameId);
-  };
+  const { removeMyGameById } = useMutationGame();
 
   useEffect(() => {
-    getGame();
+    console.log("state updated: ", selectedMyGame);
   }, [selectedMyGame]);
 
   function deleteGame() {
-    removeGameById(gameId);
+    removeMyGameById(gameId);
     // navigate back to myGames list.
     navigation.goBack();
     // TODO: Add success toast
@@ -104,7 +99,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedMyGame.address}, ${selectedMyGame.city}, ${selectedMyGame.state} ${selectedMyGame.zip}`}
+                      {`${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`}
                     </SizableText>
                   </XStack>
 

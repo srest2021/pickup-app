@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import MyGames from "./game/MyGames";
+import MyGames from "./MyGames";
 import MyGameView from "./game/MyGameView";
 import EditGame from "./game/EditGame";
 

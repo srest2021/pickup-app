@@ -2,7 +2,7 @@ import { useStore } from "../lib/store";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Game, GameSport } from "../lib/types";
+import { Address, Game, GameSport, GameWithAddress } from "../lib/types";
 
 function useMutationGame() {
   const [
@@ -21,39 +21,10 @@ function useMutationGame() {
     state.clearSelectedMyGame,
   ]);
 
-  const getLocation = async (fullAddress: string) => {
-    // API key hard coded in -- consider changing
-    const geolocationResponse = await fetch(
-      `https://geocode.maps.co/search?q=${encodeURIComponent(fullAddress)}&api_key=65e0f4e8bc79e688163432osme79a3d`,
-    );
-    const geolocationData = await geolocationResponse.json();
-
-    if (geolocationData.length < 1) {
-      throw new Error(
-        "Unable to fetch geolocation details for the provided address.",
-      );
-    }
-
-    const latitude = geolocationData[0].lat;
-    const longitude = geolocationData[0].lon;
-    if (!latitude || !longitude) {
-      throw new Error(
-        "Unable to fetch geolocation details for the provided address.",
-      );
-    }
-
-    let location = null;
-    if (longitude !== "" && latitude !== "") {
-      location = `POINT(${longitude} ${latitude})`;
-    }
-
-    return location;
-  };
-
   const createGame = async (
-    game_title: string,
+    title: string,
     datetime: Date,
-    address: string,
+    street: string,
     city: string,
     state: string,
     zip: string,
@@ -61,73 +32,62 @@ function useMutationGame() {
     skillLevel: number,
     playerLimit: string,
     description: string = "",
+    isPublic: boolean,
   ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const fullAddress = `${address} ${city} ${state} ${zip}`;
-      let location = null;
-      try {
-        location = await getLocation(fullAddress);
-      } catch (error) {
-        throw error;
-      }
+      const { data, error } = await supabase.rpc("create_game", {
+        title,
+        description,
+        datetime,
+        street,
+        city,
+        state,
+        zip,
+        sport,
+        skill_level: skillLevel,
+        max_players: playerLimit,
+        is_public: isPublic,
+        lat: 39.3289357,
+        long: -76.6172978,
+      });
+      if (error) throw error;
 
-      const { data, error } = await supabase
-        .from("games")
-        .insert([
-          {
-            organizer_id: session?.user.id,
-            title: game_title,
-            description: description,
-            datetime: datetime,
-            sport: sport,
-            skill_level: skillLevel,
-            address: address,
-            city: city,
-            state: state,
-            zip: zip,
-            location,
-            current_players: 1,
-            max_players: playerLimit,
-          },
-        ])
-        .select();
-      if (error) {
-        throw error;
-      }
-
-      if (data && data[0]) {
+      if (data && data["row"]) {
         // add game to store
-        const myNewGame: Game = {
-          id: data[0].id,
-          title: game_title,
+        const myNewGame: GameWithAddress = {
+          id: data["row"].f1,
+          organizerId: data["row"].f2,
+          title,
           description,
           datetime,
-          address,
-          city,
-          state,
-          zip,
+          address: { street, city, state, zip } as Address,
           sport: { name: sport, skillLevel: skillLevel } as GameSport,
           maxPlayers: Number(playerLimit),
           currentPlayers: 1,
+          isPublic,
+          distanceAway: Number(data["row"].f15),
         };
         addMyGame(myNewGame);
         return myNewGame;
+      } else {
+        throw new Error("Error publishing game! Please try again later.");
       }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
-        //Alert.alert("Error publishing game! Please try again later.");
-        return null;
+      } else {
+        Alert.alert("Error publishing game! Please try again later.");
       }
+      return null;
     } finally {
       setLoading(false);
     }
   };
 
-  const removeGameById = async (id: string) => {
+  const removeMyGameById = async (id: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -140,6 +100,8 @@ function useMutationGame() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error deleting game! Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -148,9 +110,9 @@ function useMutationGame() {
 
   const editGameById = async (
     id: string,
-    game_title: string,
+    title: string,
     datetime: Date,
-    address: string,
+    street: string,
     city: string,
     state: string,
     zip: string,
@@ -158,46 +120,63 @@ function useMutationGame() {
     skillLevel: number,
     playerLimit: string,
     description: string = "",
+    isPublic: boolean,
   ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const fullAddress = `${address} ${city} ${state} ${zip}`;
-      let location = null;
-      try {
-        location = await getLocation(fullAddress);
-      } catch (error) {
-        throw error;
-      }
-
-      const { data, error } = await supabase
-        .from("games")
-        .update({
-          title: game_title,
-          description,
-          datetime,
-          sport,
-          skill_level: skillLevel,
-          address,
-          city,
-          state,
-          zip,
-          location,
-          max_players: playerLimit,
-        })
-        .eq("id", id)
-        .select();
+      const { data, error } = await supabase.rpc("edit_game", {
+        game_id: id,
+        title,
+        description,
+        datetime,
+        street,
+        city,
+        state,
+        zip,
+        sport,
+        skill_level: skillLevel,
+        max_players: playerLimit,
+        is_public: isPublic,
+        lat: 39.3289357,
+        long: -76.6172978,
+      });
       if (error) throw error;
 
-      // Edit game in store
-      if (data && data[0]) {
-        editMyGame(data[0], data);
+      if (data && data["row"]) {
+        // edit game in store
+        const myUpdatedGame: GameWithAddress = {
+          id: data["row"].f1,
+          organizerId: data["row"].f2,
+          title: data["row"].f3,
+          description: data["row"].f4,
+          datetime: new Date(data["row"].f5),
+          address: {
+            street: data["row"].f6,
+            city: data["row"].f7,
+            state: data["row"].f8,
+            zip: data["row"].f9,
+          } as Address,
+          sport: {
+            name: data["row"].f10,
+            skillLevel: data["row"].f11,
+          } as GameSport,
+          maxPlayers: Number(data["row"].f12),
+          currentPlayers: Number(data["row"].f13),
+          isPublic: data["row"].f14,
+          distanceAway: Number(data["row"].f15),
+        };
+        editMyGame(myUpdatedGame.id, myUpdatedGame);
+      } else {
+        throw new Error("Error editing game! Please try again later.");
       }
       return data;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error editing game! Please try again later.");
       }
       return null;
     } finally {
@@ -205,7 +184,7 @@ function useMutationGame() {
     }
   };
 
-  return { createGame, removeGameById, editGameById };
+  return { createGame, removeMyGameById, editGameById };
 }
 
 export default useMutationGame;

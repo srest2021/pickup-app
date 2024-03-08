@@ -32,7 +32,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
-  const [address, setAddress] = useState("");
+  const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
@@ -40,6 +40,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("1");
   const [description, setDescription] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
 
   // Toasts
   const toast = useToastController();
@@ -48,7 +49,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setTitle("");
     setDate(new Date());
     setTime(new Date());
-    setAddress("");
+    setStreet("");
     setCity("");
     setState("");
     setZip("");
@@ -56,6 +57,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
+    setIsPublic(true);
   }
 
   // Radio group value is only string. Convert string skill level to number
@@ -75,13 +77,14 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !title ||
       !date ||
       !time ||
-      !address ||
+      !street ||
       !sport ||
       !skillLevel ||
       !playerLimit ||
       !city ||
       !state ||
-      !zip
+      !zip ||
+      !isPublic
     ) {
       toast.show("Error!", {
         message: "Please fill out all required fields.",
@@ -108,7 +111,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     const myNewGame = await createGame(
       title,
       combinedDateTime,
-      address,
+      street,
       city,
       state,
       zip,
@@ -116,12 +119,13 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       convertSkillLevel(),
       playerLimit,
       description,
+      isPublic,
     );
 
     if (myNewGame) {
-      toast.show("Success!", {
-        message: "Game added.",
-      });
+      // toast.show("Success!", {
+      //   message: "Game added.",
+      // });
       clearGameAttributes();
       navigation.navigate("MyGames");
     }
@@ -184,15 +188,15 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack space="$1">
               <Label size="$5" color={"#08348c"}>
-                Address
+                Name
               </Label>
               <Input
                 flex={1}
                 size="$5"
                 placeholder="Address"
                 testID="addressInput"
-                value={address}
-                onChangeText={(text: string) => setAddress(text)}
+                value={street}
+                onChangeText={(text: string) => setStreet(text)}
               />
             </YStack>
 

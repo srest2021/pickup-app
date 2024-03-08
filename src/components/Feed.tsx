@@ -10,19 +10,19 @@ import { supabase } from "../lib/supabase";
 // add switch so that you can go between myGame and AllGames
 // PICK A MINWIDTH SO THAT text always shown
 const Feed = () => {
-  const toMyGames = () => {
-    // Figure out a way to switch to MyGames (probably use Store)
-  };
+  // const toMyGames = () => {
+  //   // Figure out a way to switch to MyGames (probably use Store)
+  // };
 
-  const { fetchAllGames } = useQueryGames();
+  const { fetchFeedGames } = useQueryGames();
 
   useEffect(() => {
-    fetchAllGames();
+    fetchFeedGames();
   }, []);
 
-  const toJoinedGames = () => {
-    // Figure out how to swtich to AllGames (probably useStore)
-  };
+  // const toJoinedGames = () => {
+  //   // Figure out how to swtich to AllGames (probably useStore)
+  // };
 
   // can I use a store?
   return (

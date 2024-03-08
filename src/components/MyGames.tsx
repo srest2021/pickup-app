@@ -1,25 +1,27 @@
 import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
 import { Alert, View } from "react-native";
-import useQueryGames from "../../hooks/use-query-games";
+import useQueryGames from "../hooks/use-query-games";
 import { Tabs, Text } from "tamagui";
-import GameThumbnail from "./GameThumbnail";
-import { useStore } from "../../lib/store";
+import GameThumbnail from "./game/GameThumbnail";
+import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [selectedMyGame, session, myGames, clearMyGames] = useStore((state) => [
-    state.selectedMyGame,
-    state.session,
-    state.myGames,
-    state.clearMyGames,
-  ]);
-  const { fetchMyGames, fetchAllGames } = useQueryGames();
+  const [session, myGames, joinedGames, clearMyGames, clearJoinedGames] =
+    useStore((state) => [
+      state.session,
+      state.myGames,
+      state.joinedGames,
+      state.clearMyGames,
+      state.clearJoinedGames,
+    ]);
+  const { fetchMyGames, fetchJoinedGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
   const [myGamesToggle, setMyGamesToggle] = useState("myGames");
 
   useEffect(() => {
     handleRefresh();
-  }, [myGamesToggle, selectedMyGame]);
+  }, [myGamesToggle]); //, selectedMyGame]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -32,11 +34,11 @@ const MyGames = ({ navigation }: { navigation: any }) => {
       }
     } else if (myGamesToggle === "joinedGames") {
       try {
-        await fetchAllGames();
+        await fetchJoinedGames();
         // temporary for right now until we do query for joined games.
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
-        clearMyGames();
+        clearJoinedGames();
       }
     }
     setRefreshing(false);

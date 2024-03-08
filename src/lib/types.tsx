@@ -49,19 +49,29 @@ export function getSkillLevelColors(skillLevel: SkillLevel) {
   }
 }
 
-export type Game = {
-  id: string;
-  title: string;
-  description: string;
-  datetime: Date;
-  address: string;
+export type Address = {
+  street: string;
   city: string;
   state: string;
   zip: string;
+};
+
+export interface Game {
+  id: string;
+  organizerId: string;
+  title: string;
+  description: string;
+  datetime: Date;
   sport: GameSport;
   maxPlayers: number;
   currentPlayers: number;
-};
+  isPublic: boolean;
+  distanceAway: number;
+}
+
+export type GameWithoutAddress = Game;
+
+export type GameWithAddress = Game & { address: Address };
 
 export const sports = [
   {
