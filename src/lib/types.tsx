@@ -69,9 +69,20 @@ export interface Game {
   distanceAway: number;
 }
 
-export type GameWithoutAddress = Game;
+export type MyGame = Game & {
+  address: Address;
+  joinRequests: string[];
+  acceptedPlayers: string[];
+}
 
-export type GameWithAddress = Game & { address: Address };
+export type JoinedGame = Game & {
+  address: Address;
+  acceptedPlayers: string[];
+}
+
+export type FeedGame = Game & {
+  acceptedPlayers: string[];
+}
 
 export const sports = [
   {

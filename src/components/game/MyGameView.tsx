@@ -14,8 +14,6 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
-import useQueryGames from "../../hooks/use-query-games";
-import { useEffect } from "react";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -23,10 +21,6 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
   const { removeMyGameById } = useMutationGame();
-
-  useEffect(() => {
-    console.log("state updated: ", selectedMyGame);
-  }, [selectedMyGame]);
 
   function deleteGame() {
     removeMyGameById(gameId);

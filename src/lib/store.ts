@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { UserSport, User, GameWithAddress, GameWithoutAddress } from "./types";
+import { UserSport, User, MyGame, JoinedGame, FeedGame } from "./types";
 
 type State = {
   session: Session | null;
@@ -10,14 +10,14 @@ type State = {
   user: User | null;
   userSports: UserSport[];
 
-  myGames: GameWithAddress[];
-  selectedMyGame: GameWithAddress | null;
+  myGames: MyGame[];
+  selectedMyGame: MyGame | null;
 
-  joinedGames: GameWithAddress[];
-  selectedJoinedGame: GameWithAddress | null;
+  joinedGames: JoinedGame[];
+  selectedJoinedGame: JoinedGame | null;
 
-  feedGames: GameWithoutAddress[];
-  selectedFeedGame: GameWithoutAddress | null;
+  feedGames: FeedGame[];
+  selectedFeedGame: FeedGame | null;
 };
 
 type Action = {
@@ -35,31 +35,31 @@ type Action = {
 
   // my games
 
-  setMyGames: (myGames: GameWithAddress[]) => void;
+  setMyGames: (myGames: MyGame[]) => void;
   clearMyGames: () => void;
-  addMyGame: (myGame: GameWithAddress) => void;
+  addMyGame: (myGame: MyGame) => void;
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
-  setSelectedMyGame: (myGame: GameWithAddress) => void;
+  setSelectedMyGame: (myGame: MyGame) => void;
   clearSelectedMyGame: () => void;
 
   // feed games
 
-  setFeedGames: (feedGames: GameWithoutAddress[]) => void;
+  setFeedGames: (feedGames: FeedGame[]) => void;
   clearFeedGames: () => void;
 
-  setSelectedFeedGame: (feedGame: GameWithoutAddress) => void;
+  setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
 
   // joined games
 
-  setJoinedGames: (feedGames: GameWithAddress[]) => void;
+  setJoinedGames: (feedGames: JoinedGame[]) => void;
   clearJoinedGames: () => void;
-  addJoinedGame: (joinedGame: GameWithAddress) => void;
+  addJoinedGame: (joinedGame: JoinedGame) => void;
   removeJoinedGame: (joinedGameId: string) => void;
 
-  setSelectedJoinedGame: (joinedGame: GameWithAddress) => void;
+  setSelectedJoinedGame: (joinedGame: JoinedGame) => void;
   clearSelectedJoinedGame: () => void;
 };
 

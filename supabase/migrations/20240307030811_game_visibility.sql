@@ -638,6 +638,7 @@ begin
   )
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
+  where g.id = get_game_with_address.game_id
   into data;
   return data;
 end;
@@ -675,6 +676,7 @@ begin
     st_distance(coords, st_point(long, lat)::geography) 
   )
   from public.games as g
+  where g.id = get_game_without_address.game_id
   into data;
   return data;
 end;
@@ -760,34 +762,137 @@ $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
 create or replace function nearby_games("lat" double precision, "long" double precision) 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, "dist_meters" double precision)
-    LANGUAGE "sql"
-    AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, st_y(gl.loc::geometry) as lat, st_x(gl.loc::geometry) as long, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
-  FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.game_id
+returns table(
+  id "uuid", 
+  organizer_id "uuid", 
+  title text, 
+  description text, 
+  datetime timestamp with time zone, 
+  sport text, 
+  skill_level int, 
+  max_players bigint, 
+  current_players bigint, 
+  is_public boolean, 
+  "dist_meters" double precision,
+  accepted_players uuid[]
+) language "sql" as $$
+  select 
+    g.id, 
+    g.organizer_id, 
+    g.title, 
+    g.description, 
+    g.datetime, 
+    g.sport, 
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public, 
+    st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters,
+    array (
+      select jg.player_id 
+      from public.joined_game as jg 
+      where jg.game_id = g.id and jg.player_id != g.organizer_id
+    ) as accepted_players
+  from public.games as g
+  join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id != auth.uid()
   order by gl.loc <-> st_point(long, lat)::geography;
 $$;
 
 create or replace function my_games("lat" double precision, "long" double precision) 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text,  "dist_meters" double precision)
-    LANGUAGE "sql"
-    AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
-  FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.game_id
+returns table(
+  id "uuid", 
+  organizer_id "uuid", 
+  title text, 
+  description text, 
+  datetime timestamp with time zone, 
+  sport text, 
+  skill_level int, 
+  max_players bigint, 
+  current_players bigint, 
+  is_public boolean, 
+  street text, 
+  city text, 
+  state text, 
+  zip text, 
+  "dist_meters" double precision, 
+  join_requests uuid[],
+  accepted_players uuid[]
+) language "sql" as $$
+  select 
+    g.id,
+    g.organizer_id, 
+    g.title, 
+    g.description, 
+    g.datetime, 
+    g.sport,
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public, 
+    gl.street, 
+    gl.city, 
+    gl.state, 
+    gl.zip, 
+    st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters, 
+    array (
+      select gr.player_id 
+      from public.game_requests as gr 
+      where gr.game_id = g.id
+    ) as join_requests,
+    array (
+      select jg.player_id 
+      from public.joined_game as jg 
+      where jg.game_id = g.id and jg.player_id != g.organizer_id
+    ) as accepted_players
+  from public.games as g
+  join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
 
 create or replace function joined_games("lat" double precision, "long" double precision) 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text, "dist_meters" double precision)
-    LANGUAGE "sql"
-    AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
-  FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.game_id
+returns table(
+  id "uuid", 
+  organizer_id "uuid", 
+  title text, 
+  description text, 
+  datetime timestamp with time zone, 
+  sport text, 
+  skill_level int, 
+  max_players bigint, 
+  current_players bigint, 
+  is_public boolean, 
+  street text, 
+  city text, 
+  state text, 
+  zip text, 
+  "dist_meters" double precision,
+  accepted_players uuid[]
+) language "sql" as $$
+  select 
+    g.id, 
+    g.organizer_id, 
+    g.title, 
+    g.description, 
+    g.datetime,
+    g.sport, 
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public, 
+    gl.street, 
+    gl.city, 
+    gl.state, 
+    gl.zip, 
+    st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters,
+    array (
+      select jg.player_id 
+      from public.joined_game as jg 
+      where jg.game_id = g.id and jg.player_id != g.organizer_id
+    ) as accepted_players
+  from public.games as g
+  join public.game_locations as gl on g.id = gl.game_id
   join public.joined_game as jg on g.id = jg.game_id
   where jg.player_id = auth.uid() and g.organizer_id != auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
@@ -799,7 +904,7 @@ returns void as $$
 begin
   -- remove join request from game_requests table
   delete from game_requests
-  where player_id = player_id and game_id = game_id;
+  where game_requests.player_id = accept_join_request.player_id and game_requests.game_id = accept_join_request.game_id;
 
   -- add entry to joined_game table
   insert into joined_game (player_id, game_id)
@@ -820,7 +925,7 @@ returns void as $$
 begin
   -- remove join request from game_requests table
   delete from game_requests
-  where player_id = player_id and game_id = game_id;
+  where game_requests.player_id = reject_join_request.player_id and game_requests.game_id = reject_join_request.game_id;
 
   commit;
 end;
@@ -832,7 +937,7 @@ returns void as $$
 begin
   -- remove entry from joined_game table
   delete from joined_game
-  where player_id = player_id and game_id = game_id;
+  where joined_game.player_id = remove_player.player_id and joined_game.game_id = remove_player.game_id;
 
   -- decrement current players in games table
   update games 

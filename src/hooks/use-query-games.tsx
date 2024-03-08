@@ -3,10 +3,10 @@ import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import {
   Address,
-  Game,
   GameSport,
-  GameWithAddress,
-  GameWithoutAddress,
+  MyGame,
+  JoinedGame,
+  FeedGame
 } from "../lib/types";
 
 function useQueryGames() {
@@ -57,7 +57,7 @@ function useQueryGames() {
       if (error) throw error;
 
       if (data && data[0]) {
-        const game: GameWithoutAddress = {
+        const game: FeedGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title: data["row"].f3,
@@ -71,6 +71,7 @@ function useQueryGames() {
           currentPlayers: Number(data["row"].f9),
           isPublic: data["row"].f10,
           distanceAway: Number(data["row"].f11),
+          acceptedPlayers: data["row"].f12
         };
 
         setSelectedFeedGame(game);
@@ -104,17 +105,17 @@ function useQueryGames() {
       if (error) throw error;
 
       if (data && data["row"]) {
-        const game: GameWithAddress = {
+        const game: JoinedGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title: data["row"].f3,
           description: data["row"].f4,
           datetime: new Date(data["row"].f5),
-          address: {
+          address: { 
             street: data["row"].f6,
             city: data["row"].f7,
             state: data["row"].f8,
-            zip: data["row"].f9,
+            zip: data["row"].f9, 
           } as Address,
           sport: {
             name: data["row"].f10,
@@ -124,6 +125,7 @@ function useQueryGames() {
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
           distanceAway: Number(data["row"].f15),
+          acceptedPlayers: data["row"].f16
         };
 
         setSelectedJoinedGame(game);
@@ -153,11 +155,12 @@ function useQueryGames() {
         game_id: id,
         lat: 39.3289357,
         long: -76.6172978,
-      });
+      }); 
+      console.log(data,error);
       if (error) throw error;
 
       if (data && data["row"]) {
-        const game: GameWithAddress = {
+        const game: MyGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title: data["row"].f3,
@@ -177,6 +180,8 @@ function useQueryGames() {
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
           distanceAway: Number(data["row"].f15),
+          joinRequests: data["row"].f16,
+          acceptedPlayers: data["row"].f17
         };
 
         setSelectedMyGame(game);
@@ -206,11 +211,12 @@ function useQueryGames() {
         lat: 39.3289357,
         long: -76.6172978,
       });
+      console.log("fetching my games:", data[2],error)
       if (error) throw error;
 
       if (data) {
         const games = data.map((myGame: any) => {
-          const game: GameWithAddress = {
+          const game: MyGame = {
             id: myGame.id,
             organizerId: myGame.organizer_id,
             title: myGame.title,
@@ -230,6 +236,8 @@ function useQueryGames() {
             currentPlayers: Number(myGame.current_players),
             isPublic: myGame.is_public,
             distanceAway: Number(myGame.dist_meters),
+            joinRequests: myGame.join_requests,
+            acceptedPlayers: myGame.accepted_players,
           };
           return game;
         });
@@ -262,7 +270,7 @@ function useQueryGames() {
 
       if (data) {
         const games = data.map((myGame: any) => {
-          const game: GameWithAddress = {
+          const game: JoinedGame = {
             id: myGame.id,
             organizerId: myGame.organizer_id,
             title: myGame.title,
@@ -282,6 +290,7 @@ function useQueryGames() {
             currentPlayers: Number(myGame.current_players),
             isPublic: myGame.is_public,
             distanceAway: Number(myGame.dist_meters),
+            acceptedPlayers: myGame.accepted_players,
           };
           return game;
         });
@@ -314,7 +323,7 @@ function useQueryGames() {
 
       if (data) {
         const games = data.map((myGame: any) => {
-          const game: GameWithoutAddress = {
+          const game: FeedGame = {
             id: myGame.id,
             organizerId: myGame.organizer_id,
             title: myGame.title,
@@ -328,6 +337,7 @@ function useQueryGames() {
             currentPlayers: Number(myGame.current_players),
             isPublic: myGame.is_public,
             distanceAway: myGame.dist_meters,
+            acceptedPlayers: myGame.accepted_players,
           };
           return game;
         });

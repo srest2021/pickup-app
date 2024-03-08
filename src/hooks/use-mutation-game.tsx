@@ -2,7 +2,7 @@ import { useStore } from "../lib/store";
 import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Address, Game, GameSport, GameWithAddress } from "../lib/types";
+import { Address, MyGame, JoinedGame, FeedGame, GameSport } from "../lib/types";
 
 function useMutationGame() {
   const [
@@ -57,7 +57,7 @@ function useMutationGame() {
 
       if (data && data["row"]) {
         // add game to store
-        const myNewGame: GameWithAddress = {
+        const myNewGame: MyGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title,
@@ -69,6 +69,8 @@ function useMutationGame() {
           currentPlayers: 1,
           isPublic,
           distanceAway: Number(data["row"].f15),
+          joinRequests: data["row"].f16,
+          acceptedPlayers: data["row"].f17
         };
         addMyGame(myNewGame);
         return myNewGame;
@@ -146,7 +148,7 @@ function useMutationGame() {
 
       if (data && data["row"]) {
         // edit game in store
-        const myUpdatedGame: GameWithAddress = {
+        const myUpdatedGame: MyGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title: data["row"].f3,
@@ -166,6 +168,8 @@ function useMutationGame() {
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
           distanceAway: Number(data["row"].f15),
+          joinRequests: data["row"].f16,
+          acceptedPlayers: data["row"].f17
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
       } else {
