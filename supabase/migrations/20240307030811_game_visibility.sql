@@ -782,7 +782,7 @@ returns table(
     g.max_players, 
     g.current_players, 
     g.is_public, 
-    st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters,
+    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
     (
       SELECT jsonb_agg(
         jsonb_build_object(
@@ -811,7 +811,7 @@ returns table(
     ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
-  where g.organizer_id != auth.uid()
+  where g.organizer_id != auth.uid() and g.is_public -- public games from other people
   order by gl.loc <-> st_point(long, lat)::geography;
 $$;
 
@@ -850,7 +850,7 @@ returns table(
     gl.city, 
     gl.state, 
     gl.zip, 
-    st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters, 
+    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters, 
     (
       SELECT jsonb_agg(
         jsonb_build_object(
@@ -943,7 +943,7 @@ returns table(
     gl.city, 
     gl.state, 
     gl.zip, 
-    st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters,
+    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
     (
       SELECT jsonb_agg(
         jsonb_build_object(

@@ -65,7 +65,7 @@ function useQueryGames() {
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
             isPublic: game.is_public,
-            distanceAway: Number(game.dist_meters),
+            distanceAway: Math.trunc(Number(game.dist_meters)*100)/100,
             joinRequests: game.join_requests ? game.join_requests : [],
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
           };
@@ -119,7 +119,7 @@ function useQueryGames() {
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
             isPublic: game.is_public,
-            distanceAway: Number(game.dist_meters),
+            distanceAway: Math.trunc(Number(game.dist_meters)*100)/100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
           };
           return joinedGame;
@@ -166,7 +166,7 @@ function useQueryGames() {
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
             isPublic: game.is_public,
-            distanceAway: game.dist_meters,
+            distanceAway: Math.trunc(Number(game.dist_meters)*100)/100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
           };
           return feedGame;
