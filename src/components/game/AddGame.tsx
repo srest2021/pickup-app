@@ -12,6 +12,7 @@ import {
   XStack,
   YStack,
   H4,
+  Switch,
 } from "tamagui";
 import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
@@ -73,6 +74,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
   const createNewGame = async () => {
     // Check that no fields are left blank (except description, optional)
+    // No need to check isPublic. It is never empty, always public by default.
     if (
       !title ||
       !date ||
@@ -83,8 +85,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !playerLimit ||
       !city ||
       !state ||
-      !zip ||
-      !isPublic
+      !zip
     ) {
       toast.show("Error!", {
         message: "Please fill out all required fields.",
@@ -184,6 +185,45 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   if (datetime) setTime(datetime);
                 }}
               />
+            </XStack>
+
+            <XStack width={200} alignItems="center" padding="$2">
+              <Label
+                paddingRight="$0"
+                minWidth={90}
+                justifyContent="flex-end"
+                size="$5"
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? '#08348c' : 'black',
+                }}
+              >
+                Public
+              </Label>
+              <Switch
+                size="$4"
+                defaultChecked={false}
+                onCheckedChange={(checked: boolean) => {
+                  setIsPublic(!checked);
+                }}
+                style={{
+                  backgroundColor:'#018de9',
+                }}
+              >
+                <Switch.Thumb style={{ backgroundColor: '#08348c' }}animation="bouncy" />
+              </Switch>
+              <Label
+                paddingLeft="$6"
+                minWidth={90}
+                justifyContent="flex-end"
+                size="$5"
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? 'black' : '#08348c',
+                }}
+              >
+                Friends-Only
+              </Label>
             </XStack>
 
             <YStack space="$1">
