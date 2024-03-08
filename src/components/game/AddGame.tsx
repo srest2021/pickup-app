@@ -195,7 +195,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? '#08348c' : 'black',
+                  color: isPublic ? "#08348c" : "black",
                 }}
               >
                 Public
@@ -207,10 +207,13 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   setIsPublic(!checked);
                 }}
                 style={{
-                  backgroundColor:'#018de9',
+                  backgroundColor: "#018de9",
                 }}
               >
-                <Switch.Thumb style={{ backgroundColor: '#08348c' }}animation="bouncy" />
+                <Switch.Thumb
+                  style={{ backgroundColor: "#08348c" }}
+                  animation="bouncy"
+                />
               </Switch>
               <Label
                 paddingLeft="$6"
@@ -219,7 +222,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? 'black' : '#08348c',
+                  color: isPublic ? "black" : "#08348c",
                 }}
               >
                 Friends-Only
@@ -254,21 +257,24 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               />
             </YStack>
 
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                State/ZIP
-              </Label>
-              <XStack space="$3">
+            <XStack space="$3">
+              <YStack flexGrow={1}>
+                <Label size="$5" color={"#08348c"}>
+                  State
+                </Label>
                 <Input
-                  flex={1}
                   size="$5"
                   placeholder="State"
                   value={state}
                   testID="stateInput"
                   onChangeText={(text: string) => setState(text)}
                 />
+              </YStack>
+              <YStack flexGrow={1}>
+                <Label size="$5" color={"#08348c"}>
+                  Zip
+                </Label>
                 <Input
-                  flex={1}
                   size="$5"
                   placeholder="Zip"
                   value={zip}
@@ -276,8 +282,8 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   testID="zipInput"
                   onChangeText={(text: string) => setZip(text)}
                 />
-              </XStack>
-            </YStack>
+              </YStack>
+            </XStack>
 
             <YStack>
               <Label size="$5" color={"#08348c"}>
