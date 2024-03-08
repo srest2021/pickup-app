@@ -536,7 +536,7 @@ begin
 
   newlat := cast(lat as double precision);
   newlong := cast(long as double precision);
-  coords := st_point(newlat, newlong)::geography;
+  coords := st_point(newlong, newlat)::geography;
   return coords;
 end;
 $$;
@@ -599,18 +599,26 @@ begin
   ) into inserted_data;
   return inserted_data;
 end;
-$$ language plpgsql;
+$$ language plpgsql; 
 
 create or replace function get_game_with_address(game_id "uuid", "lat" double precision, "long" double precision)
 returns record as $$
 declare
   coords "extensions"."geography"(Point,4326);
-  data record;
+  street text;
+  city text;
+  state text;
+  zip text;
+  data record; 
 begin
-  get location
-  select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
+  -- get location
+  select gl.street, gl.city, gl.state, gl.zip 
+  into street, city, state, zip
+  from game_locations as gl
+  where gl.game_id = get_game_with_address.game_id; 
+  select public.get_coordinates(street, city, state, zip) into coords;
 
-  -- get games and game_locations rows by joining tables
+  -- get game data
   select (
     g.id,
     g.organizer_id, 
@@ -639,11 +647,20 @@ create or replace function get_game_without_address(game_id "uuid", "lat" double
 returns record as $$
 declare
   coords "extensions"."geography"(Point,4326);
+  street text;
+  city text;
+  state text;
+  zip text;
   data record;
 begin
-  get location
-  select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
+  -- get location
+  select gl.street, gl.city, gl.state, gl.zip 
+  into street, city, state, zip
+  from game_locations as gl
+  where gl.game_id = get_game_with_address.game_id; 
+  select public.get_coordinates(street, city, state, zip) into coords;
 
+  -- get game data
   select (
     g.id,
     g.organizer_id, 

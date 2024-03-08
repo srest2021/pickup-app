@@ -35,12 +35,14 @@ export default function EditProfile({ navigation }: { navigation: any }) {
       {user ? (
         <ScrollView
           style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: "space-between",
             backgroundColor: "#ffffff",
           }}
         >
+          <YStack space="$3">
           <XStack space="$5" alignItems="center" justifyContent="space-between">
             <Label size="$5" color={"#08348c"}>
               Email
@@ -78,7 +80,7 @@ export default function EditProfile({ navigation }: { navigation: any }) {
             />
           </YStack>
 
-          <View className="items-center">
+          <View className="items-center pt-5">
             <Avatar
               url={user.avatarUrl}
               onUpload={(url: string) => {
@@ -104,6 +106,7 @@ export default function EditProfile({ navigation }: { navigation: any }) {
             >
               {loading ? "Loading..." : "Update"}
             </Button>
+          </YStack>
           </YStack>
         </ScrollView>
       ) : (
