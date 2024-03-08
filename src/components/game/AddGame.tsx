@@ -229,61 +229,52 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               </Label>
             </XStack>
 
-            <YStack space="$1">
+            <YStack>
               <Label size="$5" color={"#08348c"}>
-                Name
+                Address
               </Label>
-              <Input
-                flex={1}
-                size="$5"
-                placeholder="Address"
-                testID="addressInput"
-                value={street}
-                onChangeText={(text: string) => setStreet(text)}
-              />
-            </YStack>
 
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                City
-              </Label>
-              <Input
-                flex={1}
-                size="$5"
-                placeholder="City"
-                testID="cityInput"
-                value={city}
-                onChangeText={(text: string) => setCity(text)}
-              />
-            </YStack>
+              <YStack space="$3">
+                <Input
+                  flex={1}
+                  size="$5"
+                  placeholder="Street"
+                  testID="addressInput"
+                  value={street}
+                  onChangeText={(text: string) => setStreet(text)}
+                />
 
-            <XStack space="$3">
-              <YStack flexGrow={1}>
-                <Label size="$5" color={"#08348c"}>
-                  State
-                </Label>
                 <Input
+                  flex={1}
                   size="$5"
-                  placeholder="State"
-                  value={state}
-                  testID="stateInput"
-                  onChangeText={(text: string) => setState(text)}
+                  placeholder="City"
+                  testID="cityInput"
+                  value={city}
+                  onChangeText={(text: string) => setCity(text)}
                 />
+
+                <XStack space="$2">
+                  <Input
+                    flexGrow={1}
+                    size="$5"
+                    placeholder="State"
+                    value={state}
+                    testID="stateInput"
+                    onChangeText={(text: string) => setState(text)}
+                  />
+
+                  <Input
+                    flexGrow={1}
+                    size="$5"
+                    placeholder="Zip"
+                    value={zip}
+                    keyboardType="numeric"
+                    testID="zipInput"
+                    onChangeText={(text: string) => setZip(text)}
+                  />
+                </XStack>
               </YStack>
-              <YStack flexGrow={1}>
-                <Label size="$5" color={"#08348c"}>
-                  Zip
-                </Label>
-                <Input
-                  size="$5"
-                  placeholder="Zip"
-                  value={zip}
-                  keyboardType="numeric"
-                  testID="zipInput"
-                  onChangeText={(text: string) => setZip(text)}
-                />
-              </YStack>
-            </XStack>
+            </YStack>
 
             <YStack>
               <Label size="$5" color={"#08348c"}>
