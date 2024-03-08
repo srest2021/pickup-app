@@ -12,6 +12,9 @@ function useMutationGame() {
     removeMyGame,
     editMyGame,
     clearSelectedMyGame,
+    acceptJoinRequest,
+    rejectJoinRequest,
+    removePlayer
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -19,6 +22,9 @@ function useMutationGame() {
     state.removeMyGame,
     state.editMyGame,
     state.clearSelectedMyGame,
+    state.acceptJoinRequest,
+    state.rejectJoinRequest,
+    state.removePlayer
   ]);
 
   const createGame = async (
@@ -188,19 +194,94 @@ function useMutationGame() {
     }
   };
 
-  const acceptJoinRequest = async () => {};
+  const acceptJoinRequestById = async (
+    gameId: string,
+    playerId: string
+  ) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
 
-  const rejectJoinRequest = async () => {};
+      const { error } = await supabase.rpc("accept_join_request", {
+        game_id: gameId,
+        player_id: playerId
+      });
+      if (error) throw error;
 
-  const removePlayer = async () => {};
+      acceptJoinRequest(gameId, playerId);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error accepting join request! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectJoinRequestById = async (
+    gameId: string,
+    playerId: string
+  ) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { error } = await supabase.rpc("reject_join_request", {
+        game_id: gameId,
+        player_id: playerId
+      });
+      if (error) throw error;
+
+      rejectJoinRequest(gameId, playerId);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error rejecting join request! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removePlayerById = async (
+    gameId: string,
+    playerId: string
+  ) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { error } = await supabase.rpc("remove_player", {
+        game_id: gameId,
+        player_id: playerId
+      });
+      if (error) throw error;
+
+      removePlayer(gameId, playerId);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error removing player! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return {
     createGame,
     removeMyGameById,
     editGameById,
-    acceptJoinRequest,
-    rejectJoinRequest,
-    removePlayer,
+    acceptJoinRequestById,
+    rejectJoinRequestById,
+    removePlayerById,
   };
 }
 
