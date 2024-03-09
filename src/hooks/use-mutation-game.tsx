@@ -1,8 +1,7 @@
 import { useStore } from "../lib/store";
-import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Address, Game, GameSport, GameWithAddress } from "../lib/types";
+import { Address, MyGame, GameSport } from "../lib/types";
 
 function useMutationGame() {
   const [
@@ -12,6 +11,9 @@ function useMutationGame() {
     removeMyGame,
     editMyGame,
     clearSelectedMyGame,
+    acceptJoinRequest,
+    rejectJoinRequest,
+    removePlayer,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -19,6 +21,9 @@ function useMutationGame() {
     state.removeMyGame,
     state.editMyGame,
     state.clearSelectedMyGame,
+    state.acceptJoinRequest,
+    state.rejectJoinRequest,
+    state.removePlayer,
   ]);
 
   const createGame = async (
@@ -57,7 +62,7 @@ function useMutationGame() {
 
       if (data && data["row"]) {
         // add game to store
-        const myNewGame: GameWithAddress = {
+        const myNewGame: MyGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title,
@@ -69,6 +74,8 @@ function useMutationGame() {
           currentPlayers: 1,
           isPublic,
           distanceAway: Number(data["row"].f15),
+          joinRequests: [],
+          acceptedPlayers: [],
         };
         addMyGame(myNewGame);
         return myNewGame;
@@ -146,7 +153,7 @@ function useMutationGame() {
 
       if (data && data["row"]) {
         // edit game in store
-        const myUpdatedGame: GameWithAddress = {
+        const myUpdatedGame = {
           id: data["row"].f1,
           organizerId: data["row"].f2,
           title: data["row"].f3,
@@ -184,7 +191,86 @@ function useMutationGame() {
     }
   };
 
-  return { createGame, removeMyGameById, editGameById };
+  const acceptJoinRequestById = async (gameId: string, playerId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { error } = await supabase.rpc("accept_join_request", {
+        game_id: gameId,
+        player_id: playerId,
+      });
+      if (error) throw error;
+
+      acceptJoinRequest(gameId, playerId);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error accepting join request! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectJoinRequestById = async (gameId: string, playerId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { error } = await supabase.rpc("reject_join_request", {
+        game_id: gameId,
+        player_id: playerId,
+      });
+      if (error) throw error;
+
+      rejectJoinRequest(gameId, playerId);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error rejecting join request! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removePlayerById = async (gameId: string, playerId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { error } = await supabase.rpc("remove_player", {
+        game_id: gameId,
+        player_id: playerId,
+      });
+      if (error) throw error;
+
+      removePlayer(gameId, playerId);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error removing player! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    createGame,
+    removeMyGameById,
+    editGameById,
+    acceptJoinRequestById,
+    rejectJoinRequestById,
+    removePlayerById,
+  };
 }
 
 export default useMutationGame;

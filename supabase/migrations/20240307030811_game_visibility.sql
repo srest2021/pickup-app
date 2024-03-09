@@ -180,7 +180,6 @@ create table games (
   "max_players" bigint not null,
   "current_players" bigint default '0'::bigint not null,
   "is_public" boolean default '1'::boolean not null,
-  --"distance_away" "extensions"."geography"(Point,4326),
   constraint game_skill_level_range check (skill_level >= 0 and skill_level <= 2),
   constraint games_description_check check ((length(description) < 500)),
   constraint games_max_players_check check ((max_players >= 1))
@@ -195,14 +194,10 @@ alter table games
   enable row level security;
 
 create policy "Public games are viewable by everyone." on games
-  for select using (
-    is_public
-  );
+  for select using (is_public);
 
--- create policy "Friends-only games are viewable by the organizer's friends." on games
---   for select using (
---      (is not public) and (auth.id() is organizer's friend)
---   );
+create policy "Friends-only games are viewable by the organizer's friends." on games
+  for select using ((not is_public) and true); --(auth.id() is organizer's friend)
 
 create policy "Users can insert their own games." on games
   for insert with check (auth.uid() = organizer_id);
@@ -536,7 +531,7 @@ begin
 
   newlat := cast(lat as double precision);
   newlong := cast(long as double precision);
-  coords := st_point(newlat, newlong)::geography;
+  coords := st_point(newlong, newlat)::geography;
   return coords;
 end;
 $$;
@@ -599,18 +594,26 @@ begin
   ) into inserted_data;
   return inserted_data;
 end;
-$$ language plpgsql;
+$$ language plpgsql; 
 
 create or replace function get_game_with_address(game_id "uuid", "lat" double precision, "long" double precision)
 returns record as $$
 declare
   coords "extensions"."geography"(Point,4326);
-  data record;
+  street text;
+  city text;
+  state text;
+  zip text;
+  data record; 
 begin
-  get location
-  select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
+  -- get location
+  select gl.street, gl.city, gl.state, gl.zip 
+  into street, city, state, zip
+  from game_locations as gl
+  where gl.game_id = get_game_with_address.game_id; 
+  select public.get_coordinates(street, city, state, zip) into coords;
 
-  -- get games and game_locations rows by joining tables
+  -- get game data
   select (
     g.id,
     g.organizer_id, 
@@ -630,6 +633,7 @@ begin
   )
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
+  where g.id = get_game_with_address.game_id
   into data;
   return data;
 end;
@@ -639,11 +643,20 @@ create or replace function get_game_without_address(game_id "uuid", "lat" double
 returns record as $$
 declare
   coords "extensions"."geography"(Point,4326);
+  street text;
+  city text;
+  state text;
+  zip text;
   data record;
 begin
-  get location
-  select public.get_coordinates(data.street, data.city, data.state, data.zip) into coords;
+  -- get location
+  select gl.street, gl.city, gl.state, gl.zip 
+  into street, city, state, zip
+  from game_locations as gl
+  where gl.game_id = get_game_with_address.game_id; 
+  select public.get_coordinates(street, city, state, zip) into coords;
 
+  -- get game data
   select (
     g.id,
     g.organizer_id, 
@@ -658,6 +671,7 @@ begin
     st_distance(coords, st_point(long, lat)::geography) 
   )
   from public.games as g
+  where g.id = get_game_without_address.game_id
   into data;
   return data;
 end;
@@ -743,34 +757,221 @@ $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
 create or replace function nearby_games("lat" double precision, "long" double precision) 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, "dist_meters" double precision)
-    LANGUAGE "sql"
-    AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, st_y(gl.loc::geometry) as lat, st_x(gl.loc::geometry) as long, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
-  FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.game_id
-  where g.organizer_id != auth.uid()
+returns table(
+  id "uuid", 
+  organizer_id "uuid", 
+  title text, 
+  description text, 
+  datetime timestamp with time zone, 
+  sport text, 
+  skill_level int, 
+  max_players bigint, 
+  current_players bigint, 
+  is_public boolean, 
+  "dist_meters" double precision,
+  accepted_players jsonb
+) language "sql" as $$
+  select 
+    g.id, 
+    g.organizer_id, 
+    g.title, 
+    g.description, 
+    g.datetime, 
+    g.sport, 
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public, 
+    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = jg.player_id
+          )
+        )
+      )
+      FROM public.joined_game AS jg
+      JOIN public.profiles AS p ON jg.player_id = p.id
+      WHERE jg.game_id = g.id
+    ) AS accepted_players
+  from public.games as g
+  join public.game_locations as gl on g.id = gl.game_id
+  where g.organizer_id != auth.uid() and g.is_public -- public games from other people
   order by gl.loc <-> st_point(long, lat)::geography;
 $$;
 
 create or replace function my_games("lat" double precision, "long" double precision) 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text,  "dist_meters" double precision)
-    LANGUAGE "sql"
-    AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
-  FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.game_id
+returns table(
+  id "uuid", 
+  organizer_id "uuid", 
+  title text, 
+  description text, 
+  datetime timestamp with time zone, 
+  sport text, 
+  skill_level int, 
+  max_players bigint, 
+  current_players bigint, 
+  is_public boolean, 
+  street text, 
+  city text, 
+  state text, 
+  zip text, 
+  "dist_meters" double precision, 
+  join_requests jsonb,
+  accepted_players jsonb
+) language "sql" as $$
+  select 
+    g.id,
+    g.organizer_id, 
+    g.title, 
+    g.description, 
+    g.datetime, 
+    g.sport,
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public, 
+    gl.street, 
+    gl.city, 
+    gl.state, 
+    gl.zip, 
+    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters, 
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = gr.player_id
+          )
+        )
+      )
+      FROM public.game_requests AS gr
+      JOIN public.profiles AS p ON gr.player_id = p.id
+      WHERE gr.game_id = g.id
+    ) AS join_requests,
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = jg.player_id
+          )
+        )
+      )
+      FROM public.joined_game AS jg
+      JOIN public.profiles AS p ON jg.player_id = p.id
+      WHERE jg.game_id = g.id
+    ) AS accepted_players
+  from public.games as g
+  join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
 
 create or replace function joined_games("lat" double precision, "long" double precision) 
-returns table(id "uuid", organizer_id "uuid", title text, description text, datetime timestamp with time zone, sport text, skill_level int, max_players bigint, current_players bigint, is_public boolean, street text, city text, state text, zip text, "dist_meters" double precision)
-    LANGUAGE "sql"
-    AS $$
-  select g.id, g.organizer_id, g.title, g.description, g.datetime, g.sport, g.skill_level, g.max_players, g.current_players, g.is_public, gl.street, gl.city, gl.state, gl.zip, st_distance(gl.loc, st_point(long, lat)::geography) as dist_meters
-  FROM public.games AS g
-  JOIN public.game_locations AS gl ON g.id = gl.game_id
+returns table(
+  id "uuid", 
+  organizer_id "uuid", 
+  title text, 
+  description text, 
+  datetime timestamp with time zone, 
+  sport text, 
+  skill_level int, 
+  max_players bigint, 
+  current_players bigint, 
+  is_public boolean, 
+  street text, 
+  city text, 
+  state text, 
+  zip text, 
+  "dist_meters" double precision,
+  accepted_players jsonb
+) language "sql" as $$
+  select 
+    g.id, 
+    g.organizer_id, 
+    g.title, 
+    g.description, 
+    g.datetime,
+    g.sport, 
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public, 
+    gl.street, 
+    gl.city, 
+    gl.state, 
+    gl.zip, 
+    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            FROM public.profiles AS p
+            join public.sports as s on p.id = s.user_id
+            where p.id = jg.player_id
+          )
+        )
+      )
+      FROM public.joined_game AS jg
+      JOIN public.profiles AS p ON jg.player_id = p.id
+      WHERE jg.game_id = g.id
+    ) AS accepted_players
+  from public.games as g
+  join public.game_locations as gl on g.id = gl.game_id
   join public.joined_game as jg on g.id = jg.game_id
   where jg.player_id = auth.uid() and g.organizer_id != auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
@@ -782,7 +983,7 @@ returns void as $$
 begin
   -- remove join request from game_requests table
   delete from game_requests
-  where player_id = player_id and game_id = game_id;
+  where game_requests.player_id = accept_join_request.player_id and game_requests.game_id = accept_join_request.game_id;
 
   -- add entry to joined_game table
   insert into joined_game (player_id, game_id)
@@ -803,7 +1004,7 @@ returns void as $$
 begin
   -- remove join request from game_requests table
   delete from game_requests
-  where player_id = player_id and game_id = game_id;
+  where game_requests.player_id = reject_join_request.player_id and game_requests.game_id = reject_join_request.game_id;
 
   commit;
 end;
@@ -815,7 +1016,7 @@ returns void as $$
 begin
   -- remove entry from joined_game table
   delete from joined_game
-  where player_id = player_id and game_id = game_id;
+  where joined_game.player_id = remove_player.player_id and joined_game.game_id = remove_player.game_id;
 
   -- decrement current players in games table
   update games 

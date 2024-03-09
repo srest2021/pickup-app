@@ -12,6 +12,7 @@ import {
   XStack,
   YStack,
   H4,
+  Switch,
 } from "tamagui";
 import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
@@ -73,6 +74,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
   const createNewGame = async () => {
     // Check that no fields are left blank (except description, optional)
+    // No need to check isPublic. It is never empty, always public by default.
     if (
       !title ||
       !date ||
@@ -83,8 +85,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !playerLimit ||
       !city ||
       !state ||
-      !zip ||
-      !isPublic
+      !zip
     ) {
       toast.show("Error!", {
         message: "Please fill out all required fields.",
@@ -186,57 +187,93 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               />
             </XStack>
 
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                Name
-              </Label>
-              <Input
-                flex={1}
+            <XStack width={200} alignItems="center" padding="$2">
+              <Label
+                paddingRight="$0"
+                minWidth={90}
+                justifyContent="flex-end"
                 size="$5"
-                placeholder="Address"
-                testID="addressInput"
-                value={street}
-                onChangeText={(text: string) => setStreet(text)}
-              />
-            </YStack>
-
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                City
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? "#08348c" : "black",
+                }}
+              >
+                Public
               </Label>
-              <Input
-                flex={1}
+              <Switch
+                size="$4"
+                defaultChecked={false}
+                onCheckedChange={(checked: boolean) => {
+                  setIsPublic(!checked);
+                }}
+                style={{
+                  backgroundColor: "#018de9",
+                }}
+              >
+                <Switch.Thumb
+                  style={{ backgroundColor: "#08348c" }}
+                  animation="bouncy"
+                />
+              </Switch>
+              <Label
+                paddingLeft="$6"
+                minWidth={90}
+                justifyContent="flex-end"
                 size="$5"
-                placeholder="City"
-                testID="cityInput"
-                value={city}
-                onChangeText={(text: string) => setCity(text)}
-              />
-            </YStack>
-
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                State/ZIP
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? "black" : "#08348c",
+                }}
+              >
+                Friends-Only
               </Label>
-              <XStack space="$3">
+            </XStack>
+
+            <YStack>
+              <Label size="$5" color={"#08348c"}>
+                Address
+              </Label>
+
+              <YStack space="$3">
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="State"
-                  value={state}
-                  testID="stateInput"
-                  onChangeText={(text: string) => setState(text)}
+                  placeholder="Street"
+                  testID="addressInput"
+                  value={street}
+                  onChangeText={(text: string) => setStreet(text)}
                 />
+
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="Zip"
-                  value={zip}
-                  keyboardType="numeric"
-                  testID="zipInput"
-                  onChangeText={(text: string) => setZip(text)}
+                  placeholder="City"
+                  testID="cityInput"
+                  value={city}
+                  onChangeText={(text: string) => setCity(text)}
                 />
-              </XStack>
+
+                <XStack space="$2">
+                  <Input
+                    flexGrow={1}
+                    size="$5"
+                    placeholder="State"
+                    value={state}
+                    testID="stateInput"
+                    onChangeText={(text: string) => setState(text)}
+                  />
+
+                  <Input
+                    flexGrow={1}
+                    size="$5"
+                    placeholder="Zip"
+                    value={zip}
+                    keyboardType="numeric"
+                    testID="zipInput"
+                    onChangeText={(text: string) => setZip(text)}
+                  />
+                </XStack>
+              </YStack>
             </YStack>
 
             <YStack>

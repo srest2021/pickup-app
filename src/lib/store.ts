@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { UserSport, User, GameWithAddress, GameWithoutAddress } from "./types";
+import { UserSport, User, MyGame, JoinedGame, FeedGame } from "./types";
 
 type State = {
   session: Session | null;
@@ -10,14 +10,14 @@ type State = {
   user: User | null;
   userSports: UserSport[];
 
-  myGames: GameWithAddress[];
-  selectedMyGame: GameWithAddress | null;
+  myGames: MyGame[];
+  selectedMyGame: MyGame | null;
 
-  joinedGames: GameWithAddress[];
-  selectedJoinedGame: GameWithAddress | null;
+  joinedGames: JoinedGame[];
+  selectedJoinedGame: JoinedGame | null;
 
-  feedGames: GameWithoutAddress[];
-  selectedFeedGame: GameWithoutAddress | null;
+  feedGames: FeedGame[];
+  selectedFeedGame: FeedGame | null;
 };
 
 type Action = {
@@ -35,31 +35,35 @@ type Action = {
 
   // my games
 
-  setMyGames: (myGames: GameWithAddress[]) => void;
+  setMyGames: (myGames: MyGame[]) => void;
   clearMyGames: () => void;
-  addMyGame: (myGame: GameWithAddress) => void;
+  addMyGame: (myGame: MyGame) => void;
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
-  setSelectedMyGame: (myGame: GameWithAddress) => void;
+  acceptJoinRequest: (gameId: string, playerId: string) => void;
+  rejectJoinRequest: (gameId: string, playerId: string) => void;
+  removePlayer: (gameId: string, playerId: string) => void;
+
+  setSelectedMyGame: (myGame: MyGame) => void;
   clearSelectedMyGame: () => void;
 
   // feed games
 
-  setFeedGames: (feedGames: GameWithoutAddress[]) => void;
+  setFeedGames: (feedGames: FeedGame[]) => void;
   clearFeedGames: () => void;
 
-  setSelectedFeedGame: (feedGame: GameWithoutAddress) => void;
+  setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
 
   // joined games
 
-  setJoinedGames: (feedGames: GameWithAddress[]) => void;
+  setJoinedGames: (feedGames: JoinedGame[]) => void;
   clearJoinedGames: () => void;
-  addJoinedGame: (joinedGame: GameWithAddress) => void;
+  addJoinedGame: (joinedGame: JoinedGame) => void;
   removeJoinedGame: (joinedGameId: string) => void;
 
-  setSelectedJoinedGame: (joinedGame: GameWithAddress) => void;
+  setSelectedJoinedGame: (joinedGame: JoinedGame) => void;
   clearSelectedJoinedGame: () => void;
 };
 
@@ -135,27 +139,97 @@ export const useStore = create<State & Action>()(
     },
 
     removeMyGame: (myGameId) => {
-      const newMyGames = get().myGames.filter(
+      const updatedMyGames = get().myGames.filter(
         (myGame) => myGame.id !== myGameId,
       );
-      set({ myGames: newMyGames });
+      set({ myGames: updatedMyGames });
       set({ selectedMyGame: null });
     },
 
     editMyGame: (myGameId, updatedGame) => {
-      const newMyGames = get().myGames.map((myGame) => {
+      const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
-          return updatedGame;
+          return {
+            ...updatedGame,
+            joinRequests: myGame.joinRequests,
+            acceptedPlayers: myGame.acceptedPlayers,
+          };
         }
         return myGame;
       });
       set({ selectedMyGame: updatedGame });
-      set({ myGames: newMyGames });
+      set({ myGames: updatedMyGames });
     },
 
     setSelectedMyGame: (myGame) => set({ selectedMyGame: myGame }),
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
+
+    acceptJoinRequest: (gameId, playerId) => {
+      const newPlayer = get()
+        .myGames.find((game) => game.id === gameId)
+        ?.joinRequests.find((user) => user.id === playerId);
+
+      const updatedMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === gameId) {
+          myGame.joinRequests = myGame.joinRequests.filter(
+            (user) => user.id != playerId,
+          );
+          if (newPlayer) myGame.acceptedPlayers.push(newPlayer);
+        }
+        return myGame;
+      });
+      set({ myGames: updatedMyGames });
+
+      let updatedGame = get().selectedMyGame;
+      if (updatedGame && updatedGame.id === gameId) {
+        updatedGame.joinRequests = updatedGame.joinRequests.filter(
+          (user) => user.id != playerId,
+        );
+        if (newPlayer) updatedGame.acceptedPlayers.push(newPlayer);
+        set({ selectedMyGame: updatedGame });
+      }
+    },
+
+    rejectJoinRequest: (gameId, playerId) => {
+      const updatedMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === gameId) {
+          myGame.joinRequests = myGame.joinRequests.filter(
+            (user) => user.id != playerId,
+          );
+        }
+        return myGame;
+      });
+      set({ myGames: updatedMyGames });
+
+      let updatedGame = get().selectedMyGame;
+      if (updatedGame && updatedGame.id === gameId) {
+        updatedGame.joinRequests = updatedGame.joinRequests.filter(
+          (user) => user.id != playerId,
+        );
+        set({ selectedMyGame: updatedGame });
+      }
+    },
+
+    removePlayer: (gameId, playerId) => {
+      const updatedMyGames = get().myGames.map((myGame) => {
+        if (myGame.id === gameId) {
+          myGame.acceptedPlayers = myGame.joinRequests.filter(
+            (user) => user.id != playerId,
+          );
+        }
+        return myGame;
+      });
+      set({ myGames: updatedMyGames });
+
+      let updatedGame = get().selectedMyGame;
+      if (updatedGame && updatedGame.id === gameId) {
+        updatedGame.acceptedPlayers = updatedGame.joinRequests.filter(
+          (user) => user.id != playerId,
+        );
+        set({ selectedMyGame: updatedGame });
+      }
+    },
 
     // joined games
 
@@ -165,6 +239,7 @@ export const useStore = create<State & Action>()(
 
     addJoinedGame: (joinedGame) => {
       set({ joinedGames: [joinedGame, ...get().joinedGames] });
+      set({ selectedJoinedGame: joinedGame });
     },
 
     removeJoinedGame: (joinedGameId) => {

@@ -1,4 +1,5 @@
 export type User = {
+  id: string;
   username: string;
   displayName: string;
   bio: string;
@@ -69,9 +70,20 @@ export interface Game {
   distanceAway: number;
 }
 
-export type GameWithoutAddress = Game;
+export type MyGame = Game & {
+  address: Address;
+  joinRequests: User[];
+  acceptedPlayers: User[];
+};
 
-export type GameWithAddress = Game & { address: Address };
+export type JoinedGame = Game & {
+  address: Address;
+  acceptedPlayers: User[];
+};
+
+export type FeedGame = Game & {
+  acceptedPlayers: User[];
+};
 
 export const sports = [
   {
