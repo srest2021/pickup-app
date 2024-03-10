@@ -16,6 +16,7 @@ import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
 import useQueryGames from "../../hooks/use-query-games";
 import { useEffect } from "react";
+import GamePlayers from "./GamePlayers";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -124,6 +125,8 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <SportSkill sport={selectedMyGame.sport} />
                   </XStack>
                 </YStack>
+
+                <GamePlayers navigation={undefined}/>
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
