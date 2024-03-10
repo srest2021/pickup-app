@@ -77,14 +77,14 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
 
   
     return (
-      <View className="border-2 border-blue-500" style={{ display: 'flex', height: 700}}>
+      <View style={{ display: 'flex', height: 700, marginTop: 20}}>
         <ToastViewport />
         <ToastDemo />
         {session && session.user ? (
 
         <YStack style={{ flex: 1 }} >
-          <YStack style={{ flex: 1, marginRight: 5 }}>
-            <Label size={5} width={100} style={{ justifyContent: 'center'}}>
+          <YStack style={{ flex: 1, alignItems: 'center' }}>
+            <Label size={5}>
                   <H6>Accepted Players</H6>
             </Label>
             <Card style={{ width: '100%', height: 240}} elevate size="$5">
@@ -102,8 +102,8 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             </Card>
           </YStack>
 
-          <YStack style={{ flex: 1, marginLeft: 5 }}>
-            <Label size={5} width={100} style={{ justifyContent: 'center' }}>
+          <YStack style={{ flex: 1, marginLeft: 5, alignItems: 'center'}}>
+            <Label size={5} style={{ justifyContent: 'center' }}>
                   <H6>Join Requests</H6>
             </Label>
             <Card style={{ width: '100%', height: 240}} elevate size="$5">
