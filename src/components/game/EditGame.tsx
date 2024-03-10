@@ -12,6 +12,7 @@ import {
   TextArea,
   XStack,
   YStack,
+  Switch,
 } from "tamagui";
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
@@ -71,7 +72,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     `${selectedMyGame?.maxPlayers}`,
   );
   const [description, setDescription] = useState(selectedMyGame?.description);
-  const [isPublic, setIsPublic] = useState(selectedMyGame?.isPublic);
+  const [isPublic, setIsPublic] = useState(selectedMyGame!.isPublic);
 
   // Toasts
   const toast = useToastController();
@@ -99,8 +100,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       !playerLimit ||
       !city ||
       !state ||
-      !zip ||
-      !isPublic
+      !zip
     ) {
       toast.show("Error!", {
         message: "Please fill out all required fields.",
@@ -196,6 +196,48 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   if (datetime) setTime(datetime);
                 }}
               />
+            </XStack>
+
+            <XStack width={200} alignItems="center" padding="$2">
+              <Label
+                paddingRight="$0"
+                minWidth={90}
+                justifyContent="flex-end"
+                size="$5"
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? "#08348c" : "black",
+                }}
+              >
+                Public
+              </Label>
+              <Switch
+                size="$4"
+                defaultChecked={!isPublic}
+                onCheckedChange={(checked: boolean) => {
+                  setIsPublic(!checked);
+                }}
+                style={{
+                  backgroundColor: "#018de9",
+                }}
+              >
+                <Switch.Thumb
+                  style={{ backgroundColor: "#08348c" }}
+                  animation="bouncy"
+                />
+              </Switch>
+              <Label
+                paddingLeft="$6"
+                minWidth={90}
+                justifyContent="flex-end"
+                size="$5"
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? "black" : "#08348c",
+                }}
+              >
+                Friends-Only
+              </Label>
             </XStack>
 
             <YStack>
