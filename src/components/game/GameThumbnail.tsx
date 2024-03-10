@@ -1,4 +1,4 @@
-import { MyGame, sports } from "../../lib/types";
+import { MyGame, Game, sports, FeedGame, JoinedGame } from "../../lib/types";
 import {
   Button,
   Card,
@@ -16,11 +16,15 @@ import { useStore } from "../../lib/store";
 export default function GameThumbnail({
   navigation,
   game,
+  gametype,
 }: {
   navigation: any;
-  game: MyGame;
+  game: Game;
+  gametype: string;
 }) {
   const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame]);
+  const [setSelectedFeedGame] = useStore((state)=>[state.setSelectedFeedGame]);
+  const [setSelectedJoinedGame] = useStore((state)=>[state.setSelectedJoinedGame]);
 
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
@@ -56,6 +60,7 @@ export default function GameThumbnail({
           >
             <View style={{ flex: 1 }}>
               <H4 testID="game-title">{game.title}</H4>
+              <H4 >{game.organizerId}</H4>
               <H4 testID="game-date">{date}</H4>
               <H5>{time}</H5>
             </View>
@@ -64,8 +69,17 @@ export default function GameThumbnail({
                 style={{ backgroundColor: "#ff7403" }}
                 onPress={() => {
                   const gameId = game.id;
-                  setSelectedMyGame(game);
-                  navigation.navigate("MyGameView", { gameId });
+                  if (gametype === 'my'){
+                    setSelectedMyGame(game as MyGame);
+                    navigation.navigate("MyGameView", { gameId });
+                  } else if (gametype === 'feed'){
+                    setSelectedFeedGame(game as FeedGame);
+                    navigation.navigate("GameView", {gameId});
+                  } else if (gametype === 'joined'){
+                    setSelectedJoinedGame(game as JoinedGame);
+                    navigation.navigate("GameView", {gameId});
+                  }
+                  
                 }}
               >
                 <H5 testID="view-button">View</H5>

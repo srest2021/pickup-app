@@ -86,6 +86,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                     <GameThumbnail
                       navigation={navigation}
                       game={myGame}
+                      gametype='my'
                       key={myGame.id}
                     />
                   ))}
@@ -97,7 +98,16 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               )
             ) : joinedGames.length > 0 ? (
               <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>joined games thumbnails here</H4>
+                <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                  {joinedGames.map((joinedGame)=>(
+                    <GameThumbnail
+                    navigation={navigation}
+                    game={joinedGame}
+                    gametype='joined'
+                    key={joinedGame.id}
+                    />
+                  ))}
+                </YStack>
               </View>
             ) : (
               <View className="items-center justify-center flex-1 p-12 text-center">

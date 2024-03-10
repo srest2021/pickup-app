@@ -133,21 +133,6 @@ function useQueryGames() {
     }
   };
 
-  const fetchJoinedGames = async (userId:string) => {
-    try{
-      setLoading(true);
-      
-    }catch(error){
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-
-    }finally{
-      setLoading(false);
-    }
-
-  }
-
   const fetchFeedGames = async () => {
     try {
       setLoading(true);
