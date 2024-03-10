@@ -13,12 +13,14 @@ import {
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import SportSkill from "../SportSkill";
+import useMutationGame from "../../hooks/use-mutation-game";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
   const [selectedFeedGame] = useStore((state) => [state.selectedFeedGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
+  const { requestToJoinById } = useMutationGame();
 
   // Layout:
   // Game information (MyGame View)
@@ -31,7 +33,11 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   // Ensure button says something if the player has already requested to join
 
   // Request to Join Game Logic TODO:
-  function requestToJoinGame() {}
+  function requestToJoinGame() {
+    requestToJoinById(gameId, user!.id);
+    // Go back to feed once request is sent.
+    navigation.goBack();
+  }
 
   return (
     <View>
@@ -121,10 +127,11 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 <XStack space="$3" paddingTop="$6">
                   <Button
                     theme="active"
+                    disabled={selectedFeedGame.hasRequested ? true : false}
                     flex={1}
                     onPress={() => requestToJoinGame()}
                   >
-                    Request to Join
+                    {selectedFeedGame.hasRequested ? "Requested": "Request to Join"}
                   </Button>
                 </XStack>
               </YStack>
