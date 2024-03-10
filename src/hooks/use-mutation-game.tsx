@@ -14,6 +14,7 @@ function useMutationGame() {
     acceptJoinRequest,
     rejectJoinRequest,
     removePlayer,
+    updateHasRequestedFeedGame,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -24,6 +25,7 @@ function useMutationGame() {
     state.acceptJoinRequest,
     state.rejectJoinRequest,
     state.removePlayer,
+    state.updateHasRequestedFeedGame
   ]);
 
   const createGame = async (
@@ -279,7 +281,8 @@ function useMutationGame() {
         .select();
       if (error) throw error;
 
-      // TODO
+      // update hasRequested for selectedFeedGame and feed games
+      updateHasRequestedFeedGame(gameId);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
