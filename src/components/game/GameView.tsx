@@ -1,0 +1,3 @@
+const GameView = () => {
+  // TODO
+};
