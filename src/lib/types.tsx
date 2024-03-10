@@ -82,6 +82,7 @@ export type JoinedGame = Game & {
 };
 
 export type FeedGame = Game & {
+  hasRequested: boolean;
   acceptedPlayers: User[];
 };
 
