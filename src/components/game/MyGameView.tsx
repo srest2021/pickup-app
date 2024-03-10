@@ -14,27 +14,16 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
-import useQueryGames from "../../hooks/use-query-games";
-import { useEffect } from "react";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
-  const { fetchGameById } = useQueryGames();
-  const { removeGameById } = useMutationGame();
-
-  const getGame = async () => {
-    await fetchGameById(gameId);
-  };
-
-  useEffect(() => {
-    getGame();
-  }, [selectedMyGame]);
+  const { removeMyGameById } = useMutationGame();
 
   function deleteGame() {
-    removeGameById(gameId);
+    removeMyGameById(gameId);
     // navigate back to myGames list.
     navigation.goBack();
     // TODO: Add success toast
@@ -104,7 +93,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedMyGame.address}, ${selectedMyGame.city}, ${selectedMyGame.state} ${selectedMyGame.zip}`}
+                      {`${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`}
                     </SizableText>
                   </XStack>
 

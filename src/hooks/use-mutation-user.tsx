@@ -53,6 +53,7 @@ function useMutationUser() {
         .from("profiles")
         .select(
           `
+            id,
             username, 
             display_name, 
             bio, 
@@ -72,6 +73,7 @@ function useMutationUser() {
 
       if (data) {
         const user: User = {
+          id: data.id,
           username: data.username,
           displayName: data.display_name,
           bio: data.bio,

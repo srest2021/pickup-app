@@ -1,4 +1,5 @@
 export type User = {
+  id: string;
   username: string;
   displayName: string;
   bio: string;
@@ -49,18 +50,39 @@ export function getSkillLevelColors(skillLevel: SkillLevel) {
   }
 }
 
-export type Game = {
-  id: string;
-  title: string;
-  description: string;
-  datetime: Date;
-  address: string;
+export type Address = {
+  street: string;
   city: string;
   state: string;
   zip: string;
+};
+
+export interface Game {
+  id: string;
+  organizerId: string;
+  title: string;
+  description: string;
+  datetime: Date;
   sport: GameSport;
   maxPlayers: number;
   currentPlayers: number;
+  isPublic: boolean;
+  distanceAway: number;
+}
+
+export type MyGame = Game & {
+  address: Address;
+  joinRequests: User[];
+  acceptedPlayers: User[];
+};
+
+export type JoinedGame = Game & {
+  address: Address;
+  acceptedPlayers: User[];
+};
+
+export type FeedGame = Game & {
+  acceptedPlayers: User[];
 };
 
 export const sports = [

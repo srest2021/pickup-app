@@ -1,4 +1,4 @@
-import { Game, sports } from "../../lib/types";
+import { MyGame, sports } from "../../lib/types";
 import {
   Button,
   Card,
@@ -18,7 +18,7 @@ export default function GameThumbnail({
   game,
 }: {
   navigation: any;
-  game: Game;
+  game: MyGame;
 }) {
   const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame]);
 
@@ -80,7 +80,7 @@ export default function GameThumbnail({
           style={{ flex: 0.5 }}
         >
           <Paragraph fontWeight="600" fontSize="$6">
-            X miles away
+            {game.distanceAway} miles away
           </Paragraph>
           <Paragraph
             fontWeight="500"
