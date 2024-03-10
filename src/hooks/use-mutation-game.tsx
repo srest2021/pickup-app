@@ -25,7 +25,7 @@ function useMutationGame() {
     state.acceptJoinRequest,
     state.rejectJoinRequest,
     state.removePlayer,
-    state.updateHasRequestedFeedGame
+    state.updateHasRequestedFeedGame,
   ]);
 
   const createGame = async (

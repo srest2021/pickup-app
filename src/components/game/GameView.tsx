@@ -22,17 +22,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const [session, user] = useStore((state) => [state.session, state.user]);
   const { requestToJoinById } = useMutationGame();
 
-  // Layout:
-  // Game information (MyGame View)
-  // Distance Away (NOT ADDRESS)
-  // Request to Join button
-  // Add a toast that says when your request was sent
-
-  // Further:
-  // Request to join logic:
-  // Ensure button says something if the player has already requested to join
-
-  // Request to Join Game Logic TODO:
+  // Request to Join Game Logic:
   function requestToJoinGame() {
     requestToJoinById(gameId, user!.id);
     // Go back to feed once request is sent.
@@ -131,7 +121,9 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     flex={1}
                     onPress={() => requestToJoinGame()}
                   >
-                    {selectedFeedGame.hasRequested ? "Requested": "Request to Join"}
+                    {selectedFeedGame.hasRequested
+                      ? "Requested"
+                      : "Request to Join"}
                   </Button>
                 </XStack>
               </YStack>
