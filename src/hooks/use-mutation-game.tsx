@@ -263,6 +263,35 @@ function useMutationGame() {
     }
   };
 
+  const requestToJoinById = async (gameId: string, playerId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { data, error } = await supabase
+        .from("game_requests")
+        .insert([
+          {
+            game_id: gameId,
+            player_id: playerId,
+          },
+        ])
+        .select();
+      if (error) throw error;
+
+      // TODO
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error sending join request! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     createGame,
     removeMyGameById,
@@ -270,6 +299,7 @@ function useMutationGame() {
     acceptJoinRequestById,
     rejectJoinRequestById,
     removePlayerById,
+    requestToJoinById,
   };
 }
 

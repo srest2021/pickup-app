@@ -20,6 +20,16 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const [selectedFeedGame] = useStore((state) => [state.selectedFeedGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
 
+  // Layout:
+  // Game information (MyGame View)
+  // Distance Away (NOT ADDRESS)
+  // Request to Join button
+  // Add a toast that says when your request was sent
+
+  // Further:
+  // Request to join logic:
+  // Ensure button says something if the player has already requested to join
+
   // Request to Join Game Logic TODO:
   function requestToJoinGame() {}
 
