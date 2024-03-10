@@ -26,6 +26,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { ToastDemo } from "../Toast";
 import { User, UserSport } from "../../lib/types";
 import AcceptedPlayer from "./AcceptedPlayer";
+import NonAcceptedPlayer from "./NonAcceptedPlayers";
 
 const gamePlayers: User[] = [
   { username: 'user1', displayName: 'user1', bio: 'bio', avatarUrl: '', sports: [] },
@@ -87,15 +88,17 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
                   <H6>Accepted Players</H6>
             </Label>
             <Card style={{ width: '100%', height: 240}} elevate size="$5">
+            <ScrollView>
               {gamePlayers.length > 0 ? (
-                <YStack style={{ overflowY: 'auto' }}>
-                {gamePlayers.map((user, index) => (
-                  <AcceptedPlayer index={index} user={user}/>
-                ))}
+                <YStack>
+                  {gamePlayers.map((user, index) => (
+                    <AcceptedPlayer key={index} user={user} />
+                  ))}
                 </YStack>
               ) : (
                 <Text>No Accepted Players</Text>
               )}
+            </ScrollView>
             </Card>
           </YStack>
 
@@ -103,8 +106,18 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             <Label size={5} width={100} style={{ justifyContent: 'center' }}>
                   <H6>Join Requests</H6>
             </Label>
-            <Card style={{ width: '100%', height: 240, overflowY: 'auto' }} elevate size="$5">
-              <Text>card 2</Text>
+            <Card style={{ width: '100%', height: 240}} elevate size="$5">
+            <ScrollView>
+              {gamePlayers.length > 0 ? (
+                <YStack>
+                  {gamePlayers.map((user, index) => (
+                    <NonAcceptedPlayer key={index} user={user} />
+                  ))}
+                </YStack>
+              ) : (
+                <Text>No Accepted Players</Text>
+              )}
+            </ScrollView>
             </Card>
           </YStack>
         </YStack>
