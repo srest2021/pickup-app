@@ -127,6 +127,27 @@ export const useStore = create<State & Action>()(
 
     clearSelectedFeedGame: () => set({ selectedFeedGame: null }),
 
+    updateHasRequestedFeedGame: (feedGameId) => {
+      // updated selected Feed Game
+      // ! because if this is being called, selectedFeedGame is not null.
+      const updatedSelectedFeedGame = get().selectedFeedGame!;
+      updatedSelectedFeedGame.hasRequested = !updatedSelectedFeedGame.hasRequested
+      set({ selectedFeedGame: updatedSelectedFeedGame })
+
+      // update Feed Games array
+      const updatedMyFeedGames = get().feedGames.map((game) => {
+        if (game.id === feedGameId) {
+          return {
+            ...game,
+            hasRequested: !game.hasRequested
+          };
+        }
+        return game;
+      });
+
+
+    },
+
     // my games
 
     setMyGames: (myGames) => set({ myGames }),
