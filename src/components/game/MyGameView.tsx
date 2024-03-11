@@ -117,7 +117,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <GamePlayers navigation={undefined}/>
+                <GamePlayers navigation={undefined} />
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
