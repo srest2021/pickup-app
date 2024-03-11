@@ -332,7 +332,7 @@ function useMutationGame() {
     rejectJoinRequestById,
     removePlayerById,
     requestToJoinById,
-    leaveJoinedGameById
+    leaveJoinedGameById,
   };
 }
 
