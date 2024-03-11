@@ -28,81 +28,14 @@ import { User, UserSport } from "../../lib/types";
 import AcceptedPlayer from "./AcceptedPlayer";
 import NonAcceptedPlayer from "./NonAcceptedPlayers";
 
-const gamePlayers: User[] = [
-  {
-    username: "user1",
-    displayName: "user1",
-    bio: "bio",
-    avatarUrl: "",
-    sports: [],
-  },
-  {
-    username: "user2",
-    displayName: "user2",
-    bio: "bio",
-    avatarUrl: "",
-    sports: [],
-  },
-  {
-    username: "user3",
-    displayName: "user3",
-    bio: "bio",
-    avatarUrl: "",
-    sports: [],
-  },
-  {
-    username: "user4",
-    displayName: "user4",
-    bio: "bio",
-    avatarUrl: "",
-    sports: [],
-  },
-  {
-    username: "user5",
-    displayName: "user5",
-    bio: "bio",
-    avatarUrl: "",
-    sports: [],
-  },
-  // Add more users as needed
-];
-
 const GamePlayers = ({ navigation }: { navigation: any }) => {
-  const { createGame } = useMutationGame();
-  const [loading, session] = useStore((state) => [
-    state.loading,
+  const [session, selectedMyGame] = useStore((state) => [
     state.session,
+    state.selectedMyGame
   ]);
 
-  // game attributes
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const [sport, setSport] = useState(sports[0].name);
-  const [skillLevel, setSkillLevel] = useState("0");
-  const [playerLimit, setPlayerLimit] = useState("1");
-  const [description, setDescription] = useState("");
-
-  // Toasts
-  const toast = useToastController();
-
-  function clearGameAttributes() {
-    setTitle("");
-    setDate(new Date());
-    setTime(new Date());
-    setAddress("");
-    setCity("");
-    setState("");
-    setZip("");
-    setSport(sports[0].name);
-    setSkillLevel("0");
-    setPlayerLimit("1");
-    setDescription("");
-  }
+  const acceptedPlayers = selectedMyGame?.acceptedPlayers; 
+  const joinRequests = selectedMyGame?.joinRequests;
 
   return (
     <View style={{ display: "flex", height: 700, marginTop: 20 }}>
@@ -116,9 +49,9 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             </Label>
             <Card style={{ width: "100%", height: 240 }} elevate size="$5">
               <ScrollView>
-                {gamePlayers.length > 0 ? (
+                {(acceptedPlayers && acceptedPlayers.length > 0) ? (
                   <YStack>
-                    {gamePlayers.map((user, index) => (
+                    {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer key={index} user={user} />
                     ))}
                   </YStack>
@@ -135,14 +68,14 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             </Label>
             <Card style={{ width: "100%", height: 240 }} elevate size="$5">
               <ScrollView>
-                {gamePlayers.length > 0 ? (
+                {(joinRequests && joinRequests.length > 0) ? (
                   <YStack>
-                    {gamePlayers.map((user, index) => (
+                    {joinRequests.map((user, index) => (
                       <NonAcceptedPlayer key={index} user={user} />
                     ))}
                   </YStack>
                 ) : (
-                  <Text>No Accepted Players</Text>
+                  <Text>No Join Requests</Text>
                 )}
               </ScrollView>
             </Card>

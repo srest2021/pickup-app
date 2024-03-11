@@ -14,12 +14,13 @@ import GameThumbnail from "./GameThumbnail";
 import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
 import { Check, Delete, X } from "@tamagui/lucide-icons";
+import { User } from "../../lib/types";
 
-const NonAcceptedPlayer = ({ index, user }: { index: any; user: any }) => {
+const NonAcceptedPlayer = ({ user }: { user: User }) => {
   return (
     <View margin={10}>
       <XStack>
-        <Text fontSize={20} index={index} marginRight={30}>
+        <Text fontSize={20} marginRight={30}>
           {user.username}
         </Text>
         <Button

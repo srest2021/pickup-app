@@ -931,7 +931,7 @@ returns table(
       )
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
-      WHERE jg.game_id = g.id
+      WHERE jg.game_id = g.id and jg.player_id != auth.uid()
     ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
