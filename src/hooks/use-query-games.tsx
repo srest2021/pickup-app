@@ -93,7 +93,7 @@ function useQueryGames() {
   const fetchJoinedGames = async () => {
     try {
       setLoading(true);
-      if (!session?.user) throw new Error("Please sign in to view games");
+      if (!session?.user) throw new Error("Please sign in to view joined games");
 
       let lat = 39.3289357; //if no location, for now, default location is charmander marmander
       let long = -76.6172978;
@@ -103,7 +103,7 @@ function useQueryGames() {
         long = location.coords.longitude;
       }
 
-      const { data, error } = await supabase.rpc("my_games", {
+      const { data, error } = await supabase.rpc("joined_games", {
         lat: lat,
         long: long,
       });
