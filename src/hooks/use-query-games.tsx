@@ -14,6 +14,7 @@ function useQueryGames() {
     clearFeedGames,
     setJoinedGames,
     clearJoinedGames,
+    location,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -24,6 +25,7 @@ function useQueryGames() {
     state.clearFeedGames,
     state.setJoinedGames,
     state.clearJoinedGames,
+    state.location,
   ]);
 
   const fetchMyGames = async () => {
@@ -31,9 +33,17 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
+      let lat = 39.3289357; //if no location, for now, default location is charmander marmander
+      let long = -76.6172978;
+
+      if (location != null) {
+        lat = location.coords.latitude;
+        long = location.coords.longitude;
+      }
+
       const { data, error } = await supabase.rpc("my_games", {
-        lat: 39.3289357,
-        long: -76.6172978,
+        lat: lat,
+        long: long,
       });
       if (error) throw error;
 
@@ -85,10 +95,19 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
-      const { data, error } = await supabase.rpc("joined_games", {
-        lat: 39.3289357,
-        long: -76.6172978,
+      let lat = 39.3289357; //if no location, for now, default location is charmander marmander
+      let long = -76.6172978;
+
+      if (location != null) {
+        lat = location.coords.latitude;
+        long = location.coords.longitude;
+      }
+
+      const { data, error } = await supabase.rpc("my_games", {
+        lat: lat,
+        long: long,
       });
+      
       if (error) throw error;
 
       if (data) {

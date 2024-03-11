@@ -23,12 +23,14 @@ import {
 import MyGamesNavigator from "./src/components/MyGamesNavigator";
 import FeedNavigator from "./src/components/FeedNavigator";
 import { ToastProvider } from "@tamagui/toast";
+import useQueryUsers from "./src/hooks/use-query-users";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   const { session } = useMutationUser();
+  const { setUserLocation } = useQueryUsers();
   const [loaded] = useFonts({
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
@@ -39,6 +41,13 @@ export default function App() {
       // can hide splash screen here
     }
   }, [loaded]);
+
+  useEffect(() => {
+    if (session && session.user) {
+      setUserLocation();
+    }
+    
+  }, []);
 
   if (!loaded) {
     return null;
