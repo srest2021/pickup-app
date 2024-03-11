@@ -43,7 +43,7 @@ function useMutationUser() {
   }, []);
 
   useEffect(() => {
-    if (session) getProfile() 
+    if (session) getProfile();
   }, [session]);
 
   const getProfile = async () => {

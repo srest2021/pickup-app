@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
 import { UserSport, User, MyGame, JoinedGame, FeedGame } from "./types";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 
 type State = {
   session: Session | null;
@@ -72,8 +72,8 @@ type Action = {
   clearSelectedJoinedGame: () => void;
 
   //location
-   setLocation: (location: Location.LocationObject) => void;
-   clearLocation: () => void; //not sure if we'll need this
+  setLocation: (location: Location.LocationObject) => void;
+  clearLocation: () => void; //not sure if we'll need this
 };
 
 const initialState: State = {
@@ -288,8 +288,8 @@ export const useStore = create<State & Action>()(
 
     clearSelectedJoinedGame: () => set({ selectedJoinedGame: null }),
 
-     setLocation: (location) => set({ location: location }),
+    setLocation: (location) => set({ location: location }),
 
-     clearLocation: () => set({location: null}),
+    clearLocation: () => set({ location: null }),
   })),
 );
