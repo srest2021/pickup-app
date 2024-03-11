@@ -10,7 +10,7 @@ export default function MyGamesNavigator() {
       <Stack.Screen
         name="MyGames"
         component={MyGames}
-        options={{ title: "My Games", headerShown: true }}
+        options={{ title: "My Games", headerShown: true}}
       />
       <Stack.Screen
         name="MyGameView"
