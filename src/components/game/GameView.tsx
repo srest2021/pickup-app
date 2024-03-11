@@ -12,40 +12,37 @@ import {
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
-import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
-import useQueryGames from "../../hooks/use-query-games";
-import { useEffect } from "react";
-import GamePlayers from "./GamePlayers";
+import useMutationGame from "../../hooks/use-mutation-game";
 
-const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
+const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
-  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
+  const [selectedFeedGame] = useStore((state) => [state.selectedFeedGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
-  const { removeMyGameById } = useMutationGame();
+  const { requestToJoinById } = useMutationGame();
 
-  function deleteGame() {
-    removeMyGameById(gameId);
-    // navigate back to myGames list.
+  // Request to Join Game Logic:
+  function requestToJoinGame() {
+    requestToJoinById(gameId, user!.id);
+    // Go back to feed once request is sent.
     navigation.goBack();
-    // TODO: Add success toast
   }
 
   return (
     <View>
       {session && session.user && user ? (
-        selectedMyGame ? (
+        selectedFeedGame ? (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View className="p-12">
               <YStack>
                 <YStack alignItems="center">
-                  <H4 textAlign="center">{selectedMyGame.title}</H4>
+                  <H4 textAlign="center">{selectedFeedGame.title}</H4>
                 </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>
-                    {new Date(selectedMyGame.datetime).toLocaleDateString(
+                    {new Date(selectedFeedGame.datetime).toLocaleDateString(
                       "en-US",
                       {
                         year: "numeric",
@@ -57,7 +54,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </H5>
                   <H5>
                     at{" "}
-                    {new Date(selectedMyGame.datetime).toLocaleTimeString(
+                    {new Date(selectedFeedGame.datetime).toLocaleTimeString(
                       "en-US",
                       {
                         hour: "2-digit",
@@ -69,11 +66,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <YStack alignItems="center">
                   <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{user.username}
+                    by @{selectedFeedGame.organizerId}
                   </SizableText>
                 </YStack>
 
-                {selectedMyGame.description && (
+                {selectedFeedGame.description && (
                   <YStack paddingTop="$3" paddingBottom="$7">
                     <Card elevate size="$5">
                       <View marginLeft={25} marginRight={25}>
@@ -83,7 +80,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                           paddingTop="$3"
                           paddingBottom="$3"
                         >
-                          {selectedMyGame.description}
+                          {selectedFeedGame.description}
                         </SizableText>
                       </View>
                     </Card>
@@ -93,10 +90,10 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 <YStack space="$4">
                   <XStack space="$2" alignItems="left">
                     <Label size="$5" width={90}>
-                      <H6>Address:</H6>
+                      <H6>Distance Away:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`}
+                      {`${selectedFeedGame.distanceAway}`}
                     </SizableText>
                   </XStack>
 
@@ -105,7 +102,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedMyGame.sport.name}
+                      {selectedFeedGame.sport.name}
                     </SizableText>
                   </XStack>
 
@@ -113,24 +110,20 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Skill:</H6>
                     </Label>
-                    <SportSkill sport={selectedMyGame.sport} />
+                    <SportSkill sport={selectedFeedGame.sport} />
                   </XStack>
                 </YStack>
-
-                <GamePlayers navigation={undefined} />
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
                     theme="active"
+                    disabled={selectedFeedGame.hasRequested ? true : false}
                     flex={1}
-                    onPress={() => {
-                      navigation.navigate("EditGame", { gameId });
-                    }}
+                    onPress={() => requestToJoinGame()}
                   >
-                    Edit
-                  </Button>
-                  <Button theme="active" flex={1} onPress={() => deleteGame()}>
-                    Delete
+                    {selectedFeedGame.hasRequested
+                      ? "Requested"
+                      : "Request to Join"}
                   </Button>
                 </XStack>
               </YStack>
@@ -143,11 +136,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
         )
       ) : (
         <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Log in to view and edit this game!</H4>
+          <H4>Log in to view this game!</H4>
         </View>
       )}
     </View>
   );
 };
 
-export default MyGameView;
+export default GameView;

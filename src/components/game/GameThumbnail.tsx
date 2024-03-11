@@ -28,11 +28,15 @@ export default function GameThumbnail({
   gametype: string;
 }) {
   const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame]);
-  const [setSelectedFeedGame] = useStore((state)=>[state.setSelectedFeedGame]);
-  const [setSelectedJoinedGame] = useStore((state)=>[state.setSelectedJoinedGame]);
-  const [displayName, setDisplayName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState(''); 
-  const {getOtherProfile} = useQueryUsers();
+  const [setSelectedFeedGame] = useStore((state) => [
+    state.setSelectedFeedGame,
+  ]);
+  const [setSelectedJoinedGame] = useStore((state) => [
+    state.setSelectedJoinedGame,
+  ]);
+  const [displayName, setDisplayName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const { getOtherProfile } = useQueryUsers();
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
     hour: "numeric",
@@ -55,35 +59,35 @@ export default function GameThumbnail({
     game.description.length > 100
       ? game.description.substring(0, 100) + "..."
       : game.description;
-  
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const organizer = await getOtherProfile(game.organizerId);
-            if (organizer) {
-              setDisplayName(organizer.displayName);
-              await downloadImage(organizer.avatarUrl);
-            }
-          } catch (error) {
-            Alert.alert("Error getting organizer");
-          }
-        };
-        fetchData();
-      }, []);
 
-      async function downloadImage(path: string) {
-          const { data, error } = await supabase.storage
-            .from("avatars")
-            .download(path);
-          if (error) {
-            throw error;
-          }
-          const fr = new FileReader();
-          fr.readAsDataURL(data);
-          fr.onload = () => {
-            setAvatarUrl(fr.result as string);
-          };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const organizer = await getOtherProfile(game.organizerId);
+        if (organizer) {
+          setDisplayName(organizer.displayName);
+          await downloadImage(organizer.avatarUrl);
+        }
+      } catch (error) {
+        Alert.alert("Error getting organizer");
       }
+    };
+    fetchData();
+  }, []);
+
+  async function downloadImage(path: string) {
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .download(path);
+    if (error) {
+      throw error;
+    }
+    const fr = new FileReader();
+    fr.readAsDataURL(data);
+    fr.onload = () => {
+      setAvatarUrl(fr.result as string);
+    };
+  }
 
   return (
     <View paddingLeft="$5" paddingRight="$5">
@@ -96,9 +100,14 @@ export default function GameThumbnail({
               <H4 testID="game-title">{game.title}</H4>
               <H4 testID="game-date">{date}</H4>
               <H5>{time}</H5>
-              <XStack space='$2' alignItems='center'>
-              {avatarUrl &&( <Image source={{ uri: avatarUrl, width: 35,
-                  height: 35, }} style={{width:35,height:35,borderRadius:17.5}} accessibilityLabel="Avatar"/>)}
+              <XStack space="$2" alignItems="center">
+                {avatarUrl && (
+                  <Image
+                    source={{ uri: avatarUrl, width: 35, height: 35 }}
+                    style={{ width: 35, height: 35, borderRadius: 17.5 }}
+                    accessibilityLabel="Avatar"
+                  />
+                )}
                 <Paragraph>@{displayName}</Paragraph>
               </XStack>
             </View>
@@ -107,15 +116,15 @@ export default function GameThumbnail({
                 style={{ backgroundColor: "#ff7403" }}
                 onPress={() => {
                   const gameId = game.id;
-                  if (gametype === 'my'){
+                  if (gametype === "my") {
                     setSelectedMyGame(game as MyGame);
                     navigation.navigate("MyGameView", { gameId });
-                  } else if (gametype === 'feed'){
+                  } else if (gametype === "feed") {
                     setSelectedFeedGame(game as FeedGame);
-                    navigation.navigate("GameView", {gameId});
-                  } else if (gametype === 'joined'){
+                    navigation.navigate("GameView", { gameId });
+                  } else if (gametype === "joined") {
                     setSelectedJoinedGame(game as JoinedGame);
-                    navigation.navigate("GameView", {gameId});
+                    navigation.navigate("JoinedGameView", { gameId });
                   }
                 }}
               >

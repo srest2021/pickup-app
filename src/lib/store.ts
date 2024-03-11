@@ -56,6 +56,8 @@ type Action = {
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
 
+  updateHasRequestedFeedGame: (feedGameId: string) => void;
+
   // joined games
 
   setJoinedGames: (feedGames: JoinedGame[]) => void;
@@ -146,6 +148,8 @@ export const useStore = create<State & Action>()(
         return game;
       });
       set({ feedGames: updatedMyFeedGames });
+      // Navigates back to feed
+      set({ selectedFeedGame: null });
     },
 
     // my games

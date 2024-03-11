@@ -21,6 +21,7 @@ import {
   GalleryVerticalEnd,
 } from "@tamagui/lucide-icons";
 import MyGamesNavigator from "./src/components/MyGamesNavigator";
+import FeedNavigator from "./src/components/FeedNavigator";
 import { ToastProvider } from "@tamagui/toast";
 
 const Stack = createNativeStackNavigator();
@@ -56,8 +57,8 @@ export default function App() {
               }}
             >
               <Tab.Screen
-                name="Feed"
-                component={Feed}
+                name="Games Feed"
+                component={FeedNavigator}
                 options={{
                   tabBarLabel: "Feed",
                   tabBarIcon: ({ color, size, focused }) => (
