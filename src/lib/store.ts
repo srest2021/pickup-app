@@ -148,6 +148,8 @@ export const useStore = create<State & Action>()(
         return game;
       });
       set({ feedGames: updatedMyFeedGames });
+      // Navigates back to feed
+      set({ selectedFeedGame: null });
     },
 
     // my games
