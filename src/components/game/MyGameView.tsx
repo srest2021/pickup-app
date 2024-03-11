@@ -42,6 +42,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedMyGame.title}</H4>
                 </YStack>
+                <YStack alignItems="center">
+                  <SizableText alignItems="center" padding="$5" size="$4">
+                    by @{selectedMyGame.isPublic ? "Public Game" : "Friends Only Game"}
+                  </SizableText>
+                </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>

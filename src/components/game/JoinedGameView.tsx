@@ -45,6 +45,11 @@ const JoinedGameView = ({
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedJoinedGame.title}</H4>
                 </YStack>
+                <YStack alignItems="center">
+                  <SizableText alignItems="center" padding="$5" size="$4">
+                    by @{selectedJoinedGame.isPublic ? "Public Game" : "Friends Only Game"}
+                  </SizableText>
+                </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>
