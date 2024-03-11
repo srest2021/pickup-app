@@ -57,7 +57,7 @@ export default function App() {
               }}
             >
               <Tab.Screen
-                name="Feed"
+                name="Games Feed"
                 component={FeedNavigator}
                 options={{
                   tabBarLabel: "Feed",
