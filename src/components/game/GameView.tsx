@@ -29,7 +29,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
     // Go back to feed once request is sent.
     navigation.goBack();
   }
-  
+
   return (
     <View>
       {session && session.user && user ? (

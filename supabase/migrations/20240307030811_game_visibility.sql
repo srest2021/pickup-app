@@ -1047,8 +1047,6 @@ begin
   update games 
   set current_players = current_players + 1
   where id = game_id;
-
-  commit;
 end;
 $$ language plpgsql;
 
@@ -1059,8 +1057,6 @@ begin
   -- remove join request from game_requests table
   delete from game_requests
   where game_requests.player_id = reject_join_request.player_id and game_requests.game_id = reject_join_request.game_id;
-
-  commit;
 end;
 $$ language plpgsql;
 
@@ -1076,7 +1072,5 @@ begin
   update games 
   set current_players = current_players - 1
   where id = game_id;
-
-  commit;
 end;
 $$ language plpgsql;

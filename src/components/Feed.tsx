@@ -99,7 +99,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
               <Spinner size="small" color="#ff7403" testID="spinner" />
             )}
 
-            {toggle==="publicGames" ? (
+            {toggle === "publicGames" ? (
               feedGames.length > 0 ? (
                 <YStack space="$5" paddingTop={5} paddingBottom="$5">
                   {feedGames.map((game) => (
@@ -116,12 +116,11 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   <H4>No games nearby</H4>
                 </View>
               )
-            ): (
+            ) : (
               <View className="items-center justify-center flex-1 p-12 text-center">
                 <H4>No friends-only games yet</H4>
               </View>
             )}
-
           </ScrollView>
         </View>
       ) : (

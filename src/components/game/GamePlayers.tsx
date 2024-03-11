@@ -1,40 +1,18 @@
 import { View, ScrollView, Alert } from "react-native";
-import useMutationGame from "../../hooks/use-mutation-game";
-import {
-  Adapt,
-  Button,
-  Label,
-  Input,
-  RadioGroup,
-  Select,
-  Sheet,
-  TextArea,
-  XStack,
-  YStack,
-  Text,
-  H4,
-  H6,
-  Card,
-  SizableText,
-} from "tamagui";
-import { useMemo, useState } from "react";
+import { Label, YStack, Text, H6, Card } from "tamagui";
 import { useStore } from "../../lib/store";
-import { Check, ChevronDown } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
 import { ToastViewport, useToastController } from "@tamagui/toast";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { ToastDemo } from "../Toast";
-import { User, UserSport } from "../../lib/types";
 import AcceptedPlayer from "./AcceptedPlayer";
 import NonAcceptedPlayer from "./NonAcceptedPlayers";
 
 const GamePlayers = ({ navigation }: { navigation: any }) => {
   const [session, selectedMyGame] = useStore((state) => [
     state.session,
-    state.selectedMyGame
+    state.selectedMyGame,
   ]);
 
-  const acceptedPlayers = selectedMyGame?.acceptedPlayers; 
+  const acceptedPlayers = selectedMyGame?.acceptedPlayers;
   const joinRequests = selectedMyGame?.joinRequests;
 
   return (
@@ -49,10 +27,14 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             </Label>
             <Card style={{ width: "100%", height: 240 }} elevate size="$5">
               <ScrollView>
-                {(acceptedPlayers && acceptedPlayers.length > 0) ? (
+                {acceptedPlayers && acceptedPlayers.length > 0 ? (
                   <YStack>
                     {acceptedPlayers.map((user, index) => (
-                      <AcceptedPlayer key={index} user={user} />
+                      <AcceptedPlayer
+                        key={index}
+                        user={user}
+                        gameId={selectedMyGame.id}
+                      />
                     ))}
                   </YStack>
                 ) : (
@@ -68,10 +50,14 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             </Label>
             <Card style={{ width: "100%", height: 240 }} elevate size="$5">
               <ScrollView>
-                {(joinRequests && joinRequests.length > 0) ? (
+                {joinRequests && joinRequests.length > 0 ? (
                   <YStack>
                     {joinRequests.map((user, index) => (
-                      <NonAcceptedPlayer key={index} user={user} />
+                      <NonAcceptedPlayer
+                        key={index}
+                        user={user}
+                        gameId={selectedMyGame.id}
+                      />
                     ))}
                   </YStack>
                 ) : (
