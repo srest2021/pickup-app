@@ -155,10 +155,19 @@ function useQueryGames() {
   const fetchFeedGames = async () => {
     try {
       setLoading(true);
+
+      let lat = 39.3289357; //if no location, for now, default location is charmander marmander
+      let long = -76.6172978;
+
+      if (location != null) {
+        lat = location.coords.latitude;
+        long = location.coords.longitude;
+      }
+
       const { data, error } = await supabase
         .rpc("nearby_games", {
-          lat: 39.3289357,
-          long: -76.6172978,
+          lat: lat,
+          long: long,
         })
         .limit(20);
       if (error) throw error;
