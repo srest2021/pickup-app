@@ -811,7 +811,6 @@ returns table(
       WHERE jg.game_id = g.id
     ) AS accepted_players,
     (
-      
         jsonb_build_object(
           'id', p.id,
           'username', p.username,
@@ -830,7 +829,6 @@ returns table(
             where p.id = s.user_id
           )
         )
-      
       FROM public.profiles AS p
       where p.id = g.organizer_id
     ) as organizer
