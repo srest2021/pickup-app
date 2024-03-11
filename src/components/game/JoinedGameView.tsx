@@ -13,6 +13,7 @@ import {
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import SportSkill from "../SportSkill";
+import useMutationGame from "../../hooks/use-mutation-game";
 
 const JoinedGameView = ({
   navigation,
@@ -25,10 +26,13 @@ const JoinedGameView = ({
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
+  const { leaveJoinedGameById } = useMutationGame();
 
   // Leaving a Joined Game Logic:
   function leaveJoinedGame() {
-    //TODO
+    leaveJoinedGameById(gameId, user!.id);
+    //navigate back to myGames
+    navigation.goBack();
   }
 
   return (
