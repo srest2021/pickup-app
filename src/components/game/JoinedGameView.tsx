@@ -14,6 +14,7 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
+import { Italic } from "@tamagui/lucide-icons";
 
 const JoinedGameView = ({
   navigation,
@@ -46,8 +47,7 @@ const JoinedGameView = ({
                   <H4 textAlign="center">{selectedJoinedGame.title}</H4>
                 </YStack>
                 <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$5" size="$4">
-                    by @
+                  <SizableText alignItems="center" padding="$5" size="$2">
                     {selectedJoinedGame.isPublic
                       ? "Public Game"
                       : "Friends Only Game"}
