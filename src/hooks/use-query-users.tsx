@@ -64,7 +64,22 @@ function useQueryUsers() {
     }
   };
 
-  return { getOtherProfile };
+  const setUserLocation = async () => {
+
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      //setErrorMsg('Permission to access location was denied');
+      console.log("Permission to access location was denied"); //replace with throw error
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
+    console.log(location);
+  
+}
+
+  return { getOtherProfile, setUserLocation };
 }
 
 export default useQueryUsers;
