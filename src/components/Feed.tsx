@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { useEffect, useState } from "react";
+import { View, Text, Alert } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import FeedGameView from "./game/GameThumbnail";
-import { H4, ScrollView, Separator, SizableText, Spinner, Tabs, YStack } from "tamagui";
-import { supabase } from "../lib/supabase";
+import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 
@@ -12,57 +10,68 @@ import { useStore } from "../lib/store";
 // add switch so that you can go between myGame and AllGames
 // PICK A MINWIDTH SO THAT text always shown
 const Feed = ({ navigation }: { navigation: any }) => {
-  const toMyGames = () => {
-    // Figure out a way to switch to MyGames (probably use Store)
-  };
-
   const { fetchFeedGames } = useQueryGames();
-  const feedGames = useStore((state) => state.feedGames);
+  const [session, feedGames] = useStore((state) => [
+    state.session,
+    state.feedGames,
+  ]);
   const [refreshing, setRefreshing] = useState(false);
+  const [toggle, setToggle] = useState("publicGames");
 
   useEffect(() => {
-    fetchFeedGames();
-    //console.log(location);
-  }, []);
+    handleRefresh();
+  }, [toggle]);
 
-  const toJoinedGames = () => {
-    // Figure out how to swtich to AllGames (probably useStore)
-  };
-
-  // can this be its own function somewhere?
   const handleRefresh = async () => {
     setRefreshing(true);
+    if (toggle === "publicGames") {
       try {
         await fetchFeedGames();
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
-        
       }
-    //console.log(feedGames); //delete
+    } else if (toggle === "friendsOnlyGames") {
+      //await fetchFriendsOnlyGames();
+    }
     setRefreshing(false);
   };
 
   // can I use a store?
   return (
-    <View style={styles.container}>
-      <Tabs
-        defaultValue="All Games"
-        orientation="horizontal"
-        flexDirection="column"
-        overflow="hidden"
-      >
-        <Tabs.List disablePassBorderRadius="bottom">
-          {/* <Tabs.Tab value="All Games" onInteraction={toMyGames}> */}
-          <Tabs.Tab value="All Games">
-            <SizableText>All Games </SizableText>
-          </Tabs.Tab>
-          
-          {/* <Tabs.Tab value="JoinedGames" onInteraction={toJoinedGames}> */}
-          <Tabs.Tab value="Friends-Only Games">
-            <SizableText>Friends-Only Games</SizableText>
-          </Tabs.Tab>
-        </Tabs.List>
-        <ScrollView
+    <>
+      {session && session.user ? (
+        <View style={{ flex: 1 }}>
+          <Tabs
+            alignSelf="center"
+            justifyContent="center"
+            flex={0}
+            defaultValue="PublicGames"
+          >
+            <Tabs.List>
+              <Tabs.Tab
+                width={200}
+                testID="public-games"
+                value="PublicGames"
+                onInteraction={() => {
+                  setToggle("publicGames");
+                }}
+              >
+                <Text>Public Games</Text>
+              </Tabs.Tab>
+              <Separator vertical></Separator>
+              <Tabs.Tab
+                width={200}
+                testID="friends-only-games"
+                value="FriendsOnlyGames"
+                onInteraction={() => {
+                  setToggle("friendsOnlyGames");
+                }}
+              >
+                <Text>Friends-Only Games</Text>
+              </Tabs.Tab>
+            </Tabs.List>
+          </Tabs>
+          <ScrollView
             scrollEventThrottle={16}
             showsVerticalScrollIndicator={false}
             onScroll={(e) => {
@@ -78,11 +87,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
             )}
             {feedGames.length > 0 ? (
               <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                {feedGames.map((myGame) => (
+                {feedGames.map((game) => (
                   <GameThumbnail
                     navigation={navigation}
-                    game={myGame}
-                    key={myGame.id}
+                    game={game}
+                    gametype="feed"
+                    key={game.id}
                   />
                 ))}
               </YStack>
@@ -92,23 +102,14 @@ const Feed = ({ navigation }: { navigation: any }) => {
               </View>
             )}
           </ScrollView>
-      </Tabs>
-      
-    
-    </View>
+        </View>
+      ) : (
+        <View className="items-center justify-center flex-1 p-12 text-center">
+          <H4>Loading...</H4>
+        </View>
+      )}
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});
 
 export default Feed;

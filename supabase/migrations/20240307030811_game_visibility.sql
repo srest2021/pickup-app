@@ -769,7 +769,8 @@ returns table(
   current_players bigint, 
   is_public boolean, 
   "dist_meters" double precision,
-  accepted_players jsonb
+  accepted_players jsonb,
+  organizer jsonb
 ) language "sql" as $$
   select 
     g.id, 
@@ -808,7 +809,31 @@ returns table(
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
       WHERE jg.game_id = g.id
-    ) AS accepted_players
+    ) AS accepted_players,
+    (
+      
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            from public.sports as s
+            where p.id = s.user_id
+          )
+        )
+      
+      FROM public.profiles AS p
+      where p.id = g.organizer_id
+    ) as organizer
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id != auth.uid() and g.is_public -- public games from other people
@@ -926,7 +951,8 @@ returns table(
   state text, 
   zip text, 
   "dist_meters" double precision,
-  accepted_players jsonb
+  accepted_players jsonb,
+  organizer jsonb
 ) language "sql" as $$
   select 
     g.id, 
@@ -969,7 +995,30 @@ returns table(
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
       WHERE jg.game_id = g.id
-    ) AS accepted_players
+    ) AS accepted_players,
+    (
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            from public.sports as s
+            where p.id = s.user_id
+          )
+        )
+      
+      FROM public.profiles AS p
+      where p.id = g.organizer_id
+    ) as organizer
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   join public.joined_game as jg on g.id = jg.game_id

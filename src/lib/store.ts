@@ -56,6 +56,8 @@ type Action = {
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
 
+  updateHasRequestedFeedGame: (feedGameId: string) => void;
+
   // joined games
 
   setJoinedGames: (feedGames: JoinedGame[]) => void;

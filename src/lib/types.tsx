@@ -79,11 +79,13 @@ export type MyGame = Game & {
 export type JoinedGame = Game & {
   address: Address;
   acceptedPlayers: User[];
+  organizer: User;
 };
 
 export type FeedGame = Game & {
   hasRequested: boolean;
   acceptedPlayers: User[];
+  organizer: User;
 };
 
 export const sports = [

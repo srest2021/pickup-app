@@ -114,6 +114,7 @@ function useQueryGames() {
             isPublic: game.is_public,
             distanceAway: Math.trunc(Number(game.dist_meters) * 100) / 100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
+            organizer: { ...game.organizer },
           };
           return joinedGame;
         });
@@ -162,6 +163,7 @@ function useQueryGames() {
             distanceAway: Math.trunc(Number(game.dist_meters) * 100) / 100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
             hasRequested: Boolean(game.has_requested),
+            organizer: { ...game.organizer },
           };
           return feedGame;
         });

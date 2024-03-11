@@ -12,11 +12,9 @@ import {
 } from "tamagui";
 import SportSkill from "../SportSkill";
 import { useStore } from "../../lib/store";
-import useQueryUsers from "../../hooks/use-query-users";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { supabase } from "../../lib/supabase";
-import Avatar from "../user/Avatar";
 
 export default function GameThumbnail({
   navigation,
@@ -27,12 +25,15 @@ export default function GameThumbnail({
   game: Game;
   gametype: string;
 }) {
-  const [setSelectedMyGame] = useStore((state) => [state.setSelectedMyGame]);
-  const [setSelectedFeedGame] = useStore((state)=>[state.setSelectedFeedGame]);
-  const [setSelectedJoinedGame] = useStore((state)=>[state.setSelectedJoinedGame]);
-  const [displayName, setDisplayName] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState(''); 
-  const {getOtherProfile} = useQueryUsers();
+  const [user, setSelectedMyGame, setSelectedFeedGame, setSelectedJoinedGame] =
+    useStore((state) => [
+      state.user,
+      state.setSelectedMyGame,
+      state.setSelectedFeedGame,
+      state.setSelectedJoinedGame,
+    ]);
+  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
     hour: "numeric",
@@ -55,35 +56,42 @@ export default function GameThumbnail({
     game.description.length > 100
       ? game.description.substring(0, 100) + "..."
       : game.description;
-  
-      useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const organizer = await getOtherProfile(game.organizerId);
-            if (organizer) {
-              setDisplayName(organizer.displayName);
-              await downloadImage(organizer.avatarUrl);
-            }
-          } catch (error) {
-            Alert.alert("Error getting organizer");
-          }
-        };
-        fetchData();
-      }, []);
 
-      async function downloadImage(path: string) {
-          const { data, error } = await supabase.storage
-            .from("avatars")
-            .download(path);
-          if (error) {
-            throw error;
-          }
-          const fr = new FileReader();
-          fr.readAsDataURL(data);
-          fr.onload = () => {
-            setAvatarUrl(fr.result as string);
-          };
+  useEffect(() => {
+    if (gametype === "my") {
+      setDisplayName(user ? user.displayName : null);
+      user && fetchData(user.avatarUrl);
+    } else {
+      const gameWithOrganizer =
+        gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
+      setDisplayName(gameWithOrganizer.organizer.displayName);
+      gameWithOrganizer.organizer.avatarUrl &&
+        fetchData(gameWithOrganizer.organizer.avatarUrl);
+    }
+  }, []);
+
+  const fetchData = async (avatarPath: string) => {
+    if (avatarPath) {
+      try {
+        await downloadImage(avatarPath);
+      } catch (error) {
+        Alert.alert("Error getting game organizer");
       }
+    }
+  };
+
+  async function downloadImage(path: string) {
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .download(path);
+    if (error) throw error;
+
+    const fr = new FileReader();
+    fr.readAsDataURL(data);
+    fr.onload = () => {
+      setAvatarUrl(fr.result as string);
+    };
+  }
 
   return (
     <View paddingLeft="$5" paddingRight="$5">
@@ -96,26 +104,33 @@ export default function GameThumbnail({
               <H4 testID="game-title">{game.title}</H4>
               <H4 testID="game-date">{date}</H4>
               <H5>{time}</H5>
-              <XStack space='$2' alignItems='center'>
-              {avatarUrl &&( <Image source={{ uri: avatarUrl, width: 35,
-                  height: 35, }} style={{width:35,height:35,borderRadius:17.5}} accessibilityLabel="Avatar"/>)}
-                <Paragraph>@{displayName}</Paragraph>
-              </XStack>
+              {(gametype === "feed" || gametype === "joined") && (
+                <XStack space="$2" alignItems="center">
+                  {avatarUrl && (
+                    <Image
+                      source={{ uri: avatarUrl, width: 35, height: 35 }}
+                      style={{ width: 35, height: 35, borderRadius: 17.5 }}
+                      accessibilityLabel="Avatar"
+                    />
+                  )}
+                  <Paragraph>@{displayName}</Paragraph>
+                </XStack>
+              )}
             </View>
             <View style={{ objectPosition: "absolute" }}>
               <Button
                 style={{ backgroundColor: "#ff7403" }}
                 onPress={() => {
                   const gameId = game.id;
-                  if (gametype === 'my'){
+                  if (gametype === "my") {
                     setSelectedMyGame(game as MyGame);
                     navigation.navigate("MyGameView", { gameId });
-                  } else if (gametype === 'feed'){
+                  } else if (gametype === "feed") {
                     setSelectedFeedGame(game as FeedGame);
-                    navigation.navigate("GameView", {gameId});
-                  } else if (gametype === 'joined'){
+                    navigation.navigate("GameView", { gameId });
+                  } else if (gametype === "joined") {
                     setSelectedJoinedGame(game as JoinedGame);
-                    navigation.navigate("GameView", {gameId});
+                    navigation.navigate("JoinedGameView", { gameId });
                   }
                 }}
               >

@@ -33,6 +33,7 @@ function useQueryUsers() {
         )
         .eq("id", userId)
         .single();
+
       if (error && status !== 406) {
         throw error;
       }
