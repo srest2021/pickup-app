@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MyGames from "./MyGames";
 import MyGameView from "./game/MyGameView";
 import EditGame from "./game/EditGame";
+import JoinedGameView from "./game/JoinedGameView";
 
 export default function MyGamesNavigator() {
   const Stack = createNativeStackNavigator();
@@ -16,6 +17,11 @@ export default function MyGamesNavigator() {
         name="MyGameView"
         component={MyGameView}
         options={{ title: "My Game View", headerShown: true }}
+      />
+      <Stack.Screen
+        name="JoinedGameView"
+        component={JoinedGameView}
+        options={{ title: "Joined Game View", headerShown: true }}
       />
       <Stack.Screen
         name="EditGame"

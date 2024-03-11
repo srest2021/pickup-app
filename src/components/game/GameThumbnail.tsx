@@ -25,13 +25,19 @@ export default function GameThumbnail({
   game: Game;
   gametype: string;
 }) {
-  const [user, setSelectedMyGame, setSelectedFeedGame, setSelectedJoinedGame] =
-    useStore((state) => [
-      state.user,
-      state.setSelectedMyGame,
-      state.setSelectedFeedGame,
-      state.setSelectedJoinedGame,
-    ]);
+  const [
+    user,
+    loading,
+    setSelectedMyGame,
+    setSelectedFeedGame,
+    setSelectedJoinedGame,
+  ] = useStore((state) => [
+    state.user,
+    state.loading,
+    state.setSelectedMyGame,
+    state.setSelectedFeedGame,
+    state.setSelectedJoinedGame,
+  ]);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const datetime = new Date(game.datetime);
@@ -127,14 +133,19 @@ export default function GameThumbnail({
                     navigation.navigate("MyGameView", { gameId });
                   } else if (gametype === "feed") {
                     setSelectedFeedGame(game as FeedGame);
-                    navigation.navigate("GameView", { gameId });
+                    navigation.navigate("GameView", { gameId, displayName });
                   } else if (gametype === "joined") {
                     setSelectedJoinedGame(game as JoinedGame);
-                    navigation.navigate("JoinedGameView", { gameId });
+                    navigation.navigate("JoinedGameView", {
+                      gameId,
+                      displayName,
+                    });
                   }
                 }}
               >
-                <H5 testID="view-button">View</H5>
+                <H5 testID="view-button" disabled={loading}>
+                  View
+                </H5>
               </Button>
             </View>
           </XStack>

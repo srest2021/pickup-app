@@ -62,6 +62,9 @@ dependencies:
   expo-image-picker:
     specifier: ~14.7.1
     version: 14.7.1(expo@50.0.7)
+  expo-location:
+    specifier: ^16.5.5
+    version: 16.5.5(expo@50.0.7)
   expo-status-bar:
     specifier: ~1.11.1
     version: 1.11.1
@@ -7973,6 +7976,17 @@ packages:
     resolution:
       {
         integrity: sha512-uiQdGbSX24Pt8nGbnmBtrKq6xL/Tm3+DuDRGBk/3ZE/HlizzNosGRIufIMJ/4B4FRw4dw8KU81h2RLuTjbay6g==,
+      }
+    peerDependencies:
+      expo: "*"
+    dependencies:
+      expo: 50.0.7(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
+    dev: false
+
+  /expo-location@16.5.5(expo@50.0.7):
+    resolution:
+      {
+        integrity: sha512-dXEd1HaZgdi6yHVF8R+SMnGlKDYrD+Hkkzd/b9edjMSUBLxF2y824AFSSNUf6BVOM53tJBOFEELneXkU1uj9nA==,
       }
     peerDependencies:
       expo: "*"

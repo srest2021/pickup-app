@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { View, Text, Alert } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
+import FeedGameView from "./game/GameThumbnail";
+import {
+  H4,
+  ScrollView,
+  Separator,
+  SizableText,
+  Spinner,
+  Tabs,
+  YStack,
+} from "tamagui";
+import { supabase } from "../lib/supabase";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
+import useQueryUsers from "../hooks/use-query-users";
 
 //
 // add event listener so that page is constantly updating!
@@ -15,17 +26,19 @@ const Feed = ({ navigation }: { navigation: any }) => {
     state.session,
     state.feedGames,
   ]);
+  const { setUserLocation } = useQueryUsers();
   const [refreshing, setRefreshing] = useState(false);
   const [toggle, setToggle] = useState("publicGames");
 
-  useEffect(() => {
-    handleRefresh();
-  }, [toggle]);
+  // useEffect(() => {
+  //   handleRefresh();
+  // }, [toggle]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "publicGames") {
       try {
+        setUserLocation();
         await fetchFeedGames();
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");
@@ -56,7 +69,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   setToggle("publicGames");
                 }}
               >
-                <Text>Public Games</Text>
+                <Text>All Games</Text>
               </Tabs.Tab>
               <Separator vertical></Separator>
               <Tabs.Tab
@@ -85,22 +98,30 @@ const Feed = ({ navigation }: { navigation: any }) => {
             {refreshing && (
               <Spinner size="small" color="#ff7403" testID="spinner" />
             )}
-            {feedGames.length > 0 ? (
-              <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                {feedGames.map((game) => (
-                  <GameThumbnail
-                    navigation={navigation}
-                    game={game}
-                    gametype="feed"
-                    key={game.id}
-                  />
-                ))}
-              </YStack>
-            ) : (
+
+            {toggle==="publicGames" ? (
+              feedGames.length > 0 ? (
+                <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                  {feedGames.map((game) => (
+                    <GameThumbnail
+                      navigation={navigation}
+                      game={game}
+                      gametype="feed"
+                      key={game.id}
+                    />
+                  ))}
+                </YStack>
+              ) : (
+                <View className="items-center justify-center flex-1 p-12 text-center">
+                  <H4>No games nearby</H4>
+                </View>
+              )
+            ): (
               <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No games yet</H4>
+                <H4>No friends-only games yet</H4>
               </View>
             )}
+
           </ScrollView>
         </View>
       ) : (

@@ -17,6 +17,7 @@ function useMutationUser() {
     addUserSport,
     editUserSport,
     setUserSports,
+    setLocation,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -28,6 +29,7 @@ function useMutationUser() {
     state.addUserSport,
     state.editUserSport,
     state.setUserSports,
+    state.setLocation,
   ]);
 
   useEffect(() => {

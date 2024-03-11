@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
 import { UserSport, User, MyGame, JoinedGame, FeedGame } from "./types";
+import * as Location from "expo-location";
 
 type State = {
   session: Session | null;
@@ -18,6 +19,8 @@ type State = {
 
   feedGames: FeedGame[];
   selectedFeedGame: FeedGame | null;
+
+  location: Location.LocationObject | null;
 };
 
 type Action = {
@@ -67,6 +70,10 @@ type Action = {
 
   setSelectedJoinedGame: (joinedGame: JoinedGame) => void;
   clearSelectedJoinedGame: () => void;
+
+  //location
+  setLocation: (location: Location.LocationObject) => void;
+  clearLocation: () => void; //not sure if we'll need this
 };
 
 const initialState: State = {
@@ -80,6 +87,7 @@ const initialState: State = {
   selectedFeedGame: null,
   joinedGames: [],
   selectedJoinedGame: null,
+  location: null,
 };
 
 export const useStore = create<State & Action>()(
@@ -129,7 +137,7 @@ export const useStore = create<State & Action>()(
 
     clearSelectedFeedGame: () => set({ selectedFeedGame: null }),
 
-    updateHasRequestedFeedGame: (feedGameId) => {
+    updateHasRequestedFeedGame: (feedGameId: string) => {
       // updated selected Feed Game
       // ! because if this is being called, selectedFeedGame is not null.
       const updatedSelectedFeedGame = get().selectedFeedGame!;
@@ -148,6 +156,8 @@ export const useStore = create<State & Action>()(
         return game;
       });
       set({ feedGames: updatedMyFeedGames });
+      // Navigates back to feed
+      set({ selectedFeedGame: null });
     },
 
     // my games
@@ -277,5 +287,9 @@ export const useStore = create<State & Action>()(
       set({ selectedJoinedGame: joinedGame }),
 
     clearSelectedJoinedGame: () => set({ selectedJoinedGame: null }),
+
+    setLocation: (location) => set({ location: location }),
+
+    clearLocation: () => set({ location: null }),
   })),
 );
