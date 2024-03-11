@@ -15,6 +15,7 @@ function useMutationGame() {
     rejectJoinRequest,
     removePlayer,
     updateHasRequestedFeedGame,
+    removeJoinedGame,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -26,6 +27,7 @@ function useMutationGame() {
     state.rejectJoinRequest,
     state.removePlayer,
     state.updateHasRequestedFeedGame,
+    state.removeJoinedGame,
   ]);
 
   const createGame = async (
@@ -295,6 +297,33 @@ function useMutationGame() {
     }
   };
 
+  const leaveJoinedGameById = async (gameId: string, playerId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("can_user_leave_game", {
+        game_id: gameId,
+        player_id: playerId,
+      });
+      if (error) console.error(error);
+      else console.log(data);
+
+      //Update Joined Games (remove game)
+      removeJoinedGame(gameId);
+      //Update users in game (remove player)?
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error leaving joined game! Please try again later.");
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     createGame,
     removeMyGameById,
@@ -303,6 +332,7 @@ function useMutationGame() {
     rejectJoinRequestById,
     removePlayerById,
     requestToJoinById,
+    leaveJoinedGameById
   };
 }
 
