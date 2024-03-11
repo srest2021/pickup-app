@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import FeedGameView from "./game/GameThumbnail";
-import { H4, ScrollView, Separator, SizableText, Spinner, Tabs, YStack } from "tamagui";
+import {
+  H4,
+  ScrollView,
+  Separator,
+  SizableText,
+  Spinner,
+  Tabs,
+  YStack,
+} from "tamagui";
 import { supabase } from "../lib/supabase";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
@@ -32,12 +40,11 @@ const Feed = ({ navigation }: { navigation: any }) => {
   // can this be its own function somewhere?
   const handleRefresh = async () => {
     setRefreshing(true);
-      try {
-        await fetchFeedGames();
-      } catch (error) {
-        Alert.alert("Error fetching games! Please try again later.");
-        
-      }
+    try {
+      await fetchFeedGames();
+    } catch (error) {
+      Alert.alert("Error fetching games! Please try again later.");
+    }
     //console.log(feedGames); //delete
     setRefreshing(false);
   };
@@ -56,45 +63,44 @@ const Feed = ({ navigation }: { navigation: any }) => {
           <Tabs.Tab value="All Games">
             <SizableText>All Games </SizableText>
           </Tabs.Tab>
-          
+
           {/* <Tabs.Tab value="JoinedGames" onInteraction={toJoinedGames}> */}
           <Tabs.Tab value="Friends-Only Games">
             <SizableText>Friends-Only Games</SizableText>
           </Tabs.Tab>
         </Tabs.List>
         <ScrollView
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            onScroll={(e) => {
-              const { contentOffset } = e.nativeEvent;
-              if (contentOffset.y < -50 && !refreshing) {
-                handleRefresh();
-              }
-            }}
-            contentContainerStyle={{ paddingTop: 20 }}
-          >
-            {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
-            )}
-            {feedGames.length > 0 ? (
-              <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                {feedGames.map((myGame) => (
-                  <GameThumbnail
-                    navigation={navigation}
-                    game={myGame}
-                    key={myGame.id}
-                  />
-                ))}
-              </YStack>
-            ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No games yet</H4>
-              </View>
-            )}
-          </ScrollView>
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          onScroll={(e) => {
+            const { contentOffset } = e.nativeEvent;
+            if (contentOffset.y < -50 && !refreshing) {
+              handleRefresh();
+            }
+          }}
+          contentContainerStyle={{ paddingTop: 20 }}
+        >
+          {refreshing && (
+            <Spinner size="small" color="#ff7403" testID="spinner" />
+          )}
+          {feedGames.length > 0 ? (
+            <YStack space="$5" paddingTop={5} paddingBottom="$5">
+              {feedGames.map((myGame) => (
+                <GameThumbnail
+                  navigation={navigation}
+                  game={myGame}
+                  gametype="feed"
+                  key={myGame.id}
+                />
+              ))}
+            </YStack>
+          ) : (
+            <View className="items-center justify-center flex-1 p-12 text-center">
+              <H4>No games yet</H4>
+            </View>
+          )}
+        </ScrollView>
       </Tabs>
-      
-    
     </View>
   );
 };
