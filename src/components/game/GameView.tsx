@@ -16,7 +16,7 @@ import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { gameId } = route.params;
+  const { gameId, displayName } = route.params;
 
   const [selectedFeedGame] = useStore((state) => [state.selectedFeedGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
@@ -38,6 +38,13 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
               <YStack>
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedFeedGame.title}</H4>
+                </YStack>
+                <YStack alignItems="center">
+                  <SizableText alignItems="center" padding="$2" size="$2">
+                    {selectedFeedGame.isPublic
+                      ? "Public Game"
+                      : "Friends Only Game"}
+                  </SizableText>
                 </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
@@ -66,7 +73,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <YStack alignItems="center">
                   <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{selectedFeedGame.organizerId}
+                    by @{displayName}
                   </SizableText>
                 </YStack>
 

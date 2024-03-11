@@ -107,7 +107,7 @@ function useQueryGames() {
         lat: lat,
         long: long,
       });
-      
+
       if (error) throw error;
 
       if (data) {

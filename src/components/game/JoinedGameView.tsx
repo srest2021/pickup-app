@@ -14,6 +14,7 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
+import { Italic } from "@tamagui/lucide-icons";
 
 const JoinedGameView = ({
   navigation,
@@ -22,7 +23,7 @@ const JoinedGameView = ({
   navigation: any;
   route: any;
 }) => {
-  const { gameId } = route.params;
+  const { gameId, displayName } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
@@ -44,6 +45,13 @@ const JoinedGameView = ({
               <YStack>
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedJoinedGame.title}</H4>
+                </YStack>
+                <YStack alignItems="center">
+                  <SizableText alignItems="center" padding="$5" size="$2">
+                    {selectedJoinedGame.isPublic
+                      ? "Public Game"
+                      : "Friends Only Game"}
+                  </SizableText>
                 </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
@@ -72,7 +80,7 @@ const JoinedGameView = ({
 
                 <YStack alignItems="center">
                   <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{selectedJoinedGame.organizerId}
+                    by @{displayName}
                   </SizableText>
                 </YStack>
 

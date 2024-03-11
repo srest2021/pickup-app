@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 
 function useQueryUsers() {
   const [session, setLoading, setLocation] = useStore((state) => [
@@ -11,7 +11,6 @@ function useQueryUsers() {
     state.setLoading,
     state.setLocation,
   ]);
-
 
   const getOtherProfile = async (userId: string) => {
     try {
@@ -68,9 +67,8 @@ function useQueryUsers() {
   };
 
   const setUserLocation = async () => {
-
     let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
+    if (status !== "granted") {
       //setErrorMsg('Permission to access location was denied');
       console.log("Permission to access location was denied"); //replace with throw error
       return;
@@ -78,8 +76,7 @@ function useQueryUsers() {
 
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
-  
-}
+  };
 
   return { getOtherProfile, setUserLocation };
 }

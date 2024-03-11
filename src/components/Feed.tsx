@@ -43,13 +43,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
   // can this be its own function somewhere?
   const handleRefresh = async () => {
     setRefreshing(true);
-      try {
-        setUserLocation();
-        await fetchFeedGames();
-      } catch (error) {
-        Alert.alert("Error fetching games! Please try again later.");
-        
-      }
+    try {
+      setUserLocation();
+      await fetchFeedGames();
+    } catch (error) {
+      Alert.alert("Error fetching games! Please try again later.");
+    }
     //console.log(feedGames); //delete
     setRefreshing(false);
   };
