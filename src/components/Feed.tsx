@@ -6,6 +6,7 @@ import { H4, ScrollView, Separator, SizableText, Spinner, Tabs, YStack } from "t
 import { supabase } from "../lib/supabase";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
+import useQueryUsers from "../hooks/use-query-users";
 
 //
 // add event listener so that page is constantly updating!
@@ -17,10 +18,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
   };
 
   const { fetchFeedGames } = useQueryGames();
+  const { setUserLocation } = useQueryUsers();
   const feedGames = useStore((state) => state.feedGames);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    setUserLocation();
     fetchFeedGames();
     //console.log(location);
   }, []);
@@ -33,6 +36,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
       try {
+        setUserLocation();
         await fetchFeedGames();
       } catch (error) {
         Alert.alert("Error fetching games! Please try again later.");

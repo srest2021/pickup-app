@@ -3,12 +3,15 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
+import * as Location from 'expo-location';
 
 function useQueryUsers() {
-  const [session, setLoading] = useStore((state) => [
+  const [session, setLoading, setLocation] = useStore((state) => [
     state.session,
     state.setLoading,
+    state.setLocation,
   ]);
+
 
   const getOtherProfile = async (userId: string) => {
     try {
@@ -75,7 +78,6 @@ function useQueryUsers() {
 
     let location = await Location.getCurrentPositionAsync({});
     setLocation(location);
-    console.log(location);
   
 }
 
