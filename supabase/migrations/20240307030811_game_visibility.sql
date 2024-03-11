@@ -768,6 +768,7 @@ returns table(
   max_players bigint, 
   current_players bigint, 
   is_public boolean, 
+  has_requested boolean,
   "dist_meters" double precision,
   accepted_players jsonb,
   organizer jsonb
@@ -783,6 +784,11 @@ returns table(
     g.max_players, 
     g.current_players, 
     g.is_public, 
+    auth.uid() in (
+      select player_id 
+      from game_requests
+      where game_requests.game_id = g.id
+    ) as has_requested,
     st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
     (
       SELECT jsonb_agg(
@@ -811,6 +817,7 @@ returns table(
       WHERE jg.game_id = g.id
     ) AS accepted_players,
     (
+      select
         jsonb_build_object(
           'id', p.id,
           'username', p.username,

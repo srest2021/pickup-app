@@ -14,6 +14,7 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
+import { useEffect } from "react";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, displayName } = route.params;
@@ -28,7 +29,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
     // Go back to feed once request is sent.
     navigation.goBack();
   }
-
+  
   return (
     <View>
       {session && session.user && user ? (

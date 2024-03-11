@@ -281,6 +281,7 @@ function useMutationGame() {
           },
         ])
         .select();
+      console.log("requested to join game: ",data,error)
       if (error) throw error;
 
       // update hasRequested for selectedFeedGame and feed games

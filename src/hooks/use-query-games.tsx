@@ -130,7 +130,7 @@ function useQueryGames() {
             } as GameSport,
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
-            isPublic: game.is_public,
+            isPublic: Boolean(game.is_public),
             distanceAway: Math.trunc(Number(game.dist_meters) * 100) / 100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
             organizer: { ...game.organizer },
@@ -187,10 +187,10 @@ function useQueryGames() {
             } as GameSport,
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
-            isPublic: game.is_public,
+            isPublic: Boolean(game.is_public),
             distanceAway: Math.trunc(Number(game.dist_meters) * 100) / 100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
-            hasRequested: game.has_requested,
+            hasRequested: Boolean(game.has_requested),
             organizer: { ...game.organizer },
           };
           return feedGame;

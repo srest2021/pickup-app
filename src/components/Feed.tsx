@@ -30,9 +30,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [toggle, setToggle] = useState("publicGames");
 
-  // useEffect(() => {
-  //   handleRefresh();
-  // }, [toggle]);
+  useEffect(() => {
+    handleRefresh();
+  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);
