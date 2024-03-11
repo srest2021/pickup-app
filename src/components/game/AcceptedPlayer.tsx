@@ -22,9 +22,7 @@ const AcceptedPlayer = ({ index, user }: { index: any; user: any }) => {
         <Text fontSize={20} index={index} marginRight={30}>
           {user.username}
         </Text>
-        <Button icon={X} style={{ backgroundColor: "red", color: "white" }}>
-          {" "}
-        </Button>
+        <Button icon={X} style={{ backgroundColor: "red", color: "white" }}/>
       </XStack>
     </View>
   );

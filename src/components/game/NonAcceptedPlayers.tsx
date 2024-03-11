@@ -25,15 +25,11 @@ const NonAcceptedPlayer = ({ index, user }: { index: any; user: any }) => {
         <Button
           icon={X}
           style={{ backgroundColor: "red", color: "white", marginRight: 10 }}
-        >
-          {" "}
-        </Button>
+        />
         <Button
           icon={Check}
           style={{ backgroundColor: "green", color: "white" }}
-        >
-          {" "}
-        </Button>
+        />
       </XStack>
     </View>
   );
