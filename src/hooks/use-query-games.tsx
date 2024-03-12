@@ -93,7 +93,8 @@ function useQueryGames() {
   const fetchJoinedGames = async () => {
     try {
       setLoading(true);
-      if (!session?.user) throw new Error("Please sign in to view games");
+      if (!session?.user)
+        throw new Error("Please sign in to view joined games");
 
       let lat = 39.3289357; //if no location, for now, default location is charmander marmander
       let long = -76.6172978;
@@ -103,7 +104,7 @@ function useQueryGames() {
         long = location.coords.longitude;
       }
 
-      const { data, error } = await supabase.rpc("my_games", {
+      const { data, error } = await supabase.rpc("joined_games", {
         lat: lat,
         long: long,
       });
@@ -130,9 +131,10 @@ function useQueryGames() {
             } as GameSport,
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
-            isPublic: game.is_public,
+            isPublic: Boolean(game.is_public),
             distanceAway: Math.trunc(Number(game.dist_meters) * 100) / 100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
+            organizer: { ...game.organizer },
           };
           return joinedGame;
         });
@@ -186,10 +188,11 @@ function useQueryGames() {
             } as GameSport,
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
-            isPublic: game.is_public,
+            isPublic: Boolean(game.is_public),
             distanceAway: Math.trunc(Number(game.dist_meters) * 100) / 100,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
             hasRequested: Boolean(game.has_requested),
+            organizer: { ...game.organizer },
           };
           return feedGame;
         });

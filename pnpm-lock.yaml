@@ -6054,6 +6054,17 @@ packages:
       expo: 50.0.7(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
     dev: false
 
+  /expo-location@16.5.5(expo@50.0.7):
+    resolution:
+      {
+        integrity: sha512-dXEd1HaZgdi6yHVF8R+SMnGlKDYrD+Hkkzd/b9edjMSUBLxF2y824AFSSNUf6BVOM53tJBOFEELneXkU1uj9nA==,
+      }
+    peerDependencies:
+      expo: "*"
+    dependencies:
+      expo: 50.0.7(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
+    dev: false
+
   /expo-manifests@0.13.2(expo@50.0.7):
     resolution: {integrity: sha512-l0Sia1WmLULx8V41K8RzGLsFoTe4qqthPRGpHjItsYn8ZB6lRrdTBM9OYp2McIflgqN1HAimUCQMFIwJyH+UmA==}
     peerDependencies:

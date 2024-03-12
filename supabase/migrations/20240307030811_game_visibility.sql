@@ -768,8 +768,10 @@ returns table(
   max_players bigint, 
   current_players bigint, 
   is_public boolean, 
+  has_requested boolean,
   "dist_meters" double precision,
-  accepted_players jsonb
+  accepted_players jsonb,
+  organizer jsonb
 ) language "sql" as $$
   select 
     g.id, 
@@ -782,6 +784,11 @@ returns table(
     g.max_players, 
     g.current_players, 
     g.is_public, 
+    auth.uid() in (
+      select player_id 
+      from game_requests
+      where game_requests.game_id = g.id
+    ) as has_requested,
     st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
     (
       SELECT jsonb_agg(
@@ -808,7 +815,30 @@ returns table(
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
       WHERE jg.game_id = g.id
-    ) AS accepted_players
+    ) AS accepted_players,
+    (
+      select
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            from public.sports as s
+            where p.id = s.user_id
+          )
+        )
+      FROM public.profiles AS p
+      where p.id = g.organizer_id
+    ) as organizer
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id != auth.uid() and g.is_public -- public games from other people
@@ -901,7 +931,7 @@ returns table(
       )
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
-      WHERE jg.game_id = g.id
+      WHERE jg.game_id = g.id and jg.player_id != auth.uid()
     ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
@@ -926,7 +956,8 @@ returns table(
   state text, 
   zip text, 
   "dist_meters" double precision,
-  accepted_players jsonb
+  accepted_players jsonb,
+  organizer jsonb
 ) language "sql" as $$
   select 
     g.id, 
@@ -969,7 +1000,30 @@ returns table(
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
       WHERE jg.game_id = g.id
-    ) AS accepted_players
+    ) AS accepted_players,
+    (
+        jsonb_build_object(
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'bio', p.bio,
+          'avatarUrl', p.avatar_url,
+          'sports', (
+            SELECT jsonb_agg(
+              jsonb_build_object(
+                'id', s.id,
+                'sport', s.name,
+                'skillLevel', s.skill_level
+              )
+            )
+            from public.sports as s
+            where p.id = s.user_id
+          )
+        )
+      
+      FROM public.profiles AS p
+      where p.id = g.organizer_id
+    ) as organizer
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   join public.joined_game as jg on g.id = jg.game_id
@@ -993,8 +1047,6 @@ begin
   update games 
   set current_players = current_players + 1
   where id = game_id;
-
-  commit;
 end;
 $$ language plpgsql;
 
@@ -1005,8 +1057,6 @@ begin
   -- remove join request from game_requests table
   delete from game_requests
   where game_requests.player_id = reject_join_request.player_id and game_requests.game_id = reject_join_request.game_id;
-
-  commit;
 end;
 $$ language plpgsql;
 
@@ -1022,7 +1072,5 @@ begin
   update games 
   set current_players = current_players - 1
   where id = game_id;
-
-  commit;
 end;
 $$ language plpgsql;

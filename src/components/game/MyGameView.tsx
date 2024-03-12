@@ -22,7 +22,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
-  const [session, user] = useStore((state) => [state.session, state.user]);
+  const [session, user, loading] = useStore((state) => [
+    state.session,
+    state.user,
+    state.loading,
+  ]);
   const { removeMyGameById } = useMutationGame();
 
   function deleteGame() {
@@ -133,10 +137,16 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     onPress={() => {
                       navigation.navigate("EditGame", { gameId });
                     }}
+                    disabled={loading}
                   >
                     Edit
                   </Button>
-                  <Button theme="active" flex={1} onPress={() => deleteGame()}>
+                  <Button
+                    theme="active"
+                    flex={1}
+                    onPress={() => deleteGame()}
+                    disabled={loading}
+                  >
                     Delete
                   </Button>
                 </XStack>

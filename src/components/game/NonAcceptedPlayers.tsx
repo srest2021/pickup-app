@@ -14,26 +14,50 @@ import GameThumbnail from "./GameThumbnail";
 import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
 import { Check, Delete, X } from "@tamagui/lucide-icons";
+import { User } from "../../lib/types";
+import useMutationGame from "../../hooks/use-mutation-game";
 
-const NonAcceptedPlayer = ({ index, user }: { index: any; user: any }) => {
+const NonAcceptedPlayer = ({
+  user,
+  gameId,
+  maxPlayers,
+  currentPlayers,
+}: {
+  user: User;
+  gameId: string;
+  currentPlayers: number;
+  maxPlayers: number;
+}) => {
+  const { acceptJoinRequestById, rejectJoinRequestById } = useMutationGame();
+
+  const handleAccept = async () => {
+    if (currentPlayers + 1 > maxPlayers) {
+      Alert.alert("This game is already full!");
+      return;
+    }
+    await acceptJoinRequestById(gameId, user.id);
+  };
+
+  const handleReject = async () => {
+    await rejectJoinRequestById(gameId, user.id);
+  };
+
   return (
     <View margin={10}>
       <XStack>
-        <Text fontSize={20} index={index} marginRight={30}>
+        <Text fontSize={20} marginRight={30}>
           {user.username}
         </Text>
         <Button
           icon={X}
           style={{ backgroundColor: "red", color: "white", marginRight: 10 }}
-        >
-          {" "}
-        </Button>
+          onPress={() => handleReject()}
+        />
         <Button
           icon={Check}
           style={{ backgroundColor: "green", color: "white" }}
-        >
-          {" "}
-        </Button>
+          onPress={() => handleAccept()}
+        />
       </XStack>
     </View>
   );

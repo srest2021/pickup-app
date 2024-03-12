@@ -18,7 +18,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
 
   useEffect(() => {
     handleRefresh();
-  }, [myGamesToggle]);
+  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -97,18 +97,16 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 </View>
               )
             ) : joinedGames.length > 0 ? (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                  {joinedGames.map((joinedGame) => (
-                    <GameThumbnail
-                      navigation={navigation}
-                      game={joinedGame}
-                      gametype="joined"
-                      key={joinedGame.id}
-                    />
-                  ))}
-                </YStack>
-              </View>
+              <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                {joinedGames.map((joinedGame) => (
+                  <GameThumbnail
+                    navigation={navigation}
+                    game={joinedGame}
+                    gametype="joined"
+                    key={joinedGame.id}
+                  />
+                ))}
+              </YStack>
             ) : (
               <View className="items-center justify-center flex-1 p-12 text-center">
                 <H4>No joined games yet</H4>
