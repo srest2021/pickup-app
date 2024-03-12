@@ -189,7 +189,7 @@ function useQueryGames() {
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
             isPublic: Boolean(game.is_public),
-            distanceAway: Math.trunc(Number(game.dist_meters) * 100) / 100,
+            distanceAway: Number(game.dist_meters),
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
             hasRequested: Boolean(game.has_requested),
             organizer: { ...game.organizer },
