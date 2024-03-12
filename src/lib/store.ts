@@ -199,69 +199,57 @@ export const useStore = create<State & Action>()(
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
     acceptJoinRequest: (gameId, playerId) => {
+      // find player object in join requests
       const newPlayer = get()
         .myGames.find((game) => game.id === gameId)
         ?.joinRequests.find((user) => user.id === playerId);
 
+      // update myGames
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === gameId) {
+          // remove player object from join requests
           myGame.joinRequests = myGame.joinRequests.filter(
             (user) => user.id != playerId,
           );
-          if (newPlayer) myGame.acceptedPlayers.push(newPlayer);
+          // add player object to acceptedPlayers and increment count
+          if (newPlayer) {
+            myGame.currentPlayers += 1;
+            myGame.acceptedPlayers.push(newPlayer);
+          }
+          set({ selectedMyGame: { ...myGame } });
         }
         return myGame;
       });
       set({ myGames: updatedMyGames });
-
-      let updatedGame = get().selectedMyGame;
-      if (updatedGame && updatedGame.id === gameId) {
-        updatedGame.joinRequests = updatedGame.joinRequests.filter(
-          (user) => user.id != playerId,
-        );
-        if (newPlayer) updatedGame.acceptedPlayers.push(newPlayer);
-        set({ selectedMyGame: updatedGame });
-      }
     },
 
     rejectJoinRequest: (gameId, playerId) => {
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === gameId) {
+          // remove player object from join requests
           myGame.joinRequests = myGame.joinRequests.filter(
             (user) => user.id != playerId,
           );
+          set({ selectedMyGame: { ...myGame } });
         }
         return myGame;
       });
       set({ myGames: updatedMyGames });
-
-      let updatedGame = get().selectedMyGame;
-      if (updatedGame && updatedGame.id === gameId) {
-        updatedGame.joinRequests = updatedGame.joinRequests.filter(
-          (user) => user.id != playerId,
-        );
-        set({ selectedMyGame: updatedGame });
-      }
     },
 
     removePlayer: (gameId, playerId) => {
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === gameId) {
-          myGame.acceptedPlayers = myGame.joinRequests.filter(
+          // remove player object from accepted players
+          myGame.acceptedPlayers = myGame.acceptedPlayers.filter(
             (user) => user.id != playerId,
           );
+          myGame.currentPlayers -= 1;
+          set({ selectedMyGame: { ...myGame } });
         }
         return myGame;
       });
       set({ myGames: updatedMyGames });
-
-      let updatedGame = get().selectedMyGame;
-      if (updatedGame && updatedGame.id === gameId) {
-        updatedGame.acceptedPlayers = updatedGame.joinRequests.filter(
-          (user) => user.id != playerId,
-        );
-        set({ selectedMyGame: updatedGame });
-      }
     },
 
     // joined games

@@ -23,7 +23,10 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
         <YStack style={{ flex: 1 }}>
           <YStack style={{ flex: 1, alignItems: "center" }}>
             <Label size={5}>
-              <H6>Accepted Players</H6>
+              <H6>
+                Accepted Players ({selectedMyGame?.currentPlayers}/
+                {selectedMyGame?.maxPlayers})
+              </H6>
             </Label>
             <Card style={{ width: "100%", height: 240 }} elevate size="$5">
               <ScrollView>
@@ -57,6 +60,8 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
                         key={index}
                         user={user}
                         gameId={selectedMyGame.id}
+                        currentPlayers={selectedMyGame.currentPlayers}
+                        maxPlayers={selectedMyGame.maxPlayers}
                       />
                     ))}
                   </YStack>

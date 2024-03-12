@@ -20,13 +20,21 @@ import useMutationGame from "../../hooks/use-mutation-game";
 const NonAcceptedPlayer = ({
   user,
   gameId,
+  maxPlayers,
+  currentPlayers,
 }: {
   user: User;
   gameId: string;
+  currentPlayers: number;
+  maxPlayers: number;
 }) => {
   const { acceptJoinRequestById, rejectJoinRequestById } = useMutationGame();
 
   const handleAccept = async () => {
+    if (currentPlayers + 1 > maxPlayers) {
+      Alert.alert("This game is already full!");
+      return;
+    }
     await acceptJoinRequestById(gameId, user.id);
   };
 

@@ -179,6 +179,7 @@ function useMutationGame() {
           distanceAway: Number(data["row"].f15),
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
+        return myUpdatedGame;
       } else {
         throw new Error("Error editing game! Please try again later.");
       }
@@ -281,7 +282,6 @@ function useMutationGame() {
           },
         ])
         .select();
-      console.log("requested to join game: ", data, error);
       if (error) throw error;
 
       // update hasRequested for selectedFeedGame and feed games
@@ -307,8 +307,7 @@ function useMutationGame() {
         game_id: gameId,
         player_id: playerId,
       });
-      if (error) console.error(error);
-      else console.log(data);
+      if (error) throw error;
 
       //Update Joined Games (remove game)
       removeJoinedGame(gameId);
