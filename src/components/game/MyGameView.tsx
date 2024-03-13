@@ -17,6 +17,7 @@ import SportSkill from "../SportSkill";
 import useQueryGames from "../../hooks/use-query-games";
 import { useEffect } from "react";
 import GamePlayers from "./GamePlayers";
+import { Eye, EyeOff } from '@tamagui/lucide-icons'
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;

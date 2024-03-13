@@ -32,7 +32,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
 
   return (
     <>
-      {session && session.user ? (
+      {/* {session && session.user ? ( */}
         <View style={{ flex: 1 }}>
           <Tabs
             alignSelf="center"
@@ -114,11 +114,11 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             )}
           </ScrollView>
         </View>
-      ) : (
+      {/* ) : (
         <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Loading...</H4>
         </View>
-      )}
+      )} */}
     </>
   );
 };

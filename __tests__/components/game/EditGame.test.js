@@ -31,10 +31,12 @@ const mockSelectedMyGame = {
   datetime: new Date(
     "Sun Mar 13 2025 15:42:33 GMT+0000 (Coordinated Universal Time)",
   ),
-  address: "3339 North Charles St",
-  city: "Baltimore",
-  state: "MD",
-  zip: "21218",
+  street: {
+    street: "3339 North Charles St",
+    city: "Baltimore",
+    state: "MD",
+    zip: "21218",
+  },
   sport: mockSport,
   maxPlayers: 20,
   description: "Test Description",
