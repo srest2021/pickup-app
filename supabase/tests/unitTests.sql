@@ -1,5 +1,5 @@
 begin;
-select plan( 58 );
+select plan( 56 );
 
 -- table existence
 select has_table('games');
