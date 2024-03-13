@@ -1002,6 +1002,7 @@ returns table(
       WHERE jg.game_id = g.id
     ) AS accepted_players,
     (
+      select
         jsonb_build_object(
           'id', p.id,
           'username', p.username,
