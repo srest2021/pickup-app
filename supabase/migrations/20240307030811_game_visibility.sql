@@ -308,12 +308,12 @@ alter table game_locations
   
 create policy "Users can access location if they've joined the game." on game_locations
   for select using (true);
-  (
-    auth.uid() in (
-      select player_id from joined_game
-      where joined_game.game_id = game_locations.game_id
-    )
-);
+--   (
+--     auth.uid() in (
+--       select player_id from joined_game
+--       where joined_game.game_id = game_locations.game_id
+--     )
+-- );
 
 create or replace function can_user_insert_and_update_location(game_id "uuid")
 returns boolean AS $$
