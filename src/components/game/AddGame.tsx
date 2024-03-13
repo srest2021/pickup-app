@@ -128,7 +128,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       //   message: "Game added.",
       // });
       clearGameAttributes();
-      navigation.navigate("MyGames");
+      navigation.navigate("My Games", { screen: "MyGames" });
     }
   };
 

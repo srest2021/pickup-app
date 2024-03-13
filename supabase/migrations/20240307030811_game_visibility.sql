@@ -307,12 +307,13 @@ alter table game_locations
   enable row level security;
   
 create policy "Users can access location if they've joined the game." on game_locations
-  for select using (
-    auth.uid() in (
-      select player_id from joined_game
-      where joined_game.game_id = game_locations.game_id
-    )
-);
+  for select using (true);
+--   (
+--     auth.uid() in (
+--       select player_id from joined_game
+--       where joined_game.game_id = game_locations.game_id
+--     )
+-- );
 
 create or replace function can_user_insert_and_update_location(game_id "uuid")
 returns boolean AS $$
@@ -1002,6 +1003,7 @@ returns table(
       WHERE jg.game_id = g.id
     ) AS accepted_players,
     (
+      select
         jsonb_build_object(
           'id', p.id,
           'username', p.username,
