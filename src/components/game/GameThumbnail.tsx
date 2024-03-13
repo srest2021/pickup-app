@@ -157,7 +157,7 @@ export default function GameThumbnail({
           style={{ flex: 0.5 }}
         >
           <Paragraph fontWeight="600" fontSize="$6">
-            {Math.trunc(Number(game.distanceAway) * 100) / 100} miles away
+            {game.distanceAway} miles away
           </Paragraph>
           <Paragraph
             fontWeight="500"

@@ -22,9 +22,10 @@ import useQueryUsers from "../hooks/use-query-users";
 // PICK A MINWIDTH SO THAT text always shown
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
-  const [session, feedGames] = useStore((state) => [
+  const [session, feedGames, location] = useStore((state) => [
     state.session,
     state.feedGames,
+    state.location
   ]);
   const { setUserLocation } = useQueryUsers();
   const [refreshing, setRefreshing] = useState(false);
@@ -33,6 +34,10 @@ const Feed = ({ navigation }: { navigation: any }) => {
   useEffect(() => {
     handleRefresh();
   }, []);
+
+  // useEffect(() => {
+  //   handleRefresh();
+  // }, [location]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -53,7 +58,8 @@ const Feed = ({ navigation }: { navigation: any }) => {
   return (
     <>
       {session && session.user ? (
-        <View style={{ flex: 1 }}>
+        // location ? (
+          <View style={{ flex: 1 }}>
           <Tabs
             alignSelf="center"
             justifyContent="center"
@@ -123,6 +129,11 @@ const Feed = ({ navigation }: { navigation: any }) => {
             )}
           </ScrollView>
         </View>
+        // ) : (
+        //   <View className="items-center justify-center flex-1 p-12 text-center">
+        //     <H4>Allow location permissions to view games near you!</H4>
+        //   </View>
+        // )
       ) : (
         <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Loading...</H4>
