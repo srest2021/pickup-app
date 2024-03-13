@@ -29,10 +29,12 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   ]);
   const { removeMyGameById } = useMutationGame();
 
-  function deleteGame() {
-    removeMyGameById(gameId);
+  const deleteGame = async () => {
+    const removedId = await removeMyGameById(gameId);
     // navigate back to myGames list.
-    navigation.goBack();
+    if (removedId) {
+      navigation.goBack();
+    }
     // TODO: Add success toast
   }
 
@@ -139,7 +141,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     }}
                     disabled={loading}
                   >
-                    Edit
+                    {loading ? "Loading..." : "Edit"}
                   </Button>
                   <Button
                     theme="active"
@@ -147,7 +149,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     onPress={() => deleteGame()}
                     disabled={loading}
                   >
-                    Delete
+                    {loading ? "Loading..." : "Delete"}
                   </Button>
                 </XStack>
               </YStack>
