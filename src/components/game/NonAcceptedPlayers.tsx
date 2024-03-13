@@ -1,19 +1,8 @@
-import {
-  YStack,
-  ScrollView,
-  H4,
-  Spinner,
-  Separator,
-  XStack,
-  Button,
-} from "tamagui";
+import { XStack, Button } from "tamagui";
 import { Alert, View } from "react-native";
-import useQueryGames from "../../hooks/use-query-games";
-import { Tabs, Text } from "tamagui";
-import GameThumbnail from "./GameThumbnail";
+import { Text } from "tamagui";
 import { useStore } from "../../lib/store";
-import { useEffect, useState } from "react";
-import { Check, Delete, X } from "@tamagui/lucide-icons";
+import { Check, X, Loader } from "@tamagui/lucide-icons";
 import { User } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
 
@@ -28,6 +17,7 @@ const NonAcceptedPlayer = ({
   currentPlayers: number;
   maxPlayers: number;
 }) => {
+  const [loading] = useStore((state) => [state.loading]);
   const { acceptJoinRequestById, rejectJoinRequestById } = useMutationGame();
 
   const handleAccept = async () => {
@@ -49,12 +39,14 @@ const NonAcceptedPlayer = ({
           {user.username}
         </Text>
         <Button
-          icon={X}
+          icon={loading ? Loader : X}
+          disabled={loading}
           style={{ backgroundColor: "red", color: "white", marginRight: 10 }}
           onPress={() => handleReject()}
         />
         <Button
-          icon={Check}
+          icon={loading ? Loader : Check}
+          disabled={loading}
           style={{ backgroundColor: "green", color: "white" }}
           onPress={() => handleAccept()}
         />

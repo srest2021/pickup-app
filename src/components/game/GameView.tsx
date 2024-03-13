@@ -17,9 +17,12 @@ import useMutationGame from "../../hooks/use-mutation-game";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, displayName } = route.params;
-
-  const [selectedFeedGame] = useStore((state) => [state.selectedFeedGame]);
-  const [session, user] = useStore((state) => [state.session, state.user]);
+  const [session, user, loading, selectedFeedGame] = useStore((state) => [
+    state.session,
+    state.user,
+    state.loading,
+    state.selectedFeedGame,
+  ]);
   const { requestToJoinById } = useMutationGame();
 
   // Request to Join Game Logic:
@@ -128,9 +131,11 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     flex={1}
                     onPress={() => requestToJoinGame()}
                   >
-                    {selectedFeedGame.hasRequested
-                      ? "Requested"
-                      : "Request to Join"}
+                    {loading
+                      ? "Requesting..."
+                      : selectedFeedGame.hasRequested
+                        ? "Requested"
+                        : "Request to Join"}
                   </Button>
                 </XStack>
               </YStack>

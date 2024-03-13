@@ -2,25 +2,23 @@ import {
   Adapt,
   Button,
   Dialog,
-  Fieldset,
-  Input,
   Label,
-  Paragraph,
   Sheet,
-  TooltipSimple,
   Unspaced,
   XStack,
   RadioGroup,
   YStack,
   Select,
 } from "tamagui";
-import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
+import { Check, ChevronDown, Plus, Loader } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
 import { useState, useMemo } from "react";
+import { useStore } from "../../lib/store";
 
 const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
   const [skillLevel, setSkillLevel] = useState("0");
   const [sportName, setSportName] = useState(sports[0].name);
+  const [loading] = useStore((state) => [state.loading]);
 
   const handleSave = () => {
     onSportSelect(sportName, convertSkillLevel());
@@ -41,13 +39,14 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
       <Dialog.Trigger asChild>
         <Button
           size="$3"
-          icon={Plus}
+          icon={loading ? Loader : Plus}
           color="#ff7403"
           borderColor="#ff7403"
           variant="outlined"
+          disabled={loading}
           style={{ alignSelf: "flex-start" }}
         >
-          Add Sport
+          {loading ? "Loading" : "Add Sport"}
         </Button>
       </Dialog.Trigger>
 

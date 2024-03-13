@@ -423,13 +423,16 @@ $$ language plpgsql;
 create policy "Organizers of a game can access that game's join requests." on game_requests
   for select using (can_user_select_or_delete_requests(game_id));
 
-create policy "Players cannot add multiple pending join requests for the same game." on game_requests
-  for insert with check (
-    not exists (
-      select player_id from game_requests
-      where game_requests.game_id = game_id and game_requests.player_id = auth.uid()
-    )
-  );
+-- create policy "Players cannot add multiple pending join requests for the same game." on game_requests
+--   for insert with check (
+--     not exists (
+--       select player_id from game_requests
+--       where game_requests.game_id = game_id and game_requests.player_id = auth.uid()
+--     )
+--   );
+
+create policy "Players can request to join a game." on game_requests
+  for insert with check (player_id = auth.uid());
 
 create policy "Users cannot update existing join requests." on game_requests
   for update with check (false);
