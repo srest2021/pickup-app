@@ -21,7 +21,7 @@ describe("GamesThumbnail", () => {
     }; // Mock game object
     const { root } = render(
       <TamaguiProvider config={appConfig}>
-        <GameThumbnail navigation={navigation} game={game} />
+        <GameThumbnail navigation={navigation} game={game} gametype="my" />
       </TamaguiProvider>,
     );
     expect(root).toBeTruthy();
@@ -38,7 +38,7 @@ describe("GamesThumbnail", () => {
     }; // Mock game object
     const { root } = render(
       <TamaguiProvider config={appConfig}>
-        <GameThumbnail navigation={navigation} game={game} />
+        <GameThumbnail navigation={navigation} game={game} gametype="my" />
       </TamaguiProvider>,
     );
     await waitFor(() => {
@@ -62,7 +62,7 @@ describe("GamesThumbnail", () => {
       maxPlayers: 10,
     }; // Mock game object
     const { root } = render(
-      <GameThumbnail navigation={navigation} game={game} />,
+      <GameThumbnail navigation={navigation} game={game} gametype="my" />,
     );
     const viewButton = screen.getByTestId("view-button");
     fireEvent.press(viewButton);
@@ -80,7 +80,7 @@ describe("GamesThumbnail", () => {
       maxPlayers: 10,
     }; // Mock game object
     const { root } = render(
-      <GameThumbnail navigation={navigation} game={game} />,
+      <GameThumbnail navigation={navigation} game={game} gametype="my"/>,
     );
     const imageComponent = screen.getByTestId("game-thumbnail-image");
     const expectedImageComponent = {

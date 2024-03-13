@@ -51,7 +51,7 @@ describe("MyGames", () => {
     });
   });
 
-  jest.mock("../../../src/components/game/MyGames", () => ({
+  jest.mock("../../../src/components/MyGames", () => ({
     __esModule: true,
     default: () => ({
       refreshing: true,

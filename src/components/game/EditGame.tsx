@@ -147,7 +147,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     <View className="p-12">
       <ToastViewport />
       <ToastDemo />
-      {user ? (
+      {/* {user ? ( */}
         <ScrollView
           contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
@@ -433,9 +433,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             </YStack>
           </YStack>
         </ScrollView>
-      ) : (
+      {/* ) : (
         <Text>Log in to edit an existing game!</Text>
-      )}
+      )} */}
     </View>
   );
 };

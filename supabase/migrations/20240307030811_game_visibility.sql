@@ -841,7 +841,7 @@ returns table(
     ) as organizer
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
-  where g.organizer_id != auth.uid() and g.is_public -- public games from other people
+  where g.organizer_id != auth.uid() and g.is_public
   order by gl.loc <-> st_point(long, lat)::geography;
 $$;
 
