@@ -15,6 +15,7 @@ import { supabase } from "../lib/supabase";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import useQueryUsers from "../hooks/use-query-users";
+import FeedFilter from "./FeedFilter";
 
 //
 // add event listener so that page is constantly updating!
@@ -82,6 +83,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
               >
                 <Text>Friends-Only Games</Text>
               </Tabs.Tab>
+              <FeedFilter/>
             </Tabs.List>
           </Tabs>
           <ScrollView
