@@ -307,7 +307,8 @@ alter table game_locations
   enable row level security;
   
 create policy "Users can access location if they've joined the game." on game_locations
-  for select using (
+  for select using (true);
+  (
     auth.uid() in (
       select player_id from joined_game
       where joined_game.game_id = game_locations.game_id
