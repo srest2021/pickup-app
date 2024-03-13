@@ -12,6 +12,23 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
 
+jest.mock("../../../src/hooks/use-query-games", () => ({
+  __esModule: true,
+  default: () => ({
+    myGames: [],
+    fetchMyGames: jest.fn(),
+    fetchAllGames: jest.fn(),
+    fetchJoinedGames: jest.fn(),
+  }),
+}));
+
+jest.mock("../../../src/components/game/MyGames", () => ({
+  __esModule: true,
+  default: () => ({
+    refreshing: true,
+  }),
+}));
+
 describe("MyGames", () => {
   test("renders MyGames component without crashing", async () => {
     const navigation = {}; // Mock navigation object
@@ -20,52 +37,47 @@ describe("MyGames", () => {
         <MyGames navigation={navigation} />
       </TamaguiProvider>,
     );
-    await waitFor(() => {
-      expect(root).toBeTruthy();
+    await act(async () => {
+      await waitFor(() => {
+        expect(root).toBeTruthy();
+      });
     });
+    
   });
 
-  jest.mock("../../../src/hooks/use-query-games", () => ({
-    __esModule: true,
-    default: () => ({
-      myGames: [],
-      fetchMyGames: jest.fn(),
-      fetchAllGames: jest.fn(),
-    }),
-  }));
+  
+test("toggles between My Games and Joined Games tabs", async () => {
+  const navigation = {}; // Mock navigation object
+  const { getByTestId } = render(
+    <TamaguiProvider config={appConfig}>
+      <MyGames navigation={navigation} />
+    </TamaguiProvider>,
+  );
 
-  test("toggles between My Games and Joined Games tabs", async () => {
+  const joinedGamesTab = getByTestId("joined-games");
+  const myGamesTab = getByTestId("my-games");
+
+  act(() => {
+    fireEvent.press(joinedGamesTab);
+    fireEvent.press(myGamesTab);
+  });
+
+  const { fetchMyGames, fetchJoinedGames } = require("../../../src/hooks/use-query-games");
+
+  expect(fetchJoinedGames).toHaveBeenCalled();
+  expect(fetchMyGames).toHaveBeenCalled();
+
+  test("Spinner displays properly on refresh", async () => {
     const navigation = {}; // Mock navigation object
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <MyGames navigation={navigation} />
       </TamaguiProvider>,
     );
-
-    const joinedGamesTab = screen.getByTestId("joined-games"); //getByText("Joined Games");
-    const myGamesTab = screen.getByTestId("my-games"); //getByText("Joined Games");
-
-    act(() => {
-      fireEvent.press(joinedGamesTab);
-      fireEvent.press(myGamesTab);
+    await act(async() => {
+      const spinner = screen.getByTestId("spinner");
+      expect(spinner).toBeTruthy();
     });
+    
   });
-
-  jest.mock("../../../src/components/game/MyGames", () => ({
-    __esModule: true,
-    default: () => ({
-      refreshing: true,
-    }),
-  }));
-
-  test("Spinner displays properly on refresh", () => {
-    const navigation = {}; // Mock navigation object
-    const { root } = render(
-      <TamaguiProvider config={appConfig}>
-        <MyGames navigation={navigation} />
-      </TamaguiProvider>,
-    );
-    const spinner = screen.getByTestId("spinner");
-    expect(spinner).toBeTruthy();
-  });
-});
+})});
