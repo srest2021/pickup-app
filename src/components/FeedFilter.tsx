@@ -1,16 +1,14 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, Picker, StyleSheet, GestureResponderEvent } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, GestureResponderEvent } from 'react-native';
 import { Adapt, Dialog, Label, RadioGroup, Select, Sheet, Slider, XStack, YStack, Button } from 'tamagui';
 import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../lib/types";
 import { useStore } from '../lib/store';
 
 
-const FeedFilter = (props) => {
+const FeedFilter = (props: { handleRefresh: () => void; }) => {
   const [distance, setDistance] = useState(15);
-  const [sport, setSport] = useState('soccer');
-  const [skillLevel, setSkillLevel] = useState("0");
-  const [sportName, setSportName] = useState(sports[0].name);
+  const [skillLevel, setSkillLevel] = useState("-1");
   const [
             setFilterSport,
             setFilterDist,
@@ -26,13 +24,14 @@ const FeedFilter = (props) => {
                 state.filterDist,
                 state.filterLevel,
              ])
+  const [sport, setSport] = filterSport === null ? useState('any') : useState(filterSport);
 
 
-  const handleSportChange = (value: string) => {
+  const handleSportChange = (value) => {
     setSport(value);
   };
 
-  const handleSkillLevelChange = (value: string) => {
+  const handleSkillLevelChange = (value) => {
     setSkillLevel(value);
   };
 
@@ -41,12 +40,21 @@ const FeedFilter = (props) => {
     setDistance(value[0]); // Update distance to the start of the range
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     //TODO implement
-    setFilterSport(sport);
-    setFilterDist(distance);
-    setFilterLevel(skillLevel);
-    props.handleRefresh();
+    
+    console.log(`distance: ${distance}`);
+    console.log(`sport: ${sport}`);
+    console.log(`skillLevel: ${skillLevel}`);
+    await new Promise<void>((resolve) => {
+        sport === "any" ?  setFilterSport(null) : setFilterSport(sport);
+        setFilterDist(distance);
+        skillLevel === "-1" ? setFilterLevel(null) : setFilterLevel(skillLevel);
+        resolve();
+      });
+      props.handleRefresh();
+    
+    
   }
 
   return (
@@ -91,7 +99,7 @@ const FeedFilter = (props) => {
       
       <Text style={styles.label}>Distance: {distance} miles</Text>
       <Slider
-        size="$4" width={200} defaultValue={[15]} max={30} step={1}
+        size="$4" width={200} defaultValue={[filterDist]} max={30} step={1}
         onValueChange={handleDistanceChange}
       >
         <Slider.Track>
@@ -102,8 +110,8 @@ const FeedFilter = (props) => {
       
       <Text style={styles.label}>Sport:</Text>
       <Select
-            value={sportName}
-            onValueChange={(selectedSport) => setSportName(selectedSport)}
+            value={sport}
+            onValueChange={(selectedSport) => setSport(selectedSport)}
           >
             <Select.Trigger iconAfter={ChevronDown}>
               <Select.Value placeholder="Select a sport..." />
@@ -139,6 +147,9 @@ const FeedFilter = (props) => {
               <Select.Viewport>
                 <Select.Group>
                   <Select.Label>Sports</Select.Label>
+                  <Select.Item index={-1} value={"any"}>
+                    <Select.ItemText>all sports</Select.ItemText>
+                    </Select.Item>
                   {useMemo(
                     () =>
                       sports.map((sport, i) => {
@@ -172,12 +183,27 @@ const FeedFilter = (props) => {
           <Label width={160} justifyContent="flex-end">
             <RadioGroup
               aria-labelledby="Select one item"
-              defaultValue="3"
+              defaultValue={filterLevel == null ? "-1" : filterLevel}
               name="form"
-              value={skillLevel}
+              value={skillLevel == null ? "-1" : skillLevel}
               onValueChange={setSkillLevel}
             >
               <YStack width={300} alignItems="center" space="$3">
+                <XStack width={300} alignItems="center" space="$4">
+                <RadioGroup.Item
+                value={"-1"} // Set value to null to represent "None" or "Unselected"
+                id={`skill-level-any`}
+                size={2}
+                >
+                <RadioGroup.Indicator />
+                </RadioGroup.Item>
+                <Label
+                size={2}
+                //htmlFor={`skill-level-none`}
+                >
+                {"All Skill Levels"} 
+                </Label>
+                 </XStack>
                 <XStack width={300} alignItems="center" space="$4">
                   <RadioGroup.Item
                     value={"0"}

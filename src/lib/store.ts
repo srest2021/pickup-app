@@ -80,9 +80,9 @@ type Action = {
   clearLocation: () => void; //not sure if we'll need this
 
   //feed filters
-  setFilterSport: (sport: string) => void;
+  setFilterSport: (sport: string | null) => void;
   setFilterDist: (dist: number) => void;
-  setFilterLevel: (level: string) => void;
+  setFilterLevel: (level: string | null) => void;
 };
 
 const initialState: State = {
@@ -292,8 +292,11 @@ export const useStore = create<State & Action>()(
 
     clearLocation: () => set({ location: null }),
 
-    setFilterSport: (sport: string) => set({filterSport: sport }),
+    setFilterSport: (sport: string | null) => {
+        console.log(`store changed to ${sport}`)
+        set({ filterSport: sport });
+    },
     setFilterDist: (dist: number) => set({ filterDist: dist }),
-    setFilterLevel: (level: string) => set({filterLevel: level}),
+    setFilterLevel: (level: string | null ) => set({filterLevel: level}),
   })),
 );

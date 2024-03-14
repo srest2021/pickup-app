@@ -15,6 +15,9 @@ function useQueryGames() {
     setJoinedGames,
     clearJoinedGames,
     location,
+    filterSport,
+    filterDist,
+    filterLevel,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -26,16 +29,19 @@ function useQueryGames() {
     state.setJoinedGames,
     state.clearJoinedGames,
     state.location,
+    state.filterSport,
+    state.filterDist,
+    state.filterLevel,
   ]);
 
   const fetchMyGames = async () => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
-
+      
       let lat = 39.3289357; //if no location, for now, default location is charmander marmander
       let long = -76.6172978;
-
+      
       if (location != null) {
         lat = location.coords.latitude;
         long = location.coords.longitude;
@@ -160,6 +166,10 @@ function useQueryGames() {
 
       let lat = 39.3289357; //if no location, for now, default location is charmander marmander
       let long = -76.6172978;
+
+      console.log(filterSport);
+      console.log(filterDist);
+      console.log(filterLevel);
 
       if (location != null) {
         lat = location.coords.latitude;
