@@ -14,8 +14,6 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
-import useQueryGames from "../../hooks/use-query-games";
-import { useEffect } from "react";
 import GamePlayers from "./GamePlayers";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
@@ -36,7 +34,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
       navigation.goBack();
     }
     // TODO: Add success toast
-  }
+  };
 
   return (
     <View>

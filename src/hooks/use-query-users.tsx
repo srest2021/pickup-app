@@ -1,8 +1,7 @@
 import { useStore } from "../lib/store";
-import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { SkillLevel, User, UserSport } from "../lib/types";
+import { User, UserSport } from "../lib/types";
 import * as Location from "expo-location";
 
 function useQueryUsers() {
@@ -70,16 +69,39 @@ function useQueryUsers() {
   const setUserLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      //setErrorMsg('Permission to access location was denied');
-      console.log("Permission to access location was denied"); //replace with throw error
-      return;
+      return {
+        location: null,
+        error1: new Error("Permission to access location was denied"),
+      };
     }
 
     let location = await Location.getCurrentPositionAsync({});
+    if (!location) {
+      return { location: null, error1: new Error("Error getting location") };
+    }
+
     setLocation(location);
   };
 
-  return { getOtherProfile, setUserLocation };
+  const getUserLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      return {
+        location: null,
+        error1: new Error("Permission to access location was denied"),
+      };
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    if (!location) {
+      return { location: null, error1: new Error("Error getting location") };
+    }
+
+    setLocation(location);
+    return { location, error1: null };
+  };
+
+  return { getOtherProfile, setUserLocation, getUserLocation };
 }
 
 export default useQueryUsers;

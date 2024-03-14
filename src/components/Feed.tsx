@@ -22,31 +22,26 @@ import useQueryUsers from "../hooks/use-query-users";
 // PICK A MINWIDTH SO THAT text always shown
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
-  const [session, feedGames, location] = useStore((state) => [
+  const [session, feedGames] = useStore((state) => [
     state.session,
     state.feedGames,
-    state.location
   ]);
-  const { setUserLocation } = useQueryUsers();
   const [refreshing, setRefreshing] = useState(false);
+  const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("publicGames");
 
   useEffect(() => {
     handleRefresh();
   }, []);
 
-  // useEffect(() => {
-  //   handleRefresh();
-  // }, [location]);
-
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "publicGames") {
-      try {
-        setUserLocation();
-        await fetchFeedGames();
-      } catch (error) {
-        Alert.alert("Error fetching games! Please try again later.");
+      const games = await fetchFeedGames();
+      if (!games) {
+        setHasLocation(false);
+      } else {
+        setHasLocation(true);
       }
     } else if (toggle === "friendsOnlyGames") {
       //await fetchFriendsOnlyGames();
@@ -54,86 +49,85 @@ const Feed = ({ navigation }: { navigation: any }) => {
     setRefreshing(false);
   };
 
-  // can I use a store?
   return (
     <>
       {session && session.user ? (
-        // location ? (
+        hasLocation ? (
           <View style={{ flex: 1 }}>
-          <Tabs
-            alignSelf="center"
-            justifyContent="center"
-            flex={0}
-            defaultValue="PublicGames"
-          >
-            <Tabs.List>
-              <Tabs.Tab
-                width={200}
-                testID="public-games"
-                value="PublicGames"
-                onInteraction={() => {
-                  setToggle("publicGames");
-                }}
-              >
-                <Text>All Games</Text>
-              </Tabs.Tab>
-              <Separator vertical></Separator>
-              <Tabs.Tab
-                width={200}
-                testID="friends-only-games"
-                value="FriendsOnlyGames"
-                onInteraction={() => {
-                  setToggle("friendsOnlyGames");
-                }}
-              >
-                <Text>Friends-Only Games</Text>
-              </Tabs.Tab>
-            </Tabs.List>
-          </Tabs>
-          <ScrollView
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            onScroll={(e) => {
-              const { contentOffset } = e.nativeEvent;
-              if (contentOffset.y < -50 && !refreshing) {
-                handleRefresh();
-              }
-            }}
-            contentContainerStyle={{ paddingTop: 20 }}
-          >
-            {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
-            )}
+            <Tabs
+              alignSelf="center"
+              justifyContent="center"
+              flex={0}
+              defaultValue="PublicGames"
+            >
+              <Tabs.List>
+                <Tabs.Tab
+                  width={200}
+                  testID="public-games"
+                  value="PublicGames"
+                  onInteraction={() => {
+                    setToggle("publicGames");
+                  }}
+                >
+                  <Text>All Games</Text>
+                </Tabs.Tab>
+                <Separator vertical></Separator>
+                <Tabs.Tab
+                  width={200}
+                  testID="friends-only-games"
+                  value="FriendsOnlyGames"
+                  onInteraction={() => {
+                    setToggle("friendsOnlyGames");
+                  }}
+                >
+                  <Text>Friends-Only Games</Text>
+                </Tabs.Tab>
+              </Tabs.List>
+            </Tabs>
+            <ScrollView
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              onScroll={(e) => {
+                const { contentOffset } = e.nativeEvent;
+                if (contentOffset.y < -50 && !refreshing) {
+                  handleRefresh();
+                }
+              }}
+              contentContainerStyle={{ paddingTop: 20 }}
+            >
+              {refreshing && (
+                <Spinner size="small" color="#ff7403" testID="spinner" />
+              )}
 
-            {toggle === "publicGames" ? (
-              feedGames.length > 0 ? (
-                <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                  {feedGames.map((game) => (
-                    <GameThumbnail
-                      navigation={navigation}
-                      game={game}
-                      gametype="feed"
-                      key={game.id}
-                    />
-                  ))}
-                </YStack>
+              {toggle === "publicGames" ? (
+                feedGames.length > 0 ? (
+                  <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                    {feedGames.map((game) => (
+                      <GameThumbnail
+                        navigation={navigation}
+                        game={game}
+                        gametype="feed"
+                        key={game.id}
+                      />
+                    ))}
+                  </YStack>
+                ) : (
+                  <View className="items-center justify-center flex-1 p-12 text-center">
+                    <H4>No games nearby</H4>
+                  </View>
+                )
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No games nearby</H4>
+                  <H4>No friends-only games yet</H4>
                 </View>
-              )
-            ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No friends-only games yet</H4>
-              </View>
-            )}
-          </ScrollView>
-        </View>
-        // ) : (
-        //   <View className="items-center justify-center flex-1 p-12 text-center">
-        //     <H4>Allow location permissions to view games near you!</H4>
-        //   </View>
-        // )
+              )}
+            </ScrollView>
+          </View>
+        ) : (
+          <View className="items-center justify-center flex-1 p-12 text-center">
+            <H4>Allow location permissions to view games near you!</H4>
+          </View>
+        )
       ) : (
         <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Loading...</H4>
