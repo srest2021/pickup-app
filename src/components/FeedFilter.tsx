@@ -3,28 +3,50 @@ import { View, Text, Picker, StyleSheet, GestureResponderEvent } from 'react-nat
 import { Adapt, Dialog, Label, RadioGroup, Select, Sheet, Slider, XStack, YStack, Button } from 'tamagui';
 import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../lib/types";
+import { useStore } from '../lib/store';
 
 
-const FeedFilter = () => {
-  const [distance, setDistance] = useState(0);
+const FeedFilter = (props) => {
+  const [distance, setDistance] = useState(15);
   const [sport, setSport] = useState('soccer');
   const [skillLevel, setSkillLevel] = useState("0");
   const [sportName, setSportName] = useState(sports[0].name);
+  const [
+            setFilterSport,
+            setFilterDist,
+            setFilterLevel,
+            filterSport,
+            filterDist,
+            filterLevel,
+             ] = useStore((state) => [
+                state.setFilterSport,
+                state.setFilterDist,
+                state.setFilterLevel,
+                state.filterSport,
+                state.filterDist,
+                state.filterLevel,
+             ])
 
-  const handleDistanceChange = (value) => {
-    setDistance(value);
-  };
 
-  const handleSportChange = (value) => {
+  const handleSportChange = (value: string) => {
     setSport(value);
   };
 
-  const handleSkillLevelChange = (value) => {
+  const handleSkillLevelChange = (value: string) => {
     setSkillLevel(value);
+  };
+
+
+  const handleDistanceChange = (value: number[]) => {
+    setDistance(value[0]); // Update distance to the start of the range
   };
 
   const handleSave = () => {
     //TODO implement
+    setFilterSport(sport);
+    setFilterDist(distance);
+    setFilterLevel(skillLevel);
+    props.handleRefresh();
   }
 
   return (
@@ -38,6 +60,7 @@ const FeedFilter = () => {
         >
           Filter
         </Button>
+        </Dialog.Trigger>
 
         <Adapt when="sm" platform="touch">
         <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
@@ -52,7 +75,7 @@ const FeedFilter = () => {
         </Sheet>
       </Adapt>
 
-      </Dialog.Trigger>
+      
       
       <Dialog.Portal>
       
@@ -68,13 +91,14 @@ const FeedFilter = () => {
       
       <Text style={styles.label}>Distance: {distance} miles</Text>
       <Slider
-        style={styles.slider}
-        //minimumValue={0}
-        //maximumValue={100}
-        step={1}
-        value={[0, distance]}
+        size="$4" width={200} defaultValue={[15]} max={30} step={1}
         onValueChange={handleDistanceChange}
-      />
+      >
+        <Slider.Track>
+      <Slider.TrackActive />
+    </Slider.Track>
+    <Slider.Thumb circular index={0} />
+  </Slider>
       
       <Text style={styles.label}>Sport:</Text>
       <Select

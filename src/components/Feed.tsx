@@ -83,7 +83,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
               >
                 <Text>Friends-Only Games</Text>
               </Tabs.Tab>
-              <FeedFilter/>
+              <FeedFilter handleRefresh={handleRefresh}/>
             </Tabs.List>
           </Tabs>
           <ScrollView
