@@ -1,20 +1,10 @@
 import { useEffect, useState } from "react";
-import { View, Text, Alert } from "react-native";
+import { View, Text } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import FeedGameView from "./game/GameThumbnail";
-import {
-  H4,
-  ScrollView,
-  Separator,
-  SizableText,
-  Spinner,
-  Tabs,
-  YStack,
-} from "tamagui";
-import { supabase } from "../lib/supabase";
+import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
-import useQueryUsers from "../hooks/use-query-users";
+import FeedFilter from "./FeedFilter";
 
 //
 // add event listener so that page is constantly updating!
@@ -56,13 +46,14 @@ const Feed = ({ navigation }: { navigation: any }) => {
           <View style={{ flex: 1 }}>
             <Tabs
               alignSelf="center"
-              justifyContent="center"
+              justifyContent="space-between"
               flex={0}
               defaultValue="PublicGames"
             >
               <Tabs.List>
+                <FeedFilter handleRefresh={handleRefresh} />
                 <Tabs.Tab
-                  width={200}
+                  //width={150}
                   testID="public-games"
                   value="PublicGames"
                   onInteraction={() => {
@@ -73,7 +64,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
                 <Separator vertical></Separator>
                 <Tabs.Tab
-                  width={200}
+                  //width={150}
                   testID="friends-only-games"
                   value="FriendsOnlyGames"
                   onInteraction={() => {

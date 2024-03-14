@@ -21,6 +21,10 @@ type State = {
   selectedFeedGame: FeedGame | null;
 
   location: Location.LocationObject | null;
+
+  filterSport: string | null;
+  filterDist: number;
+  filterLevel: string | null;
 };
 
 type Action = {
@@ -74,6 +78,15 @@ type Action = {
   //location
   setLocation: (location: Location.LocationObject) => void;
   clearLocation: () => void; //not sure if we'll need this
+
+  //feed filters
+  setFilterSport: (sport: string | null) => void;
+  setFilterDist: (dist: number) => void;
+  setFilterLevel: (level: string | null) => void;
+
+  getFilterSport: () => string | null;
+  getFilterDist: () => number;
+  getFilterLevel: () => string | null;
 };
 
 const initialState: State = {
@@ -88,6 +101,9 @@ const initialState: State = {
   joinedGames: [],
   selectedJoinedGame: null,
   location: null,
+  filterSport: null,
+  filterDist: 15,
+  filterLevel: null,
 };
 
 export const useStore = create<State & Action>()(
@@ -279,5 +295,19 @@ export const useStore = create<State & Action>()(
     setLocation: (location) => set({ location: location }),
 
     clearLocation: () => set({ location: null }),
+
+    setFilterSport: (sport: string | null) => set({ filterSport: sport }),
+    setFilterDist: (dist: number) => set({ filterDist: dist }),
+    setFilterLevel: (level: string | null) => set({ filterLevel: level }),
+
+    getFilterSport: () => {
+      return get().filterSport;
+    },
+    getFilterDist: () => {
+      return get().filterDist;
+    },
+    getFilterLevel: () => {
+      return get().filterLevel;
+    },
   })),
 );

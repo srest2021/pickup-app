@@ -126,7 +126,11 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
-                    theme="active"
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
                     disabled={selectedFeedGame.hasRequested ? true : false}
                     flex={1}
                     onPress={() => requestToJoinGame()}

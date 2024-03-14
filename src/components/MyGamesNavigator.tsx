@@ -11,12 +11,31 @@ export default function MyGamesNavigator() {
       <Stack.Screen
         name="MyGames"
         component={MyGames}
-        options={{ title: "My Games", headerShown: true }}
+        options={{
+          title: "My Games",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+        }}
       />
       <Stack.Screen
         name="MyGameView"
         component={MyGameView}
-        options={{ title: "My Game View", headerShown: true }}
+        options={{
+          title: "My Game View",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+          headerTintColor: "#ffffff",
+        }}
       />
       <Stack.Screen
         name="JoinedGameView"
@@ -26,7 +45,16 @@ export default function MyGamesNavigator() {
       <Stack.Screen
         name="EditGame"
         component={EditGame}
-        options={{ title: "Edit Game", headerShown: true }}
+        options={{
+          title: "Edit Game",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+        }}
       />
     </Stack.Navigator>
   );

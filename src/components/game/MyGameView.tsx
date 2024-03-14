@@ -132,7 +132,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
-                    theme="active"
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
                     flex={1}
                     onPress={() => {
                       navigation.navigate("EditGame", { gameId });
@@ -142,7 +146,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     {loading ? "Loading..." : "Edit"}
                   </Button>
                   <Button
-                    theme="active"
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
                     flex={1}
                     onPress={() => deleteGame()}
                     disabled={loading}
