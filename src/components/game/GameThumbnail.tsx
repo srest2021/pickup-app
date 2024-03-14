@@ -143,9 +143,7 @@ export default function GameThumbnail({
                   }
                 }}
               >
-                <H5 testID="view-button" disabled={loading}>
-                  View
-                </H5>
+                <H5 testID="view-button" style={{ color: '#ffffff' }}>View</H5>
               </Button>
             </View>
           </XStack>
