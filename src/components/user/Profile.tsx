@@ -126,6 +126,7 @@ export default function Profile({ navigation }: { navigation: any }) {
               size="$5"
               color="#ff7403"
               borderColor="#ff7403"
+              backgroundColor={'#ffffff'}
               width="100%"
             >
               Log Out

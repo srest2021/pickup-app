@@ -43,8 +43,9 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
           size="$3"
           icon={Plus}
           color="#ff7403"
-          borderColor="#ff7403"
           variant="outlined"
+          borderColor="#ff7403"
+          backgroundColor={'#ffffff'}
           style={{ alignSelf: "flex-start" }}
         >
           Add Sport

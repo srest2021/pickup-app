@@ -7,19 +7,19 @@ export default function SportSkill({ sport }: { sport: Sport }) {
   return (
     <XStack space="$1.5" alignItems="center">
       <Circle
-        size={8}
+        size={10}
         borderColor={"black"}
         borderWidth={1}
         backgroundColor={color1}
       ></Circle>
       <Circle
-        size={8}
+        size={10}
         borderColor={"black"}
         borderWidth={1}
         backgroundColor={color2}
       ></Circle>
       <Circle
-        size={8}
+        size={10}
         borderColor={"black"}
         borderWidth={1}
         backgroundColor={color3}

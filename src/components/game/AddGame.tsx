@@ -137,9 +137,10 @@ const AddGame = ({ navigation }: { navigation: any }) => {
           showsVerticalScrollIndicator={false}
         >
           <YStack space="$4" paddingBottom="$4">
+            <Label> * indicates required fields </Label>
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
-                Title
+                Title*
               </Label>
               <Input
                 flex={1}
@@ -153,7 +154,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
-                Date
+                Date*
               </Label>
               <DateTimePicker
                 value={date}
@@ -169,7 +170,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
-                Time
+                Time*
               </Label>
               <DateTimePicker
                 value={time}
@@ -184,7 +185,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack space="$1">
               <Label size="$5" color={"#08348c"}>
-                Address
+                Address*
               </Label>
               <Input
                 flex={1}
@@ -198,7 +199,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack space="$1">
               <Label size="$5" color={"#08348c"}>
-                City
+                City*
               </Label>
               <Input
                 flex={1}
@@ -212,7 +213,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack space="$1">
               <Label size="$5" color={"#08348c"}>
-                State/ZIP
+                State/ZIP*
               </Label>
               <XStack space="$3">
                 <Input
@@ -237,7 +238,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack>
               <Label size="$5" color={"#08348c"}>
-                Sport
+                Sport*
               </Label>
               <Select value={sport} onValueChange={setSport}>
                 <Select.Trigger iconAfter={ChevronDown}>
@@ -301,7 +302,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack>
               <Label size="$5" color={"#08348c"}>
-                Skill Level
+                Skill Level*
               </Label>
               <RadioGroup
                 aria-labelledby="Select one item"
@@ -367,7 +368,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <XStack space="$4" alignItems="center">
               <Label flex={1} size="$5" width={90} color={"#08348c"}>
-                Player Limit
+                Player Limit*
               </Label>
               <Input
                 flex={1}
@@ -409,12 +410,19 @@ const AddGame = ({ navigation }: { navigation: any }) => {
           </YStack>
         </ScrollView>
       ) : (
-        <View className="p-12 text-center items-center flex-1 justify-center">
+        <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Log in to create a new game!</H4>
         </View>
       )}
     </View>
   );
+};
+
+AddGame.navigationOptions = {
+  headerTitle: "Add Game",
+  headerTitleStyle: {
+    color: "green", // Set the color of the header title to green
+  },
 };
 
 export default AddGame;

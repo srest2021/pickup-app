@@ -68,7 +68,7 @@ export default function GameThumbnail({
                   navigation.navigate("MyGameView", { gameId });
                 }}
               >
-                <H5 testID="view-button">View</H5>
+                <H5 testID="view-button" style={{ color: '#ffffff' }}>View</H5>
               </Button>
             </View>
           </XStack>

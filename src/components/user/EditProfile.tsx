@@ -96,6 +96,7 @@ export default function EditProfile({ navigation }: { navigation: any }) {
               color="#ff7403"
               borderColor="#ff7403"
               variant="outlined"
+              backgroundColor={'#ffffff'}
               disabled={loading}
               onPress={() =>
                 handleUpdate(user.username, displayName, bio, avatarUrl)
