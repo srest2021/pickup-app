@@ -253,7 +253,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               <Label size="$5" color={"#08348c"}>
                 State/ZIP*
               </Label>
-              <XStack space="$3">
                 <Input
                   flex={1}
                   size="$5"
@@ -475,13 +474,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       )}
     </View>
   );
-};
-
-AddGame.navigationOptions = {
-  headerTitle: "Add Game",
-  headerTitleStyle: {
-    color: "green", // Set the color of the header title to green
-  },
 };
 
 export default AddGame;
