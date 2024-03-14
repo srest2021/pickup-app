@@ -18,6 +18,9 @@ function useQueryGames() {
     filterSport,
     filterDist,
     filterLevel,
+    getFilterSport,
+    getFilterDist,
+    getFilterLevel,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -32,6 +35,9 @@ function useQueryGames() {
     state.filterSport,
     state.filterDist,
     state.filterLevel,
+    state.getFilterSport,
+    state.getFilterDist,
+    state.getFilterLevel,
   ]);
 
   const fetchMyGames = async () => {
@@ -167,10 +173,10 @@ function useQueryGames() {
       let lat = 39.3289357; //if no location, for now, default location is charmander marmander
       let long = -76.6172978;
 
-      console.log(filterSport);
-      console.log(filterDist);
-      console.log(filterLevel);
-
+      //backend: use these parameters in nearby_games!
+      const sport = getFilterSport();
+      const dist = getFilterDist();
+      const level = getFilterLevel();
       if (location != null) {
         lat = location.coords.latitude;
         long = location.coords.longitude;

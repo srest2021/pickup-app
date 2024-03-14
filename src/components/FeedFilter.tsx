@@ -27,14 +27,6 @@ const FeedFilter = (props: { handleRefresh: () => void; }) => {
   const [sport, setSport] = filterSport === null ? useState('any') : useState(filterSport);
 
 
-  const handleSportChange = (value) => {
-    setSport(value);
-  };
-
-  const handleSkillLevelChange = (value) => {
-    setSkillLevel(value);
-  };
-
 
   const handleDistanceChange = (value: number[]) => {
     setDistance(value[0]); // Update distance to the start of the range
@@ -43,16 +35,10 @@ const FeedFilter = (props: { handleRefresh: () => void; }) => {
   const handleSave = async () => {
     //TODO implement
     
-    console.log(`distance: ${distance}`);
-    console.log(`sport: ${sport}`);
-    console.log(`skillLevel: ${skillLevel}`);
-    await new Promise<void>((resolve) => {
-        sport === "any" ?  setFilterSport(null) : setFilterSport(sport);
-        setFilterDist(distance);
-        skillLevel === "-1" ? setFilterLevel(null) : setFilterLevel(skillLevel);
-        resolve();
-      });
-      props.handleRefresh();
+    sport === "any" ?  setFilterSport(null) : setFilterSport(sport);
+    setFilterDist(distance);
+    skillLevel === "-1" ? setFilterLevel(null) : setFilterLevel(skillLevel);
+    props.handleRefresh();
     
     
   }
