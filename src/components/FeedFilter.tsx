@@ -43,6 +43,13 @@ const FeedFilter = (props: { handleRefresh: () => void; }) => {
     
   }
 
+  const handleCancel = () => {
+    // Reset state to original values
+    setDistance(filterDist);
+    setSport(filterSport === null ? "any" : filterSport);
+    setSkillLevel(filterLevel === null ? "-1" : filterLevel);
+  }
+
   return (
     <Dialog modal>
         <Dialog.Trigger asChild>
@@ -57,7 +64,7 @@ const FeedFilter = (props: { handleRefresh: () => void; }) => {
         </Dialog.Trigger>
 
         <Adapt when="sm" platform="touch">
-        <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
+        <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom dismissOnOverlayPress={false}>
           <Sheet.Frame padding="$4" gap="$4">
             <Adapt.Contents />
           </Sheet.Frame>
@@ -247,6 +254,13 @@ const FeedFilter = (props: { handleRefresh: () => void; }) => {
             <Dialog.Close displayWhenAdapted asChild>
               <Button theme="active" aria-label="Close" onPress={handleSave}>
                 Save
+              </Button>
+            </Dialog.Close>
+          </XStack>
+          <XStack alignSelf="flex-end" gap="$4">
+            <Dialog.Close displayWhenAdapted asChild>
+              <Button theme="active" aria-label="Cancel" onPress={handleCancel}>
+                Cancel
               </Button>
             </Dialog.Close>
           </XStack>
