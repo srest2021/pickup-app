@@ -32,11 +32,13 @@ export default function Profile({ navigation }: { navigation: any }) {
   ) => {
     // Handle the new sport as needed
     const userSport = await setSport(sportName, sportSkillLevel);
-    if (userSport) {
-      toast.show("Success!", {
-        message: "Sport added.",
-      });
-    }
+    // Comment out this toast, because if you go to My Game View,
+    // it will pop up there as well.
+    // if (userSport) {
+    //   toast.show("Success!", {
+    //     message: "Sport added.",
+    //   });
+    // }
   };
 
   return (

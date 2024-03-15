@@ -16,9 +16,6 @@ function useQueryGames() {
     setJoinedGames,
     clearJoinedGames,
     location,
-    filterSport,
-    filterDist,
-    filterLevel,
     getFilterSport,
     getFilterDist,
     getFilterLevel,
@@ -33,9 +30,6 @@ function useQueryGames() {
     state.setJoinedGames,
     state.clearJoinedGames,
     state.location,
-    state.filterSport,
-    state.filterDist,
-    state.filterLevel,
     state.getFilterSport,
     state.getFilterDist,
     state.getFilterLevel,
@@ -170,14 +164,17 @@ function useQueryGames() {
       if (!location || error1) throw error1;
 
       //backend: use these parameters in nearby_games!
-      const sport = getFilterSport();
-      const dist = getFilterDist();
-      const level = getFilterLevel();
+      const filterSport = getFilterSport();
+      const filterDist = getFilterDist();
+      const filterLevel = getFilterLevel();
 
       const { data, error } = await supabase
         .rpc("nearby_games", {
           lat: location.coords.latitude,
           long: location.coords.longitude,
+          dist_limit: filterDist,
+          sport_filter: filterSport,
+          skill_level_filter: filterLevel,
         })
         .limit(20);
       if (error) throw error;

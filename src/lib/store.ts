@@ -296,9 +296,9 @@ export const useStore = create<State & Action>()(
 
     clearLocation: () => set({ location: null }),
 
-    setFilterSport: (sport: string | null) => set({ filterSport: sport }),
-    setFilterDist: (dist: number) => set({ filterDist: dist }),
-    setFilterLevel: (level: string | null) => set({ filterLevel: level }),
+    setFilterSport: (sport) => set({ filterSport: sport }),
+    setFilterDist: (dist) => set({ filterDist: dist }),
+    setFilterLevel: (level) => set({ filterLevel: level }),
 
     getFilterSport: () => {
       return get().filterSport;
