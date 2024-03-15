@@ -84,9 +84,9 @@ type Action = {
   setFilterDist: (dist: number) => void;
   setFilterLevel: (level: string | null) => void;
 
-  getFilterSport: () => string | null;
-  getFilterDist: () => number;
-  getFilterLevel: () => string | null;
+  // getFilterSport: () => string | null;
+  // getFilterDist: () => number;
+  // getFilterLevel: () => string | null;
 };
 
 const initialState: State = {
@@ -300,14 +300,14 @@ export const useStore = create<State & Action>()(
     setFilterDist: (dist: number) => set({ filterDist: dist }),
     setFilterLevel: (level: string | null) => set({ filterLevel: level }),
 
-    getFilterSport: () => {
-      return get().filterSport;
-    },
-    getFilterDist: () => {
-      return get().filterDist;
-    },
-    getFilterLevel: () => {
-      return get().filterLevel;
-    },
+    // getFilterSport: () => {
+    //   return get().filterSport;
+    // },
+    // getFilterDist: () => {
+    //   return get().filterDist;
+    // },
+    // getFilterLevel: () => {
+    //   return get().filterLevel;
+    // },
   })),
 );
