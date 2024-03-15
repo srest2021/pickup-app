@@ -80,6 +80,7 @@ export default function App() {
                   tabBarIcon: ({ color, size, focused }) => (
                     <GalleryVerticalEnd color={focused ? "grey" : "#ffffff"} />
                   ),
+                  headerShown: false,
                 }}
                 initialParams={{ key: session.user.id }}
               />

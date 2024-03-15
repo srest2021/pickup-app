@@ -42,13 +42,6 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedFeedGame.title}</H4>
                 </YStack>
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$2" size="$2">
-                    {selectedFeedGame.isPublic
-                      ? "Public Game"
-                      : "Friends Only Game"}
-                  </SizableText>
-                </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>
@@ -98,12 +91,21 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 )}
 
                 <YStack space="$4">
+                  <XStack space="$2" alignItems="center">
+                    <Label size="$5" width={90}>
+                      <H6>Status: </H6>
+                    </Label>
+                    <SizableText flex={1} size="$5">
+                      {selectedFeedGame.isPublic ? "public" : "friends-only"}
+                    </SizableText>
+                  </XStack>
+
                   <XStack space="$2" alignItems="left">
                     <Label size="$5" width={90}>
                       <H6>Distance Away:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedFeedGame.distanceAway}`}
+                      {`${selectedFeedGame.distanceAway} miles`}
                     </SizableText>
                   </XStack>
 

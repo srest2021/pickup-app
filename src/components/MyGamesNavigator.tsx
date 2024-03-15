@@ -26,7 +26,7 @@ export default function MyGamesNavigator() {
         name="MyGameView"
         component={MyGameView}
         options={{
-          title: "My Game View",
+          title: "My Game",
           headerShown: true,
           headerStyle: {
             backgroundColor: "#08348c",
@@ -40,7 +40,7 @@ export default function MyGamesNavigator() {
       <Stack.Screen
         name="JoinedGameView"
         component={JoinedGameView}
-        options={{ title: "Joined Game View", headerShown: true }}
+        options={{ title: "Joined Game", headerShown: true }}
       />
       <Stack.Screen
         name="EditGame"

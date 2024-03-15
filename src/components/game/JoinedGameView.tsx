@@ -46,13 +46,6 @@ const JoinedGameView = ({
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedJoinedGame.title}</H4>
                 </YStack>
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$5" size="$2">
-                    {selectedJoinedGame.isPublic
-                      ? "Public Game"
-                      : "Friends Only Game"}
-                  </SizableText>
-                </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>
@@ -102,6 +95,15 @@ const JoinedGameView = ({
                 )}
 
                 <YStack space="$4">
+                  <XStack space="$2" alignItems="center">
+                    <Label size="$5" width={90}>
+                      <H6>Status: </H6>
+                    </Label>
+                    <SizableText flex={1} size="$5">
+                      {selectedJoinedGame.isPublic ? "public" : "friends-only"}
+                    </SizableText>
+                  </XStack>
+
                   <XStack space="$2" alignItems="left">
                     <Label size="$5" width={90}>
                       <H6>Address:</H6>
