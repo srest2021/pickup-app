@@ -8,6 +8,7 @@ import {
     act,
   } from "@testing-library/react-native";
 import NonAcceptedPlayer from "../../../src/components/game/NonAcceptedPlayers";
+import AcceptedPlayer from "../../../src/components/game/AcceptedPlayer";
 import { Alert } from "react-native";
   
 
