@@ -30,6 +30,7 @@
     "@tamagui/config": "^1.90.7",
     "@tamagui/font-inter": "^1.90.7",
     "@tamagui/lucide-icons": "^1.90.7",
+    "@tamagui/slider": "^1.91.4",
     "@tamagui/toast": "^1.90.7",
     "@testing-library/jest-dom": "^6.4.2",
     "burnt": "^0.12.2",

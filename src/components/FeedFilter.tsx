@@ -1,59 +1,70 @@
-import {
-  Adapt,
-  Button,
-  Dialog,
-  Fieldset,
-  Input,
-  Label,
-  Paragraph,
-  Sheet,
-  TooltipSimple,
-  Unspaced,
-  XStack,
-  RadioGroup,
-  YStack,
-  Select,
-} from "tamagui";
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, GestureResponderEvent } from 'react-native';
+import { Adapt, Dialog, Label, RadioGroup, Select, Sheet, Slider, XStack, YStack, Button } from 'tamagui';
 import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
-import { useState, useMemo } from "react";
+import { SkillLevel, sports } from "../lib/types";
+import { useStore } from '../lib/store';
 
-const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
-  const [skillLevel, setSkillLevel] = useState("0");
-  const [sportName, setSportName] = useState(sports[0].name);
 
-  const handleSave = () => {
-    onSportSelect(sportName, convertSkillLevel());
+const FeedFilter = (props: { handleRefresh: () => void; }) => {
+  const [distance, setDistance] = useState(15);
+  const [skillLevel, setSkillLevel] = useState("-1");
+  const [
+            setFilterSport,
+            setFilterDist,
+            setFilterLevel,
+            filterSport,
+            filterDist,
+            filterLevel,
+             ] = useStore((state) => [
+                state.setFilterSport,
+                state.setFilterDist,
+                state.setFilterLevel,
+                state.filterSport,
+                state.filterDist,
+                state.filterLevel,
+             ])
+  const [sport, setSport] = filterSport === null ? useState('any') : useState(filterSport);
+
+
+
+  const handleDistanceChange = (value: number[]) => {
+    setDistance(value[0]); // Update distance to the start of the range
   };
 
-  function convertSkillLevel(): number {
-    if (skillLevel === "0") {
-      return SkillLevel.Beginner;
-    } else if (skillLevel === "1") {
-      return SkillLevel.Intermediate;
-    } else {
-      return SkillLevel.Advanced;
-    }
+  const handleSave = async () => {
+    //TODO implement
+    
+    sport === "any" ?  setFilterSport(null) : setFilterSport(sport);
+    setFilterDist(distance);
+    skillLevel === "-1" ? setFilterLevel(null) : setFilterLevel(skillLevel);
+    props.handleRefresh();
+    
+    
+  }
+
+  const handleCancel = () => {
+    // Reset state to original values
+    setDistance(filterDist);
+    setSport(filterSport === null ? "any" : filterSport);
+    setSkillLevel(filterLevel === null ? "-1" : filterLevel);
   }
 
   return (
     <Dialog modal>
-      <Dialog.Trigger asChild>
+        <Dialog.Trigger asChild>
         <Button
           size="$3"
           icon={Plus}
-          color="#ff7403"
           variant="outlined"
-          borderColor="#ff7403"
-          backgroundColor={'#ffffff'}
           style={{ alignSelf: "flex-start" }}
         >
-          Add Sport
+          Filter
         </Button>
-      </Dialog.Trigger>
+        </Dialog.Trigger>
 
-      <Adapt when="sm" platform="touch">
-        <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
+        <Adapt when="sm" platform="touch">
+        <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom dismissOnOverlayPress={false}>
           <Sheet.Frame padding="$4" gap="$4">
             <Adapt.Contents />
           </Sheet.Frame>
@@ -65,16 +76,11 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
         </Sheet>
       </Adapt>
 
+      
+      
       <Dialog.Portal>
-        <Dialog.Overlay
-          key="overlay"
-          animation="slow"
-          opacity={0.5}
-          enterStyle={{ opacity: 0 }}
-          exitStyle={{ opacity: 0 }}
-        />
-
-        <Dialog.Content
+      
+      <Dialog.Content
           bordered
           elevate
           key="content"
@@ -83,15 +89,22 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
           exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
           gap="$4"
         >
-          <Dialog.Title>Add sport</Dialog.Title>
-
-          <Label width={160} justifyContent="flex-end" htmlFor="name">
-            Select Sport
-          </Label>
-
-          <Select
-            value={sportName}
-            onValueChange={(selectedSport) => setSportName(selectedSport)}
+      
+      <Text style={styles.label}>Distance: {distance} miles</Text>
+      <Slider
+        size="$4" width={200} defaultValue={[filterDist]} max={30} step={1}
+        onValueChange={handleDistanceChange}
+      >
+        <Slider.Track>
+      <Slider.TrackActive />
+    </Slider.Track>
+    <Slider.Thumb circular index={0} />
+  </Slider>
+      
+      <Text style={styles.label}>Sport:</Text>
+      <Select
+            value={sport}
+            onValueChange={(selectedSport) => setSport(selectedSport)}
           >
             <Select.Trigger iconAfter={ChevronDown}>
               <Select.Value placeholder="Select a sport..." />
@@ -127,6 +140,9 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
               <Select.Viewport>
                 <Select.Group>
                   <Select.Label>Sports</Select.Label>
+                  <Select.Item index={-1} value={"any"}>
+                    <Select.ItemText>all sports</Select.ItemText>
+                    </Select.Item>
                   {useMemo(
                     () =>
                       sports.map((sport, i) => {
@@ -150,20 +166,37 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
               <Select.ScrollDownButton />
             </Select.Content>
           </Select>
-
-          <Label width={160} justifyContent="flex-end" htmlFor="name">
+      
+      <Text style={styles.label}>Skill Level:</Text>
+      
+      <Label width={160} justifyContent="flex-end" htmlFor="name">
             Select Skill Level
           </Label>
 
           <Label width={160} justifyContent="flex-end">
             <RadioGroup
               aria-labelledby="Select one item"
-              defaultValue="3"
+              defaultValue={filterLevel == null ? "-1" : filterLevel}
               name="form"
-              value={skillLevel}
+              value={skillLevel == null ? "-1" : skillLevel}
               onValueChange={setSkillLevel}
             >
               <YStack width={300} alignItems="center" space="$3">
+                <XStack width={300} alignItems="center" space="$4">
+                <RadioGroup.Item
+                value={"-1"} // Set value to null to represent "None" or "Unselected"
+                id={`skill-level-any`}
+                size={2}
+                >
+                <RadioGroup.Indicator />
+                </RadioGroup.Item>
+                <Label
+                size={2}
+                //htmlFor={`skill-level-none`}
+                >
+                {"All Skill Levels"} 
+                </Label>
+                 </XStack>
                 <XStack width={300} alignItems="center" space="$4">
                   <RadioGroup.Item
                     value={"0"}
@@ -224,22 +257,35 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
               </Button>
             </Dialog.Close>
           </XStack>
-
-          <Unspaced>
-            <Dialog.Close asChild>
-              <Button
-                position="absolute"
-                top="$3"
-                right="$3"
-                size="$2"
-                circular
-              />
+          <XStack alignSelf="flex-end" gap="$4">
+            <Dialog.Close displayWhenAdapted asChild>
+              <Button theme="active" aria-label="Cancel" onPress={handleCancel}>
+                Cancel
+              </Button>
             </Dialog.Close>
-          </Unspaced>
-        </Dialog.Content>
-      </Dialog.Portal>
+          </XStack>
+          </Dialog.Content>
+          </Dialog.Portal>
+          
     </Dialog>
   );
 };
 
-export default AddSport;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  slider: {
+    marginBottom: 20,
+  },
+  picker: {
+    marginBottom: 20,
+  },
+});
+
+export default FeedFilter;
