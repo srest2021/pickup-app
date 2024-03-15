@@ -177,7 +177,6 @@ function useQueryGames() {
           skill_level_filter: filterLevel,
         })
         .limit(20);
-      console.log(error);
       if (error) throw error;
 
       if (data) {
