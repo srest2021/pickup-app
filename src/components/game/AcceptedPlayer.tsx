@@ -20,7 +20,7 @@ const AcceptedPlayer = ({ user, gameId }: { user: User; gameId: string }) => {
         </Text>
         <Button
           icon={X}
-          data-testid={"remove-button"}
+          testID="remove-button"
           style={{ backgroundColor: "red", color: "white" }}
           onPress={() => handleRemove()}
         />

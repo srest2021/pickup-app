@@ -31,7 +31,7 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             <Card style={{ width: "100%", height: 240 }} elevate size="$5">
               <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack>
+                  <YStack testID='accepted-players-container'>
                     {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer
                         key={index}
@@ -54,7 +54,7 @@ const GamePlayers = ({ navigation }: { navigation: any }) => {
             <Card style={{ width: "100%", height: 240 }} elevate size="$5">
               <ScrollView>
                 {joinRequests && joinRequests.length > 0 ? (
-                  <YStack>
+                  <YStack testID='join-requests-container'>
                     {joinRequests.map((user, index) => (
                       <NonAcceptedPlayer
                         key={index}

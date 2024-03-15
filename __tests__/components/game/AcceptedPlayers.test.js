@@ -10,36 +10,40 @@ import {
 import NonAcceptedPlayer from "../../../src/components/game/NonAcceptedPlayers";
 import AcceptedPlayer from "../../../src/components/game/AcceptedPlayer";
 import { Alert } from "react-native";
+import { TamaguiProvider } from "tamagui";
+import appConfig from "../../../tamagui.config";
   
 
 describe("Accepted/NonAccepted Player",()=>{
 
     jest.mock("../../../src/hooks/use-mutation-game", () => ({
-        __esModule: true,
-        default: () => ({
           removePlayerById: jest.fn(),
           acceptJoinRequestById: jest.fn(),
           rejectJoinRequestById: jest.fn()
-        }),
       }));
 
     test('renders Accepted player button and username', async()=>{
         const user = { id: '1', username: 'TestUser' };
         const gameId = 'gameId';
-        const { getByText, getByTestId } = render(<AcceptedPlayer user={user} gameId={gameId} />);
+        const { getByText, getByTestId } = render(
+        <TamaguiProvider config={appConfig}>
+        <AcceptedPlayer user={user} gameId={gameId} />
+        </TamaguiProvider>
+        );
 
         const usernameElement = getByText('TestUser');
         expect(usernameElement).toBeTruthy();
 
-        const removeButton = getByTestId('remove-button');
+        const removeButton = await getByTestId('remove-button');
         expect(removeButton).toBeTruthy();
 
         act(async ()=>{
             fireEvent.press(removeButton);
             await waitFor(() => {
-                expect(removeUserById).toHaveBeenCalled();
+                expect(removePlayerById).toHaveBeenCalled();
               });
         });
+    });
 
     test('renders non-Accepted player button and username',async()=>{
         const user = { id: '1', username: 'TestUser' };
@@ -51,10 +55,10 @@ describe("Accepted/NonAccepted Player",()=>{
         const usernameElement = getByText('TestUser');
         expect(usernameElement).toBeTruthy();
 
-        const rejectButton = getByTestId('reject-button');
+        const rejectButton = await getByTestId('reject-button');
         expect(rejectButton).toBeTruthy();
 
-        const acceptButton = getByTestId('accept-button');
+        const acceptButton = await getByTestId('accept-button');
         expect(acceptButton).toBeTruthy();
     }
     );
@@ -64,11 +68,11 @@ describe("Accepted/NonAccepted Player",()=>{
         const gameId = 'gameId';
         const maxPlayers = 4;
         const currentPlayers = 2;
-        const { getByText, getByTestId } = render(<NonAcceptedPlayer 
+        const { getByTestId } = render(<NonAcceptedPlayer 
             user={user} gameId={gameId} 
             maxPlayers={maxPlayers} 
             currentPlayers={currentPlayers} />);
-        const rejectButton = getByTestId('reject-button');
+        const rejectButton = await getByTestId('reject-button');
         act(async ()=>{
             fireEvent.press(rejectButton);
             await waitFor(() => {
@@ -87,7 +91,7 @@ describe("Accepted/NonAccepted Player",()=>{
             user={user} gameId={gameId} 
             maxPlayers={maxPlayers} 
             currentPlayers={currentPlayers} />);
-        const acceptButton = getByTestId('accept-button');
+        const acceptButton = await getByTestId('accept-button');
         jest.spyOn(Alert, 'alert').mockImplementation();
         act(async ()=>{
             fireEvent.press(acceptButton);
@@ -106,7 +110,7 @@ describe("Accepted/NonAccepted Player",()=>{
             user={user} gameId={gameId} 
             maxPlayers={maxPlayers} 
             currentPlayers={currentPlayers} />);
-        const acceptButton = getByTestId('accept-button');
+        const acceptButton = await getByTestId('accept-button');
         act(async ()=>{
             fireEvent.press(acceptButton);
             await waitFor(() => {
@@ -116,4 +120,3 @@ describe("Accepted/NonAccepted Player",()=>{
     });
 
     });
-})

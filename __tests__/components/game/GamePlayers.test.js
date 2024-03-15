@@ -3,6 +3,7 @@ import {
     screen,
     fireEvent,
     getByText,
+    findByTestId,
     waitFor,
     renderHook,
     act,
@@ -12,7 +13,9 @@ import {
   import appConfig from "../../../tamagui.config";
   import "@testing-library/jest-dom";
   import { ToastProvider } from "@tamagui/toast";
+  import { ToastViewport } from "@tamagui/toast";
 import GamePlayers from "../../../src/components/game/GamePlayers";
+
 
   describe("GamePlayers", () => {
     jest.mock("../../../src/lib/store", () => ({
@@ -44,37 +47,43 @@ import GamePlayers from "../../../src/components/game/GamePlayers";
     },
     ]),
     }));
-    test('renders accepted players correctly', ()=> {
-      const navigation = {};
-      const { root } = render(
-            <GamePlayers navigation={navigation}/>
+    test('renders accepted players correctly', async ()=> {
+      const { findByTestId } = render(
+            <TamaguiProvider config={appConfig}>
+              <ToastProvider>
+            <GamePlayers navigation={1}/>
+            </ToastProvider>
+            </TamaguiProvider>
       );
 
-      const acceptedPlayersHeader = screen.getByText(/Accepted Players/i);
-      expect(acceptedPlayersHeader).toBeInTheDocument();
+      const acceptedPlayersContainer = await findByTestId('accepted-players-container');
+      expect(acceptedPlayersContainer).toBeInTheDocument();
 
-      const player1 = screen.getByText(/Player 1/i);
+      const player1 = await getByText('Player 1');
       expect(player1).toBeInTheDocument();
 
-      const player2 = screen.getByText(/Player 2/i);
+      const player2 = await getByText('Player 2');
       expect(player2).toBeInTheDocument();
 
-      const playerCount = screen.getByText(/2\/4/i);
+      const playerCount = await getByText('2/4');
       expect(playerCount).toBeInTheDocument();
     }); 
 
-    test('render join request correctly', ()=>{
-      const navigation = {};
-      const { root } = render(
-            <GamePlayers navigation={navigation}/>
+    test('render join request correctly', async ()=>{
+      const { getByTestId } = render(
+        <TamaguiProvider config={appConfig}>
+              <ToastProvider>
+            <GamePlayers navigation={1}/>
+            </ToastProvider>
+        </TamaguiProvider>
       );
-      const joinRequestsHeader = screen.getByText(/Join Requests/i);
-      expect(joinRequestsHeader).toBeInTheDocument();
+      const joinRequestsContainer = await getByTestId('join-requests-container');
+      expect(joinRequestsContainer).toBeInTheDocument();
 
-      const player3 = screen.getByText(/Player 3/i);
+      const player3 = await getByText('Player 3');
       expect(player3).toBeInTheDocument();
 
-      const player4 = screen.getByText(/Player 4/i);
+      const player4 = await getByText('Player 4');
       expect(player4).toBeInTheDocument();
     });
 

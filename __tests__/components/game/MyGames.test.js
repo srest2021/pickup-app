@@ -11,6 +11,7 @@ import MyGames from "../../../src/components/MyGames";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
+import { useState } from "react";
 
 jest.mock("../../../src/hooks/use-query-games", () => ({
   __esModule: true,
@@ -22,12 +23,17 @@ jest.mock("../../../src/hooks/use-query-games", () => ({
   }),
 }));
 
-jest.mock("../../../src/components/MyGames", () => ({
+jest.mock('react', () => ({
+  ...jest.requireActual('react'), // Preserve all other exports from 'react'
+  useState: jest.fn(), // Mock the useState hook
+}));
+
+/*jest.mock("../../../src/components/MyGames", () => ({
   __esModule: true,
   default: () => ({
     refreshing: true,
   }),
-}));
+}));*/
 
 describe("MyGames", () => {
   test("renders MyGames component without crashing", async () => {
@@ -74,6 +80,7 @@ test("toggles between My Games and Joined Games tabs", async () => {
         <MyGames navigation={navigation} />
       </TamaguiProvider>,
     );
+    useState.mockImplementationOnce(() => [true, jest.fn()]);
     await act(async() => {
       const spinner = screen.getByTestId("spinner");
       expect(spinner).toBeTruthy();
