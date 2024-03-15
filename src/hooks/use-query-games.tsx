@@ -16,12 +16,9 @@ function useQueryGames() {
     setJoinedGames,
     clearJoinedGames,
     location,
-    filterSport,
-    filterDist,
-    filterLevel,
-    // getFilterSport,
-    // getFilterDist,
-    // getFilterLevel,
+    getFilterSport,
+    getFilterDist,
+    getFilterLevel,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -33,12 +30,9 @@ function useQueryGames() {
     state.setJoinedGames,
     state.clearJoinedGames,
     state.location,
-    state.filterSport,
-    state.filterDist,
-    state.filterLevel,
-    // state.getFilterSport,
-    // state.getFilterDist,
-    // state.getFilterLevel,
+    state.getFilterSport,
+    state.getFilterDist,
+    state.getFilterLevel,
   ]);
 
   const { getUserLocation } = useQueryUsers();
@@ -170,10 +164,10 @@ function useQueryGames() {
       if (!location || error1) throw error1;
 
       //backend: use these parameters in nearby_games!
-      // const sport = getFilterSport();
-      // const dist = getFilterDist();
-      // const level = getFilterLevel();
-      console.log("fetching games: ", filterDist, filterLevel, filterSport);
+      const sport = getFilterSport();
+      const dist = getFilterDist();
+      const level = getFilterLevel();
+      console.log("fetching games: ", dist, sport, level);
 
       const { data, error } = await supabase
         .rpc("nearby_games", {

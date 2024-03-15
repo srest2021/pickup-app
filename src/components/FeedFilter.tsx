@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Text, StyleSheet } from "react-native";
 import {
   Adapt,
   Dialog,
@@ -12,7 +11,6 @@ import {
   YStack,
   Button,
   View,
-  H5,
 } from "tamagui";
 import {
   Check,
@@ -29,38 +27,37 @@ const FeedFilter = ({ handleRefresh }: { handleRefresh: any }) => {
     setFilterSport,
     setFilterDist,
     setFilterLevel,
-    filterSport,
-    filterDist,
-    filterLevel,
+    getFilterSport,
+    getFilterDist,
+    getFilterLevel,
   ] = useStore((state) => [
     state.loading,
     state.setFilterSport,
     state.setFilterDist,
     state.setFilterLevel,
-    state.filterSport,
-    state.filterDist,
-    state.filterLevel,
+    state.getFilterSport,
+    state.getFilterDist,
+    state.getFilterLevel,
   ]);
 
-  const [distance, setDistance] = useState(filterDist);
+  const [distance, setDistance] = useState(getFilterDist());
   const [skillLevel, setSkillLevel] = useState("-1");
-  const [sport, setSport] =
-    filterSport === null ? useState("any") : useState(filterSport);
+  const [sport, setSport] = getFilterSport() ? useState(getFilterSport()) : useState("any");
 
   const handleSave = async () => {
-    console.log("setting filter: ", distance, skillLevel, sport);
     setFilterDist(distance);
     sport === "any" ? setFilterSport(null) : setFilterSport(sport);
     skillLevel === "-1" ? setFilterLevel(null) : setFilterLevel(skillLevel);
-    console.log("finished filter: ", filterDist, filterLevel, filterSport);
     await handleRefresh();
   };
 
   const handleCancel = () => {
     // Reset state to original values
-    // setDistance(filterDist);
-    // setSport(filterSport === null ? "any" : filterSport);
-    // setSkillLevel(filterLevel === null ? "-1" : filterLevel);
+    const filterSport = getFilterSport();
+    const filterLevel = getFilterLevel();
+    setDistance(getFilterDist());
+    setSport(filterSport ? filterSport : "any");
+    setSkillLevel(filterLevel ? filterLevel : "-1");
   };
 
   return (
