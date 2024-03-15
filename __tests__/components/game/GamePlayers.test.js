@@ -11,6 +11,7 @@ import {
   import { TamaguiProvider } from "tamagui";
   import appConfig from "../../../tamagui.config";
   import "@testing-library/jest-dom";
+  import { ToastProvider } from "@tamagui/toast";
 import GamePlayers from "../../../src/components/game/GamePlayers";
 
   describe("GamePlayers", () => {
@@ -46,11 +47,7 @@ import GamePlayers from "../../../src/components/game/GamePlayers";
     test('renders accepted players correctly', ()=> {
       const navigation = {};
       const { root } = render(
-        <TamaguiProvider config={appConfig}>
-          <ToastProvider>
             <GamePlayers navigation={navigation}/>
-          </ToastProvider>
-        </TamaguiProvider>,
       );
 
       const acceptedPlayersHeader = screen.getByText(/Accepted Players/i);
@@ -69,11 +66,7 @@ import GamePlayers from "../../../src/components/game/GamePlayers";
     test('render join request correctly', ()=>{
       const navigation = {};
       const { root } = render(
-        <TamaguiProvider config={appConfig}>
-          <ToastProvider>
             <GamePlayers navigation={navigation}/>
-          </ToastProvider>
-        </TamaguiProvider>,
       );
       const joinRequestsHeader = screen.getByText(/Join Requests/i);
       expect(joinRequestsHeader).toBeInTheDocument();
