@@ -50,11 +50,13 @@ const NonAcceptedPlayer = ({
         </Text>
         <Button
           icon={X}
+          data-testid={"reject-button"}
           style={{ backgroundColor: "red", color: "white", marginRight: 10 }}
           onPress={() => handleReject()}
         />
         <Button
           icon={Check}
+          data-testid={"accept-button"}
           style={{ backgroundColor: "green", color: "white" }}
           onPress={() => handleAccept()}
         />

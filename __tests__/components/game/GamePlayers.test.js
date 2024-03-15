@@ -13,7 +13,7 @@ import {
   import "@testing-library/jest-dom";
 import GamePlayers from "../../../src/components/game/GamePlayers";
 
-  describe("JoinRequests", () => {
+  describe("GamePlayers", () => {
     jest.mock("../../../src/lib/store", () => ({
       useStore: jest.fn(() => [
         {loading: false,
@@ -84,4 +84,5 @@ import GamePlayers from "../../../src/components/game/GamePlayers";
       const player4 = screen.getByText(/Player 4/i);
       expect(player4).toBeInTheDocument();
     });
+
   });
