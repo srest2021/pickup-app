@@ -174,10 +174,10 @@ function useQueryGames() {
           long: location.coords.longitude,
           dist_limit: filterDist,
           sport_filter: filterSport,
-          skill_level_filter: filterLevel
+          skill_level_filter: filterLevel,
         })
         .limit(20);
-      console.log(error)
+      console.log(error);
       if (error) throw error;
 
       if (data) {

@@ -12,12 +12,7 @@ import {
   Button,
   View,
 } from "tamagui";
-import {
-  Check,
-  ChevronDown,
-  Filter,
-  Loader,
-} from "@tamagui/lucide-icons";
+import { Check, ChevronDown, Filter, Loader } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../lib/types";
 import { useStore } from "../lib/store";
 
@@ -43,7 +38,9 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
   const [distance, setDistance] = useState(getFilterDist());
   const [skillLevel, setSkillLevel] = useState("-1");
   const filterSport = getFilterSport();
-  const [sport, setSport] = filterSport ? useState(filterSport) : useState("any");
+  const [sport, setSport] = filterSport
+    ? useState(filterSport)
+    : useState("any");
 
   const handleSave = async () => {
     setFilterDist(distance);
@@ -239,12 +236,13 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
               </Label>
             </YStack>
 
-            <XStack justifyContent="space-between">
+            <XStack space="$3" justifyContent="space-between">
               <Dialog.Close displayWhenAdapted asChild>
                 <Button
                   theme="active"
                   aria-label="Cancel"
                   size="$4"
+                  flexGrow={1}
                   color="#ff7403"
                   borderColor="#ff7403"
                   backgroundColor="#ffffff"
@@ -259,6 +257,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
                   theme="active"
                   aria-label="Close"
                   onPress={handleSave}
+                  flexGrow={1}
                   color="#ff7403"
                   borderColor="#ff7403"
                   backgroundColor="#ffffff"
