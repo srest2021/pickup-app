@@ -862,7 +862,8 @@ begin
     ' and g.skill_level = $5'
   else '' 
   end ||
-  ' order by d.dist_meters'
+  ' and not auth.uid() in (select player_id from joined_game where joined_game.game_id = g.id)
+  order by d.dist_meters'
   using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter";
 end;
 $$ language plpgsql;
