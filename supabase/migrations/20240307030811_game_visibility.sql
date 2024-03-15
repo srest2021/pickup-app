@@ -760,7 +760,7 @@ end;
 $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
-create or replace function nearby_games("lat" double precision, "long" double precision) 
+create or replace function nearby_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null) 
 returns table(
   id "uuid", 
   organizer_id "uuid", 
@@ -773,10 +773,18 @@ returns table(
   current_players bigint, 
   is_public boolean, 
   has_requested boolean,
-  "dist_meters" double precision,
+  dist_meters double precision,
   accepted_players jsonb,
   organizer jsonb
-) language "sql" as $$
+) as $$
+begin
+  return query execute
+  'with distances as (
+    select 
+      gl.game_id,
+      st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
+    from game_locations gl
+  )
   select 
     g.id, 
     g.organizer_id, 
@@ -793,21 +801,21 @@ returns table(
       from game_requests
       where game_requests.game_id = g.id
     ) as has_requested,
-    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
+    d.dist_meters,
     (
       SELECT jsonb_agg(
         jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'bio', p.bio,
-          'avatarUrl', p.avatar_url,
-          'sports', (
+          ''id'', p.id,
+          ''username'', p.username,
+          ''displayName'', p.display_name,
+          ''bio'', p.bio,
+          ''avatarUrl'', p.avatar_url,
+          ''sports'', (
             SELECT jsonb_agg(
               jsonb_build_object(
-                'id', s.id,
-                'sport', s.name,
-                'skillLevel', s.skill_level
+                ''id'', s.id,
+                ''sport'', s.name,
+                ''skillLevel'', s.skill_level
               )
             )
             FROM public.profiles AS p
@@ -823,17 +831,17 @@ returns table(
     (
       select
         jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'bio', p.bio,
-          'avatarUrl', p.avatar_url,
-          'sports', (
+          ''id'', p.id,
+          ''username'', p.username,
+          ''displayName'', p.display_name,
+          ''bio'', p.bio,
+          ''avatarUrl'', p.avatar_url,
+          ''sports'', (
             SELECT jsonb_agg(
               jsonb_build_object(
-                'id', s.id,
-                'sport', s.name,
-                'skillLevel', s.skill_level
+                ''id'', s.id,
+                ''sport'', s.name,
+                ''skillLevel'', s.skill_level
               )
             )
             from public.sports as s
@@ -844,10 +852,20 @@ returns table(
       where p.id = g.organizer_id
     ) as organizer
   from public.games as g
-  join public.game_locations as gl on g.id = gl.game_id
-  where g.organizer_id != auth.uid() and g.is_public -- public games from other people
-  order by gl.loc <-> st_point(long, lat)::geography;
-$$;
+  inner join distances d on g.id = d.game_id
+  where g.organizer_id != auth.uid() and g.is_public and d.dist_meters <= $3' ||
+  case when sport_filter is not null then 
+    ' and g.sport = $4' 
+  else '' 
+  end ||
+  case when skill_level_filter is not null then 
+    ' and g.skill_level = $5'
+  else '' 
+  end ||
+  ' order by d.dist_meters'
+  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter";
+end;
+$$ language plpgsql;
 
 create or replace function my_games("lat" double precision, "long" double precision) 
 returns table(

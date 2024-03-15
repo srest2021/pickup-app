@@ -21,7 +21,7 @@ import {
 import { SkillLevel, sports } from "../lib/types";
 import { useStore } from "../lib/store";
 
-const FeedFilter = ({ handleRefresh }: { handleRefresh: any }) => {
+const FeedFilter = (props: { handleRefresh: () => void }) => {
   const [
     loading,
     setFilterSport,
@@ -42,13 +42,14 @@ const FeedFilter = ({ handleRefresh }: { handleRefresh: any }) => {
 
   const [distance, setDistance] = useState(getFilterDist());
   const [skillLevel, setSkillLevel] = useState("-1");
-  const [sport, setSport] = getFilterSport() ? useState(getFilterSport()) : useState("any");
+  const filterSport = getFilterSport();
+  const [sport, setSport] = filterSport ? useState(filterSport) : useState("any");
 
   const handleSave = async () => {
     setFilterDist(distance);
     sport === "any" ? setFilterSport(null) : setFilterSport(sport);
     skillLevel === "-1" ? setFilterLevel(null) : setFilterLevel(skillLevel);
-    await handleRefresh();
+    props.handleRefresh();
   };
 
   const handleCancel = () => {
