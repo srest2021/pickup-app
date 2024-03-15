@@ -14,6 +14,7 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
+import GamePlayers from "./GamePlayers";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, displayName } = route.params;
@@ -125,6 +126,9 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <SportSkill sport={selectedFeedGame.sport} />
                   </XStack>
                 </YStack>
+
+                <GamePlayers navigation={undefined} game={selectedFeedGame} gametype="feed"/>
+
 
                 <XStack space="$3" paddingTop="$6">
                   <Button

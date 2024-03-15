@@ -14,7 +14,7 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
-import GamePlayers from "./GamePlayers";
+import MyGamePlayers from "./MyGamePlayers";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -130,7 +130,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <GamePlayers navigation={undefined} />
+                <MyGamePlayers navigation={undefined} />
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
