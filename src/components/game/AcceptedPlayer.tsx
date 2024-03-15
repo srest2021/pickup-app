@@ -14,13 +14,13 @@ const AcceptedPlayer = ({ user, gameId }: { user: User; gameId: string }) => {
 
   return (
     <View margin={10}>
-      <XStack>
+      <XStack alignItems="center">
         <Text fontSize={20} marginRight={30}>
           {user.username}
         </Text>
         <Button
           icon={X}
-          style={{ backgroundColor: "red", color: "white" }}
+          style={{ backgroundColor: "#e90d52", color: "white" }}
           onPress={() => handleRemove()}
         />
       </XStack>

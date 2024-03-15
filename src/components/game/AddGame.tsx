@@ -196,7 +196,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? "#08348c" : "black",
+                  color: isPublic ? "black" : "#e90d52",
                 }}
               >
                 Public
@@ -208,11 +208,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   setIsPublic(!checked);
                 }}
                 style={{
-                  backgroundColor: "#018de9",
+                  backgroundColor: "#e90d52",
                 }}
               >
                 <Switch.Thumb
-                  style={{ backgroundColor: "#08348c" }}
+                  style={{ backgroundColor: "#b90a41" }}
                   animation="bouncy"
                 />
               </Switch>
@@ -223,7 +223,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? "black" : "#08348c",
+                  color: isPublic ? "#e90d52" : "black",
                 }}
               >
                 Friends-Only
@@ -460,6 +460,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 color="#ff7403"
                 borderColor="#ff7403"
+                backgroundColor={'white'}
                 variant="outlined"
               >
                 {loading ? "Loading..." : "Publish"}
