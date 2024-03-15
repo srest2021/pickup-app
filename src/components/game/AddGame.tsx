@@ -253,7 +253,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   onChangeText={(text: string) => setCity(text)}
                 />
 
-                <XStack space="$2" alignItems="center" justifyContent="space-between">
+                <XStack
+                  space="$2"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
                   <Input
                     flexGrow={1}
                     size="$5"
