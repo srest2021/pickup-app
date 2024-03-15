@@ -25,20 +25,26 @@ const mockSport = {
   skillLevel: "Beginner",
 };
 
+const mockAddress = {
+  street: "3339 North Charles St",
+    city: "Baltimore",
+    state: "MD",
+    zip: "21218",
+}
+
 const mockSelectedMyGame = {
   id: "gameId",
+  organizerId: "organizerId",
   title: "Test Title",
   datetime: new Date(
     "Sun Mar 13 2025 15:42:33 GMT+0000 (Coordinated Universal Time)",
   ),
-  street: {
-    street: "3339 North Charles St",
-    city: "Baltimore",
-    state: "MD",
-    zip: "21218",
-  },
+  address: mockAddress,
   sport: mockSport,
   maxPlayers: 20,
+  currentPlayers: 1,
+  isPublic: true,
+  distanceAway: 1,
   description: "Test Description",
 };
 
@@ -126,10 +132,10 @@ describe("EditGame", () => {
           "gameId",
           "New Title", // only updating title
           expect.any(Date),
-          mockSelectedMyGame.address,
-          mockSelectedMyGame.city,
-          mockSelectedMyGame.state,
-          mockSelectedMyGame.zip,
+          mockSelectedMyGame.address.street,
+          mockSelectedMyGame.address.city,
+          mockSelectedMyGame.address.state,
+          mockSelectedMyGame.address.zip,
           mockSelectedMyGame.sport.name,
           expect.any(Number),
           mockSelectedMyGame.maxPlayers.toString(),
