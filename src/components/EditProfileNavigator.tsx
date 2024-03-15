@@ -9,31 +9,30 @@ export default function EditProfileNavigator() {
       <Stack.Screen
         name="Profile"
         component={Profile}
-        options={{ 
-          title: "Profile", 
+        options={{
+          title: "Profile",
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#08348c',
+            backgroundColor: "#08348c",
           },
           headerTitleStyle: {
-            color: '#ffffff', 
+            color: "#ffffff",
           },
         }}
       />
       <Stack.Screen
         name="EditProfile"
         component={EditProfile}
-        options={{ 
-          title: "Edit Profile", 
+        options={{
+          title: "Edit Profile",
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#08348c', 
+            backgroundColor: "#08348c",
           },
           headerTitleStyle: {
-            color: '#ffffff', 
+            color: "#ffffff",
           },
-          headerTintColor: '#ffffff',
-
+          headerTintColor: "#ffffff",
         }}
       />
     </Stack.Navigator>

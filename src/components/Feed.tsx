@@ -1,20 +1,9 @@
 import { useEffect, useState } from "react";
-import { View, Text, Alert } from "react-native";
+import { View, Text } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import FeedGameView from "./game/GameThumbnail";
-import {
-  H4,
-  ScrollView,
-  Separator,
-  SizableText,
-  Spinner,
-  Tabs,
-  YStack,
-} from "tamagui";
-import { supabase } from "../lib/supabase";
+import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
-import useQueryUsers from "../hooks/use-query-users";
 import FeedFilter from "./FeedFilter";
 
 //
@@ -27,8 +16,8 @@ const Feed = ({ navigation }: { navigation: any }) => {
     state.session,
     state.feedGames,
   ]);
-  const { setUserLocation } = useQueryUsers();
   const [refreshing, setRefreshing] = useState(false);
+  const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("publicGames");
 
   useEffect(() => {
@@ -38,11 +27,11 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "publicGames") {
-      try {
-        setUserLocation();
-        await fetchFeedGames();
-      } catch (error) {
-        Alert.alert("Error fetching games! Please try again later.");
+      const games = await fetchFeedGames();
+      if (!games) {
+        setHasLocation(false);
+      } else {
+        setHasLocation(true);
       }
     } else if (toggle === "friendsOnlyGames") {
       //await fetchFriendsOnlyGames();
@@ -50,81 +39,86 @@ const Feed = ({ navigation }: { navigation: any }) => {
     setRefreshing(false);
   };
 
-  // can I use a store?
   return (
     <>
       {session && session.user ? (
-        <View style={{ flex: 1 }}>
-          <Tabs
-            alignSelf="center"
-            justifyContent="center"
-            flex={0}
-            defaultValue="PublicGames"
-          >
-            <Tabs.List>
-              <Tabs.Tab
-                width={200}
-                testID="public-games"
-                value="PublicGames"
-                onInteraction={() => {
-                  setToggle("publicGames");
-                }}
-              >
-                <Text>All Games</Text>
-              </Tabs.Tab>
-              <Separator vertical></Separator>
-              <Tabs.Tab
-                width={200}
-                testID="friends-only-games"
-                value="FriendsOnlyGames"
-                onInteraction={() => {
-                  setToggle("friendsOnlyGames");
-                }}
-              >
-                <Text>Friends-Only Games</Text>
-              </Tabs.Tab>
-              <FeedFilter handleRefresh={handleRefresh}/>
-            </Tabs.List>
-          </Tabs>
-          <ScrollView
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            onScroll={(e) => {
-              const { contentOffset } = e.nativeEvent;
-              if (contentOffset.y < -50 && !refreshing) {
-                handleRefresh();
-              }
-            }}
-            contentContainerStyle={{ paddingTop: 20 }}
-          >
-            {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
-            )}
+        hasLocation ? (
+          <View style={{ flex: 1 }}>
+            <Tabs
+              alignSelf="center"
+              justifyContent="space-between"
+              flex={0}
+              defaultValue="PublicGames"
+            >
+              <Tabs.List>
+                <FeedFilter handleRefresh={handleRefresh} />
+                <Tabs.Tab
+                  //width={150}
+                  testID="public-games"
+                  value="PublicGames"
+                  onInteraction={() => {
+                    setToggle("publicGames");
+                  }}
+                >
+                  <Text>All Games</Text>
+                </Tabs.Tab>
+                <Separator vertical></Separator>
+                <Tabs.Tab
+                  //width={150}
+                  testID="friends-only-games"
+                  value="FriendsOnlyGames"
+                  onInteraction={() => {
+                    setToggle("friendsOnlyGames");
+                  }}
+                >
+                  <Text>Friends-Only Games</Text>
+                </Tabs.Tab>
+              </Tabs.List>
+            </Tabs>
+            <ScrollView
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              onScroll={(e) => {
+                const { contentOffset } = e.nativeEvent;
+                if (contentOffset.y < -50 && !refreshing) {
+                  handleRefresh();
+                }
+              }}
+              contentContainerStyle={{ paddingTop: 20 }}
+            >
+              {refreshing && (
+                <Spinner size="small" color="#ff7403" testID="spinner" />
+              )}
 
-            {toggle === "publicGames" ? (
-              feedGames.length > 0 ? (
-                <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                  {feedGames.map((game) => (
-                    <GameThumbnail
-                      navigation={navigation}
-                      game={game}
-                      gametype="feed"
-                      key={game.id}
-                    />
-                  ))}
-                </YStack>
+              {toggle === "publicGames" ? (
+                feedGames.length > 0 ? (
+                  <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                    {feedGames.map((game) => (
+                      <GameThumbnail
+                        navigation={navigation}
+                        game={game}
+                        gametype="feed"
+                        key={game.id}
+                      />
+                    ))}
+                  </YStack>
+                ) : (
+                  <View className="items-center justify-center flex-1 p-12 text-center">
+                    <H4>No games nearby</H4>
+                  </View>
+                )
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No games nearby</H4>
+                  <H4>No friends-only games yet</H4>
                 </View>
-              )
-            ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No friends-only games yet</H4>
-              </View>
-            )}
-          </ScrollView>
-        </View>
+              )}
+            </ScrollView>
+          </View>
+        ) : (
+          <View className="items-center justify-center flex-1 p-12 text-center">
+            <H4>Allow location permissions to view games near you!</H4>
+          </View>
+        )
       ) : (
         <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Loading...</H4>

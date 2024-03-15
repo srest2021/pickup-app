@@ -11,12 +11,31 @@ export default function FeedNavigator() {
       <Stack.Screen
         name="Feed"
         component={Feed}
-        options={{ title: "Feed", headerShown: false }}
+        options={{
+          title: "Feed",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+        }}
       />
       <Stack.Screen
         name="GameView"
         component={GameView}
-        options={{ title: "Game View", headerShown: false }}
+        options={{
+          title: "Feed Game",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+          headerTintColor: "#ffffff",
+        }}
       />
     </Stack.Navigator>
   );

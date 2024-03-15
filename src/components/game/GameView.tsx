@@ -17,9 +17,12 @@ import useMutationGame from "../../hooks/use-mutation-game";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, displayName } = route.params;
-
-  const [selectedFeedGame] = useStore((state) => [state.selectedFeedGame]);
-  const [session, user] = useStore((state) => [state.session, state.user]);
+  const [session, user, loading, selectedFeedGame] = useStore((state) => [
+    state.session,
+    state.user,
+    state.loading,
+    state.selectedFeedGame,
+  ]);
   const { requestToJoinById } = useMutationGame();
 
   // Request to Join Game Logic:
@@ -38,13 +41,6 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
               <YStack>
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedFeedGame.title}</H4>
-                </YStack>
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$2" size="$2">
-                    {selectedFeedGame.isPublic
-                      ? "Public Game"
-                      : "Friends Only Game"}
-                  </SizableText>
                 </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
@@ -95,12 +91,21 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 )}
 
                 <YStack space="$4">
+                  <XStack space="$2" alignItems="center">
+                    <Label size="$5" width={90}>
+                      <H6>Status: </H6>
+                    </Label>
+                    <SizableText flex={1} size="$5">
+                      {selectedFeedGame.isPublic ? "public" : "friends-only"}
+                    </SizableText>
+                  </XStack>
+
                   <XStack space="$2" alignItems="left">
                     <Label size="$5" width={90}>
                       <H6>Distance Away:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedFeedGame.distanceAway}`}
+                      {`${selectedFeedGame.distanceAway} miles`}
                     </SizableText>
                   </XStack>
 
@@ -123,14 +128,20 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
-                    theme="active"
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
                     disabled={selectedFeedGame.hasRequested ? true : false}
                     flex={1}
                     onPress={() => requestToJoinGame()}
                   >
-                    {selectedFeedGame.hasRequested
-                      ? "Requested"
-                      : "Request to Join"}
+                    {loading
+                      ? "Requesting..."
+                      : selectedFeedGame.hasRequested
+                        ? "Requested"
+                        : "Request to Join"}
                   </Button>
                 </XStack>
               </YStack>

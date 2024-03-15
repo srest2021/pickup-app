@@ -8,9 +8,7 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "./tamagui.config";
 import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Feed from "./src/components/Feed";
 import AddGame from "./src/components/game/AddGame";
-import MyGames from "./src/components/MyGames";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
@@ -66,11 +64,11 @@ export default function App() {
                   backgroundColor: "#08348c", // Set background color of the tab bar to blue
                 },
                 headerStyle: {
-                  backgroundColor: "#08348c", 
+                  backgroundColor: "#08348c",
                 },
-                headerTintColor: "#ffffff", 
+                headerTintColor: "#ffffff",
                 headerTitleStyle: {
-                  color: "#ffffff", 
+                  color: "#ffffff",
                 },
               }}
             >
@@ -80,8 +78,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Feed",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <GalleryVerticalEnd color={focused ? "grey" : "#ffffff"}/>
+                    <GalleryVerticalEnd color={focused ? "grey" : "#ffffff"} />
                   ),
+                  headerShown: false,
                 }}
                 initialParams={{ key: session.user.id }}
               />

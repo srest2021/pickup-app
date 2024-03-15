@@ -425,10 +425,11 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 size="$5"
                 color="#ff7403"
                 borderColor="#ff7403"
+                backgroundColor="#ffffff"
                 testID="editButton"
                 variant="outlined"
               >
-                {loading ? "Loading..." : "Edit"}
+                {loading ? "Loading..." : "Save"}
               </Button>
             </YStack>
           </YStack>

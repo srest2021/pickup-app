@@ -2,25 +2,23 @@ import {
   Adapt,
   Button,
   Dialog,
-  Fieldset,
-  Input,
   Label,
-  Paragraph,
   Sheet,
-  TooltipSimple,
   Unspaced,
   XStack,
   RadioGroup,
   YStack,
   Select,
 } from "tamagui";
-import { Check, ChevronDown, Plus } from "@tamagui/lucide-icons";
+import { Check, ChevronDown, Plus, Loader } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
 import { useState, useMemo } from "react";
+import { useStore } from "../../lib/store";
 
 const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
   const [skillLevel, setSkillLevel] = useState("0");
   const [sportName, setSportName] = useState(sports[0].name);
+  const [loading] = useStore((state) => [state.loading]);
 
   const handleSave = () => {
     onSportSelect(sportName, convertSkillLevel());
@@ -41,14 +39,15 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
       <Dialog.Trigger asChild>
         <Button
           size="$3"
-          icon={Plus}
+          icon={loading ? Loader : Plus}
           color="#ff7403"
           variant="outlined"
+          disabled={loading}
           borderColor="#ff7403"
-          backgroundColor={'#ffffff'}
+          backgroundColor={"#ffffff"}
           style={{ alignSelf: "flex-start" }}
         >
-          Add Sport
+          {loading ? "Loading" : "Add Sport"}
         </Button>
       </Dialog.Trigger>
 
@@ -167,7 +166,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                 <XStack width={300} alignItems="center" space="$4">
                   <RadioGroup.Item
                     value={"0"}
-                    id={`skill-level-${SkillLevel.Beginner}`}
+                    id={`profile-skill-level-${SkillLevel.Beginner}`}
                     size={2}
                   >
                     <RadioGroup.Indicator />
@@ -183,7 +182,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                 <XStack width={300} alignItems="center" space="$4">
                   <RadioGroup.Item
                     value={"1"}
-                    id={`skill-level-${SkillLevel.Intermediate}`}
+                    id={`profile-skill-level-${SkillLevel.Intermediate}`}
                     size={2}
                   >
                     <RadioGroup.Indicator />
@@ -200,7 +199,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                 <XStack width={300} alignItems="center" space="$4">
                   <RadioGroup.Item
                     value={"2"}
-                    id={`skill-level-${SkillLevel.Advanced}`}
+                    id={`profile-skill-level-${SkillLevel.Advanced}`}
                     size={2}
                   >
                     <RadioGroup.Indicator />

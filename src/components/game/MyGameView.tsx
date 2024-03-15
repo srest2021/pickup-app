@@ -14,8 +14,6 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
-import useQueryGames from "../../hooks/use-query-games";
-import { useEffect } from "react";
 import GamePlayers from "./GamePlayers";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
@@ -29,12 +27,14 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   ]);
   const { removeMyGameById } = useMutationGame();
 
-  function deleteGame() {
-    removeMyGameById(gameId);
+  const deleteGame = async () => {
+    const removedId = await removeMyGameById(gameId);
     // navigate back to myGames list.
-    navigation.goBack();
+    if (removedId) {
+      navigation.goBack();
+    }
     // TODO: Add success toast
-  }
+  };
 
   return (
     <View>
@@ -45,13 +45,6 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
               <YStack>
                 <YStack alignItems="center">
                   <H4 textAlign="center">{selectedMyGame.title}</H4>
-                </YStack>
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$5" size="$2">
-                    {selectedMyGame.isPublic
-                      ? "Public Game"
-                      : "Friends Only Game"}
-                  </SizableText>
                 </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
@@ -102,6 +95,15 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 )}
 
                 <YStack space="$4">
+                  <XStack space="$2" alignItems="center">
+                    <Label size="$5" width={90}>
+                      <H6>Status: </H6>
+                    </Label>
+                    <SizableText flex={1} size="$5">
+                      {selectedMyGame.isPublic ? "public" : "friends-only"}
+                    </SizableText>
+                  </XStack>
+
                   <XStack space="$2" alignItems="left">
                     <Label size="$5" width={90}>
                       <H6>Address:</H6>
@@ -132,22 +134,30 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
-                    theme="active"
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
                     flex={1}
                     onPress={() => {
                       navigation.navigate("EditGame", { gameId });
                     }}
                     disabled={loading}
                   >
-                    Edit
+                    {loading ? "Loading..." : "Edit"}
                   </Button>
                   <Button
-                    theme="active"
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
                     flex={1}
                     onPress={() => deleteGame()}
                     disabled={loading}
                   >
-                    Delete
+                    {loading ? "Loading..." : "Delete"}
                   </Button>
                 </XStack>
               </YStack>

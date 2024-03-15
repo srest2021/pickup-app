@@ -102,7 +102,7 @@ const initialState: State = {
   selectedJoinedGame: null,
   location: null,
   filterSport: null,
-  filterDist: 15, 
+  filterDist: 15,
   filterLevel: null,
 };
 
@@ -298,7 +298,7 @@ export const useStore = create<State & Action>()(
 
     setFilterSport: (sport: string | null) => set({ filterSport: sport }),
     setFilterDist: (dist: number) => set({ filterDist: dist }),
-    setFilterLevel: (level: string | null ) => set({filterLevel: level}),
+    setFilterLevel: (level: string | null) => set({ filterLevel: level }),
 
     getFilterSport: () => {
       return get().filterSport;
