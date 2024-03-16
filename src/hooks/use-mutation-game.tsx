@@ -6,6 +6,7 @@ import { Address, MyGame, GameSport } from "../lib/types";
 function useMutationGame() {
   const [
     session,
+    location,
     setLoading,
     addMyGame,
     removeMyGame,
@@ -18,6 +19,7 @@ function useMutationGame() {
     removeJoinedGame,
   ] = useStore((state) => [
     state.session,
+    state.location,
     state.setLoading,
     state.addMyGame,
     state.removeMyGame,
@@ -47,6 +49,10 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
+      //if no location, for now, default location is charmander marmander
+      const lat = location ? location.coords.latitude : 39.3289357;
+      const long = location ? location.coords.longitude : -76.6172978;
+
       const { data, error } = await supabase.rpc("create_game", {
         title,
         description,
@@ -59,8 +65,8 @@ function useMutationGame() {
         skill_level: skillLevel,
         max_players: playerLimit,
         is_public: isPublic,
-        lat: 39.3289357,
-        long: -76.6172978,
+        lat: lat,
+        long: long,
       });
       if (error) throw error;
 
@@ -77,7 +83,7 @@ function useMutationGame() {
           maxPlayers: Number(playerLimit),
           currentPlayers: 1,
           isPublic,
-          distanceAway: Number(data["row"].f15),
+          distanceAway: location ? Math.trunc(Number(data["row"].f15)/1609.344): "?",
           joinRequests: [],
           acceptedPlayers: [],
         };
@@ -138,6 +144,10 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
+      //if no location, for now, default location is charmander marmander
+      const lat = location ? location.coords.latitude : 39.3289357;
+      const long = location ? location.coords.longitude : -76.6172978;
+
       const { data, error } = await supabase.rpc("edit_game", {
         game_id: id,
         title,
@@ -151,8 +161,8 @@ function useMutationGame() {
         skill_level: skillLevel,
         max_players: playerLimit,
         is_public: isPublic,
-        lat: 39.3289357,
-        long: -76.6172978,
+        lat: lat,
+        long: long,
       });
       if (error) throw error;
 
@@ -177,14 +187,13 @@ function useMutationGame() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
-          distanceAway: Number(data["row"].f15),
+          distanceAway: location ? Math.trunc(Number(data["row"].f15)/1609.344): "?"
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
         return myUpdatedGame;
       } else {
         throw new Error("Error editing game! Please try again later.");
       }
-      return data;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
