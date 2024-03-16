@@ -17,7 +17,7 @@ const mockUser = {
   displayName: "test display name",
   bio: "test bio",
   avatarUrl: "test avatar url",
-  sports: []
+  sports: [],
 };
 
 // mock session with user object
@@ -26,12 +26,12 @@ const mockSession = {
   refresh_token: "refresh_token_test_string",
   expires_in: 90000000,
   token_type: "token_type_test",
-  user: mockUser
+  user: mockUser,
 };
 
 // mock useMutationUser hook
-jest.mock('../../../src/hooks/use-mutation-user', () => ({
-  __esModule: true, 
+jest.mock("../../../src/hooks/use-mutation-user", () => ({
+  __esModule: true,
   default: jest.fn(() => ({
     session: mockSession,
     setSession: jest.fn(),
@@ -120,7 +120,7 @@ describe("AddGame", () => {
     fireEvent.changeText(screen.getByTestId("dateInput"), new Date());
     fireEvent.changeText(screen.getByTestId("timeInput"), new Date());
     //fireEvent(screen.getByTestId("visibilityInput"), "onCheckedChange", true);
-    fireEvent.changeText(screen.getByTestId("streetInput"),"Homewood");
+    fireEvent.changeText(screen.getByTestId("streetInput"), "Homewood");
     fireEvent.changeText(screen.getByTestId("cityInput"), "Baltimore");
     fireEvent.changeText(screen.getByTestId("stateInput"), "MD");
     fireEvent.changeText(screen.getByTestId("zipInput"), "21218");
@@ -151,7 +151,7 @@ describe("AddGame", () => {
         1,
         "10",
         "Test Description",
-        true
+        true,
       );
 
       // Ensure navigation to 'MyGames' is triggered after creating the game

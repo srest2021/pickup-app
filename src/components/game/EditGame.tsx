@@ -30,7 +30,10 @@ import { ToastDemo } from "../Toast";
 
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
-  const [loading, selectedMyGame] = useStore((state) => [state.loading, state.selectedMyGame]);
+  const [loading, selectedMyGame] = useStore((state) => [
+    state.loading,
+    state.selectedMyGame,
+  ]);
 
   const { user } = useMutationUser();
   const { editGameById } = useMutationGame();
@@ -46,13 +49,17 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date(),
   );
   const [street, setStreet] = useState(
-    selectedMyGame && selectedMyGame.address ? selectedMyGame.address.street : "",
+    selectedMyGame && selectedMyGame.address
+      ? selectedMyGame.address.street
+      : "",
   );
   const [city, setCity] = useState(
     selectedMyGame && selectedMyGame.address ? selectedMyGame.address.city : "",
   );
   const [state, setState] = useState(
-    selectedMyGame && selectedMyGame.address ? selectedMyGame.address.state : "",
+    selectedMyGame && selectedMyGame.address
+      ? selectedMyGame.address.state
+      : "",
   );
   const [zip, setZip] = useState(
     selectedMyGame && selectedMyGame.address ? selectedMyGame.address.zip : "",

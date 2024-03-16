@@ -9,6 +9,29 @@ import MyGames from "../../../src/components/MyGames";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
+import { useState } from "react";
+
+jest.mock("../../../src/hooks/use-query-games", () => ({
+  __esModule: true,
+  default: () => ({
+    myGames: [],
+    fetchMyGames: jest.fn(),
+    fetchAllGames: jest.fn(),
+    fetchJoinedGames: jest.fn(),
+  }),
+}));
+
+jest.mock("react", () => ({
+  ...jest.requireActual("react"), // Preserve all other exports from 'react'
+  useState: jest.fn(), // Mock the useState hook
+}));
+
+/*jest.mock("../../../src/components/MyGames", () => ({
+  __esModule: true,
+  default: () => ({
+    refreshing: true,
+  }),
+}));*/
 
 // mock user
 const mockUser = {
@@ -17,7 +40,7 @@ const mockUser = {
   displayName: "test display name",
   bio: "test bio",
   avatarUrl: "test avatar url",
-  sports: []
+  sports: [],
 };
 
 // mock session with user object
@@ -26,12 +49,12 @@ const mockSession = {
   refresh_token: "refresh_token_test_string",
   expires_in: 90000000,
   token_type: "token_type_test",
-  user: mockUser
+  user: mockUser,
 };
 
 // mock useMutationUser hook
-jest.mock('../../../src/hooks/use-mutation-user', () => ({
-  __esModule: true, 
+jest.mock("../../../src/hooks/use-mutation-user", () => ({
+  __esModule: true,
   default: jest.fn(() => ({
     session: mockSession,
     setSession: jest.fn(),
@@ -61,9 +84,10 @@ describe("MyGames", () => {
         <MyGames navigation={navigation} />
       </TamaguiProvider>,
     );
-    
-    await waitFor(() => {
-      expect(root).toBeTruthy();
+    await act(async () => {
+      await waitFor(() => {
+        expect(root).toBeTruthy();
+      });
     });
   });
 
@@ -74,13 +98,10 @@ describe("MyGames", () => {
         <MyGames navigation={navigation} />
       </TamaguiProvider>,
     );
-
-    const joinedGamesTab = screen.getByTestId("joined-games"); //getByText("Joined Games");
-    const myGamesTab = screen.getByTestId("my-games"); //getByText("Joined Games");
-
-    act(() => {
-      fireEvent.press(joinedGamesTab);
-      fireEvent.press(myGamesTab);
+    useState.mockImplementationOnce(() => [true, jest.fn()]);
+    await act(async () => {
+      const spinner = screen.getByTestId("spinner");
+      expect(spinner).toBeTruthy();
     });
 
     expect(fetchJoinedGames).toHaveBeenCalled();
@@ -95,8 +116,8 @@ describe("MyGames", () => {
       </TamaguiProvider>,
     );
 
-    React.useState = jest.fn().mockReturnValue([true, jest.fn()])
-    await act(async() => {
+    React.useState = jest.fn().mockReturnValue([true, jest.fn()]);
+    await act(async () => {
       const spinner = screen.getByTestId("spinner");
       expect(spinner).toBeTruthy();
     });

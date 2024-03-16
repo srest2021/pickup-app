@@ -17,7 +17,7 @@ const mockUser = {
   displayName: "test display name",
   bio: "test bio",
   avatarUrl: "test avatar url",
-  sports: []
+  sports: [],
 };
 
 // mock session with user object
@@ -26,11 +26,16 @@ const mockSession = {
   refresh_token: "refresh_token_test_string",
   expires_in: 90000000,
   token_type: "token_type_test",
-  user: mockUser
+  user: mockUser,
 };
 
 // mock selected game
-const mockAddress = { street: "Homewood", city: "Baltimore", state: "MD", zip: "21218" };
+const mockAddress = {
+  street: "Homewood",
+  city: "Baltimore",
+  state: "MD",
+  zip: "21218",
+};
 const mockSport = { name: "basketball", skillLevel: "Beginner" };
 const mockSelectedMyGame = {
   id: "testid",
@@ -39,13 +44,16 @@ const mockSelectedMyGame = {
   address: mockAddress,
   sport: mockSport,
   maxPlayers: 20,
+  currentPlayers: 1,
+  isPublic: true,
+  distanceAway: 1,
   description: "Test Description",
-  isPublic: true
+  isPublic: true,
 };
 
 // mock useMutationUser hook
-jest.mock('../../../src/hooks/use-mutation-user', () => ({
-  __esModule: true, 
+jest.mock("../../../src/hooks/use-mutation-user", () => ({
+  __esModule: true,
   default: jest.fn(() => ({
     session: mockSession,
     setSession: jest.fn(),
@@ -55,7 +63,7 @@ jest.mock('../../../src/hooks/use-mutation-user', () => ({
 
 // mock store
 jest.mock("../../../src/lib/store", () => ({
-  useStore: jest.fn(() => [false, { selectedMyGame: mockSelectedMyGame } ]),
+  useStore: jest.fn(() => [false, { selectedMyGame: mockSelectedMyGame }]),
 }));
 
 // mock useMutationGame hook

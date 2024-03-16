@@ -1,8 +1,4 @@
-import {
-  render,
-  fireEvent,
-  screen,
-} from "@testing-library/react-native";
+import { render, fireEvent, screen } from "@testing-library/react-native";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
