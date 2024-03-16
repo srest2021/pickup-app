@@ -69,6 +69,10 @@ export default function Login({ navigation }: { navigation: any }) {
           disabled={loading}
           onPress={() => signInWithEmail()}
           size="$5"
+          color="#ff7403"
+          borderColor="#ff7403"
+          backgroundColor={"white"}
+          variant="outlined"
         >
           Login
         </Button>
@@ -79,8 +83,11 @@ export default function Login({ navigation }: { navigation: any }) {
           disabled={loading}
           onPress={() => navigation.navigate("Register")}
           size="$5"
+          color="#ff7403"
+          borderColor="#ff7403"
+          backgroundColor="#e8e8e8"
         >
-          Register
+          Create an account instead
         </Button>
       </YStack>
     </View>
