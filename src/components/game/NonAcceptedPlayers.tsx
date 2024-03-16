@@ -34,20 +34,18 @@ const NonAcceptedPlayer = ({
 
   return (
     <View margin={10}>
-      <XStack>
+      <XStack alignItems="center">
         <Text fontSize={20} marginRight={30}>
           {user.username}
         </Text>
         <Button
-          icon={loading ? Loader : X}
-          disabled={loading}
-          style={{ backgroundColor: "red", color: "white", marginRight: 10 }}
+          icon={X}
+          style={{ backgroundColor: "#e90d52", color: "white", marginRight: 10 }}
           onPress={() => handleReject()}
         />
         <Button
-          icon={loading ? Loader : Check}
-          disabled={loading}
-          style={{ backgroundColor: "green", color: "white" }}
+          icon={Check}
+          style={{ backgroundColor: "#05a579", color: "white" }}
           onPress={() => handleAccept()}
         />
       </XStack>
