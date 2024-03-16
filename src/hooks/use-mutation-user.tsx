@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
-import { Users } from "@tamagui/lucide-icons";
 
 function useMutationUser() {
   const [
@@ -17,7 +16,6 @@ function useMutationUser() {
     addUserSport,
     editUserSport,
     setUserSports,
-    setLocation,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -29,7 +27,6 @@ function useMutationUser() {
     state.addUserSport,
     state.editUserSport,
     state.setUserSports,
-    state.setLocation,
   ]);
 
   useEffect(() => {

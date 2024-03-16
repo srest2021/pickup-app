@@ -67,7 +67,7 @@ export interface Game {
   maxPlayers: number;
   currentPlayers: number;
   isPublic: boolean;
-  distanceAway: number;
+  distanceAway: number | string;
 }
 
 export type MyGame = Game & {

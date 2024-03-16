@@ -230,29 +230,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               </Label>
             </XStack>
 
-            <YStack>
+            <YStack space="$2">
               <Label size="$5" color={"#08348c"}>
                 Address*
               </Label>
-
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                City*
-              </Label>
-              <Input
-                flex={1}
-                size="$5"
-                placeholder="City"
-                testID="cityInput"
-                value={city}
-                onChangeText={(text: string) => setCity(text)}
-              />
-            </YStack>
-
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                State/ZIP*
-              </Label>
+              <YStack space="$2">
                 <Input
                   flex={1}
                   size="$5"
@@ -271,7 +253,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   onChangeText={(text: string) => setCity(text)}
                 />
 
-                <XStack space="$2">
+                <XStack
+                  space="$2"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
                   <Input
                     flexGrow={1}
                     size="$5"
@@ -444,7 +430,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               </Label>
               <TextArea
                 size="$5"
-                placeholder="Enter your game details (optional)"
+                placeholder="Enter your game details..."
                 testID="descriptionInput"
                 value={description}
                 onChangeText={(text: string) => setDescription(text)}

@@ -108,6 +108,7 @@ function useMutationGame() {
 
       removeMyGame(id);
       clearSelectedMyGame();
+      return id;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
