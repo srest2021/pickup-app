@@ -17,7 +17,7 @@ const AcceptedPlayer = ({ user, gameId, isOrganizer }: { user: User; gameId: str
 
   return (
     <View margin={10}>
-      <XStack>
+      <XStack alignItems="center">
         <Text fontSize={20} marginRight={30}>
           {user.username}
         </Text>
@@ -25,7 +25,7 @@ const AcceptedPlayer = ({ user, gameId, isOrganizer }: { user: User; gameId: str
           <Button
           icon={loading ? Loader : X}
           disabled={loading}
-          style={{ backgroundColor: "red", color: "white" }}
+          style={{ backgroundColor: "#e90d52", color: "white" }}
           onPress={() => handleRemove()}
           />
         )}
