@@ -22,11 +22,8 @@ const MyGames = ({ navigation }: { navigation: any }) => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    if (myGamesToggle === "myGames") {
-      await fetchMyGames(); // error handling happens inside
-    } else if (myGamesToggle === "joinedGames") {
-      await fetchJoinedGames(); // error handling happens inside
-    }
+    await fetchMyGames();
+    await fetchJoinedGames();
     setRefreshing(false);
   };
 

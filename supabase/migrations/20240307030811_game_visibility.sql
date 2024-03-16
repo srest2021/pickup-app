@@ -825,7 +825,7 @@ begin
         )
       )
       FROM public.joined_game AS jg
-      JOIN public.profiles AS p ON jg.player_id = p.id
+      JOIN public.profiles AS p ON jg.player_id = p.id and jg.player_id != g.organizer_id
       WHERE jg.game_id = g.id
     ) AS accepted_players,
     (
@@ -862,7 +862,8 @@ begin
     ' and g.skill_level = $5'
   else '' 
   end ||
-  ' order by d.dist_meters'
+  ' and not auth.uid() in (select player_id from joined_game where joined_game.game_id = g.id)
+  order by d.dist_meters'
   using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter";
 end;
 $$ language plpgsql;
@@ -953,7 +954,7 @@ returns table(
       )
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
-      WHERE jg.game_id = g.id and jg.player_id != auth.uid()
+      WHERE jg.game_id = g.id --and jg.player_id != auth.uid()
     ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
@@ -1020,7 +1021,7 @@ returns table(
         )
       )
       FROM public.joined_game AS jg
-      JOIN public.profiles AS p ON jg.player_id = p.id
+      JOIN public.profiles AS p ON jg.player_id = p.id and jg.player_id != g.organizer_id
       WHERE jg.game_id = g.id
     ) AS accepted_players,
     (

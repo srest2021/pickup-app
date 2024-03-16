@@ -4,69 +4,59 @@ import { useStore } from "../../lib/store";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 import AcceptedPlayer from "./AcceptedPlayer";
-import NonAcceptedPlayer from "./NonAcceptedPlayers";
+import { FeedGame, Game, JoinedGame } from "../../lib/types";
 
-const GamePlayers = ({ navigation }: { navigation: any }) => {
-  const [session, selectedMyGame] = useStore((state) => [
-    state.session,
-    state.selectedMyGame,
-  ]);
+const GamePlayers = ({
+  navigation,
+  game,
+  gametype,
+}: {
+  navigation: any;
+  game: Game;
+  gametype: string;
+}) => {
+  const [session] = useStore((state) => [state.session]);
 
-  const acceptedPlayers = selectedMyGame?.acceptedPlayers;
-  const joinRequests = selectedMyGame?.joinRequests;
+  const convertedGame =
+    gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
+  const acceptedPlayers = convertedGame.acceptedPlayers;
 
   return (
-    <View style={{ display: "flex", height: 700, marginTop: 20 }}>
+    <View style={{ display: "flex", marginTop: 20 }}>
       <ToastViewport />
       <ToastDemo />
       {session && session.user ? (
         <YStack style={{ flex: 1 }}>
           <YStack style={{ flex: 1, alignItems: "center" }}>
-            <Label size={5}>
+            <Label size={5} paddingBottom="$2">
               <H6>
-                Accepted Players ({selectedMyGame?.currentPlayers}/
-                {selectedMyGame?.maxPlayers})
+                Accepted Players ({convertedGame.currentPlayers}/
+                {convertedGame.maxPlayers})
               </H6>
             </Label>
-            <Card style={{ width: "100%", height: 240 }} elevate size="$5">
+            <Card
+              style={{
+                width: "100%",
+                maxHeight: 240,
+                justifyContent: "center",
+              }}
+              elevate
+              size="$5"
+            >
               <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack>
+                  <YStack space="$2" padding="$3">
                     {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer
                         key={index}
                         user={user}
-                        gameId={selectedMyGame.id}
+                        gameId={convertedGame.id}
+                        isOrganizer={false}
                       />
                     ))}
                   </YStack>
                 ) : (
-                  <Text>No Accepted Players</Text>
-                )}
-              </ScrollView>
-            </Card>
-          </YStack>
-
-          <YStack style={{ flex: 1, marginLeft: 5, alignItems: "center" }}>
-            <Label size={5} style={{ justifyContent: "center" }}>
-              <H6>Join Requests</H6>
-            </Label>
-            <Card style={{ width: "100%", height: 240 }} elevate size="$5">
-              <ScrollView>
-                {joinRequests && joinRequests.length > 0 ? (
-                  <YStack>
-                    {joinRequests.map((user, index) => (
-                      <NonAcceptedPlayer
-                        key={index}
-                        user={user}
-                        gameId={selectedMyGame.id}
-                        currentPlayers={selectedMyGame.currentPlayers}
-                        maxPlayers={selectedMyGame.maxPlayers}
-                      />
-                    ))}
-                  </YStack>
-                ) : (
-                  <Text>No Join Requests</Text>
+                  <Text padding="$3">No accepted players yet</Text>
                 )}
               </ScrollView>
             </Card>

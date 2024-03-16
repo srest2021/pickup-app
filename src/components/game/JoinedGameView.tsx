@@ -14,7 +14,7 @@ import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
-import { Italic } from "@tamagui/lucide-icons";
+import GamePlayers from "./GamePlayers";
 
 const JoinedGameView = ({
   navigation,
@@ -129,6 +129,12 @@ const JoinedGameView = ({
                     <SportSkill sport={selectedJoinedGame.sport} />
                   </XStack>
                 </YStack>
+
+                <GamePlayers
+                  navigation={undefined}
+                  game={selectedJoinedGame}
+                  gametype="joined"
+                />
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
