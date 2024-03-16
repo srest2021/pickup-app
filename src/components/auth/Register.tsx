@@ -91,6 +91,10 @@ export default function Register() {
           disabled={loading}
           onPress={() => signUpWithEmail()}
           size="$5"
+          color="#ff7403"
+          borderColor="#ff7403"
+          backgroundColor={"white"}
+          variant="outlined"
         >
           Register
         </Button>

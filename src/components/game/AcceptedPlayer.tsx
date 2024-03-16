@@ -35,6 +35,7 @@ const AcceptedPlayer = ({
         </Text>
         {isOrganizer && (
           <Button
+            testID="remove-button"
             icon={loading ? Loader : X}
             disabled={loading}
             size="$2"

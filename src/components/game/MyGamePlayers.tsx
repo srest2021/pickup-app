@@ -39,7 +39,11 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
             >
               <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack space="$2" padding="$3">
+                  <YStack
+                    space="$2"
+                    padding="$3"
+                    testID="accepted-players-container"
+                  >
                     {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer
                         key={index}
@@ -71,7 +75,11 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
             >
               <ScrollView>
                 {joinRequests && joinRequests.length > 0 ? (
-                  <YStack space="$2" padding="$3">
+                  <YStack
+                    space="$2"
+                    padding="$3"
+                    testID="join-requests-container"
+                  >
                     {joinRequests.map((user, index) => (
                       <NonAcceptedPlayer
                         key={index}

@@ -87,6 +87,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
           <YStack>
             <Label>Select a sport:</Label>
             <Select
+              data-testid="sportInput"
               value={sportName}
               onValueChange={(selectedSport) => setSportName(selectedSport)}
             >
@@ -153,6 +154,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
             <Label>Select a skill level:</Label>
             <Label width={160} justifyContent="flex-end">
               <RadioGroup
+                testID="skillInput"
                 aria-labelledby="Select one item"
                 defaultValue="3"
                 name="form"
@@ -222,6 +224,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                 borderColor="#ff7403"
                 backgroundColor="#ffffff"
                 variant="outlined"
+                testID="save-btn"
               >
                 Add sport
               </Button>

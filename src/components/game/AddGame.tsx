@@ -202,6 +202,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 Public
               </Label>
               <Switch
+                testID="visibilityInput"
                 size="$4"
                 defaultChecked={false}
                 onCheckedChange={(checked: boolean) => {
@@ -239,7 +240,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   flex={1}
                   size="$5"
                   placeholder="Street"
-                  testID="addressInput"
+                  testID="streetInput"
                   value={street}
                   onChangeText={(text: string) => setStreet(text)}
                 />

@@ -44,6 +44,7 @@ const NonAcceptedPlayer = ({
         </Text>
         <XStack justifyContent="flex-end" space="$2">
           <Button
+            testID="reject-button"
             icon={loading ? Loader : X}
             disabled={loading}
             size="$2"
@@ -51,6 +52,7 @@ const NonAcceptedPlayer = ({
             onPress={() => handleReject()}
           />
           <Button
+            testID="accept-button"
             icon={loading ? Loader : Check}
             disabled={loading}
             size="$2"
