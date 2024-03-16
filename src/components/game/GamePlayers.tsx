@@ -6,10 +6,19 @@ import { ToastDemo } from "../Toast";
 import AcceptedPlayer from "./AcceptedPlayer";
 import { FeedGame, Game, JoinedGame } from "../../lib/types";
 
-const GamePlayers = ({ navigation, game, gametype }: { navigation: any, game: Game, gametype: string }) => {
+const GamePlayers = ({
+  navigation,
+  game,
+  gametype,
+}: {
+  navigation: any;
+  game: Game;
+  gametype: string;
+}) => {
   const [session] = useStore((state) => [state.session]);
 
-  const convertedGame = (gametype === "feed") ? game as FeedGame : game as JoinedGame;
+  const convertedGame =
+    gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
   const acceptedPlayers = convertedGame.acceptedPlayers;
 
   return (
@@ -25,7 +34,15 @@ const GamePlayers = ({ navigation, game, gametype }: { navigation: any, game: Ga
                 {convertedGame.maxPlayers})
               </H6>
             </Label>
-            <Card style={{ width: "100%", maxHeight: 240, justifyContent:"center" }} elevate size="$5">
+            <Card
+              style={{
+                width: "100%",
+                maxHeight: 240,
+                justifyContent: "center",
+              }}
+              elevate
+              size="$5"
+            >
               <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
                   <YStack space="$2" padding="$3">

@@ -28,7 +28,15 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                 {selectedMyGame?.maxPlayers})
               </H6>
             </Label>
-            <Card style={{ width: "100%", maxHeight: 240, justifyContent:"center" }} elevate size="$5">
+            <Card
+              style={{
+                width: "100%",
+                maxHeight: 240,
+                justifyContent: "center",
+              }}
+              elevate
+              size="$5"
+            >
               <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
                   <YStack space="$2" padding="$3">
@@ -48,11 +56,19 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
             </Card>
           </YStack>
 
-          <YStack style={{ flex: 1, alignItems: "center"}}>
+          <YStack style={{ flex: 1, alignItems: "center" }}>
             <Label size={5} paddingBottom="$2">
               <H6>Join Requests</H6>
             </Label>
-            <Card style={{ width: "100%", maxHeight: 240, justifyContent:"center" }} elevate size="$5">
+            <Card
+              style={{
+                width: "100%",
+                maxHeight: 240,
+                justifyContent: "center",
+              }}
+              elevate
+              size="$5"
+            >
               <ScrollView>
                 {joinRequests && joinRequests.length > 0 ? (
                   <YStack space="$2" padding="$3">

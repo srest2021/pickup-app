@@ -446,7 +446,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 color="#ff7403"
                 borderColor="#ff7403"
-                backgroundColor={'white'}
+                backgroundColor={"white"}
                 variant="outlined"
               >
                 {loading ? "Loading..." : "Publish"}

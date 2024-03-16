@@ -83,7 +83,9 @@ function useMutationGame() {
           maxPlayers: Number(playerLimit),
           currentPlayers: 1,
           isPublic,
-          distanceAway: location ? Math.trunc(Number(data["row"].f15)/1609.344): "?",
+          distanceAway: location
+            ? Math.trunc(Number(data["row"].f15) / 1609.344)
+            : "?",
           joinRequests: [],
           acceptedPlayers: [],
         };
@@ -187,7 +189,9 @@ function useMutationGame() {
           maxPlayers: Number(data["row"].f12),
           currentPlayers: Number(data["row"].f13),
           isPublic: data["row"].f14,
-          distanceAway: location ? Math.trunc(Number(data["row"].f15)/1609.344): "?"
+          distanceAway: location
+            ? Math.trunc(Number(data["row"].f15) / 1609.344)
+            : "?",
         };
         editMyGame(myUpdatedGame.id, myUpdatedGame);
         return myUpdatedGame;

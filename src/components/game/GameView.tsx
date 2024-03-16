@@ -28,8 +28,11 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
   // Request to Join Game Logic:
   function requestToJoinGame() {
-    if (selectedFeedGame && selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers) {
-      Alert.alert("This game is already full!")
+    if (
+      selectedFeedGame &&
+      selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers
+    ) {
+      Alert.alert("This game is already full!");
     } else {
       requestToJoinById(gameId, user!.id);
       // Go back to feed once request is sent.
@@ -131,8 +134,11 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <GamePlayers navigation={undefined} game={selectedFeedGame} gametype="feed"/>
-
+                <GamePlayers
+                  navigation={undefined}
+                  game={selectedFeedGame}
+                  gametype="feed"
+                />
 
                 <XStack space="$3" paddingTop="$6">
                   <Button

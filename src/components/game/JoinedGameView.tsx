@@ -130,7 +130,11 @@ const JoinedGameView = ({
                   </XStack>
                 </YStack>
 
-                <GamePlayers navigation={undefined} game={selectedJoinedGame} gametype="joined"/>
+                <GamePlayers
+                  navigation={undefined}
+                  game={selectedJoinedGame}
+                  gametype="joined"
+                />
 
                 <XStack space="$3" paddingTop="$6">
                   <Button

@@ -34,25 +34,29 @@ const NonAcceptedPlayer = ({
 
   return (
     <View>
-      <XStack alignItems="center" flexDirection="row" justifyContent="space-between">
+      <XStack
+        alignItems="center"
+        flexDirection="row"
+        justifyContent="space-between"
+      >
         <Text fontSize="$5" ellipsizeMode="tail">
           @{user.username}
         </Text>
         <XStack justifyContent="flex-end" space="$2">
-        <Button
-          icon={loading ? Loader : X}
-          disabled={loading}
-          size="$2"
-          style={{ backgroundColor: "#e90d52", color: "white" }}
-          onPress={() => handleReject()}
-        />
-        <Button
-          icon={loading ? Loader : Check}
-          disabled={loading}
-          size="$2"
-          style={{ backgroundColor: "#05a579", color: "white" }}
-          onPress={() => handleAccept()}
-        />
+          <Button
+            icon={loading ? Loader : X}
+            disabled={loading}
+            size="$2"
+            style={{ backgroundColor: "#e90d52", color: "white" }}
+            onPress={() => handleReject()}
+          />
+          <Button
+            icon={loading ? Loader : Check}
+            disabled={loading}
+            size="$2"
+            style={{ backgroundColor: "#05a579", color: "white" }}
+            onPress={() => handleAccept()}
+          />
         </XStack>
       </XStack>
     </View>
