@@ -16,15 +16,16 @@ const AcceptedPlayer = ({ user, gameId, isOrganizer }: { user: User; gameId: str
   };
 
   return (
-    <View margin={10}>
-      <XStack alignItems="center">
-        <Text fontSize={20} marginRight={30}>
-          {user.username}
+    <View>
+      <XStack alignItems="center" flexDirection="row" justifyContent="space-between">
+        <Text fontSize="$5" ellipsizeMode="tail">
+          @{user.username}
         </Text>
         {isOrganizer && (
           <Button
           icon={loading ? Loader : X}
           disabled={loading}
+          size="$2"
           style={{ backgroundColor: "#e90d52", color: "white" }}
           onPress={() => handleRemove()}
           />

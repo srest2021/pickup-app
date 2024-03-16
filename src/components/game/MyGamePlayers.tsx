@@ -16,22 +16,22 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
   const joinRequests = selectedMyGame?.joinRequests;
 
   return (
-    <View style={{ display: "flex", height: 700, marginTop: 20 }}>
+    <View style={{ display: "flex", marginTop: 20 }}>
       <ToastViewport />
       <ToastDemo />
       {session && session.user ? (
         <YStack style={{ flex: 1 }}>
-          <YStack style={{ flex: 1, alignItems: "center" }}>
-            <Label size={5}>
+          <YStack style={{ flex: 1, alignItems: "center", paddingBottom: 30 }}>
+            <Label size={5} paddingBottom="$2">
               <H6>
                 Accepted Players ({selectedMyGame?.currentPlayers}/
                 {selectedMyGame?.maxPlayers})
               </H6>
             </Label>
-            <Card style={{ width: "100%", height: 240 }} elevate size="$5">
+            <Card style={{ width: "100%", maxHeight: 240, justifyContent:"center" }} elevate size="$5">
               <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack>
+                  <YStack space="$2" padding="$3">
                     {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer
                         key={index}
@@ -42,20 +42,20 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                     ))}
                   </YStack>
                 ) : (
-                  <Text>No Accepted Players</Text>
+                  <Text padding="$3">No Accepted Players</Text>
                 )}
               </ScrollView>
             </Card>
           </YStack>
 
-          <YStack style={{ flex: 1, marginLeft: 5, alignItems: "center" }}>
-            <Label size={5} style={{ justifyContent: "center" }}>
+          <YStack style={{ flex: 1, alignItems: "center"}}>
+            <Label size={5} paddingBottom="$2">
               <H6>Join Requests</H6>
             </Label>
-            <Card style={{ width: "100%", height: 240 }} elevate size="$5">
+            <Card style={{ width: "100%", maxHeight: 240, justifyContent:"center" }} elevate size="$5">
               <ScrollView>
                 {joinRequests && joinRequests.length > 0 ? (
-                  <YStack>
+                  <YStack space="$2" padding="$3">
                     {joinRequests.map((user, index) => (
                       <NonAcceptedPlayer
                         key={index}
@@ -67,7 +67,7 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                     ))}
                   </YStack>
                 ) : (
-                  <Text>No Join Requests</Text>
+                  <Text padding="$3">No Join Requests</Text>
                 )}
               </ScrollView>
             </Card>
