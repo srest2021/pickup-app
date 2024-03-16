@@ -19,16 +19,16 @@ const GamePlayers = ({ navigation, game, gametype }: { navigation: any, game: Ga
       {session && session.user ? (
         <YStack style={{ flex: 1 }}>
           <YStack style={{ flex: 1, alignItems: "center" }}>
-            <Label size={5}>
+            <Label size={5} paddingBottom="$2">
               <H6>
                 Accepted Players ({convertedGame.currentPlayers}/
                 {convertedGame.maxPlayers})
               </H6>
             </Label>
-            <Card style={{ width: "100%", height: 240 }} elevate size="$5">
+            <Card style={{ width: "100%", maxHeight: 240, justifyContent:"center" }} elevate size="$5">
               <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack>
+                  <YStack space="$2" padding="$3">
                     {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer
                         key={index}
@@ -39,7 +39,7 @@ const GamePlayers = ({ navigation, game, gametype }: { navigation: any, game: Ga
                     ))}
                   </YStack>
                 ) : (
-                  <Text>No Accepted Players</Text>
+                  <Text padding="$3">No accepted players yet</Text>
                 )}
               </ScrollView>
             </Card>

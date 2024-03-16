@@ -11,7 +11,7 @@ import {
   H6,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
@@ -28,9 +28,13 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
   // Request to Join Game Logic:
   function requestToJoinGame() {
-    requestToJoinById(gameId, user!.id);
-    // Go back to feed once request is sent.
-    navigation.goBack();
+    if (selectedFeedGame && selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers) {
+      Alert.alert("This game is already full!")
+    } else {
+      requestToJoinById(gameId, user!.id);
+      // Go back to feed once request is sent.
+      navigation.goBack();
+    }
   }
 
   return (

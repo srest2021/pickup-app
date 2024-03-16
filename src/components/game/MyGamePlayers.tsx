@@ -42,7 +42,7 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                     ))}
                   </YStack>
                 ) : (
-                  <Text padding="$3">No Accepted Players</Text>
+                  <Text padding="$3">No accepted players yet</Text>
                 )}
               </ScrollView>
             </Card>
@@ -67,7 +67,7 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                     ))}
                   </YStack>
                 ) : (
-                  <Text padding="$3">No Join Requests</Text>
+                  <Text padding="$3">No join requests yet</Text>
                 )}
               </ScrollView>
             </Card>
