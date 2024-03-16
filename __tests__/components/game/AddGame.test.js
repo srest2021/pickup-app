@@ -3,7 +3,6 @@ import {
   fireEvent,
   waitFor,
   screen,
-  act,
 } from "@testing-library/react-native";
 import AddGame from "../../../src/components/game/AddGame";
 import { TamaguiProvider } from "tamagui";
@@ -11,16 +10,48 @@ import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
 import { ToastProvider } from "@tamagui/toast";
 
-jest.mock("../../../src/lib/store", () => ({
-  useStore: jest.fn(() => [false, { user: { id: "mockUserId" } }]),
+// mock user
+const mockUser = {
+  id: "testid",
+  username: "testusername",
+  displayName: "test display name",
+  bio: "test bio",
+  avatarUrl: "test avatar url",
+  sports: []
+};
+
+// mock session with user object
+const mockSession = {
+  access_token: "access_token_test_string",
+  refresh_token: "refresh_token_test_string",
+  expires_in: 90000000,
+  token_type: "token_type_test",
+  user: mockUser
+};
+
+// mock useMutationUser hook
+jest.mock('../../../src/hooks/use-mutation-user', () => ({
+  __esModule: true, 
+  default: jest.fn(() => ({
+    session: mockSession,
+    setSession: jest.fn(),
+    user: mockUser,
+  })),
 }));
-// Mock useMutationGame hook
+
+// mock store
+jest.mock("../../../src/lib/store", () => ({
+  useStore: jest.fn(() => [false, { user: { id: "testid" } }]),
+}));
+
+// mock useMutationGame hook
+const mockCreateGameById = jest.fn();
 jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
-  createGame: jest.fn(),
+  createGame: mockCreateGameById,
 }));
 
 describe("AddGame", () => {
-  it("Should render component successfully", () => {
+  test("Should render component successfully", () => {
     const navigation = { navigate: jest.fn() };
 
     const { root } = render(
@@ -41,8 +72,11 @@ describe("AddGame", () => {
     const timePicker = screen.getByTestId("timeInput");
     expect(timePicker).toBeTruthy();
 
-    const addressInput = screen.getByTestId("addressInput");
-    expect(addressInput).toBeTruthy();
+    const visibilitySwitch = screen.getByTestId("visibilityInput");
+    expect(visibilitySwitch).toBeTruthy();
+
+    const streetInput = screen.getByTestId("streetInput");
+    expect(streetInput).toBeTruthy();
 
     const cityInput = screen.getByTestId("cityInput");
     expect(cityInput).toBeTruthy();
@@ -70,7 +104,7 @@ describe("AddGame", () => {
 });
 
 describe("AddGame", () => {
-  it("should create a new game and navigate to 'MyGames' when 'Publish' button is pressed", async () => {
+  test("should create a new game and navigate to 'MyGames' when 'Publish' button is pressed", async () => {
     const navigation = { navigate: jest.fn() };
 
     const { root } = render(
@@ -85,10 +119,8 @@ describe("AddGame", () => {
     fireEvent.changeText(screen.getByTestId("titleInput"), "New Game Title");
     fireEvent.changeText(screen.getByTestId("dateInput"), new Date());
     fireEvent.changeText(screen.getByTestId("timeInput"), new Date());
-    fireEvent.changeText(
-      screen.getByTestId("addressInput"),
-      "3339 North Charles Street",
-    );
+    //fireEvent(screen.getByTestId("visibilityInput"), "onCheckedChange", true);
+    fireEvent.changeText(screen.getByTestId("streetInput"),"Homewood");
     fireEvent.changeText(screen.getByTestId("cityInput"), "Baltimore");
     fireEvent.changeText(screen.getByTestId("stateInput"), "MD");
     fireEvent.changeText(screen.getByTestId("zipInput"), "21218");
@@ -103,16 +135,15 @@ describe("AddGame", () => {
     );
 
     // Simulate button press to create a new game
-    act(() => {
-      fireEvent.press(screen.getByTestId("addGameButton"));
-    });
+    const publishButton = screen.getByTestId("addGameButton");
+    fireEvent.press(publishButton);
 
     // Wait for the createGame function to be called
     await waitFor(() => () => {
       expect(createGame).toHaveBeenCalledWith(
         "New Game Title",
         expect.any(Date),
-        "3339 North Charles Street",
+        "Homewood",
         "Baltimore",
         "MD",
         "21218",
@@ -120,6 +151,7 @@ describe("AddGame", () => {
         1,
         "10",
         "Test Description",
+        true
       );
 
       // Ensure navigation to 'MyGames' is triggered after creating the game

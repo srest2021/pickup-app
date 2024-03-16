@@ -14,10 +14,10 @@ import {
   YStack,
   Switch,
 } from "tamagui";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
-import { Game, SkillLevel, sports, getSkillLevelString } from "../../lib/types";
+import { SkillLevel, sports } from "../../lib/types";
 import {
   Toast,
   ToastProvider,
@@ -26,17 +26,14 @@ import {
   useToastState,
 } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import useQueryGames from "../../hooks/use-query-games";
 import { ToastDemo } from "../Toast";
 
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
-  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
+  const [loading, selectedMyGame] = useStore((state) => [state.loading, state.selectedMyGame]);
 
   const { user } = useMutationUser();
   const { editGameById } = useMutationGame();
-
-  const loading = useStore((state) => state.loading);
 
   // existing game attributes
   const [title, setTitle] = useState(
@@ -49,16 +46,16 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     selectedMyGame ? new Date(selectedMyGame?.datetime) : new Date(),
   );
   const [street, setStreet] = useState(
-    selectedMyGame ? selectedMyGame.address.street : "",
+    selectedMyGame && selectedMyGame.address ? selectedMyGame.address.street : "",
   );
   const [city, setCity] = useState(
-    selectedMyGame ? selectedMyGame.address.city : "",
+    selectedMyGame && selectedMyGame.address ? selectedMyGame.address.city : "",
   );
   const [state, setState] = useState(
-    selectedMyGame ? selectedMyGame.address.state : "",
+    selectedMyGame && selectedMyGame.address ? selectedMyGame.address.state : "",
   );
   const [zip, setZip] = useState(
-    selectedMyGame ? selectedMyGame.address.zip : "",
+    selectedMyGame && selectedMyGame.address ? selectedMyGame.address.zip : "",
   );
   const [sport, setSport] = useState(
     selectedMyGame && selectedMyGame.sport ? selectedMyGame.sport.name : "",
