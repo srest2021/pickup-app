@@ -5,3 +5,4 @@ node_modules/
 *.md
 dist
 .vscode/
+*.config.ts

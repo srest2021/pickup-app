@@ -12,44 +12,44 @@ import {
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
-import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
-import MyGamePlayers from "./MyGamePlayers";
+import useMutationGame from "../../hooks/use-mutation-game";
+import GamePlayers from "./GamePlayers";
 
-const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { gameId } = route.params;
+const JoinedGameView = ({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) => {
+  const { gameId, displayName } = route.params;
 
-  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
-  const [session, user, loading] = useStore((state) => [
-    state.session,
-    state.user,
-    state.loading,
-  ]);
-  const { removeMyGameById } = useMutationGame();
+  const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
+  const [session, user] = useStore((state) => [state.session, state.user]);
+  const { leaveJoinedGameById } = useMutationGame();
 
-  const deleteGame = async () => {
-    const removedId = await removeMyGameById(gameId);
-    // navigate back to myGames list.
-    if (removedId) {
-      navigation.goBack();
-    }
-    // TODO: Add success toast
-  };
+  // Leaving a Joined Game Logic:
+  function leaveJoinedGame() {
+    leaveJoinedGameById(gameId, user!.id);
+    //navigate back to myGames
+    navigation.goBack();
+  }
 
   return (
     <View>
       {session && session.user && user ? (
-        selectedMyGame ? (
+        selectedJoinedGame ? (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View className="p-12">
               <YStack>
                 <YStack alignItems="center">
-                  <H4 textAlign="center">{selectedMyGame.title}</H4>
+                  <H4 textAlign="center">{selectedJoinedGame.title}</H4>
                 </YStack>
 
                 <YStack paddingTop="$3" alignItems="center">
                   <H5>
-                    {new Date(selectedMyGame.datetime).toLocaleDateString(
+                    {new Date(selectedJoinedGame.datetime).toLocaleDateString(
                       "en-US",
                       {
                         year: "numeric",
@@ -61,7 +61,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </H5>
                   <H5>
                     at{" "}
-                    {new Date(selectedMyGame.datetime).toLocaleTimeString(
+                    {new Date(selectedJoinedGame.datetime).toLocaleTimeString(
                       "en-US",
                       {
                         hour: "2-digit",
@@ -73,11 +73,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <YStack alignItems="center">
                   <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{user.username}
+                    by @{displayName}
                   </SizableText>
                 </YStack>
 
-                {selectedMyGame.description && (
+                {selectedJoinedGame.description && (
                   <YStack paddingTop="$3" paddingBottom="$7">
                     <Card elevate size="$5">
                       <View marginLeft={25} marginRight={25}>
@@ -87,7 +87,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                           paddingTop="$3"
                           paddingBottom="$3"
                         >
-                          {selectedMyGame.description}
+                          {selectedJoinedGame.description}
                         </SizableText>
                       </View>
                     </Card>
@@ -100,7 +100,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Status: </H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedMyGame.isPublic ? "public" : "friends-only"}
+                      {selectedJoinedGame.isPublic ? "public" : "friends-only"}
                     </SizableText>
                   </XStack>
 
@@ -109,7 +109,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`}
+                      {`${selectedJoinedGame.address.street}, ${selectedJoinedGame.address.city}, ${selectedJoinedGame.address.state} ${selectedJoinedGame.address.zip}`}
                     </SizableText>
                   </XStack>
 
@@ -118,7 +118,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedMyGame.sport.name}
+                      {selectedJoinedGame.sport.name}
                     </SizableText>
                   </XStack>
 
@@ -126,11 +126,15 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Skill:</H6>
                     </Label>
-                    <SportSkill sport={selectedMyGame.sport} />
+                    <SportSkill sport={selectedJoinedGame.sport} />
                   </XStack>
                 </YStack>
 
-                <MyGamePlayers navigation={undefined} />
+                <GamePlayers
+                  navigation={undefined}
+                  game={selectedJoinedGame}
+                  gametype="joined"
+                />
 
                 <XStack space="$3" paddingTop="$6">
                   <Button
@@ -140,24 +144,9 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     borderColor="#ff7403"
                     backgroundColor="#ffffff"
                     flex={1}
-                    onPress={() => {
-                      navigation.navigate("EditGame", { gameId });
-                    }}
-                    disabled={loading}
+                    onPress={() => leaveJoinedGame()}
                   >
-                    {loading ? "Loading..." : "Edit"}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    flex={1}
-                    onPress={() => deleteGame()}
-                    disabled={loading}
-                  >
-                    {loading ? "Loading..." : "Delete"}
+                    Leave Game
                   </Button>
                 </XStack>
               </YStack>
@@ -170,11 +159,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
         )
       ) : (
         <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Log in to view and edit this game!</H4>
+          <H4>Log in to view this game!</H4>
         </View>
       )}
     </View>
   );
 };
 
-export default MyGameView;
+export default JoinedGameView;

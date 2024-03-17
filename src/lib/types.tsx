@@ -1,4 +1,5 @@
 export type User = {
+  id: string;
   username: string;
   displayName: string;
   bio: string;
@@ -39,28 +40,52 @@ export function getSkillLevelString(skillLevel: SkillLevel): string {
 export function getSkillLevelColors(skillLevel: SkillLevel) {
   switch (skillLevel) {
     case SkillLevel.Beginner:
-      return ["green", "white", "white"];
+      return ["#05a579", "white", "white"];
     case SkillLevel.Intermediate:
-      return ["orange", "orange", "white"];
+      return ["#ff7403", "#ff7403", "white"];
     case SkillLevel.Advanced:
-      return ["red", "red", "red"];
+      return ["#e90d52", "#e90d52", "#e90d52"];
     default:
       return ["white", "white", "white"];
   }
 }
 
-export type Game = {
-  id: string;
-  title: string;
-  description: string;
-  datetime: Date;
-  address: string;
+export type Address = {
+  street: string;
   city: string;
   state: string;
   zip: string;
+};
+
+export interface Game {
+  id: string;
+  organizerId: string;
+  title: string;
+  description: string;
+  datetime: Date;
   sport: GameSport;
   maxPlayers: number;
   currentPlayers: number;
+  isPublic: boolean;
+  distanceAway: number | string;
+}
+
+export type MyGame = Game & {
+  address: Address;
+  joinRequests: User[];
+  acceptedPlayers: User[];
+};
+
+export type JoinedGame = Game & {
+  address: Address;
+  acceptedPlayers: User[];
+  organizer: User;
+};
+
+export type FeedGame = Game & {
+  hasRequested: boolean;
+  acceptedPlayers: User[];
+  organizer: User;
 };
 
 export const sports = [

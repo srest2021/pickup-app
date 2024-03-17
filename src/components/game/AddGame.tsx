@@ -12,6 +12,7 @@ import {
   XStack,
   YStack,
   H4,
+  Switch,
 } from "tamagui";
 import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
@@ -32,7 +33,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
-  const [address, setAddress] = useState("");
+  const [street, setStreet] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
@@ -40,6 +41,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("1");
   const [description, setDescription] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
 
   // Toasts
   const toast = useToastController();
@@ -48,7 +50,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setTitle("");
     setDate(new Date());
     setTime(new Date());
-    setAddress("");
+    setStreet("");
     setCity("");
     setState("");
     setZip("");
@@ -56,6 +58,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
+    setIsPublic(true);
   }
 
   // Radio group value is only string. Convert string skill level to number
@@ -71,11 +74,12 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
   const createNewGame = async () => {
     // Check that no fields are left blank (except description, optional)
+    // No need to check isPublic. It is never empty, always public by default.
     if (
       !title ||
       !date ||
       !time ||
-      !address ||
+      !street ||
       !sport ||
       !skillLevel ||
       !playerLimit ||
@@ -108,7 +112,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     const myNewGame = await createGame(
       title,
       combinedDateTime,
-      address,
+      street,
       city,
       state,
       zip,
@@ -116,14 +120,15 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       convertSkillLevel(),
       playerLimit,
       description,
+      isPublic,
     );
 
     if (myNewGame) {
-      toast.show("Success!", {
-        message: "Game added.",
-      });
+      // toast.show("Success!", {
+      //   message: "Game added.",
+      // });
       clearGameAttributes();
-      navigation.navigate("MyGames");
+      navigation.navigate("My Games", { screen: "MyGames" });
     }
   };
 
@@ -137,9 +142,10 @@ const AddGame = ({ navigation }: { navigation: any }) => {
           showsVerticalScrollIndicator={false}
         >
           <YStack space="$4" paddingBottom="$4">
+            <Label> * indicates required fields </Label>
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
-                Title
+                Title*
               </Label>
               <Input
                 flex={1}
@@ -153,7 +159,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
-                Date
+                Date*
               </Label>
               <DateTimePicker
                 value={date}
@@ -169,7 +175,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
-                Time
+                Time*
               </Label>
               <DateTimePicker
                 value={time}
@@ -182,62 +188,102 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               />
             </XStack>
 
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                Address
-              </Label>
-              <Input
-                flex={1}
+            <XStack width={200} alignItems="center" padding="$2">
+              <Label
+                paddingRight="$0"
+                minWidth={90}
+                justifyContent="flex-end"
                 size="$5"
-                placeholder="Address"
-                testID="addressInput"
-                value={address}
-                onChangeText={(text: string) => setAddress(text)}
-              />
-            </YStack>
-
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                City
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? "black" : "#e90d52",
+                }}
+              >
+                Public
               </Label>
-              <Input
-                flex={1}
+              <Switch
+                testID="visibilityInput"
+                size="$4"
+                defaultChecked={false}
+                onCheckedChange={(checked: boolean) => {
+                  setIsPublic(!checked);
+                }}
+                style={{
+                  backgroundColor: "#e90d52",
+                }}
+              >
+                <Switch.Thumb
+                  style={{ backgroundColor: "#b90a41" }}
+                  animation="bouncy"
+                />
+              </Switch>
+              <Label
+                paddingLeft="$6"
+                minWidth={90}
+                justifyContent="flex-end"
                 size="$5"
-                placeholder="City"
-                testID="cityInput"
-                value={city}
-                onChangeText={(text: string) => setCity(text)}
-              />
-            </YStack>
-
-            <YStack space="$1">
-              <Label size="$5" color={"#08348c"}>
-                State/ZIP
+                htmlFor={"switch-public-friends-only"}
+                style={{
+                  color: isPublic ? "#e90d52" : "black",
+                }}
+              >
+                Friends-Only
               </Label>
-              <XStack space="$3">
+            </XStack>
+
+            <YStack space="$2">
+              <Label size="$5" color={"#08348c"}>
+                Address*
+              </Label>
+              <YStack space="$2">
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="State"
-                  value={state}
-                  testID="stateInput"
-                  onChangeText={(text: string) => setState(text)}
+                  placeholder="Street"
+                  testID="streetInput"
+                  value={street}
+                  onChangeText={(text: string) => setStreet(text)}
                 />
+
                 <Input
                   flex={1}
                   size="$5"
-                  placeholder="Zip"
-                  value={zip}
-                  keyboardType="numeric"
-                  testID="zipInput"
-                  onChangeText={(text: string) => setZip(text)}
+                  placeholder="City"
+                  testID="cityInput"
+                  value={city}
+                  onChangeText={(text: string) => setCity(text)}
                 />
-              </XStack>
+
+                <XStack
+                  space="$2"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Input
+                    flexGrow={1}
+                    size="$5"
+                    placeholder="State"
+                    value={state}
+                    testID="stateInput"
+                    onChangeText={(text: string) => setState(text)}
+                  />
+
+                  <Input
+                    flexGrow={1}
+                    size="$5"
+                    placeholder="Zip"
+                    value={zip}
+                    keyboardType="numeric"
+                    testID="zipInput"
+                    onChangeText={(text: string) => setZip(text)}
+                  />
+                </XStack>
+              </YStack>
             </YStack>
 
             <YStack>
               <Label size="$5" color={"#08348c"}>
-                Sport
+                Sport*
               </Label>
               <Select value={sport} onValueChange={setSport}>
                 <Select.Trigger iconAfter={ChevronDown}>
@@ -301,7 +347,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <YStack>
               <Label size="$5" color={"#08348c"}>
-                Skill Level
+                Skill Level*
               </Label>
               <RadioGroup
                 aria-labelledby="Select one item"
@@ -367,7 +413,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
             <XStack space="$4" alignItems="center">
               <Label flex={1} size="$5" width={90} color={"#08348c"}>
-                Player Limit
+                Player Limit*
               </Label>
               <Input
                 flex={1}
@@ -385,7 +431,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               </Label>
               <TextArea
                 size="$5"
-                placeholder="Enter your game details (optional)"
+                placeholder="Enter your game details..."
                 testID="descriptionInput"
                 value={description}
                 onChangeText={(text: string) => setDescription(text)}
@@ -401,6 +447,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 color="#ff7403"
                 borderColor="#ff7403"
+                backgroundColor={"white"}
                 variant="outlined"
               >
                 {loading ? "Loading..." : "Publish"}
@@ -409,7 +456,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
           </YStack>
         </ScrollView>
       ) : (
-        <View className="p-12 text-center items-center flex-1 justify-center">
+        <View className="items-center justify-center flex-1 p-12 text-center">
           <H4>Log in to create a new game!</H4>
         </View>
       )}

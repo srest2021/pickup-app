@@ -1,12 +1,12 @@
 import { supabase } from "../../lib/supabase";
-import { ScrollView, View, Alert, Text } from "react-native";
+import { ScrollView, View, Text } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
 import { Button, Card, SizableText, YStack } from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
-import { Edit3 } from "@tamagui/lucide-icons";
+import { Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
@@ -32,11 +32,13 @@ export default function Profile({ navigation }: { navigation: any }) {
   ) => {
     // Handle the new sport as needed
     const userSport = await setSport(sportName, sportSkillLevel);
-    if (userSport) {
-      toast.show("Success!", {
-        message: "Sport added.",
-      });
-    }
+    // Comment out this toast, because if you go to My Game View,
+    // it will pop up there as well.
+    // if (userSport) {
+    //   toast.show("Success!", {
+    //     message: "Sport added.",
+    //   });
+    // }
   };
 
   return (
@@ -62,7 +64,7 @@ export default function Profile({ navigation }: { navigation: any }) {
           }}
         >
           <Button
-            icon={Edit3}
+            icon={loading ? Loader : Edit3}
             theme="active"
             disabled={loading}
             onPress={() => navigation.navigate("EditProfile")}
@@ -126,6 +128,7 @@ export default function Profile({ navigation }: { navigation: any }) {
               size="$5"
               color="#ff7403"
               borderColor="#ff7403"
+              backgroundColor={"#ffffff"}
               width="100%"
             >
               Log Out

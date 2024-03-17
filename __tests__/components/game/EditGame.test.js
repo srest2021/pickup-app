@@ -10,51 +10,75 @@ import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
 import { ToastProvider } from "@tamagui/toast";
 
-// Mock dependencies
-jest.mock("../../../src/hooks/use-mutation-user", () => () => ({
-  user: {}, // Mock user object as needed for the test
-}));
-
-const mockEditGameById = jest.fn();
-jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
-  editGameById: mockEditGameById,
-}));
-
-const mockSport = {
-  name: "Basketball",
-  skillLevel: "Beginner",
+// mock user
+const mockUser = {
+  id: "testid",
+  username: "testusername",
+  displayName: "test display name",
+  bio: "test bio",
+  avatarUrl: "test avatar url",
+  sports: [],
 };
 
-const mockSelectedMyGame = {
-  id: "gameId",
-  title: "Test Title",
-  datetime: new Date(
-    "Sun Mar 13 2025 15:42:33 GMT+0000 (Coordinated Universal Time)",
-  ),
-  address: "3339 North Charles St",
+// mock session with user object
+const mockSession = {
+  access_token: "access_token_test_string",
+  refresh_token: "refresh_token_test_string",
+  expires_in: 90000000,
+  token_type: "token_type_test",
+  user: mockUser,
+};
+
+// mock selected game
+const mockAddress = {
+  street: "Homewood",
   city: "Baltimore",
   state: "MD",
   zip: "21218",
+};
+const mockSport = { name: "basketball", skillLevel: "Beginner" };
+const mockSelectedMyGame = {
+  id: "testid",
+  title: "Test Title",
+  datetime: new Date(),
+  address: mockAddress,
   sport: mockSport,
   maxPlayers: 20,
+  currentPlayers: 1,
+  isPublic: true,
+  distanceAway: 1,
   description: "Test Description",
+  isPublic: true,
 };
 
-// Mock Selected Game in Store
+// mock useMutationUser hook
+jest.mock("../../../src/hooks/use-mutation-user", () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    session: mockSession,
+    setSession: jest.fn(),
+    user: mockUser,
+  })),
+}));
+
+// mock store
 jest.mock("../../../src/lib/store", () => ({
-  useStore: jest.fn(() => [
-    {
-      selectedMyGame: mockSelectedMyGame,
-      loading: false,
-    },
-    jest.fn(),
-  ]),
+  useStore: jest.fn(() => [false, { selectedMyGame: mockSelectedMyGame }]),
+}));
+
+// mock useMutationGame hook
+const mockEditGameById = jest.fn();
+jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
+  //editGameById: mockEditGameById,
+  default: jest.fn(() => ({
+    editGameById: mockEditGameById,
+  })),
 }));
 
 describe("EditGame", () => {
-  it("Should render component successfully", () => {
+  test("Should render component successfully", () => {
     const navigation = { goBack: jest.fn() };
-    const route = { params: { gameId: "gameId" } };
+    const route = { params: { gameId: "testid" } };
 
     const { root } = render(
       <TamaguiProvider config={appConfig}>
@@ -100,42 +124,42 @@ describe("EditGame", () => {
 
     expect(root).toBeTruthy();
   });
+});
 
-  describe("EditGame", () => {
-    it('should call editGameById with updated title attribute and navigate back when "Edit" button is pressed', async () => {
-      const navigation = { goBack: jest.fn() };
-      const route = { params: { gameId: "gameId" } };
+describe("EditGame", () => {
+  test('should call editGameById with updated title attribute and navigate back when "Edit" button is pressed', async () => {
+    const navigation = { goBack: jest.fn() };
+    const route = { params: { gameId: "testid" } };
 
-      const { root } = render(
-        <TamaguiProvider config={appConfig}>
-          <ToastProvider>
-            <EditGame navigation={navigation} route={route} />
-          </ToastProvider>
-        </TamaguiProvider>,
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <ToastProvider>
+          <EditGame navigation={navigation} route={route} />
+        </ToastProvider>
+      </TamaguiProvider>,
+    );
+
+    // getByTestId to select the input field
+    fireEvent.changeText(screen.getByTestId("titleInput"), "New Title");
+    const editButton = screen.getByTestId("editButton");
+    fireEvent.press(editButton);
+
+    await waitFor(() => {
+      expect(mockEditGameById).toHaveBeenCalledWith(
+        "testid",
+        "New Title", // only updating title
+        expect.any(Date),
+        mockSelectedMyGame.address.street,
+        mockSelectedMyGame.address.city,
+        mockSelectedMyGame.address.state,
+        mockSelectedMyGame.address.zip,
+        mockSelectedMyGame.sport.name,
+        expect.any(Number),
+        mockSelectedMyGame.maxPlayers.toString(),
+        mockSelectedMyGame.description,
       );
-
-      // getByTestId to select the input field
-      fireEvent.changeText(screen.getByTestId("titleInput"), "New Title");
-      const editButton = screen.getByTestId("editButton");
-      fireEvent.press(editButton);
-
-      await waitFor(() => {
-        expect(mockEditGameById).toHaveBeenCalledWith(
-          "gameId",
-          "New Title", // only updating title
-          expect.any(Date),
-          mockSelectedMyGame.address,
-          mockSelectedMyGame.city,
-          mockSelectedMyGame.state,
-          mockSelectedMyGame.zip,
-          mockSelectedMyGame.sport.name,
-          expect.any(Number),
-          mockSelectedMyGame.maxPlayers.toString(),
-          mockSelectedMyGame.description,
-        );
-      });
-
-      expect(navigation.goBack).toHaveBeenCalled();
     });
+
+    expect(navigation.goBack).toHaveBeenCalled();
   });
 });

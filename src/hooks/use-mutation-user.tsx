@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
-import { Users } from "@tamagui/lucide-icons";
 
 function useMutationUser() {
   const [
@@ -53,6 +52,7 @@ function useMutationUser() {
         .from("profiles")
         .select(
           `
+            id,
             username, 
             display_name, 
             bio, 
@@ -72,6 +72,7 @@ function useMutationUser() {
 
       if (data) {
         const user: User = {
+          id: data.id,
           username: data.username,
           displayName: data.display_name,
           bio: data.bio,
