@@ -166,6 +166,48 @@ create policy "Users can update their own sports." on sports
 create policy "Users can delete their own sports." on sports
   for delete using (auth.uid() = user_id);
 
+-- get another user profile (includes has_requested and is_friend fields)
+create or replace function get_other_profile(player_id "uuid")
+returns jsonb as $$
+declare 
+  data jsonb;
+begin
+  select jsonb_build_object(
+    'id', p.id,
+    'username', p.username,
+    'displayName', p.display_name,
+    'bio', p.bio,
+    'avatarUrl', p.avatar_url,
+    'sports', (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', s.id,
+          'sport', s.name,
+          'skillLevel', s.skill_level
+        )
+      )
+      from public.sports as s
+      where p.id = s.user_id
+    ),
+    'hasRequested', auth.uid() in (
+      select fr.request_sent_by
+      from friend_requests as fr
+      where fr.request_sent_to = player_id
+    ),
+    'isFriend', exists (
+      select 1
+      from friends as f
+      where (f.player1_id = auth.uid() and f.player2_id = p.id)
+        or (f.player1_id = p.id and f.player2_id = auth.uid())
+    )
+  )
+  from public.profiles as p
+  where p.id = player_id
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
 -- games table
 
 create table games (
@@ -933,7 +975,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function friends_only_games("user_id" "uuid", "lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null)
+create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null)
 returns table (
   id "uuid", 
   organizer_id "uuid", 
@@ -1014,7 +1056,7 @@ begin
   and not $6 in (select player_id from joined_game where joined_game.game_id = g.id) -- not joined yet
   and g.organizer_id != $6 -- not organizer
   order by d.dist_meters'
-  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter", "user_id";
+  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter", auth.uid();
 end;
 $$ language plpgsql;
 

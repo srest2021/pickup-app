@@ -1,3 +1,4 @@
+// when viewing my profile
 export type User = {
   id: string;
   username: string;
@@ -6,6 +7,19 @@ export type User = {
   avatarUrl: string;
   sports: UserSport[];
 };
+
+// when viewing another user's profile
+export type OtherUser = User & {
+  hasRequested: boolean;
+  isFriend: boolean;
+}
+
+// when viewing a ProfileThumbnail in list of friends, friend requests, etc.
+export type ThumbnailUser = {
+  id: string;
+  username: string;
+  avatarUrl: string;
+}
 
 export interface Sport {
   name: string;
@@ -72,20 +86,20 @@ export interface Game {
 
 export type MyGame = Game & {
   address: Address;
-  joinRequests: User[];
-  acceptedPlayers: User[];
+  joinRequests: ThumbnailUser[];
+  acceptedPlayers: ThumbnailUser[];
 };
 
 export type JoinedGame = Game & {
   address: Address;
-  acceptedPlayers: User[];
-  organizer: User;
+  acceptedPlayers: ThumbnailUser[];
+  organizer: ThumbnailUser;
 };
 
 export type FeedGame = Game & {
   hasRequested: boolean;
-  acceptedPlayers: User[];
-  organizer: User;
+  acceptedPlayers: ThumbnailUser[];
+  organizer: ThumbnailUser;
 };
 
 export const sports = [
