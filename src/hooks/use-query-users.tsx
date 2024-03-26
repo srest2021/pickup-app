@@ -16,7 +16,9 @@ function useQueryUsers() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const { data, error } = await supabase.rpc("get_other_profile", { player_id: userId });
+      const { data, error } = await supabase.rpc("get_other_profile", {
+        player_id: userId,
+      });
       if (error) throw error;
 
       if (data) {

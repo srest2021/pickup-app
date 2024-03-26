@@ -12,7 +12,7 @@ export type User = {
 export type OtherUser = User & {
   hasRequested: boolean;
   isFriend: boolean;
-}
+};
 
 // when viewing a ProfileThumbnail in list of friends, friend requests, etc.
 export type ThumbnailUser = {
@@ -20,7 +20,7 @@ export type ThumbnailUser = {
   username: string;
   displayName: string;
   avatarUrl: string;
-}
+};
 
 export interface Sport {
   name: string;

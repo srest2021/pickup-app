@@ -70,7 +70,7 @@ export default function GameThumbnail({
     } else {
       const gameWithOrganizer =
         gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
-        setUsername(gameWithOrganizer.organizer.username);
+      setUsername(gameWithOrganizer.organizer.username);
       gameWithOrganizer.organizer.avatarUrl &&
         fetchData(gameWithOrganizer.organizer.avatarUrl);
     }
