@@ -1134,12 +1134,12 @@ end;
 $$ language plpgsql;
 
 -- accept friend request
-create or replace function accept_friend_request(request_sent_by "uuid", request_sent_to "uuid")
+create or replace function accept_friend_request(request_sent_to "uuid")
 returns void as $$
 begin
   -- remove friend request from friend_requests table
   delete from friend_requests
-  where friend_requests.request_sent_by = accept_friend_request.request_sent_by 
+  where friend_requests.request_sent_by = auth.uid()
   and friend_requests.request_sent_to = accept_friend_request.request_sent_to;
 
   -- add entry to friends table
@@ -1149,26 +1149,26 @@ end;
 $$ language plpgsql;
 
 -- reject friend request
-create or replace function reject_friend_request(request_sent_by "uuid", request_sent_to "uuid")
+create or replace function reject_friend_request(request_sent_to "uuid")
 returns void as $$
 begin
   -- remove friend request from friend_requests table
   delete from friend_requests
-  where friend_requests.request_sent_by = accept_friend_request.request_sent_by 
-  and friend_requests.request_sent_to = accept_friend_request.request_sent_to;
+  where friend_requests.request_sent_by = auth.uid()
+  and friend_requests.request_sent_to = reject_friend_request.request_sent_to;
 end;
 $$ language plpgsql;
 
 -- get all friends for a player
 -- only return id, username, and avatar url for ProfileThumbnail
-create or replace function get_friends(player_id "uuid")
+create or replace function get_friends()
 returns jsonb as $$
 declare
   data jsonb;
 begin
     select jsonb_agg (
       case
-        when f.player1_id = player_id then jsonb_build_object (
+        when f.player1_id = auth.uid() then jsonb_build_object (
           'id', p1.id,
           'username', p1.username,
           'displayName', p1.display_name,
@@ -1185,7 +1185,7 @@ begin
     from public.friends as f
     join public.profiles as p1 on (f.player2_id = p1.id)
     join public.profiles as p2 on (f.player1_id = p2.id)
-    where f.player1_id = player_id or f.player2_id = player_id
+    where f.player1_id = auth.uid() or f.player2_id = auth.uid()
     into data;
     return data;
 end;
@@ -1193,7 +1193,7 @@ $$ language plpgsql;
 
 -- get all incoming friend requests for a player
 -- only return id, username, and avatar url for ProfileThumbnail
-create or replace function get_friend_requests(player_id "uuid")
+create or replace function get_friend_requests()
 returns jsonb as $$
 declare
   data jsonb;

@@ -224,7 +224,43 @@ function useMutationUser() {
     }
   };
 
-  return { session, user, getProfile, updateProfile, setSport };
+  const addFriendRequest = async (userId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const friendRequest = {
+        request_sent_by: session.user.id,
+        request_sent_to: userId
+      }
+
+      const { data, error } = await supabase
+        .from("friend_requests")
+        .insert(friendRequest)
+        .select();
+      if (error) throw error;
+
+      if (data) {
+        return friendRequest;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const acceptFriendRequest = async (userId: string) => {
+    // use custom SQL function accept_friend_request(userId)
+  }
+
+  const rejectFriendRequest = async (userId: string) => {
+    // use custom SQL function reject_friend_request(userId)
+  }
+
+  return { session, user, getProfile, updateProfile, setSport, addFriendRequest, acceptFriendRequest, rejectFriendRequest };
 }
 
 export default useMutationUser;

@@ -34,6 +34,14 @@ function useQueryUsers() {
     }
   };
 
+  const getFriends = async () => {
+    // use custom SQL function get_friends()
+  }
+
+  const getFriendRequests = async () => {
+    // use custom SQL function get_friend_requests()
+  }
+
   const setUserLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -69,7 +77,7 @@ function useQueryUsers() {
     return { location, error1: null };
   };
 
-  return { getOtherProfile, setUserLocation, getUserLocation };
+  return { getOtherProfile, getFriends, getFriendRequests, setUserLocation, getUserLocation };
 }
 
 export default useQueryUsers;
