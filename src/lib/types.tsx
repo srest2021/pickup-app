@@ -14,7 +14,11 @@ export type OtherUser = User & {
   isFriend: boolean;
 };
 
-// when viewing a ProfileThumbnail in list of friends, friend requests, etc.
+// this is the type used for:
+// - organizer, accepted players, and join requests when querying games
+// - friends and friend requests when querying list of friends or list of friend requests
+// this will essentially lower our egress
+// and we can query the entire user profile if the user navigates to the OtherProfile component
 export type ThumbnailUser = {
   id: string;
   username: string;
