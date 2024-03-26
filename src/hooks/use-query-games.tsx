@@ -172,7 +172,7 @@ function useQueryGames() {
         .rpc("nearby_games", {
           lat: location.coords.latitude,
           long: location.coords.longitude,
-          dist_limit: filterDist,
+          dist_limit: 30000,//filterDist,
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
         })

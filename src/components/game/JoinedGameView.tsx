@@ -23,7 +23,7 @@ const JoinedGameView = ({
   navigation: any;
   route: any;
 }) => {
-  const { gameId, displayName } = route.params;
+  const { gameId, username } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
   const [session, user] = useStore((state) => [state.session, state.user]);
@@ -73,7 +73,7 @@ const JoinedGameView = ({
 
                 <YStack alignItems="center">
                   <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{displayName}
+                    by @{username}
                   </SizableText>
                 </YStack>
 
