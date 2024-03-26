@@ -440,7 +440,71 @@ create policy "Users cannot update existing join requests." on game_requests
 create policy "Organizers of a game can remove join requests for that game." on game_requests
   for delete using (can_user_select_or_delete_requests(game_id));
 
--- helper functions and types
+-- friend requests table
+
+create table friend_requests (
+  "id" "uuid" primary key unique not null default "gen_random_uuid"(),
+  "created_at" timestamp with time zone default "now"() not null,
+  "request_sent_by" "uuid" references "profiles" on delete cascade not null,
+  "request_sent_to" "uuid" references "profiles" on delete cascade not null
+);
+
+create index sentbyid_fr
+  on "public"."friend_requests"
+  using btree (request_sent_by);
+
+create index senttoid_fr
+  on "public"."friend_requests"
+  using btree (request_sent_to);
+
+alter table friend_requests
+  enable row level security;
+
+create policy "Players can see their own friend requests." on friend_requests
+  for select using (request_sent_by = auth.uid() or request_sent_to = auth.uid());
+
+create policy "Players can send a friend request to other players." on friend_requests
+  for insert with check (request_sent_by = auth.uid() and request_sent_to != auth.uid());
+
+create policy "Players cannot update existing friend requests." on friend_requests
+  for update with check (false);
+
+create policy "Players can remove their own friend requests" on friend_requests
+  for delete using (request_sent_by = auth.uid());
+
+-- friends table
+
+create table friends (
+  "id" "uuid" primary key unique not null default "gen_random_uuid"(),
+  "created_at" timestamp with time zone default "now"() not null,
+  "player1_id" "uuid" references "profiles" on delete cascade not null,
+  "player2_id" "uuid" references "profiles" on delete cascade not null
+);
+
+create index player1id_f
+  on "public"."friends"
+  using btree (player1_id);
+
+create index player2id_f
+  on "public"."friends"
+  using btree (player2_id);
+
+alter table friends
+  enable row level security;
+
+create policy "Players can see their own friends." on friends
+  for select using (player1_id = auth.uid() or player2_id = auth.uid());
+
+create policy "Players can add their own friends." on friends
+  for insert with check (player1_id = auth.uid() or player2_id = auth.uid());
+
+create policy "Players cannot update existing friends." on friends
+  for update with check (false);
+
+create policy "Players can remove their own friends" on friends
+  for delete using (player1_id = auth.uid() or player2_id = auth.uid());
+
+-- helper functions
 
 -- from https://stackoverflow.com/questions/10318014/javascript-encodeuri-like-function-in-postgresql
 CREATE OR REPLACE FUNCTION urlencode(in_str text, OUT _result text)
@@ -1096,5 +1160,74 @@ begin
   update games 
   set current_players = current_players - 1
   where id = game_id;
+end;
+$$ language plpgsql;
+
+-- accept friend request
+create or replace function accept_friend_request(request_sent_by "uuid", request_sent_to "uuid")
+returns void as $$
+begin
+  -- remove friend request from friend_requests table
+  delete from friend_requests
+  where friend_requests.request_sent_by = accept_friend_request.request_sent_by 
+  and friend_requests.request_sent_to = accept_friend_request.request_sent_to;
+
+  -- add entry to friends table
+  insert into friends (player1_id, player2_id)
+  values (request_sent_by, request_sent_to);
+end;
+$$ language plpgsql;
+
+-- reject friend request
+create or replace function reject_friend_request(request_sent_by "uuid", request_sent_to "uuid")
+returns void as $$
+begin
+  -- remove friend request from friend_requests table
+  delete from friend_requests
+  where friend_requests.request_sent_by = accept_friend_request.request_sent_by 
+  and friend_requests.request_sent_to = accept_friend_request.request_sent_to;
+end;
+$$ language plpgsql;
+
+-- get all friends for a player
+-- only return id, username, and avatar url for ProfileThumbnail
+create or replace function get_friends(player_id "uuid")
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+    select jsonb_agg (
+      jsonb_build_object (
+        'id', p.id,
+        'username', p.username,
+        'avatarUrl', p.avatar_url
+      )
+    )
+    from public.friends as fr
+    join public.profiles as p on fr.request_sent_to = p.id
+    where fr.player1_id = player_id or fr.player2_id = player_id
+    into data;
+    return data;
+end;
+$$ language plpgsql;
+
+-- get all incoming friend requests for a player
+-- only return id, username, and avatar url for ProfileThumbnail
+create or replace function get_friend_requests(player_id "uuid")
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+    select jsonb_agg (
+      jsonb_build_object (
+        'id', p.id,
+        'username', p.username,
+        'avatarUrl', p.avatar_url
+      )
+    )
+    from public.friend_requests as fr
+    join public.profiles as p on fr.request_sent_to = p.id
+    into data;
+    return data;
 end;
 $$ language plpgsql;
