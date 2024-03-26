@@ -933,7 +933,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null)
+create or replace function friends_only_games("user_id" "uuid", "lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null)
 returns table (
   id "uuid", 
   organizer_id "uuid", 
@@ -980,7 +980,7 @@ begin
         jsonb_build_object(
           ''id'', p.id,
           ''username'', p.username,
-          ''avatarUrl'', p.avatar_url,
+          ''avatarUrl'', p.avatar_url 
         )
       )
       FROM public.joined_game AS jg
@@ -992,7 +992,7 @@ begin
         jsonb_build_object(
           ''id'', p.id,
           ''username'', p.username,
-          ''avatarUrl'', p.avatar_url,
+          ''avatarUrl'', p.avatar_url
         )
       FROM public.profiles AS p
       where p.id = g.organizer_id
@@ -1000,7 +1000,7 @@ begin
   from public.games as g
   join friends f on (g.organizer_id = f.player1_id OR g.organizer_id = f.player2_id)
   inner join distances d on g.id = d.game_id
-  where g.organizer_id != auth.uid() and !g.is_public and d.dist_meters <= $3' ||
+  where f.player1_id = $6 OR f.player2_id = $6 ' || --friends with the organizer
   case when sport_filter is not null then 
     ' and g.sport = $4' 
   else '' 
@@ -1009,10 +1009,12 @@ begin
     ' and g.skill_level = $5'
   else '' 
   end ||
-  ' and not auth.uid() in (select player_id from joined_game where joined_game.game_id = g.id)
-  and (f.player1_id = $6 or f.player2_id = $6)
+  ' and g.is_public = false -- friends-only
+  and d.dist_meters <= $3 -- within distance range
+  and not $6 in (select player_id from joined_game where joined_game.game_id = g.id) -- not joined yet
+  and g.organizer_id != $6 -- not organizer
   order by d.dist_meters'
-  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter", "player_id";
+  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter", "user_id";
 end;
 $$ language plpgsql;
 
@@ -1281,15 +1283,23 @@ declare
   data jsonb;
 begin
     select jsonb_agg (
-      jsonb_build_object (
-        'id', p.id,
-        'username', p.username,
-        'avatarUrl', p.avatar_url
-      )
+      case
+        when f.player1_id = player_id then jsonb_build_object (
+          'id', p1.id,
+          'username', p1.username,
+          'avatarUrl', p1.avatar_url
+        )
+        else jsonb_build_object (
+          'id', p2.id,
+          'username', p2.username,
+          'avatarUrl', p2.avatar_url
+        )
+      end
     )
-    from public.friends as fr
-    join public.profiles as p on fr.request_sent_to = p.id
-    where fr.player1_id = player_id or fr.player2_id = player_id
+    from public.friends as f
+    join public.profiles as p1 on (f.player2_id = p1.id)
+    join public.profiles as p2 on (f.player1_id = p2.id)
+    where f.player1_id = player_id or f.player2_id = player_id
     into data;
     return data;
 end;
@@ -1310,7 +1320,7 @@ begin
       )
     )
     from public.friend_requests as fr
-    join public.profiles as p on fr.request_sent_to = p.id
+    join public.profiles as p on fr.request_sent_by = p.id
     into data;
     return data;
 end;
