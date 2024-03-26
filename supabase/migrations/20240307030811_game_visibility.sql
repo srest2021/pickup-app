@@ -824,6 +824,7 @@ end;
 $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
+-- to do: organizer and accepted players should only have id, username, and avatar url returned
 create or replace function nearby_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null) 
 returns table(
   id "uuid", 
@@ -929,6 +930,89 @@ begin
   ' and not auth.uid() in (select player_id from joined_game where joined_game.game_id = g.id)
   order by d.dist_meters'
   using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter";
+end;
+$$ language plpgsql;
+
+create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null)
+returns table (
+  id "uuid", 
+  organizer_id "uuid", 
+  title text, 
+  description text, 
+  datetime timestamp with time zone, 
+  sport text, 
+  skill_level int, 
+  max_players bigint, 
+  current_players bigint, 
+  is_public boolean, 
+  has_requested boolean,
+  dist_meters double precision,
+  accepted_players jsonb,
+  organizer jsonb
+) as $$
+begin
+  return query execute
+  'with distances as (
+    select 
+      gl.game_id,
+      st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
+    from game_locations gl
+  )
+  select 
+    g.id, 
+    g.organizer_id, 
+    g.title, 
+    g.description, 
+    g.datetime, 
+    g.sport, 
+    g.skill_level, 
+    g.max_players, 
+    g.current_players, 
+    g.is_public, 
+    auth.uid() in (
+      select player_id 
+      from game_requests
+      where game_requests.game_id = g.id
+    ) as has_requested,
+    d.dist_meters,
+    (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          ''id'', p.id,
+          ''username'', p.username,
+          ''avatarUrl'', p.avatar_url,
+        )
+      )
+      FROM public.joined_game AS jg
+      JOIN public.profiles AS p ON jg.player_id = p.id and jg.player_id != g.organizer_id
+      WHERE jg.game_id = g.id
+    ) AS accepted_players,
+    (
+      select
+        jsonb_build_object(
+          ''id'', p.id,
+          ''username'', p.username,
+          ''avatarUrl'', p.avatar_url,
+        )
+      FROM public.profiles AS p
+      where p.id = g.organizer_id
+    ) as organizer
+  from public.games as g
+  join friends f on (g.organizer_id = f.player1_id OR g.organizer_id = f.player2_id)
+  inner join distances d on g.id = d.game_id
+  where g.organizer_id != auth.uid() and !g.is_public and d.dist_meters <= $3' ||
+  case when sport_filter is not null then 
+    ' and g.sport = $4' 
+  else '' 
+  end ||
+  case when skill_level_filter is not null then 
+    ' and g.skill_level = $5'
+  else '' 
+  end ||
+  ' and not auth.uid() in (select player_id from joined_game where joined_game.game_id = g.id)
+  and (f.player1_id = $6 or f.player2_id = $6)
+  order by d.dist_meters'
+  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter", "player_id";
 end;
 $$ language plpgsql;
 
