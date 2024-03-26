@@ -308,23 +308,6 @@ $$ language plpgsql;
 create policy "Players can leave a game themselves, or they can be removed by the organizer. Organizers cannot remove themselves." on joined_game
   for delete using (can_user_leave_game(player_id, game_id));
 
--- create or replace function add_organizer_id_to_game()
--- returns trigger
--- language 'plpgsql'
--- security definer
--- as $$
--- begin
---   insert into "public"."joined_game" (id, player_id, game_id)
---   values (uuid_generate_v4(), new.organizer_id, new.id);
---   return new;
--- end;
--- $$;
-
--- -- when creating a game, add organizer_id to joined_game 
--- create trigger after_add_game
---   after insert on "public"."games"
---   for each row execute function public.add_organizer_id_to_game();
-
 -- game locations table
 
 create table game_locations (
@@ -350,12 +333,6 @@ alter table game_locations
   
 create policy "Users can access location if they've joined the game." on game_locations
   for select using (true);
---   (
---     auth.uid() in (
---       select player_id from joined_game
---       where joined_game.game_id = game_locations.game_id
---     )
--- );
 
 create or replace function can_user_insert_and_update_location(game_id "uuid")
 returns boolean AS $$
@@ -376,57 +353,6 @@ create policy "Organizers can update the location for their game." on game_locat
 
 create policy "Organizers can insert the location for their game." on game_locations
   for insert with check (can_user_insert_and_update_location(game_id));
-
--- create or replace function add_location()
--- returns trigger
--- language 'plpgsql'
--- security definer
--- as $$
--- declare
---   status int;
---   content jsonb;
---   lat text;
---   long text;
---   newlat double precision;
---   newlong double precision;
---   coords "extensions"."geography"(Point,4326);
--- begin
---   select
---     into status, content
---     result.status, result.content
---     from public.get_location(new.street, new.city, new.state, new.zip) as result;
---   if status <> 200 then
---     raise EXCEPTION 'Could not get geolocation: % %', status, content;
---   end if;
-
---   select content->0->>'lat', content->0->>'lon'
---   into lat, long
---   from jsonb_array_elements(content);
-
---   if lat is null or long is null then
---     raise EXCEPTION 'Could not get geolocation: % %', status, content;
---   end if;
-
---   newlat := cast(lat as double precision);
---   newlong := cast(long as double precision);
---   coords := st_point(newlat, newlong)::geography;
-
---   update public.game_locations
---   set loc = coords
---   where id = new.id;
---   return new;
--- end;
--- $$;
-
--- -- on insert to game_locations, query lat/long from API and add point to loc column
--- create or replace trigger on_game_address_created
---   after insert on game_locations
---   for each row execute procedure public.add_location();
-
--- -- on update to game_locations, query lat/long from API and add point to loc column
--- create or replace trigger on_game_address_updated
---   after update of street, city, state, zip on game_locations
---   for each row execute procedure public.add_location();
 
 -- game join requests table
 
@@ -464,14 +390,6 @@ $$ language plpgsql;
   
 create policy "Organizers of a game can access that game's join requests." on game_requests
   for select using (can_user_select_or_delete_requests(game_id));
-
--- create policy "Players cannot add multiple pending join requests for the same game." on game_requests
---   for insert with check (
---     not exists (
---       select player_id from game_requests
---       where game_requests.game_id = game_id and game_requests.player_id = auth.uid()
---     )
---   );
 
 create policy "Players can request to join a game." on game_requests
   for insert with check (player_id = auth.uid());
@@ -915,20 +833,7 @@ begin
           ''id'', p.id,
           ''username'', p.username,
           ''displayName'', p.display_name,
-          ''bio'', p.bio,
-          ''avatarUrl'', p.avatar_url,
-          ''sports'', (
-            SELECT jsonb_agg(
-              jsonb_build_object(
-                ''id'', s.id,
-                ''sport'', s.name,
-                ''skillLevel'', s.skill_level
-              )
-            )
-            FROM public.profiles AS p
-            join public.sports as s on p.id = s.user_id
-            where p.id = jg.player_id
-          )
+          ''avatarUrl'', p.avatar_url
         )
       )
       FROM public.joined_game AS jg
@@ -941,19 +846,7 @@ begin
           ''id'', p.id,
           ''username'', p.username,
           ''displayName'', p.display_name,
-          ''bio'', p.bio,
-          ''avatarUrl'', p.avatar_url,
-          ''sports'', (
-            SELECT jsonb_agg(
-              jsonb_build_object(
-                ''id'', s.id,
-                ''sport'', s.name,
-                ''skillLevel'', s.skill_level
-              )
-            )
-            from public.sports as s
-            where p.id = s.user_id
-          )
+          ''avatarUrl'', p.avatar_url
         )
       FROM public.profiles AS p
       where p.id = g.organizer_id
@@ -1022,6 +915,7 @@ begin
         jsonb_build_object(
           ''id'', p.id,
           ''username'', p.username,
+          ''displayName'', p.display_name,
           ''avatarUrl'', p.avatar_url 
         )
       )
@@ -1034,6 +928,7 @@ begin
         jsonb_build_object(
           ''id'', p.id,
           ''username'', p.username,
+          ''displayName'', p.display_name,
           ''avatarUrl'', p.avatar_url
         )
       FROM public.profiles AS p
@@ -1102,20 +997,7 @@ returns table(
           'id', p.id,
           'username', p.username,
           'displayName', p.display_name,
-          'bio', p.bio,
-          'avatarUrl', p.avatar_url,
-          'sports', (
-            SELECT jsonb_agg(
-              jsonb_build_object(
-                'id', s.id,
-                'sport', s.name,
-                'skillLevel', s.skill_level
-              )
-            )
-            FROM public.profiles AS p
-            join public.sports as s on p.id = s.user_id
-            where p.id = gr.player_id
-          )
+          'avatarUrl', p.avatar_url
         )
       )
       FROM public.game_requests AS gr
@@ -1128,25 +1010,12 @@ returns table(
           'id', p.id,
           'username', p.username,
           'displayName', p.display_name,
-          'bio', p.bio,
-          'avatarUrl', p.avatar_url,
-          'sports', (
-            SELECT jsonb_agg(
-              jsonb_build_object(
-                'id', s.id,
-                'sport', s.name,
-                'skillLevel', s.skill_level
-              )
-            )
-            FROM public.profiles AS p
-            join public.sports as s on p.id = s.user_id
-            where p.id = jg.player_id
-          )
+          'avatarUrl', p.avatar_url
         )
       )
       FROM public.joined_game AS jg
       JOIN public.profiles AS p ON jg.player_id = p.id
-      WHERE jg.game_id = g.id --and jg.player_id != auth.uid()
+      WHERE jg.game_id = g.id and jg.player_id != auth.uid()
     ) AS accepted_players
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
@@ -1196,20 +1065,7 @@ returns table(
           'id', p.id,
           'username', p.username,
           'displayName', p.display_name,
-          'bio', p.bio,
-          'avatarUrl', p.avatar_url,
-          'sports', (
-            SELECT jsonb_agg(
-              jsonb_build_object(
-                'id', s.id,
-                'sport', s.name,
-                'skillLevel', s.skill_level
-              )
-            )
-            FROM public.profiles AS p
-            join public.sports as s on p.id = s.user_id
-            where p.id = jg.player_id
-          )
+          'avatarUrl', p.avatar_url
         )
       )
       FROM public.joined_game AS jg
@@ -1217,26 +1073,12 @@ returns table(
       WHERE jg.game_id = g.id
     ) AS accepted_players,
     (
-      select
-        jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'bio', p.bio,
-          'avatarUrl', p.avatar_url,
-          'sports', (
-            SELECT jsonb_agg(
-              jsonb_build_object(
-                'id', s.id,
-                'sport', s.name,
-                'skillLevel', s.skill_level
-              )
-            )
-            from public.sports as s
-            where p.id = s.user_id
-          )
-        )
-      
+      select jsonb_build_object(
+        'id', p.id,
+        'username', p.username,
+        'displayName', p.display_name,
+        'avatarUrl', p.avatar_url
+      )
       FROM public.profiles AS p
       where p.id = g.organizer_id
     ) as organizer
@@ -1329,11 +1171,13 @@ begin
         when f.player1_id = player_id then jsonb_build_object (
           'id', p1.id,
           'username', p1.username,
+          'displayName', p1.display_name,
           'avatarUrl', p1.avatar_url
         )
         else jsonb_build_object (
           'id', p2.id,
           'username', p2.username,
+          'displayName', p2.display_name,
           'avatarUrl', p2.avatar_url
         )
       end
@@ -1358,6 +1202,7 @@ begin
       jsonb_build_object (
         'id', p.id,
         'username', p.username,
+        'displayName', p.display_name,
         'avatarUrl', p.avatar_url
       )
     )

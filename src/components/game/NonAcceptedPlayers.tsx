@@ -3,7 +3,7 @@ import { Alert, View } from "react-native";
 import { Text } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Check, X, Loader } from "@tamagui/lucide-icons";
-import { User } from "../../lib/types";
+import { ThumbnailUser } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
 
 const NonAcceptedPlayer = ({
@@ -12,7 +12,7 @@ const NonAcceptedPlayer = ({
   maxPlayers,
   currentPlayers,
 }: {
-  user: User;
+  user: ThumbnailUser;
   gameId: string;
   currentPlayers: number;
   maxPlayers: number;

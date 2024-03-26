@@ -18,6 +18,7 @@ export type OtherUser = User & {
 export type ThumbnailUser = {
   id: string;
   username: string;
+  displayName: string;
   avatarUrl: string;
 }
 
