@@ -154,13 +154,6 @@ export const useStore = create<State & Action>()(
     clearSelectedFeedGame: () => set({ selectedFeedGame: null }),
 
     updateHasRequestedFeedGame: (feedGameId: string) => {
-      // updated selected Feed Game
-      // ! because if this is being called, selectedFeedGame is not null.
-      // const updatedSelectedFeedGame = get().selectedFeedGame!;
-      // updatedSelectedFeedGame.hasRequested =
-      //   !updatedSelectedFeedGame.hasRequested;
-      // set({ selectedFeedGame: updatedSelectedFeedGame });
-
       // update Feed Games array
       const updatedMyFeedGames = get().feedGames.map((game) => {
         if (game.id === feedGameId) {
@@ -198,11 +191,9 @@ export const useStore = create<State & Action>()(
     editMyGame: (myGameId, updatedGame) => {
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === myGameId) {
-          return {
-            ...updatedGame,
-            joinRequests: myGame.joinRequests,
-            acceptedPlayers: myGame.acceptedPlayers,
-          };
+          updatedGame.joinRequests = myGame.joinRequests;
+          updatedGame.acceptedPlayers = myGame.acceptedPlayers;
+          return updatedGame;
         }
         return myGame;
       });
@@ -292,9 +283,13 @@ export const useStore = create<State & Action>()(
 
     clearSelectedJoinedGame: () => set({ selectedJoinedGame: null }),
 
+    // location
+
     setLocation: (location) => set({ location: location }),
 
     clearLocation: () => set({ location: null }),
+
+    // feed filters
 
     setFilterSport: (sport) => set({ filterSport: sport }),
     setFilterDist: (dist) => set({ filterDist: dist }),

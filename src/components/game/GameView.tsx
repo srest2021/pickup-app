@@ -17,7 +17,7 @@ import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { gameId, displayName } = route.params;
+  const { gameId, username } = route.params;
   const [session, user, loading, selectedFeedGame] = useStore((state) => [
     state.session,
     state.user,
@@ -77,7 +77,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <YStack alignItems="center">
                   <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{displayName}
+                    by @{username}
                   </SizableText>
                 </YStack>
 

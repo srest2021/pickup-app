@@ -38,7 +38,7 @@ export default function GameThumbnail({
     state.setSelectedFeedGame,
     state.setSelectedJoinedGame,
   ]);
-  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
@@ -65,12 +65,12 @@ export default function GameThumbnail({
 
   useEffect(() => {
     if (gametype === "my") {
-      setDisplayName(user ? user.displayName : null);
+      setUsername(user ? user.username : null);
       user && fetchData(user.avatarUrl);
     } else {
       const gameWithOrganizer =
         gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
-      setDisplayName(gameWithOrganizer.organizer.displayName);
+      setUsername(gameWithOrganizer.organizer.username);
       gameWithOrganizer.organizer.avatarUrl &&
         fetchData(gameWithOrganizer.organizer.avatarUrl);
     }
@@ -119,7 +119,7 @@ export default function GameThumbnail({
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <Paragraph>@{displayName}</Paragraph>
+                  <Paragraph>@{username}</Paragraph>
                 </XStack>
               )}
             </View>
@@ -133,12 +133,12 @@ export default function GameThumbnail({
                     navigation.navigate("MyGameView", { gameId });
                   } else if (gametype === "feed") {
                     setSelectedFeedGame(game as FeedGame);
-                    navigation.navigate("GameView", { gameId, displayName });
+                    navigation.navigate("GameView", { gameId, username });
                   } else if (gametype === "joined") {
                     setSelectedJoinedGame(game as JoinedGame);
                     navigation.navigate("JoinedGameView", {
                       gameId,
-                      displayName,
+                      username,
                     });
                   }
                 }}
