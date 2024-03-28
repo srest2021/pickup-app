@@ -7,7 +7,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\" --config \".prettierrc\"",
-    "test": "jest"
+    "test": "jest --overlap"
   },
   "jest": {
     "preset": "jest-expo",

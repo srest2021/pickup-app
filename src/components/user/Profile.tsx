@@ -18,10 +18,32 @@ const windowHeight = Dimensions.get("window").height;
 const topThirdHeight = windowHeight / 4;
 
 export default function Profile({ navigation }: { navigation: any }) {
-  const [loading, user, userSports] = useStore((state) => [
+  const [
+    loading,
+    setLoading,
+    user,
+    userSports,
+    setUser,
+    clearUserSports,
+    clearMyGames,
+    clearSelectedMyGame,
+    clearFeedGames,
+    clearSelectedFeedGame,
+    clearJoinedGames,
+    clearSelectedJoinedGame,
+  ] = useStore((state) => [
     state.loading,
+    state.setLoading,
     state.user,
     state.userSports,
+    state.setUser,
+    state.clearUserSports,
+    state.clearMyGames,
+    state.clearSelectedMyGame,
+    state.clearFeedGames,
+    state.clearSelectedFeedGame,
+    state.clearJoinedGames,
+    state.clearSelectedJoinedGame,
   ]);
   const { setSport } = useMutationUser();
   const toast = useToastController();
@@ -39,6 +61,23 @@ export default function Profile({ navigation }: { navigation: any }) {
     //     message: "Sport added.",
     //   });
     // }
+  };
+
+  const handleLogOut = async () => {
+    setLoading(true);
+    await supabase.auth.signOut();
+
+    // clear store
+    setUser(null);
+    clearUserSports();
+    clearMyGames();
+    clearSelectedMyGame();
+    clearFeedGames();
+    clearSelectedFeedGame();
+    clearJoinedGames();
+    clearSelectedJoinedGame();
+
+    setLoading(false);
   };
 
   return (
@@ -124,7 +163,7 @@ export default function Profile({ navigation }: { navigation: any }) {
           <YStack space="$6" paddingTop="$5" alignItems="center">
             <Button
               variant="outlined"
-              onPress={() => supabase.auth.signOut()}
+              onPress={() => handleLogOut()}
               size="$5"
               color="#ff7403"
               borderColor="#ff7403"
