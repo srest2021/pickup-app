@@ -317,7 +317,7 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      let { data, error } = await supabase.rpc("can_user_leave_game", {
+      let { data, error } = await supabase.rpc("remove_player", {
         game_id: gameId,
         player_id: playerId,
       });
