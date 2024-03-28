@@ -32,7 +32,7 @@ type Action = {
 
   setLoading: (loading: boolean) => void;
 
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   editUser: (updated: any) => void;
 
   addUserSport: (userSport: UserSport) => void;

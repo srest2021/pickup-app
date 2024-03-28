@@ -863,6 +863,7 @@ begin
   else '' 
   end ||
   ' and not auth.uid() in (select player_id from joined_game where joined_game.game_id = g.id)
+  and g.datetime > CURRENT_TIMESTAMP - INTERVAL ''1 day'' -- only show games from yesterday on
   order by d.dist_meters'
   using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter";
 end;
@@ -950,6 +951,7 @@ begin
   and d.dist_meters <= $3 -- within distance range
   and not $6 in (select player_id from joined_game where joined_game.game_id = g.id) -- not joined yet
   and g.organizer_id != $6 -- not organizer
+  and g.datetime > CURRENT_TIMESTAMP - INTERVAL ''1 day'' -- only show games from yesterday on
   order by d.dist_meters'
   using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter", auth.uid();
 end;

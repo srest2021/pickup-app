@@ -231,8 +231,8 @@ function useMutationUser() {
 
       const friendRequest = {
         request_sent_by: session.user.id,
-        request_sent_to: userId
-      }
+        request_sent_to: userId,
+      };
 
       const { data, error } = await supabase
         .from("friend_requests")
@@ -254,13 +254,22 @@ function useMutationUser() {
 
   const acceptFriendRequest = async (userId: string) => {
     // use custom SQL function accept_friend_request(userId)
-  }
+  };
 
   const rejectFriendRequest = async (userId: string) => {
     // use custom SQL function reject_friend_request(userId)
-  }
+  };
 
-  return { session, user, getProfile, updateProfile, setSport, addFriendRequest, acceptFriendRequest, rejectFriendRequest };
+  return {
+    session,
+    user,
+    getProfile,
+    updateProfile,
+    setSport,
+    addFriendRequest,
+    acceptFriendRequest,
+    rejectFriendRequest,
+  };
 }
 
 export default useMutationUser;
