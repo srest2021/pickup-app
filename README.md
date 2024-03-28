@@ -10,9 +10,11 @@ Our app allows users to organize, find, and join pick-up games in a convenient a
 
 2. Clone the repository and navigate to the root folder in the terminal.
 
-3. Run `npm install` to install dependencies.
+3. Add a `.env` file in the root folder of this repository containing the fields in the`.env.example` file, and fill in the required environment variables.
 
-4. To use the Expo Go app: 
+4. Run `npm install` to install dependencies.
+
+5. To use the Expo Go app: 
 
     a. Download the Expo Go app on your phone.
 
@@ -20,7 +22,7 @@ Our app allows users to organize, find, and join pick-up games in a convenient a
     
     c. Scan the QR code with the Expo Go app (Android) or the Camera app (iOS) and open the link.
 
-5. To locally build the project:
+6. To locally build the project:
 
     a. On iOS, to run the simulator on Xcode:
 
@@ -38,7 +40,7 @@ Our app allows users to organize, find, and join pick-up games in a convenient a
     npx expo run:android
     ```
 
-6. To login as a test user to the app, use the following credentials:
+7. To login as a test user to the app, use the following credentials:
 
     ```shell
     email: admin@example.com
