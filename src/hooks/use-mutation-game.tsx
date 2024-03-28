@@ -323,9 +323,7 @@ function useMutationGame() {
       });
       if (error) throw error;
 
-      //Update Joined Games (remove game)
       removeJoinedGame(gameId);
-      //Update users in game (remove player)?
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
