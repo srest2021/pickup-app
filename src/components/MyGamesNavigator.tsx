@@ -3,6 +3,7 @@ import MyGames from "./MyGames";
 import MyGameView from "./game/MyGameView";
 import EditGame from "./game/EditGame";
 import JoinedGameView from "./game/JoinedGameView";
+import Chatroom from "./chatroom/Chatroom";
 
 export default function MyGamesNavigator() {
   const Stack = createNativeStackNavigator();
@@ -41,6 +42,11 @@ export default function MyGamesNavigator() {
         name="JoinedGameView"
         component={JoinedGameView}
         options={{ title: "Joined Game", headerShown: true }}
+      />
+      <Stack.Screen
+        name="Chatroom"
+        component={Chatroom}
+        options={{ title: "Chatroom", headerShown: true }}
       />
       <Stack.Screen
         name="EditGame"

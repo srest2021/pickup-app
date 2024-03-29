@@ -15,6 +15,7 @@ import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
+import { MessageCircle } from "@tamagui/lucide-icons";
 
 const JoinedGameView = ({
   navigation,
@@ -42,43 +43,45 @@ const JoinedGameView = ({
         selectedJoinedGame ? (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View className="p-12">
-              <YStack>
-                <YStack alignItems="center">
-                  <H4 textAlign="center">{selectedJoinedGame.title}</H4>
-                </YStack>
+              <YStack space="$3">
+                <YStack space="$3">
+                  <YStack alignItems="center">
+                    <H4 textAlign="center">{selectedJoinedGame.title}</H4>
+                  </YStack>
 
-                <YStack paddingTop="$3" alignItems="center">
-                  <H5>
-                    {new Date(selectedJoinedGame.datetime).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        weekday: "short",
-                      },
-                    )}
-                  </H5>
-                  <H5>
-                    at{" "}
-                    {new Date(selectedJoinedGame.datetime).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </H5>
-                </YStack>
+                  <YStack alignItems="center">
+                    <H5>
+                      {new Date(selectedJoinedGame.datetime).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          weekday: "short",
+                        },
+                      )}
+                    </H5>
+                    <H5>
+                      at{" "}
+                      {new Date(selectedJoinedGame.datetime).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
+                    </H5>
+                  </YStack>
 
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{username}
-                  </SizableText>
+                  <YStack alignItems="center">
+                    <SizableText alignItems="center" size="$4">
+                      by @{username}
+                    </SizableText>
+                  </YStack>
                 </YStack>
 
                 {selectedJoinedGame.description && (
-                  <YStack paddingTop="$3" paddingBottom="$7">
+                  <YStack paddingTop="$3">
                     <Card elevate size="$5">
                       <View marginLeft={25} marginRight={25}>
                         <SizableText
@@ -94,7 +97,7 @@ const JoinedGameView = ({
                   </YStack>
                 )}
 
-                <YStack space="$4">
+                <YStack space="$4" paddingVertical="$3">
                   <XStack space="$2" alignItems="center">
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
@@ -130,13 +133,37 @@ const JoinedGameView = ({
                   </XStack>
                 </YStack>
 
-                <GamePlayers
-                  navigation={undefined}
-                  game={selectedJoinedGame}
-                  gametype="joined"
-                />
+                <Button
+                  icon={MessageCircle}
+                  style={{
+                    borderRadius: 50,
+                    borderColor: "#ff7403",
+                    backgroundColor: "#ff7403",
+                    color: "#ffffff",
+                  }}
+                  variant="outlined"
+                  theme="active"
+                  size="$5"
+                  alignSelf="center"
+                  onPress={() =>
+                    navigation.navigate("Chatroom", {
+                      gameId,
+                      gametype: "joined",
+                    })
+                  }
+                >
+                  Chatroom
+                </Button>
 
-                <XStack space="$3" paddingTop="$6">
+                <YStack paddingVertical="$3">
+                  <GamePlayers
+                    navigation={undefined}
+                    game={selectedJoinedGame}
+                    gametype="joined"
+                  />
+                </YStack>
+
+                <YStack>
                   <Button
                     variant="outlined"
                     size="$5"
@@ -148,7 +175,7 @@ const JoinedGameView = ({
                   >
                     Leave Game
                   </Button>
-                </XStack>
+                </YStack>
               </YStack>
             </View>
           </ScrollView>

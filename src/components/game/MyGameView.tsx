@@ -15,6 +15,7 @@ import { View } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
 import MyGamePlayers from "./MyGamePlayers";
+import { MessageCircle } from "@tamagui/lucide-icons";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -42,43 +43,45 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
         selectedMyGame ? (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View className="p-12">
-              <YStack>
-                <YStack alignItems="center">
-                  <H4 textAlign="center">{selectedMyGame.title}</H4>
-                </YStack>
+              <YStack space="$3">
+                <YStack space="$3">
+                  <YStack alignItems="center">
+                    <H4 textAlign="center">{selectedMyGame.title}</H4>
+                  </YStack>
 
-                <YStack paddingTop="$3" alignItems="center">
-                  <H5>
-                    {new Date(selectedMyGame.datetime).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        weekday: "short",
-                      },
-                    )}
-                  </H5>
-                  <H5>
-                    at{" "}
-                    {new Date(selectedMyGame.datetime).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </H5>
-                </YStack>
+                  <YStack alignItems="center">
+                    <H5>
+                      {new Date(selectedMyGame.datetime).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          weekday: "short",
+                        },
+                      )}
+                    </H5>
+                    <H5>
+                      at{" "}
+                      {new Date(selectedMyGame.datetime).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
+                    </H5>
+                  </YStack>
 
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{user.username}
-                  </SizableText>
+                  <YStack alignItems="center">
+                    <SizableText alignItems="center" size="$4">
+                      by @{user.username}
+                    </SizableText>
+                  </YStack>
                 </YStack>
 
                 {selectedMyGame.description && (
-                  <YStack paddingTop="$3" paddingBottom="$7">
+                  <YStack paddingTop="$3">
                     <Card elevate size="$5">
                       <View marginLeft={25} marginRight={25}>
                         <SizableText
@@ -94,7 +97,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
                 )}
 
-                <YStack space="$4">
+                <YStack space="$4" paddingVertical="$3">
                   <XStack space="$2" alignItems="center">
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
@@ -130,36 +133,62 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <MyGamePlayers navigation={undefined} />
+                <Button
+                  icon={MessageCircle}
+                  style={{
+                    borderRadius: 50,
+                    borderColor: "#ff7403",
+                    backgroundColor: "#ff7403",
+                    color: "#ffffff",
+                  }}
+                  variant="outlined"
+                  theme="active"
+                  size="$5"
+                  alignSelf="center"
+                  onPress={() =>
+                    navigation.navigate("Chatroom", {
+                      gameId,
+                      gametype: "my",
+                    })
+                  }
+                >
+                  Chatroom
+                </Button>
 
-                <XStack space="$3" paddingTop="$6">
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    flex={1}
-                    onPress={() => {
-                      navigation.navigate("EditGame", { gameId });
-                    }}
-                    disabled={loading}
-                  >
-                    {loading ? "Loading..." : "Edit"}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    flex={1}
-                    onPress={() => deleteGame()}
-                    disabled={loading}
-                  >
-                    {loading ? "Loading..." : "Delete"}
-                  </Button>
-                </XStack>
+                <YStack paddingVertical="$3">
+                  <MyGamePlayers navigation={undefined} />
+                </YStack>
+
+                <YStack>
+                  <XStack space="$3">
+                    <Button
+                      variant="outlined"
+                      size="$5"
+                      color="#ff7403"
+                      borderColor="#ff7403"
+                      backgroundColor="#ffffff"
+                      flex={1}
+                      onPress={() => {
+                        navigation.navigate("EditGame", { gameId });
+                      }}
+                      disabled={loading}
+                    >
+                      {loading ? "Loading..." : "Edit"}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="$5"
+                      color="#ff7403"
+                      borderColor="#ff7403"
+                      backgroundColor="#ffffff"
+                      flex={1}
+                      onPress={() => deleteGame()}
+                      disabled={loading}
+                    >
+                      {loading ? "Loading..." : "Delete"}
+                    </Button>
+                  </XStack>
+                </YStack>
               </YStack>
             </View>
           </ScrollView>

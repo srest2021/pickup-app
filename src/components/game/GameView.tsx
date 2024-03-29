@@ -46,43 +46,45 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
         selectedFeedGame ? (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View className="p-12">
-              <YStack>
-                <YStack alignItems="center">
-                  <H4 textAlign="center">{selectedFeedGame.title}</H4>
-                </YStack>
+              <YStack space="$3">
+                <YStack space="$3">
+                  <YStack alignItems="center">
+                    <H4 textAlign="center">{selectedFeedGame.title}</H4>
+                  </YStack>
 
-                <YStack paddingTop="$3" alignItems="center">
-                  <H5>
-                    {new Date(selectedFeedGame.datetime).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        weekday: "short",
-                      },
-                    )}
-                  </H5>
-                  <H5>
-                    at{" "}
-                    {new Date(selectedFeedGame.datetime).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </H5>
-                </YStack>
+                  <YStack alignItems="center">
+                    <H5>
+                      {new Date(selectedFeedGame.datetime).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          weekday: "short",
+                        },
+                      )}
+                    </H5>
+                    <H5>
+                      at{" "}
+                      {new Date(selectedFeedGame.datetime).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
+                    </H5>
+                  </YStack>
 
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{username}
-                  </SizableText>
+                  <YStack alignItems="center">
+                    <SizableText alignItems="center" size="$4">
+                      by @{username}
+                    </SizableText>
+                  </YStack>
                 </YStack>
 
                 {selectedFeedGame.description && (
-                  <YStack paddingTop="$3" paddingBottom="$7">
+                  <YStack paddingTop="$3">
                     <Card elevate size="$5">
                       <View marginLeft={25} marginRight={25}>
                         <SizableText
@@ -98,7 +100,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
                 )}
 
-                <YStack space="$4">
+                <YStack space="$4" paddingTop="$3">
                   <XStack space="$2" alignItems="center">
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
@@ -134,13 +136,15 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <GamePlayers
-                  navigation={undefined}
-                  game={selectedFeedGame}
-                  gametype="feed"
-                />
+                <YStack paddingVertical="$3">
+                  <GamePlayers
+                    navigation={undefined}
+                    game={selectedFeedGame}
+                    gametype="feed"
+                  />
+                </YStack>
 
-                <XStack space="$3" paddingTop="$6">
+                <XStack>
                   <Button
                     variant="outlined"
                     size="$5"
