@@ -14,24 +14,20 @@ const windowHeight = Dimensions.get("window").height;
 const topThirdHeight = windowHeight / 4;
 
 export default function OtherProfile({ navigation }: { navigation: any }) {
-  const [
-    loading,
-    setLoading,
-    otherUser,
-    user,
-  ] = useStore((state) => [
+  const [loading, setLoading, otherUser, user] = useStore((state) => [
     state.loading,
     state.setLoading,
     state.otherUser,
-    state.user
+    state.user,
   ]);
   const toast = useToastController();
 
- 
-  function handleRequestLogic() {
-    // TODO
+  // Returns true if the user has requested
+  function handleRequestLogic(): boolean {
+    // Send friend request
+    //TODO
+    return false;
   }
-  
 
   return (
     <View style={{ flex: 1 }}>
@@ -44,7 +40,6 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
           justifyContent: "space-between",
         }}
       >
-
         <View className="p-12">
           {otherUser && user ? (
             <View>
@@ -61,11 +56,15 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
 
               <View className="self-stretch py-0">
                 <Text className="text-2xl text-center">
-                  {otherUser.displayName ? otherUser.displayName : "No display name"}
+                  {otherUser.displayName
+                    ? otherUser.displayName
+                    : "No display name"}
                 </Text>
               </View>
               <View className="self-stretch py-2">
-                <Text className="text-xl text-center">@{otherUser.username}</Text>
+                <Text className="text-xl text-center">
+                  @{otherUser.username}
+                </Text>
               </View>
 
               <YStack paddingTop="$3" paddingBottom="$4">
@@ -90,17 +89,22 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
           )}
 
           <YStack space="$6" paddingTop="$5" alignItems="center">
-            <Button
-              variant="outlined"
-              onPress={() => handleRequestLogic()}
-              size="$5"
-              color="#ff7403"
-              borderColor="#ff7403"
-              backgroundColor={"#ffffff"}
-              width="100%"
-            >
-              Request
-            </Button>
+            {!otherUser?.isFriend ? (
+              <Button
+                variant="outlined"
+                disabled={otherUser?.hasRequested}
+                onPress={() => handleRequestLogic()}
+                size="$5"
+                color="#ff7403"
+                borderColor="#ff7403"
+                backgroundColor={"#ffffff"}
+                width="100%"
+              >
+                {otherUser?.hasRequested ? "Requested" : "Request"}
+              </Button>
+            ) : (
+              "You are friends!"
+            )}
           </YStack>
         </View>
       </ScrollView>

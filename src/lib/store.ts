@@ -1,7 +1,14 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { UserSport, User, MyGame, JoinedGame, FeedGame, OtherUser } from "./types";
+import {
+  UserSport,
+  User,
+  MyGame,
+  JoinedGame,
+  FeedGame,
+  OtherUser,
+} from "./types";
 import * as Location from "expo-location";
 
 type State = {
