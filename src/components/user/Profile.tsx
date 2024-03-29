@@ -31,6 +31,8 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearSelectedFeedGame,
     clearJoinedGames,
     clearSelectedJoinedGame,
+    clearMessages,
+    setChannel,
   ] = useStore((state) => [
     state.loading,
     state.setLoading,
@@ -44,6 +46,8 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearSelectedFeedGame,
     state.clearJoinedGames,
     state.clearSelectedJoinedGame,
+    state.clearMessages,
+    state.setChannel,
   ]);
   const { setSport } = useMutationUser();
   const toast = useToastController();
@@ -76,6 +80,8 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearSelectedFeedGame();
     clearJoinedGames();
     clearSelectedJoinedGame();
+    clearMessages();
+    setChannel(null);
 
     setLoading(false);
   };

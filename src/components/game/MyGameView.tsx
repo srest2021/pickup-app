@@ -21,10 +21,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
-  const [session, user, loading] = useStore((state) => [
+  const [session, user, loading, setRoomCode] = useStore((state) => [
     state.session,
     state.user,
     state.loading,
+    state.setRoomCode,
   ]);
   const { removeMyGameById } = useMutationGame();
 
@@ -145,12 +146,10 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   theme="active"
                   size="$5"
                   alignSelf="center"
-                  onPress={() =>
-                    navigation.navigate("Chatroom", {
-                      gameId,
-                      gametype: "my",
-                    })
-                  }
+                  onPress={() => {
+                    setRoomCode(gameId);
+                    navigation.navigate("Chatroom", { gametype: "my" });
+                  }}
                 >
                   Chatroom
                 </Button>
@@ -159,36 +158,34 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   <MyGamePlayers navigation={undefined} />
                 </YStack>
 
-                <YStack>
-                  <XStack space="$3">
-                    <Button
-                      variant="outlined"
-                      size="$5"
-                      color="#ff7403"
-                      borderColor="#ff7403"
-                      backgroundColor="#ffffff"
-                      flex={1}
-                      onPress={() => {
-                        navigation.navigate("EditGame", { gameId });
-                      }}
-                      disabled={loading}
-                    >
-                      {loading ? "Loading..." : "Edit"}
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      size="$5"
-                      color="#ff7403"
-                      borderColor="#ff7403"
-                      backgroundColor="#ffffff"
-                      flex={1}
-                      onPress={() => deleteGame()}
-                      disabled={loading}
-                    >
-                      {loading ? "Loading..." : "Delete"}
-                    </Button>
-                  </XStack>
-                </YStack>
+                <XStack space="$3">
+                  <Button
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    flex={1}
+                    onPress={() => {
+                      navigation.navigate("EditGame", { gameId });
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? "Loading..." : "Edit"}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    flex={1}
+                    onPress={() => deleteGame()}
+                    disabled={loading}
+                  >
+                    {loading ? "Loading..." : "Delete"}
+                  </Button>
+                </XStack>
               </YStack>
             </View>
           </ScrollView>

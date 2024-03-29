@@ -1,7 +1,14 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { Session } from "@supabase/supabase-js";
-import { UserSport, User, MyGame, JoinedGame, FeedGame } from "./types";
+import { RealtimeChannel, Session } from "@supabase/supabase-js";
+import {
+  UserSport,
+  User,
+  MyGame,
+  JoinedGame,
+  FeedGame,
+  Message,
+} from "./types";
 import * as Location from "expo-location";
 
 type State = {
@@ -25,6 +32,10 @@ type State = {
   filterSport: string | null;
   filterDist: number;
   filterLevel: string | null;
+
+  messages: Message[];
+  channel: RealtimeChannel | undefined;
+  roomCode: string | null;
 };
 
 type Action = {
@@ -87,6 +98,13 @@ type Action = {
   getFilterSport: () => string | null;
   getFilterDist: () => number;
   getFilterLevel: () => string | null;
+
+  // chatroom
+  setMessages: (messages: Message[]) => void;
+  clearMessages: () => void;
+  addMessage: (message: Message) => void;
+  setChannel: (channel: RealtimeChannel | undefined) => void;
+  setRoomCode: (roomCode: string) => void;
 };
 
 const initialState: State = {
@@ -104,6 +122,9 @@ const initialState: State = {
   filterSport: null,
   filterDist: 15,
   filterLevel: null,
+  messages: [],
+  channel: undefined,
+  roomCode: null,
 };
 
 export const useStore = create<State & Action>()(
@@ -304,5 +325,17 @@ export const useStore = create<State & Action>()(
     getFilterLevel: () => {
       return get().filterLevel;
     },
+
+    // chatroom
+
+    setMessages: (messages) => set({ messages }),
+
+    clearMessages: () => set({ messages: [] }),
+
+    addMessage: (message) => set({ messages: [message, ...get().messages] }),
+
+    setChannel: (channel) => set({ channel }),
+
+    setRoomCode: (roomCode) => set({ roomCode }),
   })),
 );

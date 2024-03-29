@@ -27,7 +27,11 @@ const JoinedGameView = ({
   const { gameId, username } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
-  const [session, user] = useStore((state) => [state.session, state.user]);
+  const [session, user, setRoomCode] = useStore((state) => [
+    state.session,
+    state.user,
+    state.setRoomCode,
+  ]);
   const { leaveJoinedGameById } = useMutationGame();
 
   // Leaving a Joined Game Logic:
@@ -145,12 +149,10 @@ const JoinedGameView = ({
                   theme="active"
                   size="$5"
                   alignSelf="center"
-                  onPress={() =>
-                    navigation.navigate("Chatroom", {
-                      gameId,
-                      gametype: "joined",
-                    })
-                  }
+                  onPress={() => {
+                    setRoomCode(gameId);
+                    navigation.navigate("Chatroom", { gametype: "joined" });
+                  }}
                 >
                   Chatroom
                 </Button>
