@@ -155,7 +155,7 @@ function useQueryGames() {
     }
   };
 
-  const fetchFeedGames = async () => {
+  const fetchFeedGames = async (friendsOnly: Boolean) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view feed games");
@@ -169,7 +169,7 @@ function useQueryGames() {
       const filterLevel = getFilterLevel();
 
       const { data, error } = await supabase
-        .rpc("nearby_games", {
+        .rpc(friendsOnly ? "friends_only_games" : "nearby_games", {
           lat: location.coords.latitude,
           long: location.coords.longitude,
           dist_limit: filterDist,

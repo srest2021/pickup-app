@@ -27,7 +27,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "publicGames") {
-      const games = await fetchFeedGames();
+      const games = await fetchFeedGames(false);
       if (!games) {
         setHasLocation(false);
       } else {
@@ -35,6 +35,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
       }
     } else if (toggle === "friendsOnlyGames") {
       //await fetchFriendsOnlyGames();
+      const games = await fetchFeedGames(true);
+      if (!games) {
+        setHasLocation(false);
+      } else {
+        setHasLocation(true);
+      }
     }
     setRefreshing(false);
   };
@@ -90,8 +96,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 <Spinner size="small" color="#ff7403" testID="spinner" />
               )}
 
-              {toggle === "publicGames" ? (
-                feedGames.length > 0 ? (
+              {feedGames.length > 0 ? (
                   <YStack space="$5" paddingTop={5} paddingBottom="$5">
                     {feedGames.map((game) => (
                       <GameThumbnail
@@ -103,15 +108,16 @@ const Feed = ({ navigation }: { navigation: any }) => {
                     ))}
                   </YStack>
                 ) : (
+                  toggle === "publicGames" ? (
                   <View className="items-center justify-center flex-1 p-12 text-center">
                     <H4>No games nearby</H4>
                   </View>
-                )
-              ) : (
+                  ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
                   <H4>No friends-only games yet</H4>
                 </View>
-              )}
+                  )
+                )}
             </ScrollView>
           </View>
         ) : (
