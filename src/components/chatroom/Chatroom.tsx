@@ -1,35 +1,29 @@
 import { H4, Text } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
-import { JoinedGame, MyGame } from "../../lib/types";
 import ChatWindow from "./ChatWindow";
 import MessageInput from "./MessageInput";
+import { useEffect } from "react";
 
 const Chatroom = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gametype } = route.params;
 
-  const [session, user, loading, roomCode, selectedMyGame, selectedJoinedGame] =
-    useStore((state) => [
-      state.session,
-      state.user,
-      state.loading,
-      state.roomCode,
-      state.selectedMyGame,
-      state.selectedJoinedGame,
-    ]);
+  const [session, user, loading, roomCode, clearMessages] = useStore((state) => [
+    state.session,
+    state.user,
+    state.loading,
+    state.roomCode,
+    state.clearMessages
+  ]);
 
-  // let convertedGame;
-  // if (gametype == "my") {
-  //   convertedGame = selectedMyGame as MyGame;
-  // } else {
-  //   convertedGame = selectedJoinedGame as JoinedGame;
-  // }
+  useEffect(() => {
+    clearMessages();
+  }, [roomCode])
 
   return (
-    <View>
+    <View className="p-12">
       {session && session.user && user ? (
         <View>
-          <H4>Chatroom</H4>
           <ChatWindow />
           <MessageInput />
         </View>

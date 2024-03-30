@@ -1,4 +1,4 @@
-import { Button, H4, Input, Text, XStack } from "tamagui";
+import { Button, H4, Input, Text, TextArea, XStack } from "tamagui";
 import { useStore } from "../../lib/store";
 import { View } from "react-native";
 import useMutationMessages from "../../hooks/use-mutation-messages";
@@ -6,13 +6,8 @@ import { useState } from "react";
 import { Loader, SendHorizontal } from "@tamagui/lucide-icons";
 
 const MessageInput = () => {
-  const [loading, roomCode] = useStore((state) => [
-    state.loading,
-    state.roomCode,
-  ]);
-
+  const [loading] = useStore((state) => [state.loading]);
   const [message, setMessage] = useState("");
-
   const { addChatroomMessage } = useMutationMessages();
 
   const sendMessage = async () => {
@@ -24,9 +19,13 @@ const MessageInput = () => {
 
   return (
     <View>
-      <H4>Message input</H4>
-      <XStack>
+      <XStack
+        alignItems="center"
+        space="$3"
+      >
         <Input
+          flex={1}
+          multiline={true}
           size="$4"
           placeholder="Enter your message"
           value={message}
@@ -35,6 +34,7 @@ const MessageInput = () => {
         />
         <Button
           icon={loading ? Loader : SendHorizontal}
+          disabled={loading}
           style={{
             borderColor: "#ff7403",
             backgroundColor: "#ff7403",
