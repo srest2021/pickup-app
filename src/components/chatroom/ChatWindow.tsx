@@ -35,7 +35,7 @@ const ChatWindow = () => {
         {messages.length > 0 ? (
           <YStack space="$2">
             {messages.map((message) =>
-              message.id === user?.id ? (
+              message.user.id === user?.id ? (
                 <MyMessage key={message.id} message={message} />
               ) : (
                 <OtherMessage key={message.id} message={message} />

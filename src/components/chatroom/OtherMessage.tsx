@@ -1,11 +1,10 @@
 import { Paragraph, Text, View, XStack, YStack } from "tamagui";
-import { useStore } from "../../lib/store";
 import { Message } from "../../lib/types";
 
 const OtherMessage = ({ message }: { message: Message }) => {
   return (
     <View>
-      <YStack>
+      <YStack style={{ maxWidth: "70%" }}>
         <XStack space="$2" alignItems="center">
           {/* {avatarUrl && (
                     <Image
