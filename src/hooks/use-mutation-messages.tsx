@@ -5,13 +5,17 @@ import { Alert } from "react-native";
 import { Message } from "../lib/types";
 
 function useMutationMessages() {
-  const [session, setLoading, addMessage] = useStore((state) => [
-    state.session,
-    state.setLoading,
-    state.addMessage,
-  ]);
+  const [session, setLoading, channel, roomCode, addMessage] = useStore(
+    (state) => [
+      state.session,
+      state.setLoading,
+      state.channel,
+      state.roomCode,
+      state.addMessage,
+    ],
+  );
 
-  const addChatroomMessage = async (roomCode: string, content: string) => {
+  const addChatroomMessage = async (content: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -23,9 +27,16 @@ function useMutationMessages() {
       if (error) throw error;
 
       if (data) {
-        // add message to store
         const message: Message = data;
-        addMessage(message);
+
+        // broadcast message through channel
+        channel?.send({
+          type: "broadcast",
+          event: "message",
+          payload: {
+            ...message,
+          },
+        });
         return message;
       } else {
         throw new Error("Error sending message! Please try again later.");

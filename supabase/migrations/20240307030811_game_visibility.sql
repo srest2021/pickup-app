@@ -1256,16 +1256,20 @@ $$ language plpgsql;
 create or replace function add_message(game_id "uuid", content text)
 returns jsonb as $$
 declare
+  message_id "uuid";
+  sent_at timestamp with time zone;
   data jsonb;
 begin
-  insert into messages (content, game_id, player_id)
-  values (content, game_id, auth.uid());
+  message_id := uuid_generate_v4();
+  sent_at := CURRENT_TIMESTAMP;
+  insert into messages (id, sent_at, content, game_id, player_id)
+  values (message_id, sent_at, content, game_id, auth.uid());
 
   select jsonb_build_object (
-    'id', m.id,
-    'roomCode', m.game_id,
-    'sentAt', m.sent_at,
-    'content', m.content,
+    'id', message_id,
+    'roomCode', game_id,
+    'sentAt', sent_at,
+    'content', content,
     'user', jsonb_build_object (
       'id', p.id,
       'username', p.username,
@@ -1273,9 +1277,8 @@ begin
       'avatarUrl', p.avatar_url
     )
   )
-  from messages as m
-  join profiles as p on m.player_id = p.id
-  where m.game_id = game_id
+  from profiles as p
+  where p.id = auth.uid()
   into data;
   return data;
 end;

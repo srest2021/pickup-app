@@ -332,7 +332,7 @@ export const useStore = create<State & Action>()(
 
     clearMessages: () => set({ messages: [] }),
 
-    addMessage: (message) => set({ messages: [message, ...get().messages] }),
+    addMessage: (message) => set({ messages: [...get().messages, message] }),
 
     setChannel: (channel) => set({ channel }),
 

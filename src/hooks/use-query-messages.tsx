@@ -39,7 +39,9 @@ function useQueryMessages() {
 
       // listen to broadcast messages with a "message" event
       channel.on("broadcast", { event: "message" }, ({ payload }) => {
+        //if (!(payload.userId == user.id)) {
         addMessage(payload);
+        //}
       });
 
       channel.subscribe();
@@ -53,7 +55,41 @@ function useQueryMessages() {
     }
   }, [roomCode, username]);
 
-  const getChatroomMessages = async (roomCode: string) => {
+  const getChatroomUsers = async () => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { data, error } = await supabase
+        .from("joined_game")
+        .select(
+          `
+          player_id,
+          profiles (
+            avatar_url
+          )
+          `,
+        )
+        .eq("game_id", roomCode);
+      if (error) throw error;
+
+      if (data) {
+        // setMessages(messages);
+      } else {
+        throw new Error(
+          "Error getting chatroom users! Please try again later.",
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getChatroomMessages = async () => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -74,7 +110,8 @@ function useQueryMessages() {
           )
         `,
         )
-        .eq("messages.game_id", roomCode);
+        .eq("game_id", roomCode)
+        .order("sent_at", { ascending: true });
       if (error) throw error;
 
       if (data) {
