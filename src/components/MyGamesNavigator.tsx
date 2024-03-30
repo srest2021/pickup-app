@@ -41,7 +41,17 @@ export default function MyGamesNavigator() {
       <Stack.Screen
         name="JoinedGameView"
         component={JoinedGameView}
-        options={{ title: "Joined Game", headerShown: true }}
+        options={{
+          title: "Joined Game",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+          headerTintColor: "#ffffff",
+        }}
       />
       <Stack.Screen
         name="Chatroom"
