@@ -19,12 +19,10 @@ const MessageInput = () => {
 
   return (
     <View>
-      <XStack
-        alignItems="center"
-        space="$3"
-      >
+      <XStack alignItems="center" space="$3">
         <Input
           flex={1}
+          maxHeight={47}
           multiline={true}
           size="$4"
           placeholder="Enter your message"
