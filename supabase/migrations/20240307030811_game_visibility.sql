@@ -208,6 +208,24 @@ begin
 end;
 $$ language plpgsql;
 
+-- get the user id from a string or partial string CHECK IF THIS WORKS!
+
+create or replace function username_search(user_search varchar)
+returns UUID as $$
+declare
+  user_id varchar;
+begin
+  select id into user_id
+  from profiles
+  where username LIKE '%' || user_search || '%';
+  return user_id;
+EXCEPTION
+  when NO_DATA_FOUND then
+    return null;
+END;
+$$ language plpsql;
+
+
 -- games table
 
 create table games (

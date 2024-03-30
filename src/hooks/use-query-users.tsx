@@ -12,6 +12,22 @@ function useQueryUsers() {
     state.setOtherUser,
   ]);
 
+  const searchByUsername = async (userSearch: string) => {
+    try{
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+      const{ data , error } = await supabase.rpc("username_search", {user_search: userSearch});
+      if (error) throw error;
+      if (data) {
+        return data;
+      }
+    } catch(error){
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    }
+  }
+
   const getOtherProfile = async (userId: string) => {
     try {
       setLoading(true);
@@ -85,6 +101,7 @@ function useQueryUsers() {
     getFriendRequests,
     setUserLocation,
     getUserLocation,
+    searchByUsername
   };
 }
 
