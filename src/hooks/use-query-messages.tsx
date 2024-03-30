@@ -14,6 +14,7 @@ function useQueryMessages() {
     addMessage,
     channel,
     setChannel,
+    setAvatarUrls
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -23,6 +24,7 @@ function useQueryMessages() {
     state.addMessage,
     state.channel,
     state.setChannel,
+    state.setAvatarUrls
   ]);
 
   const username = user?.username;
@@ -45,10 +47,8 @@ function useQueryMessages() {
       });
 
       channel.subscribe();
-      console.log("SUBSCRIBED TO CHANNEL");
       setChannel(channel);
       return () => {
-        console.log("UNSUBSCRIBED FROM CHANNEL");
         channel.unsubscribe();
         setChannel(undefined);
       };
@@ -74,7 +74,14 @@ function useQueryMessages() {
       if (error) throw error;
 
       if (data) {
-        // setMessages(messages);
+        const avatarUrls: any[] = data.map((res: any) => ({
+          userId: res.player_id,
+          avatarPath: res.profiles.avatar_url,
+          avatarUrl: null
+        }));
+        console.log("setting initial avatar paths: ",avatarUrls)
+        setAvatarUrls(avatarUrls); 
+        return avatarUrls;   
       } else {
         throw new Error(
           "Error getting chatroom users! Please try again later.",
@@ -142,6 +149,7 @@ function useQueryMessages() {
 
   return {
     getChatroomMessages,
+    getChatroomUsers
   };
 }
 

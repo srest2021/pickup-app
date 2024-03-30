@@ -33,9 +33,10 @@ type State = {
   filterDist: number;
   filterLevel: string | null;
 
-  messages: Message[];
   channel: RealtimeChannel | undefined;
   roomCode: string | null;
+  messages: Message[];
+  avatarUrls: any[];
 };
 
 type Action = {
@@ -105,6 +106,8 @@ type Action = {
   addMessage: (message: Message) => void;
   setChannel: (channel: RealtimeChannel | undefined) => void;
   setRoomCode: (roomCode: string) => void;
+  setAvatarUrls: (avatarUrls: any[]) => void;
+  setAvatarUrl: (userId: string, avatarUrl: string | null) => void;
 };
 
 const initialState: State = {
@@ -125,6 +128,7 @@ const initialState: State = {
   messages: [],
   channel: undefined,
   roomCode: null,
+  avatarUrls: []
 };
 
 export const useStore = create<State & Action>()(
@@ -337,5 +341,17 @@ export const useStore = create<State & Action>()(
     setChannel: (channel) => set({ channel }),
 
     setRoomCode: (roomCode) => set({ roomCode }),
+
+    setAvatarUrls: (avatarUrls) => set({avatarUrls}),
+
+    setAvatarUrl: (userId, avatarUrl) => {
+      const newAvatarUrls = get().avatarUrls.map((elem) => {
+        if (elem.userId === userId) {
+          elem.avatarUrl = avatarUrl;
+        }
+        return elem;
+      });
+      set({ avatarUrls: newAvatarUrls });
+    }
   })),
 );
