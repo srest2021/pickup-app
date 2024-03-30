@@ -19,7 +19,6 @@ const OtherMessage = ({ message }: { message: Message }) => {
   const [avatarUrl, setAvatarUrl] = useState(undefined);
 
   useEffect(() => {
-    console.log("finding avatar url for @", message.user.username);
     setAvatarUrl(
       avatarUrls.find((elem) => elem.userId === message.user.id).avatarUrl,
     );

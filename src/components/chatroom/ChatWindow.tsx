@@ -38,7 +38,6 @@ const ChatWindow = () => {
     const fr = new FileReader();
     fr.readAsDataURL(data);
     fr.onload = () => {
-      console.log(`successfully downloaded avatar for ${userId}`);
       setAvatarUrl(userId, fr.result as string);
     };
   }
@@ -51,13 +50,11 @@ const ChatWindow = () => {
       if (avatarUrls && avatarUrls.length > 0) {
         avatarUrls.forEach((avatarUrl) => {
           if (avatarUrl.avatarPath) {
-            console.log("downloading for ", avatarUrl.userId);
             fetchData(avatarUrl.userId, avatarUrl.avatarPath);
           }
         });
       }
     };
-    console.log("useeffect in chat window triggered");
     getData();
   }, []);
 

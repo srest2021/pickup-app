@@ -79,7 +79,6 @@ function useQueryMessages() {
           avatarPath: res.profiles.avatar_url,
           avatarUrl: null,
         }));
-        console.log("setting initial avatar paths: ", avatarUrls);
         setAvatarUrls(avatarUrls);
         return avatarUrls;
       } else {
