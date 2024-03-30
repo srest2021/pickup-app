@@ -128,7 +128,7 @@ const initialState: State = {
   messages: [],
   channel: undefined,
   roomCode: null,
-  avatarUrls: []
+  avatarUrls: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -342,7 +342,7 @@ export const useStore = create<State & Action>()(
 
     setRoomCode: (roomCode) => set({ roomCode }),
 
-    setAvatarUrls: (avatarUrls) => set({avatarUrls}),
+    setAvatarUrls: (avatarUrls) => set({ avatarUrls }),
 
     setAvatarUrl: (userId, avatarUrl) => {
       const newAvatarUrls = get().avatarUrls.map((elem) => {
@@ -352,6 +352,6 @@ export const useStore = create<State & Action>()(
         return elem;
       });
       set({ avatarUrls: newAvatarUrls });
-    }
+    },
   })),
 );

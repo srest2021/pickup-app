@@ -14,7 +14,7 @@ function useQueryMessages() {
     addMessage,
     channel,
     setChannel,
-    setAvatarUrls
+    setAvatarUrls,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -24,7 +24,7 @@ function useQueryMessages() {
     state.addMessage,
     state.channel,
     state.setChannel,
-    state.setAvatarUrls
+    state.setAvatarUrls,
   ]);
 
   const username = user?.username;
@@ -77,11 +77,11 @@ function useQueryMessages() {
         const avatarUrls: any[] = data.map((res: any) => ({
           userId: res.player_id,
           avatarPath: res.profiles.avatar_url,
-          avatarUrl: null
+          avatarUrl: null,
         }));
-        console.log("setting initial avatar paths: ",avatarUrls)
-        setAvatarUrls(avatarUrls); 
-        return avatarUrls;   
+        console.log("setting initial avatar paths: ", avatarUrls);
+        setAvatarUrls(avatarUrls);
+        return avatarUrls;
       } else {
         throw new Error(
           "Error getting chatroom users! Please try again later.",
@@ -149,7 +149,7 @@ function useQueryMessages() {
 
   return {
     getChatroomMessages,
-    getChatroomUsers
+    getChatroomUsers,
   };
 }
 

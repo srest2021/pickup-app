@@ -1,4 +1,14 @@
-import { Paragraph, Text, View, XStack, YStack, Image } from "tamagui";
+import {
+  Paragraph,
+  Text,
+  View,
+  XStack,
+  YStack,
+  Image,
+  Avatar,
+  Row,
+  Column,
+} from "tamagui";
 import { Message } from "../../lib/types";
 import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
@@ -9,24 +19,30 @@ const OtherMessage = ({ message }: { message: Message }) => {
   const [avatarUrl, setAvatarUrl] = useState(undefined);
 
   useEffect(() => {
-    console.log("finding avatar url for @", message.user.username)
-    setAvatarUrl(avatarUrls.find((elem) => elem.userId === message.user.id).avatarUrl);
-  }, [avatarUrls])
-  
+    console.log("finding avatar url for @", message.user.username);
+    setAvatarUrl(
+      avatarUrls.find((elem) => elem.userId === message.user.id).avatarUrl,
+    );
+  }, [avatarUrls]);
+
   return (
     <View>
-      <YStack style={{ maxWidth: "70%" }}>
-        <XStack space="$2" alignItems="center">
-          {avatarUrl && (
-                    <Image
-                      source={{ uri: avatarUrl, width: 35, height: 35 }}
-                      style={{ width: 35, height: 35, borderRadius: 17.5 }}
-                      accessibilityLabel="Avatar"
-                    />
-          )}
-          <Paragraph>@{message.user.username}</Paragraph>
+      <YStack>
+        <XStack style={{ maxWidth: "80%" }}>
+          <Text>@{message.user.username}</Text>
         </XStack>
-        <Text>{message.content}</Text>
+
+        <XStack style={{ maxWidth: "80%" }}>
+          <Avatar circular size="$3">
+            <Avatar.Image
+              accessibilityLabel={message.user.username}
+              src={avatarUrl}
+            />
+            <Avatar.Fallback backgroundColor="$blue10" />
+          </Avatar>
+
+          <Text>{message.content}</Text>
+        </XStack>
       </YStack>
     </View>
   );

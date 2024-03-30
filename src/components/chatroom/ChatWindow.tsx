@@ -12,7 +12,7 @@ const ChatWindow = () => {
     state.user,
     state.loading,
     state.messages,
-    state.setAvatarUrl
+    state.setAvatarUrl,
   ]);
   const { getChatroomMessages, getChatroomUsers } = useQueryMessages();
 
@@ -38,7 +38,7 @@ const ChatWindow = () => {
     const fr = new FileReader();
     fr.readAsDataURL(data);
     fr.onload = () => {
-      console.log(`successfully downloaded avatar for ${userId}`)
+      console.log(`successfully downloaded avatar for ${userId}`);
       setAvatarUrl(userId, fr.result as string);
     };
   }
@@ -51,18 +51,18 @@ const ChatWindow = () => {
       if (avatarUrls && avatarUrls.length > 0) {
         avatarUrls.forEach((avatarUrl) => {
           if (avatarUrl.avatarPath) {
-            console.log("downloading for ",avatarUrl.userId)
+            console.log("downloading for ", avatarUrl.userId);
             fetchData(avatarUrl.userId, avatarUrl.avatarPath);
           }
-        })
+        });
       }
     };
-    console.log("useeffect in chat window triggered")
+    console.log("useeffect in chat window triggered");
     getData();
   }, []);
 
   return (
-    <View style={{ minHeight: "87%", maxHeight: "87%" }}>
+    <View style={{ minHeight: "88%", maxHeight: "88%" }}>
       <ScrollView
         style={{ flexGrow: 0 }}
         ref={scrollViewRef}
