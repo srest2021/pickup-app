@@ -235,11 +235,13 @@ using btree (organizer_id);
 alter table games
   enable row level security;
 
-create policy "Public games are viewable by everyone." on games
-  for select using (is_public);
-
-create policy "Friends-only games are viewable by the organizer's friends." on games
-  for select using ((not is_public) and true); --(auth.id() is organizer's friend)
+create policy "Public games are viewable by everyone; friends-only games are viewable by the organizer's friends." on games
+  for select using (is_public or ((not is_public) and exists (
+    select 1
+    from friends as f
+    where (f.player1_id = auth.uid() and f.player2_id = organizer_id)
+      or (f.player1_id = organizer_id and f.player2_id = auth.uid())
+  )));
 
 create policy "Users can insert their own games." on games
   for insert with check (auth.uid() = organizer_id);
@@ -463,6 +465,42 @@ create policy "Players cannot update existing friends." on friends
 
 create policy "Players can remove their own friends" on friends
   for delete using (player1_id = auth.uid() or player2_id = auth.uid());
+
+-- messages table
+create table messages (
+  "id" "uuid" primary key unique not null default "gen_random_uuid"(),
+  "sent_at" timestamp with time zone default "now"() not null,
+  "game_id" "uuid" references "games" on delete cascade not null,
+  "player_id" "uuid" references "profiles" on delete cascade not null,
+  "content" text not null
+);
+
+alter table messages
+  enable row level security;
+
+create policy "Players can see messages for a game if they've joined the game." on messages
+  for select using (
+    exists (
+      select 1
+      from joined_game AS jg
+      where jg.game_id = game_id and jg.player_id = auth.uid()
+    )
+  );
+
+create policy "Players can send messages for a game if they've joined the game." on messages
+  for insert with check (
+    exists (
+        select 1
+        from joined_game AS jg
+        where jg.game_id = game_id and jg.player_id = auth.uid()
+    )
+  );
+
+create policy "Players cannot edit existing messages." on messages
+  for update with check (false);
+
+create policy "Players cannot delete messages" on messages
+  for delete using (false);
 
 -- helper functions
 
@@ -1212,5 +1250,33 @@ begin
     join public.profiles as p on fr.request_sent_by = p.id
     into data;
     return data;
+end;
+$$ language plpgsql;
+
+create or replace function add_message(game_id "uuid", content text)
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+  insert into messages (content, game_id, player_id)
+  values (content, game_id, auth.uid());
+
+  select jsonb_build_object (
+    'id', m.id,
+    'roomCode', m.game_id,
+    'sentAt', m.sent_at,
+    'content', m.content,
+    'user', jsonb_build_object (
+      'id', p.id,
+      'username', p.username,
+      'displayName', p.display_name,
+      'avatarUrl', p.avatar_url
+    )
+  )
+  from messages as m
+  join profiles as p on m.player_id = p.id
+  where m.game_id = game_id
+  into data;
+  return data;
 end;
 $$ language plpgsql;

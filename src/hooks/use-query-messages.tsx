@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
+import { Message, ThumbnailUser } from "../lib/types";
 
 function useQueryMessages() {
   const [
@@ -57,14 +58,42 @@ function useQueryMessages() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      // const { data, error } = await supabase.rpc("get_messages", {
-      //   room_code: roomCode,
-      // });
-      // if (error) throw error;
+      const { data, error } = await supabase
+        .from("messages")
+        .select(
+          `
+          id,
+          sent_at,
+          game_id,
+          player_id,
+          content,
+          profiles (
+            username,
+            display_name,
+            avatar_url
+          )
+        `,
+        )
+        .eq("messages.game_id", roomCode);
+      if (error) throw error;
 
-      // if (data) {
-      //   setMessages(data);
-      // }
+      if (data) {
+        const messages: Message[] = data.map((message: any) => ({
+          id: message.id,
+          roomCode: message.game_id,
+          sentAt: message.sent_at,
+          content: message.content,
+          user: {
+            id: message.player_id,
+            username: message.profiles.username,
+            displayName: message.profiles.display_name,
+            avatarUrl: message.profiles.avatarUrl,
+          } as ThumbnailUser,
+        }));
+        setMessages(messages);
+      } else {
+        throw new Error("Error getting messages! Please try again later.");
+      }
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

@@ -109,9 +109,10 @@ export type FeedGame = Game & {
 
 export type Message = {
   id: string;
-  userId: string;
+  roomCode: string;
   sentAt: Date;
   content: string;
+  user: ThumbnailUser;
 };
 
 export const sports = [
