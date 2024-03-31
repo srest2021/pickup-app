@@ -1,14 +1,4 @@
-import {
-  Paragraph,
-  Text,
-  View,
-  XStack,
-  YStack,
-  Image,
-  Avatar,
-  Row,
-  Column,
-} from "tamagui";
+import { Paragraph, Text, View, XStack, YStack, Image, Avatar } from "tamagui";
 import { Message } from "../../lib/types";
 import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
@@ -27,17 +17,25 @@ const OtherMessage = ({ message }: { message: Message }) => {
   return (
     <View>
       <YStack>
-        <XStack style={{ maxWidth: "80%" }}>
+        <XStack style={{ maxWidth: "70%" }}>
           <Text>@{message.user.username}</Text>
         </XStack>
 
-        <XStack style={{ maxWidth: "80%" }}>
+        <XStack style={{ maxWidth: "70%" }}>
           <Avatar circular size="$3">
             <Avatar.Image
               accessibilityLabel={message.user.username}
               src={avatarUrl}
             />
-            <Avatar.Fallback backgroundColor="$blue10" />
+            <Avatar.Fallback
+              backgroundColor="$blue10"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text color="#ffffff">
+                {message.user.username.substring(0, 2).toUpperCase()}
+              </Text>
+            </Avatar.Fallback>
           </Avatar>
 
           <Text>{message.content}</Text>

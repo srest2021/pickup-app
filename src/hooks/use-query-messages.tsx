@@ -14,7 +14,7 @@ function useQueryMessages() {
     addMessage,
     channel,
     setChannel,
-    setAvatarUrls,
+    addAvatarUrls,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -24,7 +24,7 @@ function useQueryMessages() {
     state.addMessage,
     state.channel,
     state.setChannel,
-    state.setAvatarUrls,
+    state.addAvatarUrls,
   ]);
 
   const username = user?.username;
@@ -41,9 +41,7 @@ function useQueryMessages() {
 
       // listen to broadcast messages with a "message" event
       channel.on("broadcast", { event: "message" }, ({ payload }) => {
-        //if (!(payload.userId == user.id)) {
         addMessage(payload);
-        //}
       });
 
       channel.subscribe();
@@ -79,7 +77,7 @@ function useQueryMessages() {
           avatarPath: res.profiles.avatar_url,
           avatarUrl: null,
         }));
-        setAvatarUrls(avatarUrls);
+        addAvatarUrls(avatarUrls);
         return avatarUrls;
       } else {
         throw new Error(

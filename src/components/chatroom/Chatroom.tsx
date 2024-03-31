@@ -23,7 +23,7 @@ const Chatroom = ({ navigation, route }: { navigation: any; route: any }) => {
   }, [roomCode]);
 
   return (
-    <View className="p-8">
+    <View className="p-9">
       {session && session.user && user ? (
         <YStack space="$3">
           <ChatWindow />

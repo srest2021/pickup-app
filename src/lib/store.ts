@@ -106,8 +106,8 @@ type Action = {
   addMessage: (message: Message) => void;
   setChannel: (channel: RealtimeChannel | undefined) => void;
   setRoomCode: (roomCode: string) => void;
-  setAvatarUrls: (avatarUrls: any[]) => void;
-  setAvatarUrl: (userId: string, avatarUrl: string | null) => void;
+  addAvatarUrls: (newAvatarUrls: any[]) => void;
+  addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
 };
 
 const initialState: State = {
@@ -342,9 +342,17 @@ export const useStore = create<State & Action>()(
 
     setRoomCode: (roomCode) => set({ roomCode }),
 
-    setAvatarUrls: (avatarUrls) => set({ avatarUrls }),
+    addAvatarUrls: (newAvatarUrls) => {
+      // filter out avatar urls that already exist in store
+      const filteredAvatarUrls = newAvatarUrls.filter(
+        (obj2) => !get().avatarUrls.some((obj1) => obj1.userId === obj2.userId),
+      );
+      // add new avatar urls
+      const updatedAvatarUrls = get().avatarUrls.concat(filteredAvatarUrls);
+      set({ avatarUrls: updatedAvatarUrls });
+    },
 
-    setAvatarUrl: (userId, avatarUrl) => {
+    addAvatarUrl: (userId, avatarUrl) => {
       const newAvatarUrls = get().avatarUrls.map((elem) => {
         if (elem.userId === userId) {
           elem.avatarUrl = avatarUrl;

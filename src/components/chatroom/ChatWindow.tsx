@@ -8,11 +8,11 @@ import { View, ScrollView, Alert } from "react-native";
 import { supabase } from "../../lib/supabase";
 
 const ChatWindow = () => {
-  const [user, loading, messages, setAvatarUrl] = useStore((state) => [
+  const [user, loading, messages, addAvatarUrl] = useStore((state) => [
     state.user,
     state.loading,
     state.messages,
-    state.setAvatarUrl,
+    state.addAvatarUrl,
   ]);
   const { getChatroomMessages, getChatroomUsers } = useQueryMessages();
 
@@ -24,7 +24,7 @@ const ChatWindow = () => {
         await downloadImage(userId, avatarPath);
       } catch (error) {
         //Alert.alert("Error getting avatar");
-        setAvatarUrl(userId, null);
+        addAvatarUrl(userId, null);
       }
     }
   };
@@ -38,7 +38,7 @@ const ChatWindow = () => {
     const fr = new FileReader();
     fr.readAsDataURL(data);
     fr.onload = () => {
-      setAvatarUrl(userId, fr.result as string);
+      addAvatarUrl(userId, fr.result as string);
     };
   }
 
