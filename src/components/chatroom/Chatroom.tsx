@@ -5,9 +5,7 @@ import ChatWindow from "./ChatWindow";
 import MessageInput from "./MessageInput";
 import { useEffect } from "react";
 
-const Chatroom = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { gametype } = route.params;
-
+const Chatroom = ({ navigation }: { navigation: any }) => {
   const [session, user, loading, roomCode, clearMessages] = useStore(
     (state) => [
       state.session,

@@ -345,11 +345,12 @@ export const useStore = create<State & Action>()(
     addAvatarUrls: (newAvatarUrls) => {
       // filter out avatar urls that already exist in store
       const filteredAvatarUrls = newAvatarUrls.filter(
-        (obj2) => !get().avatarUrls.some((obj1) => obj1.userId === obj2.userId),
+        (updated) =>
+          !get().avatarUrls.some((old) => old.userId === updated.userId),
       );
       // add new avatar urls
-      const updatedAvatarUrls = get().avatarUrls.concat(filteredAvatarUrls);
-      set({ avatarUrls: updatedAvatarUrls });
+      //const updatedAvatarUrls = get().avatarUrls.concat(filteredAvatarUrls);
+      set({ avatarUrls: [...get().avatarUrls, ...filteredAvatarUrls] });
     },
 
     addAvatarUrl: (userId, avatarUrl) => {

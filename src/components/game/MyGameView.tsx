@@ -42,8 +42,8 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
     <View>
       {session && session.user && user ? (
         selectedMyGame ? (
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View className="p-12">
+          <View className="p-12">
+            <ScrollView showsVerticalScrollIndicator={false}>
               <YStack space="$3">
                 <YStack space="$3">
                   <YStack alignItems="center">
@@ -134,27 +134,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <Button
-                  icon={MessageCircle}
-                  style={{
-                    borderRadius: 50,
-                    borderColor: "#ff7403",
-                    backgroundColor: "#ff7403",
-                    color: "#ffffff",
-                  }}
-                  variant="outlined"
-                  theme="active"
-                  size="$5"
-                  alignSelf="center"
-                  onPress={() => {
-                    setRoomCode(gameId);
-                    navigation.navigate("Chatroom", { gametype: "my" });
-                  }}
-                >
-                  Chatroom
-                </Button>
-
-                <YStack paddingVertical="$3">
+                <YStack paddingBottom="$4">
                   <MyGamePlayers navigation={undefined} />
                 </YStack>
 
@@ -187,8 +167,28 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </Button>
                 </XStack>
               </YStack>
-            </View>
-          </ScrollView>
+            </ScrollView>
+            <Button
+              icon={MessageCircle}
+              style={{
+                borderRadius: 50,
+                borderColor: "#ff7403",
+                backgroundColor: "#ff7403",
+                color: "#ffffff",
+              }}
+              variant="outlined"
+              theme="active"
+              size="$5"
+              position="absolute"
+              alignSelf="flex-end"
+              right="$7"
+              top="$7"
+              onPress={() => {
+                setRoomCode(gameId);
+                navigation.navigate("Chatroom");
+              }}
+            />
+          </View>
         ) : (
           <View className="items-center justify-center flex-1 p-12 text-center">
             <H4>Loading...</H4>
