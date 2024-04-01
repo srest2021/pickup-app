@@ -54,23 +54,16 @@ export default function OtherUserThumbnail({
           <XStack
             style={{ justifyContent: "space-between", overflow: "hidden" }}
           >
-            <View style={{ flex: 1 }}>
-              <H4 >{}</H4>
-              <H4 >{}</H4>
-              <H5>{}</H5>
-              {(gametype === "feed" || gametype === "joined") && (
                 <XStack space="$2" alignItems="center">
                   {avatarUrl && (
                     <Image
-                      source={{ uri: avatarUrl, width: 35, height: 35 }}
-                      style={{ width: 35, height: 35, borderRadius: 17.5 }}
+                      source={{ uri: avatarUrl, width: 60, height: 60 }}
+                      style={{ width: 60, height: 60, borderRadius: 30 }}
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <Paragraph>@{username}</Paragraph>
+                  <Paragraph fontSize={20} >@{otherUser?.displayName}</Paragraph>
                 </XStack>
-              )}
-            </View>
             <View style={{ objectPosition: "absolute" }}>
               <Button
                 style={{ backgroundColor: "#ff7403" }}
