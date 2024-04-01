@@ -338,13 +338,21 @@ export const useStore = create<State & Action>()(
       set({ friendRequests: myFriendRequests }),
 
     acceptFriendRequest: (userId) => {
+      // Save the newly accepted friend only!
+      const acceptedFriend = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id == userId,
+      );
+
+      // Remove the accepted friend from the friend requests lists
       const updatedFriendRequests = get().friendRequests.filter(
         (friendRequest) => friendRequest.id != userId,
       );
+
       // update requests list
       set({ friendRequests: updatedFriendRequests });
 
-      // add friend to friends list? TODO
+      // add newly accepted friend to friends list
+      set({ friends: [acceptedFriend[0], ...get().friends] });
     },
 
     rejectFriendRequest: (userId) => {
