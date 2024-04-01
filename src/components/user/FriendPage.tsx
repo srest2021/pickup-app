@@ -113,6 +113,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   <H4 style={{ textAlign: 'center' }}> {friendsList.length} friends</H4>
                   {friendsList.map((friend, index) => (
                       <Text key={index}>{friend}</Text>
+                      /*<Button onPress={() => handleButtonClick(friend)}>Button</Button>*/
                   ))}
                 </View>
                 ) : (
