@@ -10,6 +10,7 @@ import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AddGame from "./src/components/game/AddGame";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
+import FriendPage from "./src/components/user/FriendPage";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import {
@@ -17,11 +18,13 @@ import {
   AlignJustify,
   CircleUser,
   GalleryVerticalEnd,
+  PersonStanding,
 } from "@tamagui/lucide-icons";
 import MyGamesNavigator from "./src/components/MyGamesNavigator";
 import FeedNavigator from "./src/components/FeedNavigator";
 import { ToastProvider } from "@tamagui/toast";
 import useQueryUsers from "./src/hooks/use-query-users";
+import FriendNavigator from "./src/components/FriendNavigator";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -114,6 +117,18 @@ export default function App() {
                   tabBarLabel: "Profile",
                   tabBarIcon: ({ color, size, focused }) => (
                     <CircleUser color={focused ? "grey" : "#ffffff"} />
+                  ),
+                  headerShown: false,
+                }}
+                initialParams={{ key: session.user.id }}
+              />
+              <Tab.Screen
+                name="Friends"
+                component={FriendNavigator}
+                options={{
+                  tabBarLabel: "Friends",
+                  tabBarIcon: ({ color, size, focused }) => (
+                    <PersonStanding color={focused ? "grey" : "#ffffff"} />
                   ),
                   headerShown: false,
                 }}
