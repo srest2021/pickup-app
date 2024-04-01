@@ -14,16 +14,32 @@ import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { supabase } from "../../lib/supabase";
 import { useStore } from "../../lib/store";
+import { ArrowRightSquare } from "@tamagui/lucide-icons";
 
 export default function OtherUserThumbnail({
   navigation,
-  otherUser,
+  otherUserEntered,
 }: {
   navigation: any;
-  otherUser: OtherUser;
+  otherUserEntered: OtherUser;
 }) {
-  const [setOtherUser] = useStore((state)=>{state.setOtherUser}); 
+  //const [setOtherUser] = useStore((state)=>{state.setOtherUser}); 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [bio, setBio] = useState<string>('');
+
+  useEffect(() => {
+    setUsername(otherUserEntered ? otherUserEntered.username : null);
+    setBio(otherUserEntered ? otherUserEntered.bio : '');
+    const abbrevDescription =
+    bio.length > 100
+      ? bio.substring(0, 100) + "..."
+      : bio;
+    setBio(abbrevDescription);
+    otherUserEntered && fetchData(otherUserEntered.avatarUrl);
+  }, []);
+
+  
   
   const fetchData = async (avatarPath: string) => {
     if (avatarPath) {
@@ -40,7 +56,6 @@ export default function OtherUserThumbnail({
       .from("avatars")
       .download(path);
     if (error) throw error;
-
     const fr = new FileReader();
     fr.readAsDataURL(data);
     fr.onload = () => {
@@ -49,9 +64,7 @@ export default function OtherUserThumbnail({
   }
 
   return (
-    <View paddingLeft="$5" paddingRight="$5">
-      <Card elevate size="$5">
-        <Card.Header padded>
+    <View paddingLeft="$5" paddingRight="$5" borderBottomColor='#808080'>
                 <XStack space="$2" alignItems="center">
                   {avatarUrl && (
                     <Image
@@ -60,23 +73,23 @@ export default function OtherUserThumbnail({
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <Paragraph fontSize={20} >@{otherUser?.displayName}</Paragraph>
-                  <View style={{ objectPosition: "absolute" }}>
+                  <Paragraph fontSize={20} >@{username}</Paragraph>
+            <View style={{ objectPosition: "absolute" }}>
               <Button
+                icon={ArrowRightSquare}
                 style={{ backgroundColor: "#ff7403" }}
                 onPress={()=>{
-                  setOtherUser(otherUser);
-                  navigation.navigate("OtherProfile", {});
+                  //setOtherUser(otherUserEntered);
+                  navigation.navigate("OtherProfile");
                 }}
               >
-                <H5 style={{ color: "#ffffff" }}>
-                  Profile 
-                </H5>
               </Button>
             </View>
                 </XStack>
-        </Card.Header>
-      </Card>
+            <View>
+              <H5>{bio ? bio : ''}</H5>
+            </View>
     </View>
   );
 }
+// Should i have something that cuts short extended bios? 
