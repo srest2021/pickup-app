@@ -5,10 +5,11 @@ import { User, OtherUser, UserSport } from "../lib/types";
 import * as Location from "expo-location";
 
 function useQueryUsers() {
-  const [session, setLoading, setLocation] = useStore((state) => [
+  const [session, setLoading, setLocation, setOtherUser] = useStore((state) => [
     state.session,
     state.setLoading,
     state.setLocation,
+    state.setOtherUser,
   ]);
 
   const getOtherProfile = async (userId: string) => {
@@ -23,6 +24,7 @@ function useQueryUsers() {
 
       if (data) {
         const user: OtherUser = data;
+        setOtherUser(user);
         return user;
       }
     } catch (error) {
