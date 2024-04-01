@@ -6,6 +6,7 @@ import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
+import useMutationUser from "../../hooks/use-mutation-user";
 
 // Get the height of the screen
 const windowHeight = Dimensions.get("window").height;
@@ -21,13 +22,22 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
     state.user,
   ]);
   const toast = useToastController();
+  const { addFriendRequest } = useMutationUser();
 
   // Returns true if the user has requested
-  function handleRequestLogic(): boolean {
+  const handleRequestLogic = async () => {
     // Send friend request
-    //TODO
-    return false;
-  }
+    // using !, otherUser should never be null if this page appears.
+    const friendRequest = await addFriendRequest(otherUser!.id);
+
+    if (friendRequest) {
+      toast.show("Success!", {
+        message: "Request sent.",
+      });
+    }
+
+    // No navigation, since user can choose to continue viewing the profile.
+  };
 
   return (
     <View style={{ flex: 1 }}>
