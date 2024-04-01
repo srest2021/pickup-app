@@ -2,7 +2,15 @@ import { supabase } from "../../lib/supabase";
 import { ScrollView, View, Text } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
-import { Button, Card, H4, Separator, SizableText, Tabs, YStack } from "tamagui";
+import {
+  Button,
+  Card,
+  H4,
+  Separator,
+  SizableText,
+  Tabs,
+  YStack,
+} from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
@@ -13,47 +21,37 @@ import { ToastDemo } from "../Toast";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
-  const [session] = useStore((state) => [
-    state.session,
-  ]);
-    
+  const [session] = useStore((state) => [state.session]);
+
   return (
-      <>
-        {session && session.user ? (
-          <View style={{ flex: 1 }}>
-            <Tabs
-              alignSelf="center"
-              justifyContent="center"
-              flex={0}
-              defaultValue="Friends"
-            >
-              <Tabs.List>
-                <Tabs.Tab
-                  width="33.33%"
-                  testID="friends"
-                  value="Friends"
-                >
-                  <Text>Friends</Text>
-                </Tabs.Tab>
-                <Separator vertical></Separator>
-                <Tabs.Tab
-                  width="33.33%"
-                  testID="friend-requests"
-                  value="Requests"
-                >
-                  <Text>Requests</Text>
-                </Tabs.Tab>
-                <Separator vertical></Separator>
-                <Tabs.Tab
-                  width="33.33%"
-                  testID="search-friends"
-                  value="Search"
-                >
-                  <Text>Search</Text>
-                </Tabs.Tab>
-              </Tabs.List>
-            </Tabs>
-            {/* <ScrollView
+    <>
+      {session && session.user ? (
+        <View style={{ flex: 1 }}>
+          <Tabs
+            alignSelf="center"
+            justifyContent="center"
+            flex={0}
+            defaultValue="Friends"
+          >
+            <Tabs.List>
+              <Tabs.Tab width="33.33%" testID="friends" value="Friends">
+                <Text>Friends</Text>
+              </Tabs.Tab>
+              <Separator vertical></Separator>
+              <Tabs.Tab
+                width="33.33%"
+                testID="friend-requests"
+                value="Requests"
+              >
+                <Text>Requests</Text>
+              </Tabs.Tab>
+              <Separator vertical></Separator>
+              <Tabs.Tab width="33.33%" testID="search-friends" value="Search">
+                <Text>Search</Text>
+              </Tabs.Tab>
+            </Tabs.List>
+          </Tabs>
+          {/* <ScrollView
               scrollEventThrottle={16}
               showsVerticalScrollIndicator={false}
               onScroll={(e) => {
@@ -102,12 +100,12 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                 </View>
               )}
             </ScrollView> */}
-          </View>
-        ) : (
-          <View className="items-center justify-center flex-1 p-12 text-center">
-            <H4>Loading...</H4>
-          </View>
-        )}
-      </>
+        </View>
+      ) : (
+        <View className="items-center justify-center flex-1 p-12 text-center">
+          <H4>Loading...</H4>
+        </View>
+      )}
+    </>
   );
 }
