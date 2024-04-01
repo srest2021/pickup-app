@@ -12,9 +12,10 @@ import FeedFilter from "./FeedFilter";
 // PICK A MINWIDTH SO THAT text always shown
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
-  const [session, feedGames] = useStore((state) => [
+  const [session, feedGames, feedGamesFriendsOnly] = useStore((state) => [
     state.session,
     state.feedGames,
+    state.feedGamesFriendsOnly,
   ]);
   const [refreshing, setRefreshing] = useState(false);
   const [hasLocation, setHasLocation] = useState(true);
@@ -27,7 +28,8 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "publicGames") {
-      const games = await fetchFeedGames(false);
+      let games = feedGames;
+      games = await fetchFeedGames(false);
       if (!games) {
         setHasLocation(false);
       } else {
@@ -35,7 +37,8 @@ const Feed = ({ navigation }: { navigation: any }) => {
       }
     } else if (toggle === "friendsOnlyGames") {
       //await fetchFriendsOnlyGames();
-      const games = await fetchFeedGames(true);
+      let games = feedGamesFriendsOnly;
+      games = await fetchFeedGames(true);
       if (!games) {
         setHasLocation(false);
       } else {
@@ -98,7 +101,8 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 <Spinner size="small" color="#ff7403" testID="spinner" />
               )}
 
-              {feedGames.length > 0 ? (
+              { toggle === "publicGames" ? (
+                feedGames.length > 0 ? ( 
                   <YStack space="$5" paddingTop={5} paddingBottom="$5">
                     {feedGames.map((game) => (
                       <GameThumbnail
@@ -110,10 +114,22 @@ const Feed = ({ navigation }: { navigation: any }) => {
                     ))}
                   </YStack>
                 ) : (
-                  toggle === "publicGames" ? (
                   <View className="items-center justify-center flex-1 p-12 text-center">
                     <H4>No games nearby</H4>
                   </View>
+                )
+                ) : (
+                  feedGamesFriendsOnly.length > 0 ? (
+                    <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                    {feedGamesFriendsOnly.map((game) => (
+                      <GameThumbnail
+                        navigation={navigation}
+                        game={game}
+                        gametype="feed"
+                        key={game.id}
+                      />
+                    ))}
+                  </YStack>
                   ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
                   <H4>No friends-only games yet</H4>

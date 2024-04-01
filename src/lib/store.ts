@@ -20,6 +20,8 @@ type State = {
   feedGames: FeedGame[];
   selectedFeedGame: FeedGame | null;
 
+  feedGamesFriendsOnly: FeedGame[];
+
   location: Location.LocationObject | null;
 
   filterSport: string | null;
@@ -60,6 +62,9 @@ type Action = {
   setFeedGames: (feedGames: FeedGame[]) => void;
   clearFeedGames: () => void;
 
+  setFeedGamesFriendsOnly: (feedGames: FeedGame[]) => void;
+  clearFeedGamesFriendsOnly: () => void;
+
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
 
@@ -97,6 +102,7 @@ const initialState: State = {
   myGames: [],
   selectedMyGame: null,
   feedGames: [],
+  feedGamesFriendsOnly: [],
   selectedFeedGame: null,
   joinedGames: [],
   selectedJoinedGame: null,
@@ -148,6 +154,10 @@ export const useStore = create<State & Action>()(
     setFeedGames: (feedGames) => set({ feedGames }),
 
     clearFeedGames: () => set({ feedGames: [] }),
+
+    setFeedGamesFriendsOnly: (feedGamesFriendsOnly) => set({ feedGamesFriendsOnly }),
+
+    clearFeedGamesFriendsOnly: () => set({ feedGamesFriendsOnly: [] }),
 
     setSelectedFeedGame: (feedGame) => set({ selectedFeedGame: feedGame }),
 

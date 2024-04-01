@@ -13,6 +13,8 @@ function useQueryGames() {
     clearMyGames,
     setFeedGames,
     clearFeedGames,
+    setFeedGamesFriendsOnly,
+    clearFeedGamesFriendsOnly,
     setJoinedGames,
     clearJoinedGames,
     location,
@@ -27,6 +29,8 @@ function useQueryGames() {
     state.clearMyGames,
     state.setFeedGames,
     state.clearFeedGames,
+    state.setFeedGamesFriendsOnly,
+    state.clearFeedGamesFriendsOnly,
     state.setJoinedGames,
     state.clearJoinedGames,
     state.location,
@@ -201,7 +205,7 @@ function useQueryGames() {
           };
           return feedGame;
         });
-        setFeedGames(games);
+        friendsOnly ? setFeedGamesFriendsOnly(games) : setFeedGames(games);
         return games;
       }
     } catch (error) {
@@ -210,7 +214,7 @@ function useQueryGames() {
       } else {
         Alert.alert("Error fetching feed games! Please try again later.");
       }
-      clearFeedGames();
+      friendsOnly ? clearFeedGamesFriendsOnly() : clearFeedGames();
     } finally {
       setLoading(false);
     }
