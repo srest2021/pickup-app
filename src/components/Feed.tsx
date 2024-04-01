@@ -64,6 +64,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   value="PublicGames"
                   onInteraction={() => {
                     setToggle("publicGames");
+                    handleRefresh();
                   }}
                 >
                   <Text>All Games</Text>
@@ -75,6 +76,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   value="FriendsOnlyGames"
                   onInteraction={() => {
                     setToggle("friendsOnlyGames");
+                    handleRefresh();
                   }}
                 >
                   <Text>Friends-Only Games</Text>
