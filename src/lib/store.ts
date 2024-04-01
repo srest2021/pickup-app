@@ -8,6 +8,7 @@ import {
   JoinedGame,
   FeedGame,
   OtherUser,
+  ThumbnailUser,
 } from "./types";
 import * as Location from "expo-location";
 
@@ -34,6 +35,8 @@ type State = {
   filterSport: string | null;
   filterDist: number;
   filterLevel: string | null;
+
+  friends: ThumbnailUser[];
 };
 
 type Action = {
@@ -98,6 +101,9 @@ type Action = {
   getFilterSport: () => string | null;
   getFilterDist: () => number;
   getFilterLevel: () => string | null;
+
+  // friends
+  setFriends: (friends: ThumbnailUser[]) => void;
 };
 
 const initialState: State = {
@@ -116,6 +122,7 @@ const initialState: State = {
   filterSport: null,
   filterDist: 15,
   filterLevel: null,
+  friends: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -318,5 +325,9 @@ export const useStore = create<State & Action>()(
     getFilterLevel: () => {
       return get().filterLevel;
     },
+
+    // friends
+
+    setFriends: (myfriends) => set({ friends: myfriends }),
   })),
 );
