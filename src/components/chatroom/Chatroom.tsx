@@ -1,6 +1,6 @@
-import { H4, Text, YStack } from "tamagui";
+import { H4, Text, YStack, View } from "tamagui";
 import { useStore } from "../../lib/store";
-import { View } from "react-native";
+//import { View } from "react-native";
 import ChatWindow from "./ChatWindow";
 import MessageInput from "./MessageInput";
 import { useEffect } from "react";
@@ -21,7 +21,7 @@ const Chatroom = ({ navigation }: { navigation: any }) => {
   }, [roomCode]);
 
   return (
-    <View className="p-9">
+    <View padding="$5">
       {session && session.user && user ? (
         <YStack space="$3">
           <ChatWindow />
