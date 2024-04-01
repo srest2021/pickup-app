@@ -10,11 +10,13 @@ import { Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
   const [session] = useStore((state) => [
     state.session,
   ]);
+    
   return (
       <>
         {session && session.user ? (
