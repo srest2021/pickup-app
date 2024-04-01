@@ -7,6 +7,7 @@ import { Dimensions } from "react-native";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 import useMutationUser from "../../hooks/use-mutation-user";
+import { OtherUser } from "../../lib/types";
 
 // Get the height of the screen
 const windowHeight = Dimensions.get("window").height;
