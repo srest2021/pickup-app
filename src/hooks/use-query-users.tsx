@@ -5,15 +5,21 @@ import { User, OtherUser, UserSport, ThumbnailUser } from "../lib/types";
 import * as Location from "expo-location";
 
 function useQueryUsers() {
-  const [session, setLoading, setLocation, setOtherUser, setFriends] = useStore(
-    (state) => [
-      state.session,
-      state.setLoading,
-      state.setLocation,
-      state.setOtherUser,
-      state.setFriends,
-    ],
-  );
+  const [
+    session,
+    setLoading,
+    setLocation,
+    setOtherUser,
+    setFriends,
+    setFriendRequests,
+  ] = useStore((state) => [
+    state.session,
+    state.setLoading,
+    state.setLocation,
+    state.setOtherUser,
+    state.setFriends,
+    state.setFriendRequests,
+  ]);
 
   const getOtherProfile = async (userId: string) => {
     try {
@@ -74,7 +80,39 @@ function useQueryUsers() {
   };
 
   const getFriendRequests = async () => {
-    // use custom SQL function get_friend_requests()
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("get_friend_requests");
+      if (error) console.error(error);
+
+      if (data) {
+        const friendRequests = data.map((friendRequest: any) => {
+          const myFriendRequest: ThumbnailUser = {
+            id: friendRequest.id,
+            username: friendRequest.username,
+            displayName: friendRequest.displayName,
+            avatarUrl: friendRequest.avatarUrl,
+          };
+          return myFriendRequest;
+        });
+
+        setFriendRequests(friendRequests);
+      } else {
+        throw new Error(
+          "Error fetching friend requests! Please try again later.",
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching friend requests! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const setUserLocation = async () => {

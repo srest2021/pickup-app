@@ -37,6 +37,7 @@ type State = {
   filterLevel: string | null;
 
   friends: ThumbnailUser[];
+  friendRequests: ThumbnailUser[];
 };
 
 type Action = {
@@ -104,6 +105,7 @@ type Action = {
 
   // friends
   setFriends: (friends: ThumbnailUser[]) => void;
+  setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
 };
 
 const initialState: State = {
@@ -123,6 +125,7 @@ const initialState: State = {
   filterDist: 15,
   filterLevel: null,
   friends: [],
+  friendRequests: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -329,5 +332,7 @@ export const useStore = create<State & Action>()(
     // friends
 
     setFriends: (myfriends) => set({ friends: myfriends }),
+    setFriendRequests: (myFriendRequests) =>
+      set({ friendRequests: myFriendRequests }),
   })),
 );
