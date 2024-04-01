@@ -24,6 +24,7 @@ import MyGamesNavigator from "./src/components/MyGamesNavigator";
 import FeedNavigator from "./src/components/FeedNavigator";
 import { ToastProvider } from "@tamagui/toast";
 import useQueryUsers from "./src/hooks/use-query-users";
+import FriendNavigator from "./src/components/FriendNavigator";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -123,7 +124,7 @@ export default function App() {
               />
               <Tab.Screen
                 name="Friends"
-                component={FriendPage}
+                component={FriendNavigator}
                 options={{
                   tabBarLabel: "Friends",
                   tabBarIcon: ({ color, size, focused }) => (

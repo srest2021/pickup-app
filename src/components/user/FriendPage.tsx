@@ -29,7 +29,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             >
               <Tabs.List>
                 <Tabs.Tab
-                  width={200}
+                  width="33.33%"
                   testID="friends"
                   value="Friends"
                 >
@@ -37,7 +37,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                 </Tabs.Tab>
                 <Separator vertical></Separator>
                 <Tabs.Tab
-                  width={200}
+                  width="33.33%"
                   testID="friend-requests"
                   value="Requests"
                 >
@@ -45,7 +45,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                 </Tabs.Tab>
                 <Separator vertical></Separator>
                 <Tabs.Tab
-                  width={200}
+                  width="33.33%"
                   testID="search-friends"
                   value="Search"
                 >

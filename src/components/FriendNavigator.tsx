@@ -3,7 +3,7 @@ import Profile from "./user/Profile";
 import EditProfile from "./user/EditProfile";
 import FriendPage from "./user/FriendPage";
 
-export default function EditProfileNavigator() {
+export default function FriendNavigator() {
   const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator>
