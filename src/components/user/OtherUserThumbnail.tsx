@@ -10,10 +10,10 @@ import {
   Paragraph,
   XStack,
 } from "tamagui";
-import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { supabase } from "../../lib/supabase";
+import { useStore } from "../../lib/store";
 
 export default function OtherUserThumbnail({
   navigation,
@@ -22,6 +22,7 @@ export default function OtherUserThumbnail({
   navigation: any;
   otherUser: OtherUser;
 }) {
+  const [setOtherUser] = useStore((state)=>{state.setOtherUser}); 
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   
   const fetchData = async (avatarPath: string) => {
@@ -51,9 +52,6 @@ export default function OtherUserThumbnail({
     <View paddingLeft="$5" paddingRight="$5">
       <Card elevate size="$5">
         <Card.Header padded>
-          <XStack
-            style={{ justifyContent: "space-between", overflow: "hidden" }}
-          >
                 <XStack space="$2" alignItems="center">
                   {avatarUrl && (
                     <Image
@@ -63,39 +61,21 @@ export default function OtherUserThumbnail({
                     />
                   )}
                   <Paragraph fontSize={20} >@{otherUser?.displayName}</Paragraph>
-                </XStack>
-            <View style={{ objectPosition: "absolute" }}>
+                  <View style={{ objectPosition: "absolute" }}>
               <Button
                 style={{ backgroundColor: "#ff7403" }}
-                onPress={()=>{}}
+                onPress={()=>{
+                  setOtherUser(otherUser);
+                  navigation.navigate("OtherProfile", {});
+                }}
               >
                 <H5 style={{ color: "#ffffff" }}>
                   Profile 
                 </H5>
               </Button>
             </View>
-          </XStack>
+                </XStack>
         </Card.Header>
-        <View
-          space="$2"
-          alignSelf="baseline"
-          marginLeft={25}
-          style={{ flex: 0.5 }}
-        >
-        </View>
-        <Card.Footer padded>
-          <View
-            alignItems="center"
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              flex: 1,
-            }}
-          >
-          </View>
-        </Card.Footer>
-        <Card.Background>
-        </Card.Background>
       </Card>
     </View>
   );
