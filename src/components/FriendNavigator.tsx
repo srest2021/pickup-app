@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Profile from "./user/Profile";
-import EditProfile from "./user/EditProfile";
 import FriendPage from "./user/FriendPage";
+import OtherProfile from "./user/OtherProfile";
 
 export default function FriendNavigator() {
   const Stack = createNativeStackNavigator();
@@ -19,6 +18,21 @@ export default function FriendNavigator() {
           headerTitleStyle: {
             color: "#ffffff",
           },
+        }}
+      />
+      <Stack.Screen
+        name="OtherProfileView"
+        component={OtherProfile}
+        options={{
+          title: "Other Profile",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+          headerTintColor: "#ffffff",
         }}
       />
     </Stack.Navigator>

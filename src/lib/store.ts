@@ -1,7 +1,15 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Session } from "@supabase/supabase-js";
-import { UserSport, User, MyGame, JoinedGame, FeedGame } from "./types";
+import {
+  UserSport,
+  User,
+  MyGame,
+  JoinedGame,
+  FeedGame,
+  OtherUser,
+  ThumbnailUser,
+} from "./types";
 import * as Location from "expo-location";
 
 type State = {
@@ -10,6 +18,8 @@ type State = {
 
   user: User | null;
   userSports: UserSport[];
+
+  otherUser: OtherUser | null;
 
   myGames: MyGame[];
   selectedMyGame: MyGame | null;
@@ -25,6 +35,9 @@ type State = {
   filterSport: string | null;
   filterDist: number;
   filterLevel: string | null;
+
+  friends: ThumbnailUser[];
+  friendRequests: ThumbnailUser[];
 };
 
 type Action = {
@@ -34,6 +47,8 @@ type Action = {
 
   setUser: (user: User | null) => void;
   editUser: (updated: any) => void;
+
+  setOtherUser: (otherUser: OtherUser | null) => void;
 
   addUserSport: (userSport: UserSport) => void;
   editUserSport: (userSport: UserSport) => void;
@@ -87,6 +102,10 @@ type Action = {
   getFilterSport: () => string | null;
   getFilterDist: () => number;
   getFilterLevel: () => string | null;
+
+  // friends
+  setFriends: (friends: ThumbnailUser[]) => void;
+  setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
 };
 
 const initialState: State = {
@@ -94,6 +113,7 @@ const initialState: State = {
   loading: false,
   user: null,
   userSports: [],
+  otherUser: null,
   myGames: [],
   selectedMyGame: null,
   feedGames: [],
@@ -104,6 +124,8 @@ const initialState: State = {
   filterSport: null,
   filterDist: 15,
   filterLevel: null,
+  friends: [],
+  friendRequests: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -115,6 +137,8 @@ export const useStore = create<State & Action>()(
     setLoading: (loading) => set({ loading }),
 
     setUser: (user) => set({ user }),
+
+    setOtherUser: (user) => set({ otherUser: user }),
 
     editUser: (updated) => {
       let updatedUser = { ...get().user };
@@ -304,5 +328,11 @@ export const useStore = create<State & Action>()(
     getFilterLevel: () => {
       return get().filterLevel;
     },
+
+    // friends
+
+    setFriends: (myfriends) => set({ friends: myfriends }),
+    setFriendRequests: (myFriendRequests) =>
+      set({ friendRequests: myFriendRequests }),
   })),
 );
