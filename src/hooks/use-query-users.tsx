@@ -59,6 +59,7 @@ function useQueryUsers() {
             id: friend.id,
             username: friend.username,
             displayName: friend.displayName,
+            bio: friend.bio,
             avatarUrl: friend.avatarUrl,
           };
           return myFriend;
@@ -94,6 +95,7 @@ function useQueryUsers() {
             id: friendRequest.id,
             username: friendRequest.username,
             displayName: friendRequest.displayName,
+            bio: friendRequest.bio,
             avatarUrl: friendRequest.avatarUrl,
           };
           return myFriendRequest;
