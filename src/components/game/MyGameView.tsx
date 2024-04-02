@@ -9,21 +9,23 @@ import {
   Button,
   ScrollView,
   H6,
+  View,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-import { View } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
 import MyGamePlayers from "./MyGamePlayers";
+import { MessageCircle } from "@tamagui/lucide-icons";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
   const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
-  const [session, user, loading] = useStore((state) => [
+  const [session, user, loading, setRoomCode] = useStore((state) => [
     state.session,
     state.user,
     state.loading,
+    state.setRoomCode,
   ]);
   const { removeMyGameById } = useMutationGame();
 
@@ -37,48 +39,50 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   };
 
   return (
-    <View>
+    <View flex={1}>
       {session && session.user && user ? (
         selectedMyGame ? (
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View className="p-12">
-              <YStack>
-                <YStack alignItems="center">
-                  <H4 textAlign="center">{selectedMyGame.title}</H4>
-                </YStack>
+          <View padding="$7" flex={1}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <YStack space="$3" flex={1}>
+                <YStack space="$3">
+                  <YStack alignItems="center">
+                    <H4 textAlign="center">{selectedMyGame.title}</H4>
+                  </YStack>
 
-                <YStack paddingTop="$3" alignItems="center">
-                  <H5>
-                    {new Date(selectedMyGame.datetime).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        weekday: "short",
-                      },
-                    )}
-                  </H5>
-                  <H5>
-                    at{" "}
-                    {new Date(selectedMyGame.datetime).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </H5>
-                </YStack>
+                  <YStack alignItems="center">
+                    <H5>
+                      {new Date(selectedMyGame.datetime).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          weekday: "short",
+                        },
+                      )}
+                    </H5>
+                    <H5>
+                      at{" "}
+                      {new Date(selectedMyGame.datetime).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
+                    </H5>
+                  </YStack>
 
-                <YStack alignItems="center">
-                  <SizableText alignItems="center" padding="$5" size="$4">
-                    by @{user.username}
-                  </SizableText>
+                  <YStack alignItems="center">
+                    <SizableText alignItems="center" size="$4">
+                      by @{user.username}
+                    </SizableText>
+                  </YStack>
                 </YStack>
 
                 {selectedMyGame.description && (
-                  <YStack paddingTop="$3" paddingBottom="$7">
+                  <YStack paddingTop="$3">
                     <Card elevate size="$5">
                       <View marginLeft={25} marginRight={25}>
                         <SizableText
@@ -94,7 +98,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
                 )}
 
-                <YStack space="$4">
+                <YStack space="$4" paddingVertical="$3">
                   <XStack space="$2" alignItems="center">
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
@@ -132,7 +136,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <MyGamePlayers navigation={undefined} />
 
-                <XStack space="$3" paddingTop="$6">
+                <XStack space="$3" paddingTop="$5">
                   <Button
                     variant="outlined"
                     size="$5"
@@ -161,16 +165,41 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </Button>
                 </XStack>
               </YStack>
-            </View>
-          </ScrollView>
+            </ScrollView>
+            <Button
+              icon={MessageCircle}
+              style={{
+                borderRadius: 50,
+                borderColor: "#ff7403",
+                backgroundColor: "#ff7403",
+                color: "#ffffff",
+              }}
+              variant="outlined"
+              theme="active"
+              size="$5"
+              position="absolute"
+              alignSelf="flex-end"
+              right="$7"
+              top="$7"
+              onPress={() => {
+                setRoomCode(gameId);
+                navigation.navigate("Chatroom");
+              }}
+            />
+          </View>
         ) : (
-          <View className="items-center justify-center flex-1 p-12 text-center">
-            <H4>Loading...</H4>
+          <View
+            padding="$7"
+            flex={1}
+            alignSelf="center"
+            justifyContent="center"
+          >
+            <H4 textAlign="center">Loading...</H4>
           </View>
         )
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Log in to view and edit this game!</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Log in to view this game!</H4>
         </View>
       )}
     </View>

@@ -123,7 +123,7 @@ export default function App() {
                 initialParams={{ key: session.user.id }}
               />
               <Tab.Screen
-                name="Friends"
+                name="My Friends"
                 component={FriendNavigator}
                 options={{
                   tabBarLabel: "Friends",

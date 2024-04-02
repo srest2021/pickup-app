@@ -23,6 +23,7 @@ export type ThumbnailUser = {
   id: string;
   username: string;
   displayName: string;
+  bio: string;
   avatarUrl: string;
 };
 
@@ -105,6 +106,14 @@ export type FeedGame = Game & {
   hasRequested: boolean;
   acceptedPlayers: ThumbnailUser[];
   organizer: ThumbnailUser;
+};
+
+export type Message = {
+  id: string;
+  roomCode: string;
+  sentAt: Date;
+  content: string;
+  user: ThumbnailUser;
 };
 
 export const sports = [
