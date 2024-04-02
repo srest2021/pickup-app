@@ -65,6 +65,7 @@ function useQueryUsers() {
         });
 
         setFriends(friends);
+        return friends;
       } else {
         throw new Error("Error fetching friends! Please try again later.");
       }
@@ -99,6 +100,7 @@ function useQueryUsers() {
         });
 
         setFriendRequests(friendRequests);
+        return friendRequests;
       } else {
         throw new Error(
           "Error fetching friend requests! Please try again later.",
