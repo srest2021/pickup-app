@@ -151,11 +151,12 @@ export const useStore = create<State & Action>()(
 
     // feed games
 
-    setFeedGames: (feedGames) => set({ feedGames }),
+    setFeedGames: (newGames) => set((state) => ({ feedGames: [...state.feedGames, ...newGames] })),
+
 
     clearFeedGames: () => set({ feedGames: [] }),
 
-    setFeedGamesFriendsOnly: (feedGamesFriendsOnly) => set({ feedGamesFriendsOnly }),
+    setFeedGamesFriendsOnly: (newGames) => set((state) => ({ feedGamesFriendsOnly: [...state.feedGamesFriendsOnly, ...newGames] })),
 
     clearFeedGamesFriendsOnly: () => set({ feedGamesFriendsOnly: [] }),
 

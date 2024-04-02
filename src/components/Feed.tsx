@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, FlatList, RefreshControl } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
@@ -20,6 +20,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("publicGames");
+  const [feedOffset, setFeedOffset] = useState(feedGames.length);
+  const [friendsOnlyOffset, setFriendsOnlyOffset] = useState(feedGamesFriendsOnly.length);
+  const [allGamesFetched, setAllGamesFetched] = useState(false);
 
   useEffect(() => {
     handleRefresh();
@@ -27,9 +30,11 @@ const Feed = ({ navigation }: { navigation: any }) => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
+    setAllGamesFetched(false);
     if (toggle === "publicGames") {
       let games = feedGames;
       games = await fetchFeedGames(false);
+      setFeedOffset(games.length);
       if (!games) {
         setHasLocation(false);
       } else {
@@ -39,6 +44,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
       //await fetchFriendsOnlyGames();
       let games = feedGamesFriendsOnly;
       games = await fetchFeedGames(true);
+      setFriendsOnlyOffset(games.length);
       if (!games) {
         setHasLocation(false);
       } else {
@@ -46,6 +52,25 @@ const Feed = ({ navigation }: { navigation: any }) => {
       }
     }
     setRefreshing(false);
+  };
+
+  const handleLoadMore = async () => {
+    if (!refreshing && !allGamesFetched) {
+      let games;
+      if (toggle === "publicGames") {
+        games = await fetchFeedGames(false, feedOffset);
+        setFeedOffset(feedOffset + games.length);
+        if (!games || games.length === 0) {
+          setAllGamesFetched(true);
+        } 
+      } else if (toggle === "friendsOnlyGames") {
+        games = await fetchFeedGames(true, friendsOnlyOffset);
+        setFriendsOnlyOffset(friendsOnlyOffset + games.length);
+        if (!games || games.length === 0) {
+          setAllGamesFetched(true);
+        }
+      }
+    }
   };
 
   return (
@@ -86,7 +111,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
               </Tabs.List>
             </Tabs>
-            <ScrollView
+            { /*<ScrollView
               scrollEventThrottle={16}
               showsVerticalScrollIndicator={false}
               onScroll={(e) => {
@@ -137,6 +162,36 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   )
                 )}
             </ScrollView>
+                  */}
+            
+            <FlatList
+              data={toggle === "publicGames" ? feedGames : feedGamesFriendsOnly}
+              renderItem={({ item }) => (
+                <GameThumbnail
+                  navigation={navigation}
+                  game={item}
+                  gametype="feed"
+                  key={item.id}
+                />
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.5}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                  colors={["#ff7403"]}
+                  tintColor="#ff7403"
+                  title="Pull to Refresh"
+                  titleColor="#ff7403"
+                />
+              }
+              ListFooterComponent={() =>
+                refreshing && <Spinner size="small" color="#ff7403" testID="spinner" />
+              }
+              contentContainerStyle={{ paddingVertical: 20 }}
+            />
           </View>
         ) : (
           <View className="items-center justify-center flex-1 p-12 text-center">
