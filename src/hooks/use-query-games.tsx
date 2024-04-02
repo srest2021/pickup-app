@@ -40,7 +40,7 @@ function useQueryGames() {
     state.getFilterDist,
     state.getFilterLevel,
     state.feedGames,
-    state.feedGamesFriendsOnly
+    state.feedGamesFriendsOnly,
   ]);
 
   const { getUserLocation } = useQueryUsers();
@@ -184,10 +184,12 @@ function useQueryGames() {
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
         })
-        .range(offset, offset+20);
+        .range(offset, offset + 20);
       if (error) throw error;
 
-      console.log(`query ${friendsOnly ? "friends_only_games" : "nearby_games"} with range ${offset}-${offset+20}, got ${data.length} games`)
+      console.log(
+        `query ${friendsOnly ? "friends_only_games" : "nearby_games"} with range ${offset}-${offset + 20}, got ${data.length} games`,
+      );
 
       if (data) {
         const games = data.map((game: any) => {
@@ -212,12 +214,6 @@ function useQueryGames() {
           return feedGame;
         });
         friendsOnly ? setFeedGamesFriendsOnly(games) : setFeedGames(games);
-        //console.log(fg) 
-        console.log("DATA")
-        data.forEach((elem) => console.log(elem.title, elem.organizer.username))
-        console.log("FEEDGAMES")
-        fg.forEach((game) => console.log(game.title, game.organizer.username))
-        //console.log(fgfo)
         return games;
       } else {
         throw new Error("Error fetching feed games! Please try again later.");

@@ -9,12 +9,18 @@ import FeedFilter from "./FeedFilter";
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
 
-  const [session, publicGames, clearPublicGames, friendsOnlyGames, clearFriendsOnlyGames] = useStore((state) => [
+  const [
+    session,
+    publicGames,
+    clearPublicGames,
+    friendsOnlyGames,
+    clearFriendsOnlyGames,
+  ] = useStore((state) => [
     state.session,
     state.feedGames,
     state.clearFeedGames,
     state.feedGamesFriendsOnly,
-    state.clearFeedGamesFriendsOnly
+    state.clearFeedGamesFriendsOnly,
   ]);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -22,9 +28,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const [toggle, setToggle] = useState("publicGames");
 
   const [publicOffset, setPublicOffset] = useState(publicGames.length);
-  const [friendsOnlyOffset, setFriendsOnlyOffset] = useState(friendsOnlyGames.length);
+  const [friendsOnlyOffset, setFriendsOnlyOffset] = useState(
+    friendsOnlyGames.length,
+  );
   const [allPublicGamesFetched, setAllPublicGamesFetched] = useState(false);
-  const [allFriendsOnlyGamesFetched, setAllFriendsOnlyGamesFetched] = useState(false);
+  const [allFriendsOnlyGamesFetched, setAllFriendsOnlyGamesFetched] =
+    useState(false);
 
   useEffect(() => {
     const getAllGames = async () => {
@@ -32,12 +41,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
       await handlePublicGamesRefresh();
       await handleFriendsOnlyGamesRefresh();
       setRefreshing(false);
-    }
+    };
     getAllGames();
   }, []);
 
   const handlePublicGamesRefresh = async () => {
-    console.log("call handlePublicGamesRefresh")
+    console.log("call handlePublicGamesRefresh");
     clearPublicGames();
     setAllPublicGamesFetched(false);
     setPublicOffset(0);
@@ -48,24 +57,24 @@ const Feed = ({ navigation }: { navigation: any }) => {
     } else {
       setHasLocation(false);
     }
-  }
-   
+  };
+
   const handleFriendsOnlyGamesRefresh = async () => {
-    console.log("call handleFriendsOnlyGamesRefresh")
+    console.log("call handleFriendsOnlyGamesRefresh");
     clearFriendsOnlyGames();
     setAllFriendsOnlyGamesFetched(false);
     setFriendsOnlyOffset(0);
     const games = await fetchFeedGames(true, friendsOnlyOffset);
     if (games) {
       setFriendsOnlyOffset(games.length);
-      setHasLocation(true)
+      setHasLocation(true);
     } else {
       setHasLocation(false);
     }
-  }
+  };
 
   const handleRefresh = async () => {
-    console.log("call handleRefresh")
+    console.log("call handleRefresh");
     setRefreshing(true);
     if (toggle === "publicGames") {
       await handlePublicGamesRefresh();
@@ -76,16 +85,24 @@ const Feed = ({ navigation }: { navigation: any }) => {
   };
 
   const handleLoadMore = async () => {
-    if (!refreshing && !allGamesFetched) {
-      let games;
-      if (toggle === "publicGames") {
+    let games;
+    if (toggle === "publicGames") {
+      if (!refreshing && !allPublicGamesFetched) {
+        setRefreshing(true);
         games = await fetchFeedGames(false, publicOffset);
+        setRefreshing(false);
+
         setPublicOffset(publicOffset + games.length);
         if (!games || games.length === 0) {
           setAllPublicGamesFetched(true);
-        } 
-      } else if (toggle === "friendsOnlyGames") {
+        }
+      }
+    } else if (toggle === "friendsOnlyGames") {
+      if (!refreshing && !allFriendsOnlyGamesFetched) {
+        setRefreshing(true);
         games = await fetchFeedGames(true, friendsOnlyOffset);
+        setRefreshing(false);
+
         setFriendsOnlyOffset(friendsOnlyOffset + games.length);
         if (!games || games.length === 0) {
           setAllFriendsOnlyGamesFetched(true);
@@ -128,7 +145,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
               </Tabs.List>
             </Tabs>
-            { /*<ScrollView
+            {/*<ScrollView
               scrollEventThrottle={16}
               showsVerticalScrollIndicator={false}
               onScroll={(e) => {
@@ -180,9 +197,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 )}
             </ScrollView>
                   */}
-            
-            {/* <FlatList
-              data={toggle === "publicGames" ? feedGames : feedGamesFriendsOnly}
+
+            <FlatList
+              data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
               renderItem={({ item }) => (
                 <GameThumbnail
                   navigation={navigation}
@@ -197,7 +214,15 @@ const Feed = ({ navigation }: { navigation: any }) => {
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
-                  onRefresh={handleRefresh}
+                  onRefresh={() => {
+                    setRefreshing(true);
+                    if (toggle === "publicGames") {
+                      handlePublicGamesRefresh();
+                    } else {
+                      handleFriendsOnlyGamesRefresh();
+                    }
+                    setRefreshing(false);
+                  }}
                   colors={["#ff7403"]}
                   tintColor="#ff7403"
                   title="Pull to Refresh"
@@ -205,10 +230,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 />
               }
               ListFooterComponent={() =>
-                refreshing && <Spinner size="small" color="#ff7403" testID="spinner" />
+                refreshing && (
+                  <Spinner size="small" color="#ff7403" testID="spinner" />
+                )
               }
               contentContainerStyle={{ paddingVertical: 20 }}
-            /> */}
+            />
           </View>
         ) : (
           <View className="items-center justify-center flex-1 p-12 text-center">
