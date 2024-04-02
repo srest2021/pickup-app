@@ -9,9 +9,10 @@ import {
   Button,
   ScrollView,
   H6,
+  View,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-import { View } from "react-native";
+//import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
@@ -42,12 +43,12 @@ const JoinedGameView = ({
   }
 
   return (
-    <View>
+    <View flex={1}>
       {session && session.user && user ? (
         selectedJoinedGame ? (
-          <View className="p-12">
+          <View padding="$7" flex={1}>
             <ScrollView showsVerticalScrollIndicator={false}>
-              <YStack space="$3">
+              <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
                     <H4 textAlign="center">{selectedJoinedGame.title}</H4>
@@ -137,27 +138,29 @@ const JoinedGameView = ({
                   </XStack>
                 </YStack>
 
-                <YStack paddingBottom="$4">
+                <YStack paddingBottom="$10">
                   <GamePlayers
                     navigation={undefined}
                     game={selectedJoinedGame}
                     gametype="joined"
                   />
                 </YStack>
-
-                <Button
-                  variant="outlined"
-                  size="$5"
-                  color="#ff7403"
-                  borderColor="#ff7403"
-                  backgroundColor="#ffffff"
-                  flex={1}
-                  onPress={() => leaveJoinedGame()}
-                >
-                  Leave Game
-                </Button>
               </YStack>
             </ScrollView>
+            <XStack paddingTop="$5">
+              <Button
+                variant="outlined"
+                size="$5"
+                flex={1}
+                color="#ff7403"
+                borderColor="#ff7403"
+                backgroundColor="#ffffff"
+                onPress={() => leaveJoinedGame()}
+              >
+                Leave Game
+              </Button>
+            </XStack>
+
             <Button
               icon={MessageCircle}
               style={{
@@ -180,13 +183,18 @@ const JoinedGameView = ({
             />
           </View>
         ) : (
-          <View className="items-center justify-center flex-1 p-12 text-center">
-            <H4>Loading...</H4>
+          <View
+            padding="$7"
+            flex={1}
+            alignSelf="center"
+            justifyContent="center"
+          >
+            <H4 textAlign="center">Loading...</H4>
           </View>
         )
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Log in to view this game!</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Log in to view this game!</H4>
         </View>
       )}
     </View>

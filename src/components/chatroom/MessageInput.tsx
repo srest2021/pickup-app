@@ -21,8 +21,7 @@ const MessageInput = () => {
       <XStack alignItems="center" space="$3">
         <Input
           flex={1}
-          padding="$5"
-          maxHeight={60}
+          maxHeight={57}
           multiline={true}
           size="$5"
           placeholder="Enter your message"

@@ -9,9 +9,10 @@ import {
   Button,
   ScrollView,
   H6,
+  View,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-import { Alert, View } from "react-native";
+import { Alert } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
@@ -41,12 +42,12 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   }
 
   return (
-    <View>
+    <View flex={1}>
       {session && session.user && user ? (
         selectedFeedGame ? (
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View className="p-12">
-              <YStack space="$3">
+          <View padding="$7" flex={1}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
                     <H4 textAlign="center">{selectedFeedGame.title}</H4>
@@ -100,7 +101,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
                 )}
 
-                <YStack space="$4" paddingTop="$3">
+                <YStack space="$4" paddingVertical="$3">
                   <XStack space="$2" alignItems="center">
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
@@ -136,43 +137,47 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <YStack paddingVertical="$3">
+                <YStack paddingBottom="$10">
                   <GamePlayers
                     navigation={undefined}
                     game={selectedFeedGame}
                     gametype="feed"
                   />
                 </YStack>
-
-                <XStack>
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    disabled={selectedFeedGame.hasRequested ? true : false}
-                    flex={1}
-                    onPress={() => requestToJoinGame()}
-                  >
-                    {loading
-                      ? "Requesting..."
-                      : selectedFeedGame.hasRequested
-                        ? "Requested"
-                        : "Request to Join"}
-                  </Button>
-                </XStack>
               </YStack>
-            </View>
-          </ScrollView>
+            </ScrollView>
+            <XStack paddingTop="$5">
+              <Button
+                variant="outlined"
+                size="$5"
+                color="#ff7403"
+                borderColor="#ff7403"
+                backgroundColor="#ffffff"
+                disabled={selectedFeedGame.hasRequested ? true : false}
+                flex={1}
+                onPress={() => requestToJoinGame()}
+              >
+                {loading
+                  ? "Loading..."
+                  : selectedFeedGame.hasRequested
+                    ? "Requested"
+                    : "Request to Join"}
+              </Button>
+            </XStack>
+          </View>
         ) : (
-          <View className="items-center justify-center flex-1 p-12 text-center">
-            <H4>Loading...</H4>
+          <View
+            padding="$7"
+            flex={1}
+            alignSelf="center"
+            justifyContent="center"
+          >
+            <H4 textAlign="center">Loading...</H4>
           </View>
         )
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Log in to view this game!</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Log in to view this game!</H4>
         </View>
       )}
     </View>
