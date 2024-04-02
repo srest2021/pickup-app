@@ -90,14 +90,13 @@ const Feed = ({ navigation }: { navigation: any }) => {
     setRefreshing(false);
   };
 
-  // once reach bottom, get games with corresponding offset
+  // once reach bottom, get more games using corresponding offset
   const handleLoadMore = async () => {
     console.log("# handleLoadMore")
     let games;
     if (toggle === "publicGames") {
       if (!refreshing && !allPublicGamesFetched) {
         setRefreshing(true);
-        console.log("## fetch public games")
         games = await fetchFeedGames(false, publicOffset);
         setRefreshing(false);
 
@@ -105,11 +104,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
         if (!games || games.length === 0) {
           setAllPublicGamesFetched(true);
         }
+      } else {
+        console.log(`blocked load more public (refreshing ${refreshing}, all fetched ${allPublicGamesFetched})`)
       }
     } else if (toggle === "friendsOnlyGames") {
       if (!refreshing && !allFriendsOnlyGamesFetched) {
         setRefreshing(true);
-        console.log("## fetch friends only games")
         games = await fetchFeedGames(true, friendsOnlyOffset);
         setRefreshing(false);
 
@@ -117,8 +117,10 @@ const Feed = ({ navigation }: { navigation: any }) => {
         if (!games || games.length === 0) {
           setAllFriendsOnlyGamesFetched(true);
         }
+      } else {
+        console.log(`blocked load more friends only (refreshing ${refreshing}, all fetched ${allFriendsOnlyGamesFetched})`)
       }
-    }
+    } 
   };
 
   return (
@@ -155,58 +157,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
               </Tabs.List>
             </Tabs>
-            {/*<ScrollView
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
-              onScroll={(e) => {
-                const { contentOffset } = e.nativeEvent;
-                if (contentOffset.y < -50 && !refreshing) {
-                  handleRefresh();
-                }
-              }}
-              contentContainerStyle={{ paddingTop: 20 }}
-            >
-              {refreshing && (
-                <Spinner size="small" color="#ff7403" testID="spinner" />
-              )}
-
-              { toggle === "publicGames" ? (
-                feedGames.length > 0 ? ( 
-                  <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                    {feedGames.map((game) => (
-                      <GameThumbnail
-                        navigation={navigation}
-                        game={game}
-                        gametype="feed"
-                        key={game.id}
-                      />
-                    ))}
-                  </YStack>
-                ) : (
-                  <View className="items-center justify-center flex-1 p-12 text-center">
-                    <H4>No games nearby</H4>
-                  </View>
-                )
-                ) : (
-                  feedGamesFriendsOnly.length > 0 ? (
-                    <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                    {feedGamesFriendsOnly.map((game) => (
-                      <GameThumbnail
-                        navigation={navigation}
-                        game={game}
-                        gametype="feed"
-                        key={game.id}
-                      />
-                    ))}
-                  </YStack>
-                  ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No friends-only games yet</H4>
-                </View>
-                  )
-                )}
-            </ScrollView>
-                  */}
 
             <FlatList
               data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
@@ -219,27 +169,14 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 />
               )}
               keyExtractor={(item) => item.id.toString()}
-              onEndReached={() => { 
-                console.log("# onEndReached -> handleLoadMore")
-                handleLoadMore();
-              }}
+              onEndReached={() => { handleLoadMore(); }}
               onEndReachedThreshold={0.05}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
-                  onRefresh={() => {
-                    console.log("# refreshControl -> onRefresh")
-                    setRefreshing(true);
-                    if (toggle === "publicGames") {
-                      handlePublicGamesRefresh();
-                    } else {
-                      handleFriendsOnlyGamesRefresh();
-                    }
-                    setRefreshing(false);
-                  }}
+                  onRefresh={handleRefresh}
                   colors={["#ff7403"]}
                   tintColor="#ff7403"
-                  title="Pull to Refresh"
                   titleColor="#ff7403"
                 />
               }

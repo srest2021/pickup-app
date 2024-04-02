@@ -854,7 +854,7 @@ returns table(
     g.is_public -- public game
     and d.dist_meters <= dist_limit -- within distance limit
     and (sport_filter is null or g.sport = sport_filter) -- apply sport filter
-    and (skill_level_filter is null or g.skill_level = skill_level) -- apply skill level filter
+    and (skill_level_filter is null or g.skill_level = skill_level_filter) -- apply skill level filter
     and not auth.uid() in (
       select player_id from joined_game where joined_game.game_id = g.id -- not joined yet
     )
@@ -937,7 +937,7 @@ returns table (
     g.is_public is false -- friends-only
     and d.dist_meters <= dist_limit -- within distance limit
     and (sport_filter is null or g.sport = sport_filter) -- apply sport filter
-    and (skill_level_filter is null or g.skill_level = skill_level) -- apply skill level filter
+    and (skill_level_filter is null or g.skill_level = skill_level_filter) -- apply skill level filter
     and not auth.uid() in (
       select player_id from joined_game where joined_game.game_id = g.id -- not joined yet
     )
