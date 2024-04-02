@@ -18,7 +18,7 @@ function useMutationUser() {
     setUserSports,
     acceptFriendRequest,
     rejectFriendRequest,
-    removeFriend
+    removeFriend,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -32,7 +32,7 @@ function useMutationUser() {
     state.setUserSports,
     state.acceptFriendRequest,
     state.rejectFriendRequest,
-    state.removeFriend
+    state.removeFriend,
   ]);
 
   useEffect(() => {
