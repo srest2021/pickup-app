@@ -111,7 +111,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     </SizableText>
                   </XStack>
 
-                  <XStack space="$2" alignItems="center" flex={1} space="$3">
+                  <XStack space="$2" alignItems="center" flex={1} space="$5">
                     <Label size="$5">
                       <H6>Distance Away:</H6>
                     </Label>
