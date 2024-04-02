@@ -12,7 +12,6 @@ import {
   View,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-//import { View } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
@@ -148,10 +147,10 @@ const JoinedGameView = ({
                   <Button
                     variant="outlined"
                     size="$5"
-                    flex={1}
                     color="#ff7403"
                     borderColor="#ff7403"
                     backgroundColor="#ffffff"
+                    flex={1}
                     onPress={() => leaveJoinedGame()}
                   >
                     Leave Game

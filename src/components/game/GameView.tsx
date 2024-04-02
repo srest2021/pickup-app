@@ -106,16 +106,16 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
                     </Label>
-                    <SizableText flex={1} size="$5">
+                    <SizableText size="$5">
                       {selectedFeedGame.isPublic ? "public" : "friends-only"}
                     </SizableText>
                   </XStack>
 
-                  <XStack space="$2" alignItems="left">
-                    <Label size="$5" width={90}>
+                  <XStack space="$2" alignItems="center" flex={1} space="$3">
+                    <Label size="$5">
                       <H6>Distance Away:</H6>
                     </Label>
-                    <SizableText flex={1} size="$5">
+                    <SizableText size="$5">
                       {`${selectedFeedGame.distanceAway} miles`}
                     </SizableText>
                   </XStack>
