@@ -145,19 +145,17 @@ const JoinedGameView = ({
                   />
                 </YStack>
 
-                <YStack>
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    flex={1}
-                    onPress={() => leaveJoinedGame()}
-                  >
-                    Leave Game
-                  </Button>
-                </YStack>
+                <Button
+                  variant="outlined"
+                  size="$5"
+                  color="#ff7403"
+                  borderColor="#ff7403"
+                  backgroundColor="#ffffff"
+                  flex={1}
+                  onPress={() => leaveJoinedGame()}
+                >
+                  Leave Game
+                </Button>
               </YStack>
             </ScrollView>
             <Button

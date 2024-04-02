@@ -21,15 +21,17 @@ const MessageInput = () => {
       <XStack alignItems="center" space="$3">
         <Input
           flex={1}
-          maxHeight={47}
+          padding="$5"
+          maxHeight={60}
           multiline={true}
-          size="$4"
+          size="$5"
           placeholder="Enter your message"
           value={message}
           onChangeText={(text: string) => setMessage(text)}
           autoCapitalize={"none"}
         />
         <Button
+          size="$5"
           icon={loading ? Loader : SendHorizontal}
           disabled={loading}
           style={{

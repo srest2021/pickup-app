@@ -62,6 +62,7 @@ const ChatWindow = () => {
     <View flex={3}>
       {messages.length > 0 ? (
         <ScrollView
+          showsVerticalScrollIndicator={false}
           ref={scrollViewRef}
           onContentSizeChange={() =>
             scrollViewRef.current.scrollToEnd({ animated: true })
