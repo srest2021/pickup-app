@@ -3,6 +3,7 @@ import MyGames from "./MyGames";
 import MyGameView from "./game/MyGameView";
 import EditGame from "./game/EditGame";
 import JoinedGameView from "./game/JoinedGameView";
+import Chatroom from "./chatroom/Chatroom";
 
 export default function MyGamesNavigator() {
   const Stack = createNativeStackNavigator();
@@ -40,7 +41,32 @@ export default function MyGamesNavigator() {
       <Stack.Screen
         name="JoinedGameView"
         component={JoinedGameView}
-        options={{ title: "Joined Game", headerShown: true }}
+        options={{
+          title: "Joined Game",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+          headerTintColor: "#ffffff",
+        }}
+      />
+      <Stack.Screen
+        name="Chatroom"
+        component={Chatroom}
+        options={{
+          title: "Chatroom",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+          headerTintColor: "#ffffff",
+        }}
       />
       <Stack.Screen
         name="EditGame"
