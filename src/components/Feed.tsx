@@ -6,50 +6,71 @@ import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import FeedFilter from "./FeedFilter";
 
-//
-// add event listener so that page is constantly updating!
-// add switch so that you can go between myGame and AllGames
-// PICK A MINWIDTH SO THAT text always shown
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
-  const [session, feedGames, feedGamesFriendsOnly] = useStore((state) => [
+
+  const [session, publicGames, clearPublicGames, friendsOnlyGames, clearFriendsOnlyGames] = useStore((state) => [
     state.session,
     state.feedGames,
+    state.clearFeedGames,
     state.feedGamesFriendsOnly,
+    state.clearFeedGamesFriendsOnly
   ]);
+
   const [refreshing, setRefreshing] = useState(false);
   const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("publicGames");
-  const [feedOffset, setFeedOffset] = useState(feedGames.length);
-  const [friendsOnlyOffset, setFriendsOnlyOffset] = useState(feedGamesFriendsOnly.length);
-  const [allGamesFetched, setAllGamesFetched] = useState(false);
+
+  const [publicOffset, setPublicOffset] = useState(publicGames.length);
+  const [friendsOnlyOffset, setFriendsOnlyOffset] = useState(friendsOnlyGames.length);
+  const [allPublicGamesFetched, setAllPublicGamesFetched] = useState(false);
+  const [allFriendsOnlyGamesFetched, setAllFriendsOnlyGamesFetched] = useState(false);
 
   useEffect(() => {
-    handleRefresh();
+    const getAllGames = async () => {
+      setRefreshing(true);
+      await handlePublicGamesRefresh();
+      await handleFriendsOnlyGamesRefresh();
+      setRefreshing(false);
+    }
+    getAllGames();
   }, []);
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    setAllGamesFetched(false);
-    if (toggle === "publicGames") {
-      let games = feedGames;
-      games = await fetchFeedGames(false);
-      setFeedOffset(games.length);
-      if (!games) {
-        setHasLocation(false);
-      } else {
-        setHasLocation(true);
-      }
-    } else if (toggle === "friendsOnlyGames") {
-      //await fetchFriendsOnlyGames();
-      let games = feedGamesFriendsOnly;
-      games = await fetchFeedGames(true);
+  const handlePublicGamesRefresh = async () => {
+    console.log("call handlePublicGamesRefresh")
+    clearPublicGames();
+    setAllPublicGamesFetched(false);
+    setPublicOffset(0);
+    const games = await fetchFeedGames(false, publicOffset);
+    if (games) {
+      setPublicOffset(games.length);
+      setHasLocation(true);
+    } else {
+      setHasLocation(false);
+    }
+  }
+   
+  const handleFriendsOnlyGamesRefresh = async () => {
+    console.log("call handleFriendsOnlyGamesRefresh")
+    clearFriendsOnlyGames();
+    setAllFriendsOnlyGamesFetched(false);
+    setFriendsOnlyOffset(0);
+    const games = await fetchFeedGames(true, friendsOnlyOffset);
+    if (games) {
       setFriendsOnlyOffset(games.length);
-      if (!games) {
-        setHasLocation(false);
-      } else {
-        setHasLocation(true);
-      }
+      setHasLocation(true)
+    } else {
+      setHasLocation(false);
+    }
+  }
+
+  const handleRefresh = async () => {
+    console.log("call handleRefresh")
+    setRefreshing(true);
+    if (toggle === "publicGames") {
+      await handlePublicGamesRefresh();
+    } else if (toggle === "friendsOnlyGames") {
+      await handleFriendsOnlyGamesRefresh();
     }
     setRefreshing(false);
   };
@@ -58,16 +79,16 @@ const Feed = ({ navigation }: { navigation: any }) => {
     if (!refreshing && !allGamesFetched) {
       let games;
       if (toggle === "publicGames") {
-        games = await fetchFeedGames(false, feedOffset);
-        setFeedOffset(feedOffset + games.length);
+        games = await fetchFeedGames(false, publicOffset);
+        setPublicOffset(publicOffset + games.length);
         if (!games || games.length === 0) {
-          setAllGamesFetched(true);
+          setAllPublicGamesFetched(true);
         } 
       } else if (toggle === "friendsOnlyGames") {
         games = await fetchFeedGames(true, friendsOnlyOffset);
         setFriendsOnlyOffset(friendsOnlyOffset + games.length);
         if (!games || games.length === 0) {
-          setAllGamesFetched(true);
+          setAllFriendsOnlyGamesFetched(true);
         }
       }
     }
@@ -87,24 +108,20 @@ const Feed = ({ navigation }: { navigation: any }) => {
               <Tabs.List>
                 <FeedFilter handleRefresh={handleRefresh} />
                 <Tabs.Tab
-                  //width={150}
                   testID="public-games"
                   value="PublicGames"
                   onInteraction={() => {
                     setToggle("publicGames");
-                    handleRefresh();
                   }}
                 >
                   <Text>All Games</Text>
                 </Tabs.Tab>
                 <Separator vertical></Separator>
                 <Tabs.Tab
-                  //width={150}
                   testID="friends-only-games"
                   value="FriendsOnlyGames"
                   onInteraction={() => {
                     setToggle("friendsOnlyGames");
-                    handleRefresh();
                   }}
                 >
                   <Text>Friends-Only Games</Text>
@@ -164,7 +181,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
             </ScrollView>
                   */}
             
-            <FlatList
+            {/* <FlatList
               data={toggle === "publicGames" ? feedGames : feedGamesFriendsOnly}
               renderItem={({ item }) => (
                 <GameThumbnail
@@ -191,7 +208,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 refreshing && <Spinner size="small" color="#ff7403" testID="spinner" />
               }
               contentContainerStyle={{ paddingVertical: 20 }}
-            />
+            /> */}
           </View>
         ) : (
           <View className="items-center justify-center flex-1 p-12 text-center">

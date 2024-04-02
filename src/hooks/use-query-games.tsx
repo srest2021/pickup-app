@@ -21,6 +21,8 @@ function useQueryGames() {
     getFilterSport,
     getFilterDist,
     getFilterLevel,
+    fg,
+    fgfo,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -37,6 +39,8 @@ function useQueryGames() {
     state.getFilterSport,
     state.getFilterDist,
     state.getFilterLevel,
+    state.feedGames,
+    state.feedGamesFriendsOnly
   ]);
 
   const { getUserLocation } = useQueryUsers();
@@ -159,7 +163,7 @@ function useQueryGames() {
     }
   };
 
-  const fetchFeedGames = async (friendsOnly: Boolean) => {
+  const fetchFeedGames = async (friendsOnly: Boolean, offset: number) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view feed games");
@@ -176,12 +180,14 @@ function useQueryGames() {
         .rpc(friendsOnly ? "friends_only_games" : "nearby_games", {
           lat: location.coords.latitude,
           long: location.coords.longitude,
-          dist_limit: filterDist,
+          dist_limit: 10000000, //filterDist, TEMP FIX
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
         })
-        .limit(20);
+        .range(offset, offset+20);
       if (error) throw error;
+
+      console.log(`query ${friendsOnly ? "friends_only_games" : "nearby_games"} with range ${offset}-${offset+20}, got ${data.length} games`)
 
       if (data) {
         const games = data.map((game: any) => {
@@ -206,7 +212,15 @@ function useQueryGames() {
           return feedGame;
         });
         friendsOnly ? setFeedGamesFriendsOnly(games) : setFeedGames(games);
+        //console.log(fg) 
+        console.log("DATA")
+        data.forEach((elem) => console.log(elem.title, elem.organizer.username))
+        console.log("FEEDGAMES")
+        fg.forEach((game) => console.log(game.title, game.organizer.username))
+        //console.log(fgfo)
         return games;
+      } else {
+        throw new Error("Error fetching feed games! Please try again later.");
       }
     } catch (error) {
       if (error instanceof Error) {
