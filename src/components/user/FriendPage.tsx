@@ -2,7 +2,7 @@ import { supabase } from "../../lib/supabase";
 import { ScrollView, View, Text } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
-import { Button, Card, H4, Separator, SizableText, Spinner, Tabs, YStack } from "tamagui";
+import { Button, Card, H4, Separator, SizableText, Spinner, Tabs, XStack, YStack } from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
@@ -16,13 +16,19 @@ import useQueryUsers from "../../hooks/use-query-users";
 
 
 export default function FriendPage({ navigation }: { navigation: any }) {
-  const [session] = useStore((state) => [
+  const [session, myFriends, myFriendReqs] = useStore((state) => [
     state.session,
+    state.friends,
+    state.friendRequests,
   ]);
+  //setFriends from store
 
   //mock friend list for now
   const friendsList: string[] = ["maddie", "clarissa", "kate"]
   const { getFriends } = useQueryUsers()
+  const { getFriendRequests } = useQueryUsers()
+  const { acceptFriendRequestById } = useMutationUser()
+  const { rejectFriendRequestById } = useMutationUser()
 
   //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
   //const [session, friendList] = useStore((state) => [
@@ -40,9 +46,9 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "friends") {
-      //const games = await fetchFeedGames();
+      const loadedFriends = await getFriends();
     } else if (toggle === "friendRequests") {
-      //await fetchFriendsOnlyGames();
+      const loadedReqs = await getFriendRequests();
     } else if (toggle === "searchForFriends") {
 
     }
@@ -110,13 +116,20 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               )}
               
               {toggle === "friends" ? (
-                friendsList.length > 0 ? (
+                myFriends.length > 0 ? (
                 <View>
                   
-                  <H4 style={{ textAlign: 'center' }}> {friendsList.length} friends</H4>
-                  {friendsList.map((friend, index) => (
-                      <Text key={index}>{friend}</Text>
-                      /*<Button onPress={() => handleButtonClick(friend)}>Button</Button>*/
+                  <H4 style={{ textAlign: 'center' }}> {myFriends.length} friends</H4>
+                  {myFriends.map((friend) => (
+                    <View>
+                      <Text key={friend.id}>{friend.username}</Text>
+                      <Button
+                        testID="reject-button"
+                        size="$2"
+                        style={{ backgroundColor: "#e90d52", color: "white" }}
+                        onPress={() => rejectFriendRequestById(friend.username)}
+                      />
+                    </View>
                   ))}
 
                 </View>
@@ -126,9 +139,35 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   </View>
                 )
               ) : toggle === "friendRequests" ? (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No friends requests yet</H4>
-                </View>
+                  myFriendReqs.length > 0 ? (
+                    <View>
+                      <H4 style={{ textAlign: 'center' }}> {myFriendReqs.length} pending friend requests</H4>
+                      {myFriendReqs.map((friendReq) => (
+                        <View>
+                          <Text key={friendReq.id}>{friendReq.username}</Text>
+                          <XStack justifyContent="flex-end" space="$2">
+                            <Button
+                              testID="reject-button"
+                              size="$2"
+                              style={{ backgroundColor: "#e90d52", color: "white" }}
+                              onPress={() => rejectFriendRequestById(friendReq.username)}
+                            />
+                            <Button
+                              testID="accept-button"
+                              size="$2"
+                              style={{ backgroundColor: "#05a579", color: "white" }}
+                              onPress={() => acceptFriendRequestById(friendReq.username)}
+                            />
+                          </XStack>
+                        </View>
+                      ))}
+    
+                    </View>
+                    ) : (
+                      <View className="items-center justify-center flex-1 p-12 text-center">
+                        <H4>No friend requests</H4>
+                      </View>
+                    )
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
                   <H4>No friends search results</H4>
