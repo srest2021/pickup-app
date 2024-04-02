@@ -784,7 +784,7 @@ end;
 $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
-create or replace function nearby_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null) 
+create or replace function nearby_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null) 
 returns table(
   id "uuid", 
   organizer_id "uuid", 
@@ -860,10 +860,12 @@ returns table(
     )
     and g.organizer_id != auth.uid() -- not organizer
     and g.datetime > CURRENT_TIMESTAMP - INTERVAL '1 day' -- only show games from yesterday on
-  order by d.dist_meters;
+  order by d.dist_meters
+  offset "offset"
+  limit "limit";
 $$;
 
-create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null)
+create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null)
 returns table (
   id "uuid", 
   organizer_id "uuid", 
@@ -943,7 +945,9 @@ returns table (
     )
     and g.organizer_id != auth.uid() -- not organizer
     and g.datetime > CURRENT_TIMESTAMP - INTERVAL '1 day' -- only show games from yesterday on
-  order by d.dist_meters;
+  order by d.dist_meters
+  offset "offset"
+  limit "limit";
 $$;
 
 create or replace function my_games("lat" double precision, "long" double precision) 
