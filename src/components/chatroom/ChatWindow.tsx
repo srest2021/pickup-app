@@ -1,10 +1,10 @@
-import { H4, Text, YStack } from "tamagui";
+import { H4, Text, YStack, View } from "tamagui";
 import { useStore } from "../../lib/store";
 import { useEffect, useRef } from "react";
 import useQueryMessages from "../../hooks/use-query-messages";
 import MyMessage from "./MyMessage";
 import OtherMessage from "./OtherMessage";
-import { View, ScrollView, Alert } from "react-native";
+import { ScrollView, Alert } from "react-native";
 import { supabase } from "../../lib/supabase";
 
 const ChatWindow = () => {
@@ -59,15 +59,14 @@ const ChatWindow = () => {
   }, []);
 
   return (
-    <View style={{ minHeight: "88%", maxHeight: "88%" }}>
-      <ScrollView
-        style={{ flexGrow: 0 }}
-        ref={scrollViewRef}
-        onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({ animated: true })
-        }
-      >
-        {messages.length > 0 ? (
+    <View flex={3}>
+      {messages.length > 0 ? (
+        <ScrollView
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current.scrollToEnd({ animated: true })
+          }
+        >
           <YStack space="$2">
             {messages.map((message) =>
               message.user.id === user?.id ? (
@@ -77,10 +76,10 @@ const ChatWindow = () => {
               ),
             )}
           </YStack>
-        ) : (
-          <Text>No messages yet</Text>
-        )}
-      </ScrollView>
+        </ScrollView>
+      ) : (
+        <Text>No messages yet</Text>
+      )}
     </View>
   );
 };

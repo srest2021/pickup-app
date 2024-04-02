@@ -1,6 +1,5 @@
-import { Button, H4, Input, Text, TextArea, XStack } from "tamagui";
+import { Button, H4, Input, Text, TextArea, XStack, View } from "tamagui";
 import { useStore } from "../../lib/store";
-import { View } from "react-native";
 import useMutationMessages from "../../hooks/use-mutation-messages";
 import { useState } from "react";
 import { Loader, SendHorizontal } from "@tamagui/lucide-icons";
@@ -18,7 +17,7 @@ const MessageInput = () => {
   };
 
   return (
-    <View>
+    <View paddingTop="$3">
       <XStack alignItems="center" space="$3">
         <Input
           flex={1}
