@@ -184,13 +184,9 @@ function useQueryGames() {
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
           offset,
-          limit: 2
+          limit: 20
         });
       if (error) throw error;
-
-      console.log(
-        `query ${friendsOnly ? "friends_only_games" : "nearby_games"} with range ${offset}-${offset + 20}, sport filter ${filterSport}, skill level filter ${filterLevel}, got ${data.length} games`,
-      );
 
       if (data) {
         const games = data.map((game: any) => {

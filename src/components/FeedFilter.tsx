@@ -46,7 +46,6 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
     setFilterDist(distance);
     sport === "any" ? setFilterSport(null) : setFilterSport(sport);
     skillLevel === "-1" ? setFilterLevel(null) : setFilterLevel(skillLevel);
-    console.log("feed filter handle refresh")
     props.handleRefresh();
   };
 

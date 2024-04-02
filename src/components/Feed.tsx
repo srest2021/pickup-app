@@ -39,7 +39,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
   // on component render, clear state and get all games
   useEffect(() => {
     const getAllGames = async () => {
-      console.log("# getAllGames")
       setRefreshing(true);
       await handlePublicGamesRefresh();
       await handleFriendsOnlyGamesRefresh();
@@ -50,7 +49,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
 
   // clear public games state and get public games
   const handlePublicGamesRefresh = async () => {
-    console.log("## handlePublicGamesRefresh");
     clearPublicGames();
     setAllPublicGamesFetched(false);
     setPublicOffset(0);
@@ -65,7 +63,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
 
   // clear friends-only games state and get friends-only games
   const handleFriendsOnlyGamesRefresh = async () => {
-    console.log("## handleFriendsOnlyGamesRefresh");
     clearFriendsOnlyGames();
     setAllFriendsOnlyGamesFetched(false);
     setFriendsOnlyOffset(0);
@@ -80,7 +77,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
 
   // on refresh, clear state and get games only for current toggle
   const handleRefresh = async () => {
-    console.log("# handleRefresh");
     setRefreshing(true);
     if (toggle === "publicGames") {
       await handlePublicGamesRefresh();
@@ -92,7 +88,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
 
   // once reach bottom, get more games using corresponding offset
   const handleLoadMore = async () => {
-    console.log("# handleLoadMore")
     let games;
     if (toggle === "publicGames") {
       if (!refreshing && !allPublicGamesFetched) {
@@ -104,8 +99,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
         if (!games || games.length === 0) {
           setAllPublicGamesFetched(true);
         }
-      } else {
-        console.log(`blocked load more public (refreshing ${refreshing}, all fetched ${allPublicGamesFetched})`)
       }
     } else if (toggle === "friendsOnlyGames") {
       if (!refreshing && !allFriendsOnlyGamesFetched) {
@@ -117,8 +110,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
         if (!games || games.length === 0) {
           setAllFriendsOnlyGamesFetched(true);
         }
-      } else {
-        console.log(`blocked load more friends only (refreshing ${refreshing}, all fetched ${allFriendsOnlyGamesFetched})`)
       }
     } 
   };
