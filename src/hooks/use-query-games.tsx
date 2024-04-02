@@ -180,11 +180,12 @@ function useQueryGames() {
         .rpc(friendsOnly ? "friends_only_games" : "nearby_games", {
           lat: location.coords.latitude,
           long: location.coords.longitude,
-          dist_limit: 10000000, //filterDist, TEMP FIX
+          dist_limit: filterDist,
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
-        })
-        .range(offset, offset + 20);
+          offset,
+          limit: 2
+        });
       if (error) throw error;
 
       console.log(
