@@ -134,39 +134,38 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <YStack paddingBottom="$10">
-                  <MyGamePlayers navigation={undefined} />
-                </YStack>
+                <MyGamePlayers navigation={undefined} />
+
+                <XStack paddingTop="$5" space="$3">
+                  <Button
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    flex={1}
+                    onPress={() => {
+                      navigation.navigate("EditGame", { gameId });
+                    }}
+                    disabled={loading}
+                  >
+                    {loading ? "Loading..." : "Edit"}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    flex={1}
+                    onPress={() => deleteGame()}
+                    disabled={loading}
+                  >
+                    {loading ? "Loading..." : "Delete"}
+                  </Button>
+                </XStack>
               </YStack>
             </ScrollView>
-            <XStack paddingTop="$5" space="$3">
-              <Button
-                variant="outlined"
-                size="$5"
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor="#ffffff"
-                flex={1}
-                onPress={() => {
-                  navigation.navigate("EditGame", { gameId });
-                }}
-                disabled={loading}
-              >
-                {loading ? "Loading..." : "Edit"}
-              </Button>
-              <Button
-                variant="outlined"
-                size="$5"
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor="#ffffff"
-                flex={1}
-                onPress={() => deleteGame()}
-                disabled={loading}
-              >
-                {loading ? "Loading..." : "Delete"}
-              </Button>
-            </XStack>
             <Button
               icon={MessageCircle}
               style={{

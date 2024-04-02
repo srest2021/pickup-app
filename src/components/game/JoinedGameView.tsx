@@ -138,28 +138,27 @@ const JoinedGameView = ({
                   </XStack>
                 </YStack>
 
-                <YStack paddingBottom="$10">
-                  <GamePlayers
-                    navigation={undefined}
-                    game={selectedJoinedGame}
-                    gametype="joined"
-                  />
-                </YStack>
+                <GamePlayers
+                  navigation={undefined}
+                  game={selectedJoinedGame}
+                  gametype="joined"
+                />
+
+                <XStack paddingTop="$4">
+                  <Button
+                    variant="outlined"
+                    size="$5"
+                    flex={1}
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    onPress={() => leaveJoinedGame()}
+                  >
+                    Leave Game
+                  </Button>
+                </XStack>
               </YStack>
             </ScrollView>
-            <XStack paddingTop="$5">
-              <Button
-                variant="outlined"
-                size="$5"
-                flex={1}
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor="#ffffff"
-                onPress={() => leaveJoinedGame()}
-              >
-                Leave Game
-              </Button>
-            </XStack>
 
             <Button
               icon={MessageCircle}

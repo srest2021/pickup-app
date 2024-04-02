@@ -137,33 +137,32 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <YStack paddingBottom="$10">
-                  <GamePlayers
-                    navigation={undefined}
-                    game={selectedFeedGame}
-                    gametype="feed"
-                  />
-                </YStack>
+                <GamePlayers
+                  navigation={undefined}
+                  game={selectedFeedGame}
+                  gametype="feed"
+                />
+
+                <XStack paddingTop="$5">
+                  <Button
+                    variant="outlined"
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    disabled={selectedFeedGame.hasRequested ? true : false}
+                    flex={1}
+                    onPress={() => requestToJoinGame()}
+                  >
+                    {loading
+                      ? "Loading..."
+                      : selectedFeedGame.hasRequested
+                        ? "Requested"
+                        : "Request to Join"}
+                  </Button>
+                </XStack>
               </YStack>
             </ScrollView>
-            <XStack paddingTop="$5">
-              <Button
-                variant="outlined"
-                size="$5"
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor="#ffffff"
-                disabled={selectedFeedGame.hasRequested ? true : false}
-                flex={1}
-                onPress={() => requestToJoinGame()}
-              >
-                {loading
-                  ? "Loading..."
-                  : selectedFeedGame.hasRequested
-                    ? "Requested"
-                    : "Request to Join"}
-              </Button>
-            </XStack>
           </View>
         ) : (
           <View
