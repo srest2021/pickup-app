@@ -25,6 +25,8 @@ function useQueryUsers() {
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
+    } finally {
+      setLoading(false);
     }
   }
 

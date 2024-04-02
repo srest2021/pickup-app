@@ -14,6 +14,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import { OtherUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
+import SearchProfiles from "./SearchProfiles";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
   const [session] = useStore((state) => [
@@ -127,9 +128,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   <H4>No friends requests yet</H4>
                 </View>
               ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No friends search results</H4>
-              </View>
+                  <SearchProfiles navigation={navigation}/>
               )}
             </ScrollView>
           </View>
