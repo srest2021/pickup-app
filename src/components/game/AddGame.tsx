@@ -196,7 +196,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? "black" : "#e90d52",
+                  color: isPublic ? "#e90d52" : "black",
                 }}
               >
                 Public
@@ -224,7 +224,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? "#e90d52" : "black",
+                  color: isPublic ? "black" : "#e90d52",
                 }}
               >
                 Friends-Only

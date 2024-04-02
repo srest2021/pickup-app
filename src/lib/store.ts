@@ -8,6 +8,7 @@ import {
   JoinedGame,
   FeedGame,
   Message,
+  OtherUser,
 } from "./types";
 import * as Location from "expo-location";
 
@@ -17,6 +18,8 @@ type State = {
 
   user: User | null;
   userSports: UserSport[];
+
+  otherUser: OtherUser | null;
 
   myGames: MyGame[];
   selectedMyGame: MyGame | null;
@@ -46,6 +49,8 @@ type Action = {
 
   setUser: (user: User | null) => void;
   editUser: (updated: any) => void;
+
+  setOtherUser: (otherUser: OtherUser | null) => void;
 
   addUserSport: (userSport: UserSport) => void;
   editUserSport: (userSport: UserSport) => void;
@@ -115,6 +120,7 @@ const initialState: State = {
   loading: false,
   user: null,
   userSports: [],
+  otherUser: null,
   myGames: [],
   selectedMyGame: null,
   feedGames: [],
@@ -140,6 +146,8 @@ export const useStore = create<State & Action>()(
     setLoading: (loading) => set({ loading }),
 
     setUser: (user) => set({ user }),
+
+    setOtherUser: (user) => set({ otherUser: user }),
 
     editUser: (updated) => {
       let updatedUser = { ...get().user };
