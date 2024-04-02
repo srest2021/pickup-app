@@ -35,8 +35,11 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const [allFriendsOnlyGamesFetched, setAllFriendsOnlyGamesFetched] =
     useState(false);
 
+  
+  // on component render, clear state and get all games
   useEffect(() => {
     const getAllGames = async () => {
+      console.log("# getAllGames")
       setRefreshing(true);
       await handlePublicGamesRefresh();
       await handleFriendsOnlyGamesRefresh();
@@ -45,8 +48,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
     getAllGames();
   }, []);
 
+  // clear public games state and get public games
   const handlePublicGamesRefresh = async () => {
-    console.log("call handlePublicGamesRefresh");
+    console.log("## handlePublicGamesRefresh");
     clearPublicGames();
     setAllPublicGamesFetched(false);
     setPublicOffset(0);
@@ -59,8 +63,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
     }
   };
 
+  // clear friends-only games state and get friends-only games
   const handleFriendsOnlyGamesRefresh = async () => {
-    console.log("call handleFriendsOnlyGamesRefresh");
+    console.log("## handleFriendsOnlyGamesRefresh");
     clearFriendsOnlyGames();
     setAllFriendsOnlyGamesFetched(false);
     setFriendsOnlyOffset(0);
@@ -73,8 +78,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
     }
   };
 
+  // on refresh, clear state and get games only for current toggle
   const handleRefresh = async () => {
-    console.log("call handleRefresh");
+    console.log("# handleRefresh");
     setRefreshing(true);
     if (toggle === "publicGames") {
       await handlePublicGamesRefresh();
@@ -84,11 +90,14 @@ const Feed = ({ navigation }: { navigation: any }) => {
     setRefreshing(false);
   };
 
+  // once reach bottom, get games with corresponding offset
   const handleLoadMore = async () => {
+    console.log("# handleLoadMore")
     let games;
     if (toggle === "publicGames") {
       if (!refreshing && !allPublicGamesFetched) {
         setRefreshing(true);
+        console.log("## fetch public games")
         games = await fetchFeedGames(false, publicOffset);
         setRefreshing(false);
 
@@ -100,6 +109,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
     } else if (toggle === "friendsOnlyGames") {
       if (!refreshing && !allFriendsOnlyGamesFetched) {
         setRefreshing(true);
+        console.log("## fetch friends only games")
         games = await fetchFeedGames(true, friendsOnlyOffset);
         setRefreshing(false);
 
@@ -209,12 +219,16 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 />
               )}
               keyExtractor={(item) => item.id.toString()}
-              onEndReached={handleLoadMore}
-              onEndReachedThreshold={0.5}
+              onEndReached={() => { 
+                console.log("# onEndReached -> handleLoadMore")
+                handleLoadMore();
+              }}
+              onEndReachedThreshold={0.05}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={() => {
+                    console.log("# refreshControl -> onRefresh")
                     setRefreshing(true);
                     if (toggle === "publicGames") {
                       handlePublicGamesRefresh();
