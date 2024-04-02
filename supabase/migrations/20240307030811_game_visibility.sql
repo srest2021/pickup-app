@@ -211,14 +211,22 @@ $$ language plpgsql;
 -- get the user id from a string or partial string CHECK IF THIS WORKS!
 
 create or replace function username_search(user_search varchar)
-returns UUID as $$
+returns jsonb as $$
 declare
-  user_id varchar;
+  data jsonb;
 begin
-  select id into user_id
-  from profiles
-  where username LIKE '%' || user_search || '%';
-  return user_id;
+  select jsonb_agg(
+    jsonb_build_object (
+    'id', p.id,
+    'username',p.username,
+    'displayName', p.display_name,
+    'bio', p.bio,
+    'avatarUrl',p.avatar_url
+  ))
+  from public.profiles as p
+  where p.username LIKE '%' || user_search || '%';
+  into data;
+  return data;
 EXCEPTION
   when NO_DATA_FOUND then
     return null;

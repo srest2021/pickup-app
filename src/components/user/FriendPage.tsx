@@ -12,6 +12,8 @@ import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
+import { OtherUser } from "../../lib/types";
+import OtherUserThumbnail from "./OtherUserThumbnail";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
   const [session] = useStore((state) => [
@@ -20,6 +22,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
 
   //mock friend list for now
   const friendsList: string[] = ["maddie", "clarissa", "kate"]
+
 
   //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
   //const [session, friendList] = useStore((state) => [
@@ -109,7 +112,6 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               {toggle === "friends" ? (
                 friendsList.length > 0 ? (
                 <View>
-
                   <H4 style={{ textAlign: 'center' }}> {friendsList.length} friends</H4>
                   {friendsList.map((friend, index) => (
                       <Text key={index}>{friend}</Text>

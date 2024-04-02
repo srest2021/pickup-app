@@ -1,4 +1,4 @@
-import { OtherUser, User } from "../../lib/types";
+import { OtherUser, ThumbnailUser, User } from "../../lib/types";
 import {
   Button,
   Card,
@@ -9,63 +9,40 @@ import {
   View,
   Paragraph,
   XStack,
+  YStack,
 } from "tamagui";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
-import { supabase } from "../../lib/supabase";
-import { useStore } from "../../lib/store";
 import { ArrowRightSquare } from "@tamagui/lucide-icons";
+import useQueryUsers from "../../hooks/use-query-users";
 
 export default function OtherUserThumbnail({
   navigation,
   otherUserEntered,
 }: {
   navigation: any;
-  otherUserEntered: OtherUser;
+  otherUserEntered: ThumbnailUser;
 }) {
-  //const [setOtherUser] = useStore((state)=>{state.setOtherUser}); 
+  const { getOtherProfile } = useQueryUsers();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
-  const [bio, setBio] = useState<string>('');
+  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [biography, setBio] = useState<string>('');
 
   useEffect(() => {
     setUsername(otherUserEntered ? otherUserEntered.username : null);
+    setDisplayName(otherUserEntered ? otherUserEntered.displayName : null);
     setBio(otherUserEntered ? otherUserEntered.bio : '');
-    const abbrevDescription =
-    bio.length > 100
-      ? bio.substring(0, 100) + "..."
-      : bio;
-    setBio(abbrevDescription);
-    otherUserEntered && fetchData(otherUserEntered.avatarUrl);
+    otherUserEntered && setAvatarUrl(otherUserEntered.avatarUrl);
   }, []);
 
-  
-  
-  const fetchData = async (avatarPath: string) => {
-    if (avatarPath) {
-      try {
-        await downloadImage(avatarPath);
-      } catch (error) {
-        Alert.alert("Error getting game organizer");
-      }
-    }
-  };
-
-  async function downloadImage(path: string) {
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .download(path);
-    if (error) throw error;
-    const fr = new FileReader();
-    fr.readAsDataURL(data);
-    fr.onload = () => {
-      setAvatarUrl(fr.result as string);
-    };
-  }
+  const abbrevDescription =
+    biography.length > 85
+      ? biography.substring(0, 85) + "..."
+      : biography;
 
   return (
-    <View paddingLeft="$5" paddingRight="$5" borderBottomColor='#808080'>
-                <XStack space="$2" alignItems="center">
+    <View style={{ paddingLeft: 3, paddingRight: 5, borderBottomWidth: 1, borderColor: '#014cc6' }}>
+                <XStack space="$2" alignItems="center" paddingTop={5}>
                   {avatarUrl && (
                     <Image
                       source={{ uri: avatarUrl, width: 60, height: 60 }}
@@ -73,23 +50,26 @@ export default function OtherUserThumbnail({
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <Paragraph fontSize={20} >@{username}</Paragraph>
-            <View style={{ objectPosition: "absolute" }}>
-              <Button
-                icon={ArrowRightSquare}
-                style={{ backgroundColor: "#ff7403" }}
-                onPress={()=>{
-                  //setOtherUser(otherUserEntered);
-                  navigation.navigate("OtherProfile");
-                }}
-              >
-              </Button>
-            </View>
-                </XStack>
-            <View>
-              <H5>{bio ? bio : ''}</H5>
-            </View>
+                  <YStack>
+                  {displayName ? <Paragraph fontSize={20} >{displayName}</Paragraph> : <Paragraph fontSize={20} >{username}</Paragraph>}
+                  <Paragraph fontSize={14} color={'gray'}>@{username}</Paragraph>
+                  </YStack>
+                  
+                  <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'center' }}>
+          <Button
+          icon={<ArrowRightSquare />}
+          style={{ backgroundColor: '#ff7403', width: 40, height: 40, borderRadius: 20 }}
+          onPress={() => {
+            getOtherProfile(otherUserEntered.id);
+            navigation.navigate('OtherProfileView');
+          }}
+          />
+          </View>
+          </XStack>
+          <View padding={5}>
+              <Paragraph fontSize={15}>{abbrevDescription}</Paragraph>
+          </View>
     </View>
   );
 }
-// Should i have something that cuts short extended bios? 
+ 
