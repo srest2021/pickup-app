@@ -31,14 +31,7 @@ export default function OtherUserThumbnail({
       : user.bio;
 
   return (
-    <View
-      style={{
-        paddingLeft: 3,
-        paddingRight: 5,
-        borderBottomWidth: 1,
-        borderColor: "#014cc6",
-      }}
-    >
+    <View style={{ borderBottomWidth: 1, borderColor: "#014cc6" }}>
       <XStack space="$2" alignItems="center" paddingTop={5}>
         <Avatar circular size="$3">
           <Avatar.Image accessibilityLabel={user.username} src={avatarUrl} />
@@ -53,11 +46,9 @@ export default function OtherUserThumbnail({
           </Avatar.Fallback>
         </Avatar>
         <YStack>
-          {user.displayName ? (
-            <Paragraph fontSize={20}>{user.displayName}</Paragraph>
-          ) : (
-            <Paragraph fontSize={20}>{user.username}</Paragraph>
-          )}
+          <Paragraph fontSize={18}>
+            {user.displayName ? user.displayName : user.username}
+          </Paragraph>
           <Paragraph fontSize={14} color={"gray"}>
             @{user.username}
           </Paragraph>

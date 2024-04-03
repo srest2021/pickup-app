@@ -1,5 +1,5 @@
-import { YStack, ScrollView, Spinner, Button } from "tamagui";
-import { Alert, View } from "react-native";
+import { YStack, ScrollView, Spinner, Button, View, XStack } from "tamagui";
+import { Alert } from "react-native";
 import { Text } from "tamagui";
 import { useEffect, useState } from "react";
 import { Input, Form } from "tamagui";
@@ -33,26 +33,26 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <View style={{ flex: 1, paddingHorizontal: 15, paddingVertical: 5 }}>
+    <View padding="$5">
       <Form flexDirection="row" onSubmit={handleSearch}>
-        <Input
-          marginRight={15}
-          paddingRight={10}
-          flex={1}
-          borderWidth={2}
-          placeholder="Search by username"
-          autoCapitalize="none"
-          onChangeText={(text: string) => setCurrentInput(text)}
-        />
-        <Form.Trigger asChild>
-          <Button
-            backgroundColor="#e54b07"
-            icon={loading ? () => <Spinner /> : UserSearch}
-          ></Button>
-        </Form.Trigger>
+        <XStack flex={1} space="$3">
+          <Input
+            flex={1}
+            borderWidth={2}
+            placeholder="Search by username"
+            autoCapitalize="none"
+            onChangeText={(text: string) => setCurrentInput(text)}
+          />
+          <Form.Trigger asChild>
+            <Button
+              backgroundColor="#e54b07"
+              icon={loading ? () => <Spinner /> : UserSearch}
+            ></Button>
+          </Form.Trigger>
+        </XStack>
       </Form>
-      <ScrollView contentContainerStyle={{ paddingTop: 20 }}>
-        <YStack>
+      <ScrollView contentContainerStyle={{}}>
+        <YStack paddingVertical="$3" space="$3">
           {results ? (
             results.map((user: ThumbnailUser) => (
               <OtherUserThumbnail
