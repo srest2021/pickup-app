@@ -19,10 +19,10 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [results, setResults] = useState<ThumbnailUser[]>([]);
 
   const handleSearch = async () => {
-    // if (currentInput.length < 1) {
-    //   Alert.alert("Please enter a search first!");
-    //   return;
-    // }
+    if (currentInput.length < 1) {
+      Alert.alert("Please enter a search first!");
+      return;
+    }
 
     setLoading(true);
     const results = await searchByUsername(currentInput);
