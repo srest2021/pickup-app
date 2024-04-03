@@ -29,7 +29,7 @@ export default function OtherUserThumbnail({
       : user.bio;
 
   return (
-    <View style={{ borderBottomWidth: 1, borderColor: "#014cc6" }}>
+    <View style={{ paddingLeft:3, paddingRight:5, borderBottomWidth: 1, borderColor: "#014cc6" }}>
       <XStack space="$2" alignItems="center" paddingTop={5}>
         <Avatar circular size="$3">
           <Avatar.Image accessibilityLabel={user.username} src={avatarUrl} />
