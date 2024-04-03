@@ -11,11 +11,20 @@ import { useEffect, useState } from "react";
 import { ArrowRightSquare } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import Avatar from "./Avatar";
+import { supabase } from "../../lib/supabase";
+
+interface Props {
+  url: string | null;
+  navigation: any;
+  otherUserEntered: ThumbnailUser;
+}
 
 export default function OtherUserThumbnail({
+  url,
   navigation,
   otherUserEntered,
 }: {
+  url: string | null;
   navigation: any;
   otherUserEntered: ThumbnailUser;
 }) {
@@ -29,10 +38,35 @@ export default function OtherUserThumbnail({
     setUsername(otherUserEntered ? otherUserEntered.username : null);
     setDisplayName(otherUserEntered ? otherUserEntered.displayName : null);
     setBio(otherUserEntered ? otherUserEntered.bio : '');
-    otherUserEntered && setAvatarUrl(otherUserEntered.avatarUrl);
+    //otherUserEntered && setAvatarUrl(otherUserEntered.avatarUrl);
   }, []);
 
-  
+  useEffect(() => {
+    if (otherUserEntered.avatarUrl) downloadImage(otherUserEntered.avatarUrl);
+  }, [url]);
+
+
+async function downloadImage(path: string) {
+    try {
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .download(path);
+
+      if (error) {
+        throw error;
+      }
+
+      const fr = new FileReader();
+      fr.readAsDataURL(data);
+      fr.onload = () => {
+        setAvatarUrl(fr.result as string);
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log("Error downloading image: ", error.message);
+      }
+    }
+  }
 
   /*
   const abbrevDescription =
@@ -46,8 +80,8 @@ export default function OtherUserThumbnail({
                 <XStack space="$2" alignItems="center" paddingTop={5} >
                   {avatarUrl && (
                     <Image
-                    source={{ uri: otherUserEntered.avatarUrl, width: 20, height: 60 }}
-                    style={{ width: 60, height: 60, borderRadius: 30 }}
+                    source={{ uri: otherUserEntered.avatarUrl }}
+                    style={{ flex: 1, width: 60, height: 60, borderRadius: 30 }}
                     accessibilityLabel="Avatar"
                   />
                   )}

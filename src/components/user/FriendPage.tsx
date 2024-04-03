@@ -123,7 +123,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   
                   {myFriends.map((friend) => (
                     <View>
-                      <OtherUserThumbnail navigation={navigation} otherUserEntered={friend}/>
+                      <OtherUserThumbnail url={friend.avatarUrl} navigation={navigation} otherUserEntered={friend}/>
                     </View>
                   ))}
 
