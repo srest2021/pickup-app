@@ -12,24 +12,40 @@ function useQueryUsers() {
     state.setOtherUser,
   ]);
 
-  const searchByUsername = async (userSearch: string) => {
-    try{
+  const searchByUsername = async (username: string): Promise<ThumbnailUser[] | undefined> => {
+    try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-      const{ data , error } = await supabase.rpc("username_search", {user_search: userSearch});
-      console.log(userSearch);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, username, display_name, bio, avatar_url')
+        .ilike('username', `%${username}%`)
+      console.log(username, data);
       if (error) throw error;
+
       if (data) {
-        return data as ThumbnailUser[];
+        data.map((elem: any) => {
+          const user: ThumbnailUser = {
+            id: elem.id, 
+            username: elem.username,
+            displayName: elem.displayName,
+            bio: elem.bio,
+            avatarUrl: elem.avatarUrl
+          };
+          return user;
+        })
+        return data;
+      } else {
+        throw new Error("Error processing your search! Please try again later");
       }
-    } catch(error){
+    } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
       }
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const getOtherProfile = async (userId: string) => {
     try {
@@ -104,7 +120,7 @@ function useQueryUsers() {
     getFriendRequests,
     setUserLocation,
     getUserLocation,
-    searchByUsername
+    searchByUsername,
   };
 }
 
