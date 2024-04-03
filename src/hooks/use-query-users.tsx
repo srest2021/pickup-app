@@ -20,21 +20,21 @@ function useQueryUsers() {
         .from('profiles')
         .select('id, username, display_name, bio, avatar_url')
         .ilike('username', `%${username}%`)
-      console.log(username, data);
+        .order('username', {ascending:true})
       if (error) throw error;
 
       if (data) {
-        data.map((elem: any) => {
+        const users = data.map((elem: any) => {
           const user: ThumbnailUser = {
             id: elem.id, 
             username: elem.username,
-            displayName: elem.displayName,
+            displayName: elem.display_name,
             bio: elem.bio,
-            avatarUrl: elem.avatarUrl
+            avatarUrl: elem.avatar_url
           };
           return user;
         })
-        return data;
+        return users;
       } else {
         throw new Error("Error processing your search! Please try again later");
       }
