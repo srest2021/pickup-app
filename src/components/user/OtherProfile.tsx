@@ -114,7 +114,7 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
                 {otherUser?.hasRequested ? "Requested" : "Request"}
               </Button>
             ) : (
-              "You are friends!"
+              <Text>You are friends!</Text>
             )}
           </YStack>
         </View>
