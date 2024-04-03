@@ -19,7 +19,12 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
 
     useEffect(() => {
         if (status === 'submitting') {
-          setResults(searchByUsername(currentInput));
+          const data = searchByUsername(currentInput);
+          if (data !== null){
+            console.log("got an object");
+            console.log(data);
+          }
+          //setResults(searchByUsername(currentInput));
           const timer = setTimeout(() => setStatus('off'), 2000)
           return () => {
             clearTimeout(timer)

@@ -1,7 +1,7 @@
 import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { User, OtherUser, UserSport } from "../lib/types";
+import { User, OtherUser, UserSport, ThumbnailUser } from "../lib/types";
 import * as Location from "expo-location";
 
 function useQueryUsers() {
@@ -17,9 +17,10 @@ function useQueryUsers() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
       const{ data , error } = await supabase.rpc("username_search", {user_search: userSearch});
+      console.log(userSearch);
       if (error) throw error;
       if (data) {
-        return data;
+        return data as ThumbnailUser[];
       }
     } catch(error){
       if (error instanceof Error) {
