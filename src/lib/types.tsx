@@ -108,6 +108,14 @@ export type FeedGame = Game & {
   organizer: ThumbnailUser;
 };
 
+export type Message = {
+  id: string;
+  roomCode: string;
+  sentAt: Date;
+  content: string;
+  user: ThumbnailUser;
+};
+
 export const sports = [
   {
     name: "soccer",

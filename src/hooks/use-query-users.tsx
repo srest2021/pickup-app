@@ -5,11 +5,20 @@ import { User, OtherUser, UserSport, ThumbnailUser } from "../lib/types";
 import * as Location from "expo-location";
 
 function useQueryUsers() {
-  const [session, setLoading, setLocation, setOtherUser] = useStore((state) => [
+  const [
+    session,
+    setLoading,
+    setLocation,
+    setOtherUser,
+    setFriends,
+    setFriendRequests,
+  ] = useStore((state) => [
     state.session,
     state.setLoading,
     state.setLocation,
     state.setOtherUser,
+    state.setFriends,
+    state.setFriendRequests,
   ]);
 
   const searchByUsername = async (
@@ -73,11 +82,77 @@ function useQueryUsers() {
   };
 
   const getFriends = async () => {
-    // use custom SQL function get_friends()
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("get_friends");
+      if (error) console.error(error);
+
+      if (data) {
+        const friends = data.map((friend: any) => {
+          const myFriend: ThumbnailUser = {
+            id: friend.id,
+            username: friend.username,
+            displayName: friend.displayName,
+            bio: friend.bio,
+            avatarUrl: friend.avatarUrl,
+          };
+          return myFriend;
+        });
+
+        setFriends(friends);
+        return friends;
+      } else {
+        throw new Error("Error fetching friends! Please try again later.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching friends! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getFriendRequests = async () => {
-    // use custom SQL function get_friend_requests()
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("get_friend_requests");
+      if (error) console.error(error);
+
+      if (data) {
+        const friendRequests = data.map((friendRequest: any) => {
+          const myFriendRequest: ThumbnailUser = {
+            id: friendRequest.id,
+            username: friendRequest.username,
+            displayName: friendRequest.displayName,
+            bio: friendRequest.bio,
+            avatarUrl: friendRequest.avatarUrl,
+          };
+          return myFriendRequest;
+        });
+
+        setFriendRequests(friendRequests);
+        return friendRequests;
+      } else {
+        throw new Error(
+          "Error fetching friend requests! Please try again later.",
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching friend requests! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const setUserLocation = async () => {

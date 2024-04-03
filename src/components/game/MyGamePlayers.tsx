@@ -16,12 +16,12 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
   const joinRequests = selectedMyGame?.joinRequests;
 
   return (
-    <View style={{ display: "flex", marginTop: 20 }}>
+    <View style={{ display: "flex" }}>
       <ToastViewport />
       <ToastDemo />
       {session && session.user ? (
         <YStack style={{ flex: 1 }}>
-          <YStack style={{ flex: 1, alignItems: "center", paddingBottom: 30 }}>
+          <YStack style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
             <Label size={5} paddingBottom="$2">
               <H6>
                 Accepted Players ({selectedMyGame?.currentPlayers}/

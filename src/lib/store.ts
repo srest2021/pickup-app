@@ -1,13 +1,15 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { Session } from "@supabase/supabase-js";
+import { RealtimeChannel, Session } from "@supabase/supabase-js";
 import {
   UserSport,
   User,
   MyGame,
   JoinedGame,
   FeedGame,
+  Message,
   OtherUser,
+  ThumbnailUser,
 } from "./types";
 import * as Location from "expo-location";
 
@@ -34,6 +36,14 @@ type State = {
   filterSport: string | null;
   filterDist: number;
   filterLevel: string | null;
+
+  channel: RealtimeChannel | undefined;
+  roomCode: string | null;
+  messages: Message[];
+  avatarUrls: any[];
+
+  friends: ThumbnailUser[];
+  friendRequests: ThumbnailUser[];
 };
 
 type Action = {
@@ -98,6 +108,22 @@ type Action = {
   getFilterSport: () => string | null;
   getFilterDist: () => number;
   getFilterLevel: () => string | null;
+
+  // chatroom
+  setMessages: (messages: Message[]) => void;
+  clearMessages: () => void;
+  addMessage: (message: Message) => void;
+  setChannel: (channel: RealtimeChannel | undefined) => void;
+  setRoomCode: (roomCode: string) => void;
+  addAvatarUrls: (newAvatarUrls: any[]) => void;
+  addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
+
+  // friends
+  setFriends: (friends: ThumbnailUser[]) => void;
+  setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
+  acceptFriendRequest: (userId: string) => void;
+  rejectFriendRequest: (userId: string) => void;
+  removeFriend: (userId: string) => void;
 };
 
 const initialState: State = {
@@ -116,6 +142,12 @@ const initialState: State = {
   filterSport: null,
   filterDist: 15,
   filterLevel: null,
+  messages: [],
+  channel: undefined,
+  roomCode: null,
+  avatarUrls: [],
+  friends: [],
+  friendRequests: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -317,6 +349,80 @@ export const useStore = create<State & Action>()(
     },
     getFilterLevel: () => {
       return get().filterLevel;
+    },
+
+    // chatroom
+
+    setMessages: (messages) => set({ messages }),
+
+    clearMessages: () => set({ messages: [] }),
+
+    addMessage: (message) => set({ messages: [...get().messages, message] }),
+
+    setChannel: (channel) => set({ channel }),
+
+    setRoomCode: (roomCode) => set({ roomCode }),
+
+    addAvatarUrls: (newAvatarUrls) => {
+      // filter out avatar urls that already exist in store
+      const filteredAvatarUrls = newAvatarUrls.filter(
+        (updated) =>
+          !get().avatarUrls.some((old) => old.userId === updated.userId),
+      );
+      // add new avatar urls
+      //const updatedAvatarUrls = get().avatarUrls.concat(filteredAvatarUrls);
+      set({ avatarUrls: [...get().avatarUrls, ...filteredAvatarUrls] });
+    },
+
+    addAvatarUrl: (userId, avatarUrl) => {
+      const newAvatarUrls = get().avatarUrls.map((elem) => {
+        if (elem.userId === userId) {
+          elem.avatarUrl = avatarUrl;
+        }
+        return elem;
+      });
+      set({ avatarUrls: newAvatarUrls });
+    },
+
+    // friends
+
+    setFriends: (myfriends) => set({ friends: myfriends }),
+    setFriendRequests: (myFriendRequests) =>
+      set({ friendRequests: myFriendRequests }),
+
+    acceptFriendRequest: (userId) => {
+      // Save the newly accepted friend only!
+      const acceptedFriend = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id == userId,
+      );
+
+      // Remove the accepted friend from the friend requests lists
+      const updatedFriendRequests = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id != userId,
+      );
+
+      // update requests list
+      set({ friendRequests: updatedFriendRequests });
+
+      // add newly accepted friend to friends list
+      set({ friends: [acceptedFriend[0], ...get().friends] });
+    },
+
+    rejectFriendRequest: (userId) => {
+      const updatedFriendRequests = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id != userId,
+      );
+      // update requests list
+      set({ friendRequests: updatedFriendRequests });
+    },
+
+    removeFriend: (userId) => {
+      const updatedFriends = get().friends.filter(
+        (friend) => friend.id != userId,
+      );
+
+      //update friends list
+      set({ friends: updatedFriends });
     },
   })),
 );

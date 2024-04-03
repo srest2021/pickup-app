@@ -22,7 +22,7 @@ const GamePlayers = ({
   const acceptedPlayers = convertedGame.acceptedPlayers;
 
   return (
-    <View style={{ display: "flex", marginTop: 20 }}>
+    <View style={{ display: "flex" }}>
       <ToastViewport />
       <ToastDemo />
       {session && session.user ? (
