@@ -1,10 +1,6 @@
-import { OtherUser, ThumbnailUser, User } from "../../lib/types";
+import { ThumbnailUser } from "../../lib/types";
 import {
   Button,
-  Card,
-  H4,
-  H5,
-  H6,
   Image,
   View,
   Paragraph,

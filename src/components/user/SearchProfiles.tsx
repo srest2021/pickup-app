@@ -1,8 +1,7 @@
 
-import { YStack, ScrollView, H4, Spinner, Separator, Button, Paragraph, XStack } from "tamagui";
-import { Alert, View } from "react-native";
-import { Tabs, Text } from "tamagui";
-import { useStore } from "../../lib/store"
+import { YStack, ScrollView, Spinner, Button } from "tamagui";
+import { View } from "react-native";
+import { Text } from "tamagui";
 import { useEffect, useState } from "react";
 import { Input, Form, } from "tamagui";
 import { UserSearch } from '@tamagui/lucide-icons'
