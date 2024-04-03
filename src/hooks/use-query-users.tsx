@@ -24,7 +24,6 @@ function useQueryUsers() {
         .ilike("username", `%${username}%`)
         .order("username", { ascending: true });
       if (error) throw error;
-
       if (data) {
         const users = data.map((elem: any) => {
           const user: ThumbnailUser = {

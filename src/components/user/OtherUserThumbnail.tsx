@@ -1,7 +1,6 @@
 import { ThumbnailUser } from "../../lib/types";
 import {
   Button,
-  Image,
   View,
   Paragraph,
   XStack,
@@ -9,7 +8,6 @@ import {
   Avatar,
   Text,
 } from "tamagui";
-import { useEffect, useState } from "react";
 import { ArrowRightSquare } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 
