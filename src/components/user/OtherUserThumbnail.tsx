@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { ArrowRightSquare } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
+import Avatar from "./Avatar";
 
 export default function OtherUserThumbnail({
   navigation,
@@ -31,21 +32,26 @@ export default function OtherUserThumbnail({
     otherUserEntered && setAvatarUrl(otherUserEntered.avatarUrl);
   }, []);
 
+  
+
+  /*
   const abbrevDescription =
     biography.length > 85
       ? biography.substring(0, 85) + "..."
       : biography;
+  */
 
   return (
     <View style={{ paddingLeft: 3, paddingRight: 5, borderBottomWidth: 1, borderColor: '#014cc6' }}>
-                <XStack space="$2" alignItems="center" paddingTop={5}>
+                <XStack space="$2" alignItems="center" paddingTop={5} >
                   {avatarUrl && (
                     <Image
-                      source={{ uri: avatarUrl, width: 60, height: 60 }}
-                      style={{ width: 60, height: 60, borderRadius: 30 }}
-                      accessibilityLabel="Avatar"
-                    />
+                    source={{ uri: otherUserEntered.avatarUrl, width: 20, height: 60 }}
+                    style={{ width: 60, height: 60, borderRadius: 30 }}
+                    accessibilityLabel="Avatar"
+                  />
                   )}
+                  
                   <YStack>
                   {displayName ? <Paragraph fontSize={20} >{displayName}</Paragraph> : <Paragraph fontSize={20} >{username}</Paragraph>}
                   <Paragraph fontSize={14} color={'gray'}>@{username}</Paragraph>
@@ -62,9 +68,9 @@ export default function OtherUserThumbnail({
           />
           </View>
           </XStack>
-          <View padding={5}>
+          {/* <View padding={5}>
               <Paragraph fontSize={15}>{abbrevDescription}</Paragraph>
-          </View>
+          </View> */}
     </View>
   );
 }

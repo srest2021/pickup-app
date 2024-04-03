@@ -37,15 +37,13 @@ type State = {
   filterDist: number;
   filterLevel: string | null;
 
-<<<<<<< HEAD
   friends: ThumbnailUser[];
   friendRequests: ThumbnailUser[];
-=======
+
   channel: RealtimeChannel | undefined;
   roomCode: string | null;
   messages: Message[];
   avatarUrls: any[];
->>>>>>> dev
 };
 
 type Action = {
@@ -119,6 +117,12 @@ type Action = {
   setRoomCode: (roomCode: string) => void;
   addAvatarUrls: (newAvatarUrls: any[]) => void;
   addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
+
+  // friends
+  setFriends: (friends: ThumbnailUser[]) => void;
+  setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
+  acceptFriendRequest: (userId: string) => void;
+  rejectFriendRequest: (userId: string) => void;
 };
 
 const initialState: State = {
@@ -141,6 +145,8 @@ const initialState: State = {
   channel: undefined,
   roomCode: null,
   avatarUrls: [],
+  friends: [],
+  friendRequests: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -375,6 +381,38 @@ export const useStore = create<State & Action>()(
         return elem;
       });
       set({ avatarUrls: newAvatarUrls });
+    },
+
+    // friends
+
+    setFriends: (myfriends) => set({ friends: myfriends }),
+    setFriendRequests: (myFriendRequests) =>
+      set({ friendRequests: myFriendRequests }),
+
+    acceptFriendRequest: (userId) => {
+      // Save the newly accepted friend only!
+      const acceptedFriend = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id == userId,
+      );
+
+      // Remove the accepted friend from the friend requests lists
+      const updatedFriendRequests = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id != userId,
+      );
+
+      // update requests list
+      set({ friendRequests: updatedFriendRequests });
+
+      // add newly accepted friend to friends list
+      set({ friends: [acceptedFriend[0], ...get().friends] });
+    },
+
+    rejectFriendRequest: (userId) => {
+      const updatedFriendRequests = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id != userId,
+      );
+      // update requests list
+      set({ friendRequests: updatedFriendRequests });
     },
   })),
 );

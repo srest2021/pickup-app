@@ -13,10 +13,11 @@ import { ToastDemo } from "../Toast";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import useQueryUsers from "../../hooks/use-query-users";
+import OtherUserThumbnail from "./OtherUserThumbnail";
 
 
 export default function FriendPage({ navigation }: { navigation: any }) {
-  const [session, myFriends, myFriendReqs] = useStore((state) => [
+  const [session, myFriends = [], myFriendReqs] = useStore((state) => [
     state.session,
     state.friends,
     state.friendRequests,
@@ -47,6 +48,8 @@ export default function FriendPage({ navigation }: { navigation: any }) {
     setRefreshing(true);
     if (toggle === "friends") {
       const loadedFriends = await getFriends();
+      console.log("friends")
+      console.log(loadedFriends)
     } else if (toggle === "friendRequests") {
       const loadedReqs = await getFriendRequests();
     } else if (toggle === "searchForFriends") {
@@ -115,29 +118,17 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                 <Spinner size="small" color="#ff7403" testID="spinner" />
               )}
               
-              {toggle === "friends" ? (
-                myFriends.length > 0 ? (
+              {toggle === "friends" && myFriends ? (
                 <View>
                   
-                  <H4 style={{ textAlign: 'center' }}> {myFriends.length} friends</H4>
                   {myFriends.map((friend) => (
                     <View>
-                      <Text key={friend.id}>{friend.username}</Text>
-                      <Button
-                        testID="reject-button"
-                        size="$2"
-                        style={{ backgroundColor: "#e90d52", color: "white" }}
-                        onPress={() => rejectFriendRequestById(friend.username)}
-                      />
+                      <OtherUserThumbnail navigation={navigation} otherUserEntered={friend}/>
                     </View>
                   ))}
 
                 </View>
-                ) : (
-                  <View className="items-center justify-center flex-1 p-12 text-center">
-                    <H4>No friends</H4>
-                  </View>
-                )
+                
               ) : toggle === "friendRequests" ? (
                   myFriendReqs.length > 0 ? (
                     <View>
