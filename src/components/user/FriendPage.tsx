@@ -8,6 +8,7 @@ import {
   H4,
   Separator,
   SizableText,
+  Spinner,
   Tabs,
   YStack,
 } from "tamagui";
@@ -19,9 +20,40 @@ import AddSport from "./AddSport";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useEffect, useState } from "react";
+import { OtherUser } from "../../lib/types";
+import OtherUserThumbnail from "./OtherUserThumbnail";
+import SearchProfiles from "./SearchProfiles";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
   const [session] = useStore((state) => [state.session]);
+
+  //mock friend list for now
+  const friendsList: string[] = ["maddie", "clarissa", "kate"];
+
+  //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
+  //const [session, friendList] = useStore((state) => [
+  //state.session,
+  //state.friendList,
+  //]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasLocation, setHasLocation] = useState(true);
+  const [toggle, setToggle] = useState("friends");
+
+  useEffect(() => {
+    handleRefresh();
+  }, []);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    if (toggle === "friends") {
+      //const games = await fetchFeedGames();
+    } else if (toggle === "friendRequests") {
+      //await fetchFriendsOnlyGames();
+    } else if (toggle === "searchForFriends") {
+    }
+    setRefreshing(false);
+  };
 
   return (
     <>
@@ -34,7 +66,14 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             defaultValue="Friends"
           >
             <Tabs.List>
-              <Tabs.Tab width="33.33%" testID="friends" value="Friends">
+              <Tabs.Tab
+                width="33.33%"
+                testID="friends"
+                value="Friends"
+                onInteraction={() => {
+                  setToggle("friends");
+                }}
+              >
                 <Text>Friends</Text>
               </Tabs.Tab>
               <Separator vertical></Separator>
@@ -42,64 +81,64 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                 width="33.33%"
                 testID="friend-requests"
                 value="Requests"
+                onInteraction={() => {
+                  setToggle("friendRequests");
+                }}
               >
                 <Text>Requests</Text>
               </Tabs.Tab>
               <Separator vertical></Separator>
-              <Tabs.Tab width="33.33%" testID="search-friends" value="Search">
+              <Tabs.Tab
+                width="33.33%"
+                testID="search-friends"
+                value="Search"
+                onInteraction={() => {
+                  setToggle("searchForFriends");
+                }}
+              >
                 <Text>Search</Text>
               </Tabs.Tab>
             </Tabs.List>
           </Tabs>
-          {/* <ScrollView
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
-              onScroll={(e) => {
-                const { contentOffset } = e.nativeEvent;
-                if (contentOffset.y < -50 && !refreshing) {
-                  handleRefresh();
-                }
-              }}
-              contentContainerStyle={{ paddingTop: 20 }}
-            >
-              {refreshing && (
-                <Spinner size="small" color="#ff7403" testID="spinner" />
-              )}
-  
-              {myGamesToggle === "myGames" ? (
-                myGames.length > 0 ? (
-                  <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                    {myGames.map((myGame) => (
-                      <GameThumbnail
-                        navigation={navigation}
-                        game={myGame}
-                        gametype="my"
-                        key={myGame.id}
-                      />
-                    ))}
-                  </YStack>
-                ) : (
-                  <View className="items-center justify-center flex-1 p-12 text-center">
-                    <H4>No published games yet</H4>
-                  </View>
-                )
-              ) : joinedGames.length > 0 ? (
-                <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                  {joinedGames.map((joinedGame) => (
-                    <GameThumbnail
-                      navigation={navigation}
-                      game={joinedGame}
-                      gametype="joined"
-                      key={joinedGame.id}
-                    />
+          <ScrollView
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+            onScroll={(e) => {
+              const { contentOffset } = e.nativeEvent;
+              if (contentOffset.y < -50 && !refreshing) {
+                handleRefresh();
+              }
+            }}
+            contentContainerStyle={{ paddingTop: 20 }}
+          >
+            {refreshing && (
+              <Spinner size="small" color="#ff7403" testID="spinner" />
+            )}
+
+            {toggle === "friends" ? (
+              friendsList.length > 0 ? (
+                <View>
+                  <H4 style={{ textAlign: "center" }}>
+                    {" "}
+                    {friendsList.length} friends
+                  </H4>
+                  {friendsList.map((friend, index) => (
+                    <Text key={index}>{friend}</Text>
                   ))}
-                </YStack>
+                </View>
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No joined games yet</H4>
+                  <H4>No friends</H4>
                 </View>
-              )}
-            </ScrollView> */}
+              )
+            ) : toggle === "friendRequests" ? (
+              <View className="items-center justify-center flex-1 p-12 text-center">
+                <H4>No friends requests yet</H4>
+              </View>
+            ) : (
+              <SearchProfiles navigation={navigation} />
+            )}
+          </ScrollView>
         </View>
       ) : (
         <View className="items-center justify-center flex-1 p-12 text-center">

@@ -1,57 +1,54 @@
 import { ThumbnailUser } from "../../lib/types";
-import { Button, Image, View, Paragraph, XStack, YStack } from "tamagui";
-import { useEffect, useState } from "react";
+import {
+  Button,
+  View,
+  Paragraph,
+  XStack,
+  YStack,
+  Avatar,
+  Text,
+} from "tamagui";
 import { ArrowRightSquare } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 
 export default function OtherUserThumbnail({
   navigation,
-  otherUserEntered,
+  user: user,
 }: {
   navigation: any;
-  otherUserEntered: ThumbnailUser;
+  user: ThumbnailUser;
 }) {
   const { getOtherProfile } = useQueryUsers();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [displayName, setDisplayName] = useState<string | null>(null);
-  const [biography, setBio] = useState<string>("");
 
-  useEffect(() => {
-    setUsername(otherUserEntered ? otherUserEntered.username : null);
-    setDisplayName(otherUserEntered ? otherUserEntered.displayName : null);
-    setBio(otherUserEntered ? otherUserEntered.bio : "");
-    otherUserEntered && setAvatarUrl(otherUserEntered.avatarUrl);
-  }, []);
+  const avatarUrl =
+    user.avatarUrl && user.avatarUrl.length > 0 ? user.avatarUrl : undefined;
 
-  const abbrevDescription =
-    biography.length > 85 ? biography.substring(0, 85) + "..." : biography;
+  const abbrevBio =
+    user.bio && user.bio.length > 85
+      ? user.bio.substring(0, 85) + "..."
+      : user.bio;
 
   return (
-    <View
-      style={{
-        paddingLeft: 3,
-        paddingRight: 5,
-        borderBottomWidth: 1,
-        borderColor: "#014cc6",
-      }}
-    >
+    <View style={{ paddingLeft:3, paddingRight:5, borderBottomWidth: 1, borderColor: "#014cc6" }}>
       <XStack space="$2" alignItems="center" paddingTop={5}>
-        {avatarUrl && (
-          <Image
-            source={{ uri: avatarUrl, width: 60, height: 60 }}
-            style={{ width: 60, height: 60, borderRadius: 30 }}
-            accessibilityLabel="Avatar"
-          />
-        )}
+        <Avatar circular size="$3">
+          <Avatar.Image accessibilityLabel={user.username} src={avatarUrl} />
+          <Avatar.Fallback
+            backgroundColor="#08348c"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text color="#ffffff">
+              {user.username.substring(0, 2).toUpperCase()}
+            </Text>
+          </Avatar.Fallback>
+        </Avatar>
         <YStack>
-          {displayName ? (
-            <Paragraph fontSize={20}>{displayName}</Paragraph>
-          ) : (
-            <Paragraph fontSize={20}>{username}</Paragraph>
-          )}
+          <Paragraph fontSize={18}>
+            {user.displayName ? user.displayName : user.username}
+          </Paragraph>
           <Paragraph fontSize={14} color={"gray"}>
-            @{username}
+            @{user.username}
           </Paragraph>
         </YStack>
 
@@ -67,14 +64,14 @@ export default function OtherUserThumbnail({
               borderRadius: 20,
             }}
             onPress={() => {
-              getOtherProfile(otherUserEntered.id);
+              getOtherProfile(user.id);
               navigation.navigate("OtherProfileView");
             }}
           />
         </View>
       </XStack>
       <View padding={5}>
-        <Paragraph fontSize={15}>{abbrevDescription}</Paragraph>
+        <Paragraph fontSize={15}>{abbrevBio}</Paragraph>
       </View>
     </View>
   );

@@ -208,6 +208,29 @@ begin
 end;
 $$ language plpgsql;
 
+-- get the user id from a string or partial string!
+create or replace function username_search(username text)
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+  SELECT jsonb_agg(
+    jsonb_build_object (
+    'id', p.id,
+    'username',p.username,
+    'displayName', p.display_name,
+    'bio', p.bio,
+    'avatarUrl',p.avatar_url
+    )
+  )
+  from public.profiles as p
+  where p.username like '%' || username || '%'
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
+
 -- games table
 
 create table games (
