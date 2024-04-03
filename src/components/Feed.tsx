@@ -176,7 +176,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   <Spinner size="small" color="#ff7403" testID="spinner" />
                 )
               }
-              contentContainerStyle={{ paddingVertical: 20 }}
+              contentContainerStyle={{ gap: 10 }}
             />
           </View>
         ) : (
