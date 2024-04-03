@@ -12,28 +12,30 @@ function useQueryUsers() {
     state.setOtherUser,
   ]);
 
-  const searchByUsername = async (username: string): Promise<ThumbnailUser[] | undefined> => {
+  const searchByUsername = async (
+    username: string,
+  ): Promise<ThumbnailUser[] | undefined> => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
       const { data, error } = await supabase
-        .from('profiles')
-        .select('id, username, display_name, bio, avatar_url')
-        .ilike('username', `%${username}%`)
-        .order('username', {ascending:true})
+        .from("profiles")
+        .select("id, username, display_name, bio, avatar_url")
+        .ilike("username", `%${username}%`)
+        .order("username", { ascending: true });
       if (error) throw error;
 
       if (data) {
         const users = data.map((elem: any) => {
           const user: ThumbnailUser = {
-            id: elem.id, 
+            id: elem.id,
             username: elem.username,
             displayName: elem.display_name,
             bio: elem.bio,
-            avatarUrl: elem.avatar_url
+            avatarUrl: elem.avatar_url,
           };
           return user;
-        })
+        });
         return users;
       } else {
         throw new Error("Error processing your search! Please try again later");

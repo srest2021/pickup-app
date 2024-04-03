@@ -10,7 +10,10 @@ import OtherUserThumbnail from "./OtherUserThumbnail";
 import { useStore } from "../../lib/store";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
-  const [loading, setLoading] = useStore((state) => [state.loading, state.setLoading]);
+  const [loading, setLoading] = useStore((state) => [
+    state.loading,
+    state.setLoading,
+  ]);
   const { searchByUsername } = useQueryUsers();
   const [currentInput, setCurrentInput] = useState<string>("");
   const [results, setResults] = useState<ThumbnailUser[]>([]);
@@ -22,7 +25,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
     // }
 
     setLoading(true);
-    const results = await searchByUsername(currentInput)
+    const results = await searchByUsername(currentInput);
     if (results) {
       setResults(results);
     }
@@ -31,10 +34,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 15, paddingVertical: 5 }}>
-      <Form
-        flexDirection="row"
-        onSubmit={handleSearch}
-      >
+      <Form flexDirection="row" onSubmit={handleSearch}>
         <Input
           marginRight={15}
           paddingRight={10}
@@ -58,7 +58,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
               <OtherUserThumbnail
                 key={user.id}
                 navigation={navigation}
-                otherUserEntered={user}
+                user={user}
               />
             ))
           ) : (
