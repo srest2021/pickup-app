@@ -123,6 +123,7 @@ type Action = {
   setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
   acceptFriendRequest: (userId: string) => void;
   rejectFriendRequest: (userId: string) => void;
+  removeFriend: (userId: string) => void;
 };
 
 const initialState: State = {
@@ -413,6 +414,15 @@ export const useStore = create<State & Action>()(
       );
       // update requests list
       set({ friendRequests: updatedFriendRequests });
+    },
+
+    removeFriend: (userId) => {
+      const updatedFriends = get().friends.filter(
+        (friend) => friend.id != userId,
+      );
+
+      //update friends list
+      set({ friends: updatedFriends });
     },
   })),
 );

@@ -18,6 +18,7 @@ function useMutationUser() {
     setUserSports,
     acceptFriendRequest,
     rejectFriendRequest,
+    removeFriend,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -31,6 +32,7 @@ function useMutationUser() {
     state.setUserSports,
     state.acceptFriendRequest,
     state.rejectFriendRequest,
+    state.removeFriend,
   ]);
 
   useEffect(() => {
@@ -304,6 +306,30 @@ function useMutationUser() {
     }
   };
 
+  const removeFriendById = async (userId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("remove_friend", {
+        user1_id: user?.id,
+        user2_id: userId,
+      });
+      if (error) console.error(error);
+
+      if (data) {
+        removeFriend(userId);
+        return userId;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     session,
     user,
@@ -313,6 +339,7 @@ function useMutationUser() {
     addFriendRequest,
     acceptFriendRequestById,
     rejectFriendRequestById,
+    removeFriendById,
   };
 }
 
