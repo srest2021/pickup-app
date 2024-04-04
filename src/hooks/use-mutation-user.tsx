@@ -259,6 +259,7 @@ function useMutationUser() {
   };
 
   const acceptFriendRequestById = async (userId: string) => {
+    console.log(userId)
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");

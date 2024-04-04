@@ -16,7 +16,7 @@ import {
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
-import { Edit3, Loader } from "@tamagui/lucide-icons";
+import { Check, Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
@@ -38,8 +38,6 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   const friendsList: string[] = ["maddie", "clarissa", "kate"];
   const {getFriends} = useQueryUsers()
   const {getFriendRequests} = useQueryUsers()
-  const {acceptFriendRequestById} = useMutationUser()
-  const {rejectFriendRequestById} = useMutationUser()
 
   //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
   //const [session, friendList] = useStore((state) => [
@@ -66,6 +64,9 @@ export default function FriendPage({ navigation }: { navigation: any }) {
     }
     setRefreshing(false);
   };
+
+  const filteredFriendReqs = myFriendReqs.filter(friendReq => friendReq.id !== session.user.id);
+  const pendingRequestsCount = filteredFriendReqs.length;
 
   return (
     <>
@@ -140,27 +141,16 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   ))}
                 </View>
               ) : toggle === "friendRequests" ? (
+                
                   myFriendReqs.length > 0 ? (
                     <View>
-                      <H4 style={{ textAlign: 'center' }}> {myFriendReqs.length} pending friend requests</H4>
+                      <H4 style={{ textAlign: 'center' }}> {pendingRequestsCount} pending friend requests</H4>
                       {myFriendReqs.map((friendReq) => (
-                        <View>
-                          <Text key={friendReq.id}>{friendReq.username}</Text>
-                          <XStack justifyContent="flex-end" space="$2">
-                            <Button
-                              testID="reject-button"
-                              size="$2"
-                              style={{ backgroundColor: "#e90d52", color: "white" }}
-                              onPress={() => rejectFriendRequestById(friendReq.username)}
-                            />
-                            <Button
-                              testID="accept-button"
-                              size="$2"
-                              style={{ backgroundColor: "#05a579", color: "white" }}
-                              onPress={() => acceptFriendRequestById(friendReq.username)}
-                            />
-                          </XStack>
-                        </View>
+                        friendReq.id !== session.user.id && (
+                          <View>
+                            <OtherUserThumbnail navigation={navigation} user={friendReq} isFriend={false}/>
+                          </View>
+                        )
                     ))}
     
                     </View>

@@ -3,7 +3,8 @@ import { UserSport } from "../../lib/types";
 import SportSkill from "../SportSkill";
 import { XStack } from "tamagui";
 
-export default function Sport({ sport }: { sport: UserSport }) {
+export default function Sport({ sport}: { sport: UserSport}) {
+  console.log(sport)
   return (
     <View className="flex flex-row p-2">
       <XStack>
@@ -15,9 +16,9 @@ export default function Sport({ sport }: { sport: UserSport }) {
             marginRight: 10, // Adjust margin as needed
           }}
         >
-          <Text className="text-lg" style={{ color: "white" }}>
-            {sport.name}
-          </Text>
+            <Text key={sport.id} className="text-lg" style={{ color: "white" }}>
+              {sport.name}
+            </Text>
         </View>
         <SportSkill sport={sport} />
       </XStack>
