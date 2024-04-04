@@ -63,6 +63,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
                 navigation={navigation}
                 user={user}
                 isFriend={false}
+                isSearch={true}
               />
             ))
           ) : (

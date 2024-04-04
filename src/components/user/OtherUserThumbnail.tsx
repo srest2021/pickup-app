@@ -7,18 +7,27 @@ import { supabase } from "../../lib/supabase";
 import SmallAvatar from "./SmallAvatar";
 import useMutationGame from "../../hooks/use-mutation-game";
 import useMutationUser from "../../hooks/use-mutation-user";
+import { useNavigation } from '@react-navigation/native';
 
 export default function OtherUserThumbnail({
   navigation,
   user: user,
   isFriend,
+  isSearch,
 }: {
   navigation: any;
   user: ThumbnailUser;
   isFriend: boolean;
+  isSearch: boolean;
 }) {
   const { getOtherProfile } = useQueryUsers();
   //const [url, setAvatarUrl] = useState<string | null>(null);
+
+  //const nav = useNavigation();
+  //const isOnSpecificPage = nav && navigation.getState().routes.some(route => route.name === 'SearchForFriends');
+  //console.log('Current route name:', navigation.getState().routes[navigation.getState().index].name);
+  //console.log("HIIII")
+  //console.log(isOnSpecificPage)
 
   const avatarUrl =
     user.avatarUrl && user.avatarUrl.length > 0 ? user.avatarUrl : undefined;
@@ -59,7 +68,7 @@ export default function OtherUserThumbnail({
 
 
         <XStack space="$3" style={{ flex: 1, justifyContent: "flex-end"}}>
-          {isFriend ? (
+          {!isSearch && isFriend ? (
             <Button
               icon={X}
               testID="remove-button"
@@ -68,6 +77,7 @@ export default function OtherUserThumbnail({
               onPress={() => handleRemove()}
             />
           ) : (
+            !isSearch && (
             <Button
               icon={Check}
               testID="accept-button"
@@ -75,6 +85,7 @@ export default function OtherUserThumbnail({
               style={{ backgroundColor: "#05a579", color: "white", width: 50, height: 50 }}
               onPress={() => handleAccept()}
             />
+            )
           )}
           
           <Button
