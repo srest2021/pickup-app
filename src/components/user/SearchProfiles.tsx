@@ -38,7 +38,6 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
       <Form flexDirection="row" onSubmit={handleSearch}>
         <XStack flex={1} space="$3">
           <Input
-            id="input-form"
             flex={1}
             borderWidth={2}
             placeholder="Search by username"
