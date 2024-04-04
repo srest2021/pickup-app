@@ -1,14 +1,6 @@
 import { ThumbnailUser } from "../../lib/types";
-import {
-  Button,
-  View,
-  Paragraph,
-  XStack,
-  YStack,
-  Text,
-} from "tamagui";
-import { X, Loader } from "@tamagui/lucide-icons";
-import { ArrowRightSquare } from "@tamagui/lucide-icons";
+import { Button, View, Paragraph, XStack, YStack, Avatar, Text } from "tamagui";
+import { ArrowRightSquare, X } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
@@ -59,8 +51,8 @@ export default function OtherUserThumbnail({
     }
 
   const abbrevBio =
-    user.bio && user.bio.length > 85
-      ? user.bio.substring(0, 85) + "..."
+    user.bio && user.bio.trim().length > 85
+      ? user.bio.substring(0, 85).trim() + "..."
       : user.bio;
 
   const { removeFriendById } = useMutationUser();
@@ -117,7 +109,9 @@ export default function OtherUserThumbnail({
         
       </XStack>
       <View padding={5}>
-        <Paragraph fontSize={15}>{abbrevBio}</Paragraph>
+        <Paragraph fontSize={15}>
+          {abbrevBio ? abbrevBio.trim() : null}
+        </Paragraph>
       </View>
     </View>
   );

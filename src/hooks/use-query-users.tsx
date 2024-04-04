@@ -1,7 +1,7 @@
 import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { User, OtherUser, UserSport, ThumbnailUser } from "../lib/types";
+import { OtherUser, ThumbnailUser } from "../lib/types";
 import * as Location from "expo-location";
 
 function useQueryUsers() {
@@ -30,7 +30,7 @@ function useQueryUsers() {
       const { data, error } = await supabase
         .from("profiles")
         .select("id, username, display_name, bio, avatar_url")
-        .ilike("username", `%${username}%`)
+        .or(`username.ilike.%${username}%, display_name.ilike.%${username}%`)
         .order("username", { ascending: true });
       if (error) throw error;
       if (data) {
