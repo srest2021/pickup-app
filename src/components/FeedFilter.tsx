@@ -67,7 +67,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
             color="#ffffff"
             borderColor="#08348c"
             backgroundColor="#08348c"
-            icon={loading ? Loader : Filter}
+            icon={Filter}
             variant="outlined"
             disabled={loading}
             style={{ alignSelf: "flex-start" }}

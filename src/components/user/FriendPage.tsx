@@ -15,14 +15,7 @@ import {
 } from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
-import { Dimensions } from "react-native";
-import { Edit3, Loader } from "@tamagui/lucide-icons";
-import AddSport from "./AddSport";
-import { ToastViewport, useToastController } from "@tamagui/toast";
-import { ToastDemo } from "../Toast";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
-import { OtherUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import SearchProfiles from "./SearchProfiles";
 import useQueryUsers from "../../hooks/use-query-users";
@@ -35,7 +28,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   ]);
 
   //mock friend list for now
-  const friendsList: string[] = ["maddie", "clarissa", "kate"];
+  //const friendsList: string[] = ["maddie", "clarissa", "kate"];
   const {getFriends} = useQueryUsers()
   const {getFriendRequests} = useQueryUsers()
   const {acceptFriendRequestById} = useMutationUser()
@@ -47,7 +40,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   //state.friendList,
   //]);
   const [refreshing, setRefreshing] = useState(false);
-  const [hasLocation, setHasLocation] = useState(true);
+  //const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("friends");
 
   useEffect(() => {
@@ -58,8 +51,6 @@ export default function FriendPage({ navigation }: { navigation: any }) {
     setRefreshing(true);
     if (toggle === "friends") {
       const loadedFriends = await getFriends();
-      console.log("friends")
-      console.log(loadedFriends)
     } else if (toggle === "friendRequests") {
       const loadedReqs = await getFriendRequests();
     } else if (toggle === "searchForFriends") {
@@ -130,11 +121,10 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             {toggle === "friends" && myFriends ? (
                 <View>
                   <H4 style={{ textAlign: "center" }}>
-                    {" "}
-                    {myFriends.length} friends
+                    {myFriends.length} {myFriends.length == 1 ? "friend": "friends"}
                   </H4>
                   {myFriends.map((friend) => (
-                    <View>
+                    <View key={friend.id}>
                       <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true}/>
                     </View>
                   ))}
