@@ -37,13 +37,13 @@ type State = {
   filterDist: number;
   filterLevel: string | null;
 
+  friends: ThumbnailUser[];
+  friendRequests: ThumbnailUser[];
+
   channel: RealtimeChannel | undefined;
   roomCode: string | null;
   messages: Message[];
   avatarUrls: any[];
-
-  friends: ThumbnailUser[];
-  friendRequests: ThumbnailUser[];
 };
 
 type Action = {

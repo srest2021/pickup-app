@@ -10,6 +10,7 @@ import {
   SizableText,
   Spinner,
   Tabs,
+  XStack,
   YStack,
 } from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
@@ -24,12 +25,21 @@ import { useEffect, useState } from "react";
 import { OtherUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import SearchProfiles from "./SearchProfiles";
+import useQueryUsers from "../../hooks/use-query-users";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
-  const [session] = useStore((state) => [state.session]);
+  const [session, myFriends = [], myFriendReqs] = useStore((state) => [
+    state.session,
+    state.friends,
+    state.friendRequests,
+  ]);
 
   //mock friend list for now
   const friendsList: string[] = ["maddie", "clarissa", "kate"];
+  const {getFriends} = useQueryUsers()
+  const {getFriendRequests} = useQueryUsers()
+  const {acceptFriendRequestById} = useMutationUser()
+  const {rejectFriendRequestById} = useMutationUser()
 
   //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
   //const [session, friendList] = useStore((state) => [
@@ -47,9 +57,11 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "friends") {
-      //const games = await fetchFeedGames();
+      const loadedFriends = await getFriends();
+      console.log("friends")
+      console.log(loadedFriends)
     } else if (toggle === "friendRequests") {
-      //await fetchFriendsOnlyGames();
+      const loadedReqs = await getFriendRequests();
     } else if (toggle === "searchForFriends") {
     }
     setRefreshing(false);
@@ -115,28 +127,54 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               <Spinner size="small" color="#ff7403" testID="spinner" />
             )}
 
-            {toggle === "friends" ? (
-              friendsList.length > 0 ? (
+            {toggle === "friends" && myFriends ? (
                 <View>
                   <H4 style={{ textAlign: "center" }}>
                     {" "}
-                    {friendsList.length} friends
+                    {myFriends.length} friends
                   </H4>
-                  {friendsList.map((friend, index) => (
-                    <Text key={index}>{friend}</Text>
+                  {myFriends.map((friend) => (
+                    <View>
+                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true}/>
+                    </View>
                   ))}
                 </View>
+              ) : toggle === "friendRequests" ? (
+                  myFriendReqs.length > 0 ? (
+                    <View>
+                      <H4 style={{ textAlign: 'center' }}> {myFriendReqs.length} pending friend requests</H4>
+                      {myFriendReqs.map((friendReq) => (
+                        <View>
+                          <Text key={friendReq.id}>{friendReq.username}</Text>
+                          <XStack justifyContent="flex-end" space="$2">
+                            <Button
+                              testID="reject-button"
+                              size="$2"
+                              style={{ backgroundColor: "#e90d52", color: "white" }}
+                              onPress={() => rejectFriendRequestById(friendReq.username)}
+                            />
+                            <Button
+                              testID="accept-button"
+                              size="$2"
+                              style={{ backgroundColor: "#05a579", color: "white" }}
+                              onPress={() => acceptFriendRequestById(friendReq.username)}
+                            />
+                          </XStack>
+                        </View>
+                    ))}
+    
+                    </View>
+                    ) : (
+                      <View className="items-center justify-center flex-1 p-12 text-center">
+                        <H4>No friend requests</H4>
+                      </View>
+                    )
+              ) : toggle === "searchForFriends" ? (
+                <SearchProfiles navigation={navigation} />
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No friends</H4>
-                </View>
-              )
-            ) : toggle === "friendRequests" ? (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No friends requests yet</H4>
+                <H4>No friends search results</H4>
               </View>
-            ) : (
-              <SearchProfiles navigation={navigation} />
             )}
           </ScrollView>
         </View>
