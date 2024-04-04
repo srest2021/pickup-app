@@ -29,10 +29,10 @@ export default function FriendPage({ navigation }: { navigation: any }) {
 
   //mock friend list for now
   //const friendsList: string[] = ["maddie", "clarissa", "kate"];
-  const {getFriends} = useQueryUsers()
-  const {getFriendRequests} = useQueryUsers()
-  const {acceptFriendRequestById} = useMutationUser()
-  const {rejectFriendRequestById} = useMutationUser()
+  const { getFriends } = useQueryUsers();
+  const { getFriendRequests } = useQueryUsers();
+  const { acceptFriendRequestById } = useMutationUser();
+  const { rejectFriendRequestById } = useMutationUser();
 
   //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
   //const [session, friendList] = useStore((state) => [
@@ -119,50 +119,61 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             )}
 
             {toggle === "friends" && myFriends ? (
+              <View>
+                <H4 style={{ textAlign: "center" }}>
+                  {myFriends.length}{" "}
+                  {myFriends.length == 1 ? "friend" : "friends"}
+                </H4>
+                {myFriends.map((friend) => (
+                  <View key={friend.id}>
+                    <OtherUserThumbnail
+                      navigation={navigation}
+                      user={friend}
+                      isFriend={true}
+                    />
+                  </View>
+                ))}
+              </View>
+            ) : toggle === "friendRequests" ? (
+              myFriendReqs.length > 0 ? (
                 <View>
                   <H4 style={{ textAlign: "center" }}>
-                    {myFriends.length} {myFriends.length == 1 ? "friend": "friends"}
+                    {" "}
+                    {myFriendReqs.length} pending friend requests
                   </H4>
-                  {myFriends.map((friend) => (
-                    <View key={friend.id}>
-                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true}/>
+                  {myFriendReqs.map((friendReq) => (
+                    <View>
+                      <Text key={friendReq.id}>{friendReq.username}</Text>
+                      <XStack justifyContent="flex-end" space="$2">
+                        <Button
+                          testID="reject-button"
+                          size="$2"
+                          style={{ backgroundColor: "#e90d52", color: "white" }}
+                          onPress={() =>
+                            rejectFriendRequestById(friendReq.username)
+                          }
+                        />
+                        <Button
+                          testID="accept-button"
+                          size="$2"
+                          style={{ backgroundColor: "#05a579", color: "white" }}
+                          onPress={() =>
+                            acceptFriendRequestById(friendReq.username)
+                          }
+                        />
+                      </XStack>
                     </View>
                   ))}
                 </View>
-              ) : toggle === "friendRequests" ? (
-                  myFriendReqs.length > 0 ? (
-                    <View>
-                      <H4 style={{ textAlign: 'center' }}> {myFriendReqs.length} pending friend requests</H4>
-                      {myFriendReqs.map((friendReq) => (
-                        <View>
-                          <Text key={friendReq.id}>{friendReq.username}</Text>
-                          <XStack justifyContent="flex-end" space="$2">
-                            <Button
-                              testID="reject-button"
-                              size="$2"
-                              style={{ backgroundColor: "#e90d52", color: "white" }}
-                              onPress={() => rejectFriendRequestById(friendReq.username)}
-                            />
-                            <Button
-                              testID="accept-button"
-                              size="$2"
-                              style={{ backgroundColor: "#05a579", color: "white" }}
-                              onPress={() => acceptFriendRequestById(friendReq.username)}
-                            />
-                          </XStack>
-                        </View>
-                    ))}
-    
-                    </View>
-                    ) : (
-                      <View className="items-center justify-center flex-1 p-12 text-center">
-                        <H4>No friend requests</H4>
-                      </View>
-                    )
-              ) : toggle === "searchForFriends" ? (
-                <SearchProfiles navigation={navigation} />
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
+                  <H4>No friend requests</H4>
+                </View>
+              )
+            ) : toggle === "searchForFriends" ? (
+              <SearchProfiles navigation={navigation} />
+            ) : (
+              <View className="items-center justify-center flex-1 p-12 text-center">
                 <H4>No friends search results</H4>
               </View>
             )}

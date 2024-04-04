@@ -46,7 +46,9 @@ function useQueryUsers() {
         });
         return users;
       } else {
-        throw new Error("Error processing your search! Please try again later.");
+        throw new Error(
+          "Error processing your search! Please try again later.",
+        );
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -89,7 +91,7 @@ function useQueryUsers() {
       let { data, error } = await supabase.rpc("get_friends");
       if (error) throw error;
       if (data == null && error == null) {
-        data = []
+        data = [];
       }
 
       if (data) {
@@ -128,7 +130,7 @@ function useQueryUsers() {
       let { data, error } = await supabase.rpc("get_friend_requests");
       if (error) console.error(error);
       if (data == null && error == null) {
-        data = []
+        data = [];
       }
 
       if (data) {
