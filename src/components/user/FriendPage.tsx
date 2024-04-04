@@ -170,11 +170,11 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                       </View>
                     )
               ) : toggle === "searchForFriends" ? (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No friends search results</H4>
-                </View>
+                <SearchProfiles navigation={navigation} />
               ) : (
-              <SearchProfiles navigation={navigation} />
+                <View className="items-center justify-center flex-1 p-12 text-center">
+                <H4>No friends search results</H4>
+              </View>
             )}
           </ScrollView>
         </View>

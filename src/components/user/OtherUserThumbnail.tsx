@@ -87,7 +87,7 @@ export default function OtherUserThumbnail({
         </YStack>
 
 
-        <XStack space="$3" style={{ flex: 1, alignItems: "flex-end"}}>
+        <XStack space="$3" style={{ flex: 1, justifyContent: "flex-end"}}>
           {isFriend && (
             <Button
               icon={X}
