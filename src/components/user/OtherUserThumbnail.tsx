@@ -1,13 +1,5 @@
 import { ThumbnailUser } from "../../lib/types";
-import {
-  Button,
-  View,
-  Paragraph,
-  XStack,
-  YStack,
-  Avatar,
-  Text,
-} from "tamagui";
+import { Button, View, Paragraph, XStack, YStack, Avatar, Text } from "tamagui";
 import { ArrowRightSquare } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 
@@ -24,12 +16,19 @@ export default function OtherUserThumbnail({
     user.avatarUrl && user.avatarUrl.length > 0 ? user.avatarUrl : undefined;
 
   const abbrevBio =
-    user.bio && user.bio.length > 85
-      ? user.bio.substring(0, 85) + "..."
+    user.bio && user.bio.trim().length > 85
+      ? user.bio.substring(0, 85).trim() + "..."
       : user.bio;
 
   return (
-    <View style={{ paddingLeft:3, paddingRight:5, borderBottomWidth: 1, borderColor: "#014cc6" }}>
+    <View
+      style={{
+        paddingLeft: 3,
+        paddingRight: 5,
+        borderBottomWidth: 1,
+        borderColor: "#014cc6",
+      }}
+    >
       <XStack space="$2" alignItems="center" paddingTop={5}>
         <Avatar circular size="$3">
           <Avatar.Image accessibilityLabel={user.username} src={avatarUrl} />
@@ -71,7 +70,9 @@ export default function OtherUserThumbnail({
         </View>
       </XStack>
       <View padding={5}>
-        <Paragraph fontSize={15}>{abbrevBio}</Paragraph>
+        <Paragraph fontSize={15}>
+          {abbrevBio ? abbrevBio.trim() : null}
+        </Paragraph>
       </View>
     </View>
   );
