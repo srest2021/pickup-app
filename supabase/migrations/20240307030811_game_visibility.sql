@@ -258,14 +258,6 @@ using btree (organizer_id);
 alter table games
   enable row level security;
 
-create policy "Public games are viewable by everyone; friends-only games are viewable by the organizer's friends." on games
-  for select using (is_public or ((not is_public) and exists (
-    select 1
-    from friends as f
-    where (f.player1_id = auth.uid() and f.player2_id = organizer_id)
-      or (f.player1_id = organizer_id and f.player2_id = auth.uid())
-  )));
-
 create policy "Users can insert their own games." on games
   for insert with check (auth.uid() = organizer_id);
 
@@ -488,6 +480,14 @@ create policy "Players cannot update existing friends." on friends
 
 create policy "Players can remove their own friends" on friends
   for delete using (player1_id = auth.uid() or player2_id = auth.uid());
+
+create policy "Public games are viewable by everyone; friends-only games are viewable by the organizer's friends." on games
+  for select using (is_public or ((not is_public) and exists (
+    select 1
+    from friends as f
+    where (f.player1_id = auth.uid() and f.player2_id = organizer_id)
+      or (f.player1_id = organizer_id and f.player2_id = auth.uid())
+  )));
 
 -- messages table
 create table messages (
