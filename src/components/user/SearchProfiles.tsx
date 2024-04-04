@@ -1,7 +1,7 @@
 import { YStack, ScrollView, Spinner, Button, View, XStack } from "tamagui";
 import { Alert } from "react-native";
 import { Text } from "tamagui";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input, Form } from "tamagui";
 import { UserSearch } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
@@ -19,13 +19,14 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [results, setResults] = useState<ThumbnailUser[]>([]);
 
   const handleSearch = async () => {
-    if (currentInput.length < 1) {
+    if (currentInput.trim().length < 1) {
+      setCurrentInput("");
       Alert.alert("Please enter a search first!");
       return;
     }
 
     setLoading(true);
-    const results = await searchByUsername(currentInput);
+    const results = await searchByUsername(currentInput.trim());
     if (results) {
       setResults(results);
     }
@@ -37,11 +38,13 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
       <Form flexDirection="row" onSubmit={handleSearch}>
         <XStack flex={1} space="$3">
           <Input
+            id="input-form"
             flex={1}
             borderWidth={2}
             placeholder="Search by username"
             autoCapitalize="none"
             onChangeText={(text: string) => setCurrentInput(text)}
+            value={currentInput}
           />
           <Form.Trigger asChild>
             <Button
@@ -63,6 +66,17 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
             ))
           ) : (
             <Text>No Search Yet</Text>
+          )}
+          {results.length > 0 && (
+            <Button
+              backgroundColor="#e54b07"
+              onPress={() => {
+                setResults([]);
+                setCurrentInput("");
+              }}
+            >
+              Clear All
+            </Button>
           )}
         </YStack>
       </ScrollView>
