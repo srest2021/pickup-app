@@ -7,18 +7,23 @@ import {
   YStack,
   Text,
 } from "tamagui";
+import { X, Loader } from "@tamagui/lucide-icons";
 import { ArrowRightSquare } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import SmallAvatar from "./SmallAvatar";
+import useMutationGame from "../../hooks/use-mutation-game";
+import useMutationUser from "../../hooks/use-mutation-user";
 
 export default function OtherUserThumbnail({
   navigation,
   user: user,
+  isFriend,
 }: {
   navigation: any;
   user: ThumbnailUser;
+  isFriend: boolean;
 }) {
   const { getOtherProfile } = useQueryUsers();
   const [url, setAvatarUrl] = useState<string | null>(null);
@@ -58,6 +63,12 @@ export default function OtherUserThumbnail({
       ? user.bio.substring(0, 85) + "..."
       : user.bio;
 
+  const { removeFriendById } = useMutationUser();
+
+  const handleRemove = async () => {
+    await removeFriendById(user.id);
+  };
+
   return (
     <View style={{ paddingLeft:3, paddingRight:5, borderBottomWidth: 1, borderColor: "#014cc6" }}>
       <XStack space="$2" alignItems="center" paddingTop={20}>
@@ -75,23 +86,35 @@ export default function OtherUserThumbnail({
           </Paragraph>
         </YStack>
 
-        <View
-          style={{ flex: 1, alignItems: "flex-end", justifyContent: "center" }}
-        >
+
+        <XStack space="$3" style={{ flex: 1, alignItems: "flex-end"}}>
+          {isFriend && (
+            <Button
+              icon={X}
+              testID="remove-button"
+              size="$5"
+              style={{ backgroundColor: "#e90d52", color: "white", width: 50, height: 50 }}
+              onPress={() => handleRemove()}
+            />
+          )}
+          
           <Button
             icon={<ArrowRightSquare />}
             style={{
               backgroundColor: "#ff7403",
-              width: 40,
-              height: 40,
-              borderRadius: 20,
+              width: 50,
+              height: 50,
+              borderRadius: 50,
             }}
             onPress={() => {
               getOtherProfile(user.id);
               navigation.navigate("OtherProfileView");
             }}
           />
-        </View>
+          
+        </XStack>
+    
+        
       </XStack>
       <View padding={5}>
         <Paragraph fontSize={15}>{abbrevBio}</Paragraph>

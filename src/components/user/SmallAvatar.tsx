@@ -116,7 +116,7 @@ export default function SmallAvatar({ url, onUpload, allowUpload }: Props) {
               justifyContent: "center",
             }}
           >
-            <Text style={{ color: "grey" }}>Loading...</Text>
+            <Text style={{ color: "grey" }}>Loading</Text>
           </View>
         ) : (
           <Image

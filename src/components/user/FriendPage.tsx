@@ -135,7 +135,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   </H4>
                   {myFriends.map((friend) => (
                     <View>
-                      <OtherUserThumbnail navigation={navigation} user={friend}/>
+                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true}/>
                     </View>
                   ))}
                 </View>
