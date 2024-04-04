@@ -69,7 +69,7 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
                 <Text className="text-2xl text-center">
                   {otherUser.displayName
                     ? otherUser.displayName
-                    : "No display name"}
+                    : <Text> "No display name" </Text>} 
                 </Text>
               </View>
               <View className="self-stretch py-2">
