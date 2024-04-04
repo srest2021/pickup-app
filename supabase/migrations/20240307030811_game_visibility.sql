@@ -1232,22 +1232,24 @@ begin
     select jsonb_agg (
       case
         when f.player1_id = auth.uid() then jsonb_build_object (
-          'id', p1.id,
-          'username', p1.username,
-          'displayName', p1.display_name,
-          'avatarUrl', p1.avatar_url
-        )
-        else jsonb_build_object (
           'id', p2.id,
           'username', p2.username,
           'displayName', p2.display_name,
-          'avatarUrl', p2.avatar_url
+          'avatarUrl', p2.avatar_url,
+          'bio', p.bio
+        )
+        else jsonb_build_object (
+          'id', p1.id,
+          'username', p1.username,
+          'displayName', p1.display_name,
+          'avatarUrl', p1.avatar_url,
+          'bio', p.bio
         )
       end
     )
     from public.friends as f
-    join public.profiles as p1 on (f.player2_id = p1.id)
-    join public.profiles as p2 on (f.player1_id = p2.id)
+    join public.profiles as p2 on (f.player2_id = p2.id)
+    join public.profiles as p1 on (f.player1_id = p1.id)
     where f.player1_id = auth.uid() or f.player2_id = auth.uid()
     into data;
     return data;
@@ -1266,7 +1268,8 @@ begin
         'id', p.id,
         'username', p.username,
         'displayName', p.display_name,
-        'avatarUrl', p.avatar_url
+        'avatarUrl', p.avatar_url,
+        'bio', p.bio
       )
     )
     from public.friend_requests as fr

@@ -46,7 +46,7 @@ function useQueryUsers() {
         });
         return users;
       } else {
-        throw new Error("Error processing your search! Please try again later");
+        throw new Error("Error processing your search! Please try again later.");
       }
     } catch (error) {
       if (error instanceof Error) {
