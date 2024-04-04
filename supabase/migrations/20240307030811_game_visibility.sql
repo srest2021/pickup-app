@@ -1207,7 +1207,7 @@ begin
 
   -- add entry to friends table
   insert into friends (player1_id, player2_id)
-  values (request_sent_by, request_sent_to);
+  values (auth.uid(), request_sent_to);
 end;
 $$ language plpgsql;
 
