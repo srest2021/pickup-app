@@ -21,8 +21,6 @@ function useQueryGames() {
     getFilterSport,
     getFilterDist,
     getFilterLevel,
-    fg,
-    fgfo,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -39,8 +37,6 @@ function useQueryGames() {
     state.getFilterSport,
     state.getFilterDist,
     state.getFilterLevel,
-    state.feedGames,
-    state.feedGamesFriendsOnly,
   ]);
 
   const { getUserLocation } = useQueryUsers();
