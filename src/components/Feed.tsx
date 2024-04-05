@@ -164,6 +164,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
               onEndReachedThreshold={0.05}
               refreshControl={
                 <RefreshControl
+                  size={10}
                   refreshing={refreshing}
                   onRefresh={handleRefresh}
                   colors={["#ff7403"]}
