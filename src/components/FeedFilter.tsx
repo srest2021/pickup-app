@@ -62,16 +62,18 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
     <View padding="$2">
       <Dialog modal>
         <Dialog.Trigger asChild>
-          <Button
-            size="$3"
-            color="#ffffff"
-            borderColor="#08348c"
-            backgroundColor="#08348c"
-            icon={loading ? Loader : Filter}
-            variant="outlined"
-            disabled={loading}
-            style={{ alignSelf: "flex-start" }}
-          />
+        {!loading ? (
+        <Button
+          size="$3"
+          color="#ffffff"
+          borderColor="#08348c"
+          backgroundColor="#08348c"
+          icon={Filter}
+          variant="outlined"
+          disabled={loading}
+          style={{ alignSelf: "flex-start" }}
+        />
+      ) : null}
         </Dialog.Trigger>
 
         <Adapt when="sm" platform="touch">
