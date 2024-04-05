@@ -53,6 +53,21 @@ function useMutationGame() {
       const lat = location ? location.coords.latitude : 39.3289357;
       const long = location ? location.coords.longitude : -76.6172978;
 
+
+      //Checking for overlap
+      const doesGameOverlap = await supabase.rpc("is_game_overlap" , {
+        city,
+        state,
+        street,
+        zip,
+        datetime
+      })
+
+      if (doesGameOverlap) {
+        //Do something here with an error/warning for them to update their game time, probably a return statement
+        throw new Error("Someone else already planned a game here! Either join them or schedule your game for another time.")
+      }
+
       const { data, error } = await supabase.rpc("create_game", {
         title,
         description,

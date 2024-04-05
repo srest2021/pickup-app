@@ -93,6 +93,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       return;
     }
 
+
     // Combine date and time to one object
     const combinedDateTime = new Date(
       date.getFullYear(),
@@ -108,6 +109,8 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       });
       return;
     }
+
+    //Call function here to check if there is an overlapping game
 
     const myNewGame = await createGame(
       title,
@@ -131,6 +134,20 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       navigation.navigate("My Games", { screen: "MyGames" });
     }
   };
+
+  const autocompleteAddress = async (address) => {
+    //API KEY = pk.9ab0d93044f3a83dc41aad0677a190e9
+    const options = {method: 'GET', headers: {accept: 'application/json'}};
+    const apiURL = 'https://us1.locationiq.com/v1/autocomplete?key=pk.9ab0d93044f3a83dc41aad0677a190e9&q=' + address + '&countrycode=us';
+    fetch(apiURL, options)
+    .then(response => response.json())
+    .then(response => console.log(response))
+    .catch(err => console.error(err));
+    
+    //Potential Solutions:
+    //1. Use first address slot to serve as main search bar, when response is chosen, break down the response and fill the other adress inputs
+    //2. Cut down the address form to one input, and store the response chosen. Need to update database to store this.
+  }
 
   return (
     <View className="p-12">
