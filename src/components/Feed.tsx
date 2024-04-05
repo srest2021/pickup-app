@@ -35,7 +35,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const [allFriendsOnlyGamesFetched, setAllFriendsOnlyGamesFetched] =
     useState(false);
 
-  
   // on component render, clear state and get all games
   useEffect(() => {
     const getAllGames = async () => {
@@ -109,7 +108,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
           setAllFriendsOnlyGamesFetched(true);
         }
       }
-    } 
+    }
   };
 
   return (
@@ -146,54 +145,55 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
               </Tabs.List>
             </Tabs>
-            {(toggle === "publicGames" && publicGames.length > 0) || (toggle === "friendsOnlyGames" && friendsOnlyGames.length > 0) ? (
-            <FlatList
-              data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
-              renderItem={({ item }) => (
-                <GameThumbnail
-                  navigation={navigation}
-                  game={item}
-                  gametype="feed"
-                  key={item.id}
-                />
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              onEndReached={() => { handleLoadMore(); }}
-              onEndReachedThreshold={0.05}
-              refreshControl={
-                <RefreshControl
-                  size={10}
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                  colors={["#ff7403"]}
-                  tintColor="#ff7403"
-                  titleColor="#ff7403"
-                />
-              }
-              ListFooterComponent={() =>
-                refreshing && (
-                  <Spinner size="small" color="#ff7403" testID="spinner" />
-                )
-              }
-              contentContainerStyle={{ gap: 10 }}
-            />
-            ) : (
-              refreshing ? (
-                toggle === "publicGames" ? (
-                  <View className="items-center justify-center flex-1 p-12 text-center">
-                    <H4>Fetching Public Games...</H4>
-                  </View>
-                ) : (
-                  <View className="items-center justify-center flex-1 p-12 text-center">
-                    <H4>Fetching Friends Only Games...</H4>
-                  </View>
-                )
+            {(toggle === "publicGames" && publicGames.length > 0) ||
+            (toggle === "friendsOnlyGames" && friendsOnlyGames.length > 0) ? (
+              <FlatList
+                data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
+                renderItem={({ item }) => (
+                  <GameThumbnail
+                    navigation={navigation}
+                    game={item}
+                    gametype="feed"
+                    key={item.id}
+                  />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                onEndReached={() => {
+                  handleLoadMore();
+                }}
+                onEndReachedThreshold={0.05}
+                refreshControl={
+                  <RefreshControl
+                    size={10}
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    colors={["#ff7403"]}
+                    tintColor="#ff7403"
+                    titleColor="#ff7403"
+                  />
+                }
+                ListFooterComponent={() =>
+                  refreshing && (
+                    <Spinner size="small" color="#ff7403" testID="spinner" />
+                  )
+                }
+                contentContainerStyle={{ gap: 10 }}
+              />
+            ) : refreshing ? (
+              toggle === "publicGames" ? (
+                <View className="items-center justify-center flex-1 p-12 text-center">
+                  <H4>Fetching Public Games...</H4>
+                </View>
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No games nearby.</H4>
-                  <Button title="Click to Refresh" onPress={handleRefresh} />
+                  <H4>Fetching Friends Only Games...</H4>
                 </View>
               )
+            ) : (
+              <View className="items-center justify-center flex-1 p-12 text-center">
+                <H4>No games nearby.</H4>
+                <Button title="Click to Refresh" onPress={handleRefresh} />
+              </View>
             )}
           </View>
         ) : (

@@ -1,7 +1,4 @@
-import { supabase } from "../../lib/supabase";
-import { ScrollView, View, Text } from "react-native";
-import Avatar from "./Avatar";
-import Sports from "./Sports";
+import { ScrollView, Text } from "react-native";
 import {
   Button,
   Card,
@@ -12,6 +9,7 @@ import {
   Tabs,
   XStack,
   YStack,
+  View,
 } from "tamagui";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
@@ -61,7 +59,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   return (
     <>
       {session && session.user ? (
-        <View style={{ flex: 1 }}>
+        <View flex={1}>
           <Tabs
             alignSelf="center"
             justifyContent="center"
@@ -114,74 +112,81 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             }}
             contentContainerStyle={{ paddingTop: 20 }}
           >
-            {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
-            )}
+            <View flex={1}>
+              {refreshing && (
+                <Spinner size="small" color="#ff7403" testID="spinner" />
+              )}
 
-            {toggle === "friends" && myFriends ? (
-              <View>
-                <H4 style={{ textAlign: "center" }}>
-                  {myFriends.length}{" "}
-                  {myFriends.length == 1 ? "friend" : "friends"}
-                </H4>
-                {myFriends.map((friend) => (
-                  <View key={friend.id}>
-                    <OtherUserThumbnail
-                      navigation={navigation}
-                      user={friend}
-                      isFriend={true}
-                    />
-                  </View>
-                ))}
-              </View>
-            ) : toggle === "friendRequests" ? (
-              myFriendReqs.length > 0 ? (
+              {toggle === "friends" && myFriends ? (
                 <View>
                   <H4 style={{ textAlign: "center" }}>
-                    {" "}
-                    {myFriendReqs.length} pending friend requests
+                    {myFriends.length}{" "}
+                    {myFriends.length == 1 ? "friend" : "friends"}
                   </H4>
-                  {myFriendReqs.map((friendReq) => (
-                    <View>
-                      <Text key={friendReq.id}>{friendReq.username}</Text>
-                      <XStack justifyContent="flex-end" space="$2">
-                        <Button
-                          testID="reject-button"
-                          size="$2"
-                          style={{ backgroundColor: "#e90d52", color: "white" }}
-                          onPress={() =>
-                            rejectFriendRequestById(friendReq.username)
-                          }
-                        />
-                        <Button
-                          testID="accept-button"
-                          size="$2"
-                          style={{ backgroundColor: "#05a579", color: "white" }}
-                          onPress={() =>
-                            acceptFriendRequestById(friendReq.username)
-                          }
-                        />
-                      </XStack>
+                  {myFriends.map((friend) => (
+                    <View key={friend.id}>
+                      <OtherUserThumbnail
+                        navigation={navigation}
+                        user={friend}
+                        isFriend={true}
+                      />
                     </View>
                   ))}
                 </View>
+              ) : toggle === "friendRequests" ? (
+                myFriendReqs.length > 0 ? (
+                  <View>
+                    <H4 style={{ textAlign: "center" }}>
+                      {myFriendReqs.length} pending friend requests
+                    </H4>
+                    {myFriendReqs.map((friendReq) => (
+                      <View>
+                        <Text key={friendReq.id}>{friendReq.username}</Text>
+                        <XStack justifyContent="flex-end" space="$2">
+                          <Button
+                            testID="reject-button"
+                            size="$2"
+                            style={{
+                              backgroundColor: "#e90d52",
+                              color: "white",
+                            }}
+                            onPress={() =>
+                              rejectFriendRequestById(friendReq.id)
+                            }
+                          />
+                          <Button
+                            testID="accept-button"
+                            size="$2"
+                            style={{
+                              backgroundColor: "#05a579",
+                              color: "white",
+                            }}
+                            onPress={() =>
+                              acceptFriendRequestById(friendReq.id)
+                            }
+                          />
+                        </XStack>
+                      </View>
+                    ))}
+                  </View>
+                ) : (
+                  <View flex={1} alignSelf="center" justifyContent="center">
+                    <H4 textAlign="center">No friend requests</H4>
+                  </View>
+                )
+              ) : toggle === "searchForFriends" ? (
+                <SearchProfiles navigation={navigation} />
               ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No friend requests</H4>
+                <View flex={1} alignSelf="center" justifyContent="center">
+                  <H4 textAlign="center">No search results</H4>
                 </View>
-              )
-            ) : toggle === "searchForFriends" ? (
-              <SearchProfiles navigation={navigation} />
-            ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No friends search results</H4>
-              </View>
-            )}
+              )}
+            </View>
           </ScrollView>
         </View>
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Loading...</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Loading...</H4>
         </View>
       )}
     </>

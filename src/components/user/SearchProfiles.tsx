@@ -61,6 +61,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
                 key={user.id}
                 navigation={navigation}
                 user={user}
+                isFriend={false}
               />
             ))
           ) : (
