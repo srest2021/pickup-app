@@ -4,7 +4,6 @@ import SportSkill from "../SportSkill";
 import { XStack } from "tamagui";
 
 export default function Sport({ sport}: { sport: UserSport}) {
-  console.log(sport)
   return (
     <View className="flex flex-row p-2">
       <XStack>

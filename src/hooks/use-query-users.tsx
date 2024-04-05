@@ -124,6 +124,9 @@ function useQueryUsers() {
 
       let { data, error } = await supabase.rpc("get_friend_requests");
       if (error) console.error(error);
+      if(data == null && error == null) {
+        data = []
+      }
 
       if (data) {
         const friendRequests = data.map((friendRequest: any) => {
@@ -138,6 +141,7 @@ function useQueryUsers() {
         });
 
         setFriendRequests(friendRequests);
+        
         return friendRequests;
       } else {
         throw new Error(

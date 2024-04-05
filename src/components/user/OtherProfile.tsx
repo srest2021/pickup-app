@@ -107,7 +107,7 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
               <Sports sports={otherUser.sports} />
             </View>
           ) : (
-            <Text>No user on the session.</Text>
+            <Text>Loading user profile...</Text>
           )}
 
           <YStack space="$6" paddingTop="$5" alignItems="center">

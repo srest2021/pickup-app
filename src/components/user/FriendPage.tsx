@@ -63,10 +63,9 @@ export default function FriendPage({ navigation }: { navigation: any }) {
     setRefreshing(true);
     if (toggle === "friends") {
       const loadedFriends = await getFriends();
-      console.log("friends")
-      console.log(loadedFriends)
     } else if (toggle === "friendRequests") {
       const loadedReqs = await getFriendRequests();
+      
     } else if (toggle === "searchForFriends") {
     }
     setRefreshing(false);
@@ -143,7 +142,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   </H4>
                   {uniqueFriends.map((friend) => (
                     <View>
-                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true}/>
+                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true} isSearch={false}/>
                     </View>
                   ))}
                 </View>
