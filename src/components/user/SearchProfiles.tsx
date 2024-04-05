@@ -8,6 +8,7 @@ import useQueryUsers from "../../hooks/use-query-users";
 import { ThumbnailUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import { useStore } from "../../lib/store";
+import { OtherUser } from "../../lib/types";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [loading, setLoading] = useStore((state) => [
@@ -62,6 +63,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
                 navigation={navigation}
                 user={user}
                 isFriend={false}
+                isSearch={true}
               />
             ))
           ) : (
