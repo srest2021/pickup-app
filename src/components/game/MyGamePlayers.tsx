@@ -1,8 +1,6 @@
 import { View, ScrollView, Alert } from "react-native";
 import { Label, YStack, Text, H6, Card } from "tamagui";
 import { useStore } from "../../lib/store";
-import { ToastViewport, useToastController } from "@tamagui/toast";
-import { ToastDemo } from "../Toast";
 import AcceptedPlayer from "./AcceptedPlayer";
 import NonAcceptedPlayer from "./NonAcceptedPlayers";
 
@@ -17,8 +15,6 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
 
   return (
     <View style={{ display: "flex" }}>
-      <ToastViewport />
-      <ToastDemo />
       {session && session.user ? (
         <YStack style={{ flex: 1 }}>
           <YStack style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
@@ -37,12 +33,11 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
               elevate
               size="$5"
             >
-              <ScrollView>
+              <ScrollView testID="accepted-players-container">
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
                   <YStack
                     space="$2"
                     padding="$3"
-                    testID="accepted-players-container"
                   >
                     {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer

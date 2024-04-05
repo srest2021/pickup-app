@@ -9,7 +9,7 @@ import appConfig from "../../../tamagui.config";
 import Register from "../../../src/components/auth/Register";
 import { supabase } from "../../../src/lib/supabase";
 import "@testing-library/jest-dom";
-import { Alert } from 'react-native';
+import { Alert } from "react-native";
 
 describe("Register", () => {
   it("should render successfully", () => {
@@ -69,10 +69,10 @@ describe("Register button", () => {
   beforeEach(() => {
     jest.spyOn(supabase.auth, "signUp").mockResolvedValueOnce({
       data: { session: null },
-      error: {message:"Error registering"},
+      error: { message: "Error registering" },
     });
 
-    jest.spyOn(Alert, 'alert');
+    jest.spyOn(Alert, "alert");
   });
 
   it("should show an alert window when receiving an error", async () => {
@@ -96,7 +96,7 @@ describe("Register button", () => {
     const registerBtn = screen.getByTestId("register-button");
     fireEvent.press(registerBtn);
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith("Error registering")
+      expect(Alert.alert).toHaveBeenCalledWith("Error registering");
     });
   });
 });
