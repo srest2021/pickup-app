@@ -33,9 +33,13 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
               elevate
               size="$5"
             >
-              <ScrollView testID="accepted-players-container">
+              <ScrollView>
                 {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack space="$2" padding="$3">
+                  <YStack
+                    space="$2"
+                    padding="$3"
+                    testID="accepted-players-container"
+                  >
                     {acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer
                         key={index}
