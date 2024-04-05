@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, RefreshControl } from "react-native";
+import { View, Text, FlatList, RefreshControl, Button } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
@@ -49,10 +49,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
 
   // clear public games state and get public games
   const handlePublicGamesRefresh = async () => {
-    clearPublicGames();
     setAllPublicGamesFetched(false);
     setPublicOffset(0);
-    const games = await fetchFeedGames(false, publicOffset);
+    const games = await fetchFeedGames(false, 0);
     if (games) {
       setPublicOffset(games.length);
       setHasLocation(true);
@@ -63,10 +62,9 @@ const Feed = ({ navigation }: { navigation: any }) => {
 
   // clear friends-only games state and get friends-only games
   const handleFriendsOnlyGamesRefresh = async () => {
-    clearFriendsOnlyGames();
     setAllFriendsOnlyGamesFetched(false);
     setFriendsOnlyOffset(0);
-    const games = await fetchFeedGames(true, friendsOnlyOffset);
+    const games = await fetchFeedGames(true, 0);
     if (games) {
       setFriendsOnlyOffset(games.length);
       setHasLocation(true);
@@ -148,7 +146,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
               </Tabs.List>
             </Tabs>
-
+            {(toggle === "publicGames" && publicGames.length > 0) || (toggle === "friendsOnlyGames" && friendsOnlyGames.length > 0) ? (
             <FlatList
               data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
               renderItem={({ item }) => (
@@ -179,6 +177,24 @@ const Feed = ({ navigation }: { navigation: any }) => {
               }
               contentContainerStyle={{ gap: 10 }}
             />
+            ) : (
+              refreshing ? (
+                toggle === "publicGames" ? (
+                  <View className="items-center justify-center flex-1 p-12 text-center">
+                    <H4>Fetching Public Games...</H4>
+                  </View>
+                ) : (
+                  <View className="items-center justify-center flex-1 p-12 text-center">
+                    <H4>Fetching Friends Only Games...</H4>
+                  </View>
+                )
+              ) : (
+                <View className="items-center justify-center flex-1 p-12 text-center">
+                  <H4>No games nearby.</H4>
+                  <Button title="Click to Refresh" onPress={handleRefresh} />
+                </View>
+              )
+            )}
           </View>
         ) : (
           <View className="items-center justify-center flex-1 p-12 text-center">
