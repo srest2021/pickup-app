@@ -1,7 +1,4 @@
-import {
-  render,
-  getByText,
-} from "@testing-library/react-native";
+import { render, getByText } from "@testing-library/react-native";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
@@ -39,28 +36,28 @@ jest.mock("../../../src/hooks/use-mutation-user", () => ({
 describe("GamePlayers", () => {
   beforeEach(() => {
     mockFeedGame = {
-        id: "game_1",
-        organizerId: "user_1",
-        title: "test_game",
-        description: "T",
-        datetime: new Date(),
-        sport: { name: "soccer", skillLevel: 1 },
-        maxPlayers: 4,
-        currentPlayers: 2,
-        isPublic: true,
-        distanceAway: 5,
-        address: null,
-        acceptedPlayers: [
-          { id: "user_1", username: "Player 1" },
-          { id: "user_2", username: "Player 2" },
-        ],
-        organizer: {
-          id: "user_1",
-          username: "test_username",
-          displayName: "test",
-          bio: "test",
-          avatarUrl: "test"
-        }
+      id: "game_1",
+      organizerId: "user_1",
+      title: "test_game",
+      description: "T",
+      datetime: new Date(),
+      sport: { name: "soccer", skillLevel: 1 },
+      maxPlayers: 4,
+      currentPlayers: 2,
+      isPublic: true,
+      distanceAway: 5,
+      address: null,
+      acceptedPlayers: [
+        { id: "user_1", username: "Player 1" },
+        { id: "user_2", username: "Player 2" },
+      ],
+      organizer: {
+        id: "user_1",
+        username: "test_username",
+        displayName: "test",
+        bio: "test",
+        avatarUrl: "test",
+      },
     };
   });
 
