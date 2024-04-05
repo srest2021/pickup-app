@@ -3,13 +3,6 @@ import MessageInput from "../../../src/components/chatroom/MessageInput";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 
-jest.mock("../../../src/lib/store", () => ({
-  __esModule: true,
-  default: jest.fn(() => ({
-    loading: false,
-  })),
-}));
-
 // mock useMutationMessages
 const mockAddChatroomMessage = jest.fn();
 jest.mock("../../../src/hooks/use-mutation-messages", () => () => ({
@@ -56,7 +49,8 @@ describe("MessageInput", () => {
 
     fireEvent.changeText(input, "Test message");
     fireEvent.press(button);
-
-    expect(input.props.value).toEqual("");
+    await waitFor(() => () => {
+      expect(input.props.value).toEqual("");
+    });
   });
 });

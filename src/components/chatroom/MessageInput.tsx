@@ -40,6 +40,7 @@ const MessageInput = () => {
           }}
           variant="outlined"
           theme="active"
+          testID="send-button"
           onPress={() => sendMessage()}
         />
       </XStack>

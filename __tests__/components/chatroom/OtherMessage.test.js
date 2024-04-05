@@ -10,7 +10,7 @@ describe("OtherMessage component", () => {
       roomCode: "testcode",
       content: "Test message",
       sentAt: new Date("2024-04-03T12:34:56Z"),
-      user: { username: 'testusername'},
+      user: { username: "testusername" },
     };
 
     const { getByText } = render(
