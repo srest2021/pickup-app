@@ -16,7 +16,7 @@ import {
 import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
-import { Edit3, Loader } from "@tamagui/lucide-icons";
+import { Check, Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
@@ -38,14 +38,19 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   const friendsList: string[] = ["maddie", "clarissa", "kate"];
   const {getFriends} = useQueryUsers()
   const {getFriendRequests} = useQueryUsers()
-  const {acceptFriendRequestById} = useMutationUser()
-  const {rejectFriendRequestById} = useMutationUser()
 
-  //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
-  //const [session, friendList] = useStore((state) => [
-  //state.session,
-  //state.friendList,
-  //]);
+  // Create a set to store unique user IDs
+  const uniqueUserIds = new Set<string>();
+
+  // Remove duplicate users from myFriends array
+  const uniqueFriends = myFriends.filter((friend) => {
+    if (uniqueUserIds.has(friend.id)) {
+      return false; // Skip this user, it's a duplicate
+    }
+    uniqueUserIds.add(friend.id); // Add user ID to set
+    return true; // Include this user in the unique friends list
+  });
+  
   const [refreshing, setRefreshing] = useState(false);
   const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("friends");
@@ -58,14 +63,16 @@ export default function FriendPage({ navigation }: { navigation: any }) {
     setRefreshing(true);
     if (toggle === "friends") {
       const loadedFriends = await getFriends();
-      console.log("friends")
-      console.log(loadedFriends)
     } else if (toggle === "friendRequests") {
       const loadedReqs = await getFriendRequests();
+      
     } else if (toggle === "searchForFriends") {
     }
     setRefreshing(false);
   };
+
+  const filteredFriendReqs = myFriendReqs.filter(friendReq => friendReq.id !== session.user.id);
+  const pendingRequestsCount = filteredFriendReqs.length;
 
   return (
     <>
@@ -127,46 +134,34 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               <Spinner size="small" color="#ff7403" testID="spinner" />
             )}
 
-            {toggle === "friends" && myFriends ? (
+            {toggle === "friends" && uniqueFriends ? (
                 <View>
                   <H4 style={{ textAlign: "center" }}>
                     {" "}
-                    {myFriends.length} friends
+                    {uniqueFriends.length} friends
                   </H4>
-                  {myFriends.map((friend) => (
+                  {uniqueFriends.map((friend) => (
                     <View>
-                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true}/>
+                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true} isSearch={false}/>
                     </View>
                   ))}
                 </View>
               ) : toggle === "friendRequests" ? (
                   myFriendReqs.length > 0 ? (
                     <View>
-                      <H4 style={{ textAlign: 'center' }}> {myFriendReqs.length} pending friend requests</H4>
+                      <H4 style={{ textAlign: 'center' }}> {pendingRequestsCount} pending friend requests</H4>
                       {myFriendReqs.map((friendReq) => (
-                        <View>
-                          <Text key={friendReq.id}>{friendReq.username}</Text>
-                          <XStack justifyContent="flex-end" space="$2">
-                            <Button
-                              testID="reject-button"
-                              size="$2"
-                              style={{ backgroundColor: "#e90d52", color: "white" }}
-                              onPress={() => rejectFriendRequestById(friendReq.username)}
-                            />
-                            <Button
-                              testID="accept-button"
-                              size="$2"
-                              style={{ backgroundColor: "#05a579", color: "white" }}
-                              onPress={() => acceptFriendRequestById(friendReq.username)}
-                            />
-                          </XStack>
-                        </View>
+                        friendReq.id !== session.user.id && (
+                          <View>
+                            <OtherUserThumbnail navigation={navigation} user={friendReq} isFriend={false} isSearch={false}/>
+                          </View>
+                        )
                     ))}
     
                     </View>
                     ) : (
                       <View className="items-center justify-center flex-1 p-12 text-center">
-                        <H4>No friend requests</H4>
+                        <H4>Refresh to check for friend requests</H4>
                       </View>
                     )
               ) : toggle === "searchForFriends" ? (

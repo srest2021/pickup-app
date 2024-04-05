@@ -51,6 +51,17 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
           justifyContent: "space-between",
         }}
       >
+        <View
+          style={{
+            backgroundColor: "#08348c",
+            height: topThirdHeight,
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "flex-start",
+            padding: 12,
+          }}
+        ></View>
         <View className="p-12">
           {otherUser && user ? (
             <View>
@@ -96,7 +107,7 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
               <Sports sports={otherUser.sports} />
             </View>
           ) : (
-            <Text>No user on the session.</Text>
+            <Text>Loading user profile...</Text>
           )}
 
           <YStack space="$6" paddingTop="$5" alignItems="center">
@@ -111,7 +122,7 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
                 backgroundColor={"#ffffff"}
                 width="100%"
               >
-                {otherUser?.hasRequested ? "Requested" : "Request"}
+                {otherUser?.hasRequested ? "Requested" : "Send Friend Request"}
               </Button>
             ) : (
               <Text>You are friends!</Text>

@@ -259,12 +259,13 @@ function useMutationUser() {
   };
 
   const acceptFriendRequestById = async (userId: string) => {
+    console.log(userId)
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
       let { data, error } = await supabase.rpc("accept_friend_request", {
-        request_sent_to: userId,
+        sent_by: userId,
       });
       if (error) console.error(error);
 

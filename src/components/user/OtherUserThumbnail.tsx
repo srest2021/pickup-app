@@ -1,54 +1,36 @@
 import { ThumbnailUser } from "../../lib/types";
-import { Button, View, Paragraph, XStack, YStack, Avatar, Text } from "tamagui";
-import { ArrowRightSquare, X } from "@tamagui/lucide-icons";
+import { Button, View, Paragraph, XStack, YStack, Avatar, Text, Checkbox } from "tamagui";
+import { ArrowRightSquare, Check, X } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import SmallAvatar from "./SmallAvatar";
 import useMutationGame from "../../hooks/use-mutation-game";
 import useMutationUser from "../../hooks/use-mutation-user";
+import { useNavigation } from '@react-navigation/native';
 
 export default function OtherUserThumbnail({
   navigation,
   user: user,
   isFriend,
+  isSearch,
 }: {
   navigation: any;
   user: ThumbnailUser;
   isFriend: boolean;
+  isSearch: boolean;
 }) {
   const { getOtherProfile } = useQueryUsers();
-  const [url, setAvatarUrl] = useState<string | null>(null);
+  //const [url, setAvatarUrl] = useState<string | null>(null);
+
+  //const nav = useNavigation();
+  //const isOnSpecificPage = nav && navigation.getState().routes.some(route => route.name === 'SearchForFriends');
+  //console.log('Current route name:', navigation.getState().routes[navigation.getState().index].name);
+  //console.log("HIIII")
+  //console.log(isOnSpecificPage)
 
   const avatarUrl =
     user.avatarUrl && user.avatarUrl.length > 0 ? user.avatarUrl : undefined;
-
-    useEffect(() => {
-      if (url) downloadImage(url);
-    }, [url]);
-  
-    async function downloadImage(path: string) {
-      console.log("hi")
-      try {
-        const { data, error } = await supabase.storage
-          .from("avatars")
-          .download(path);
-  
-        if (error) {
-          throw error;
-        }
-  
-        const fr = new FileReader();
-        fr.readAsDataURL(data);
-        fr.onload = () => {
-          setAvatarUrl(fr.result as string);
-        };
-      } catch (error) {
-        if (error instanceof Error) {
-          console.log("Error downloading image: ", error.message);
-        }
-      }
-    }
 
   const abbrevBio =
     user.bio && user.bio.trim().length > 85
@@ -56,10 +38,16 @@ export default function OtherUserThumbnail({
       : user.bio;
 
   const { removeFriendById } = useMutationUser();
+  const { acceptFriendRequestById } = useMutationUser();
 
   const handleRemove = async () => {
     await removeFriendById(user.id);
   };
+
+  const handleAccept = async () => {
+    console.log("handleaccept")
+    await acceptFriendRequestById(user.id);
+  }
 
   return (
     <View style={{ paddingLeft:3, paddingRight:5, borderBottomWidth: 1, borderColor: "#014cc6" }}>
@@ -80,7 +68,7 @@ export default function OtherUserThumbnail({
 
 
         <XStack space="$3" style={{ flex: 1, justifyContent: "flex-end"}}>
-          {isFriend && (
+          {!isSearch && isFriend ? (
             <Button
               icon={X}
               testID="remove-button"
@@ -88,6 +76,16 @@ export default function OtherUserThumbnail({
               style={{ backgroundColor: "#e90d52", color: "white", width: 50, height: 50 }}
               onPress={() => handleRemove()}
             />
+          ) : (
+            !isSearch && (
+            <Button
+              icon={Check}
+              testID="accept-button"
+              size="$5"
+              style={{ backgroundColor: "#05a579", color: "white", width: 50, height: 50 }}
+              onPress={() => handleAccept()}
+            />
+            )
           )}
           
           <Button
