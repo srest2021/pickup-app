@@ -87,7 +87,10 @@ function useQueryUsers() {
       if (!session?.user) throw new Error("No user on the session!");
 
       let { data, error } = await supabase.rpc("get_friends");
-      if (error) console.error(error);
+      if (error) throw error;
+      if (data == null && error == null) {
+        data = []
+      }
 
       if (data) {
         const friends = data.map((friend: any) => {
@@ -123,8 +126,8 @@ function useQueryUsers() {
       if (!session?.user) throw new Error("No user on the session!");
 
       let { data, error } = await supabase.rpc("get_friend_requests");
-      if (error) console.error(error);
-      if(data == null && error == null) {
+      if (error) throw error;
+      if (data == null && error == null) {
         data = []
       }
 
