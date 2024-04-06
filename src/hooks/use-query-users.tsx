@@ -33,6 +33,7 @@ function useQueryUsers() {
         .from("profiles")
         .select("id, username, display_name, bio, avatar_url")
         .or(`username.ilike.%${username}%, display_name.ilike.%${username}%`)
+        .not("id", "eq", session.user.id)
         .order("username", { ascending: true });
       if (error) throw error;
       if (data) {

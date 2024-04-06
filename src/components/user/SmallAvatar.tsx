@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-//import { supabase } from "../../lib/supabase";
 import { View, Avatar, Text } from "tamagui";
 import { useStore } from "../../lib/store";
 import { ThumbnailUser } from "../../lib/types";
