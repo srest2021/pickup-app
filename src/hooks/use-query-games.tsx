@@ -172,16 +172,18 @@ function useQueryGames() {
       const filterDist = getFilterDist();
       const filterLevel = getFilterLevel();
 
-      const { data, error } = await supabase
-        .rpc(friendsOnly ? "friends_only_games" : "nearby_games", {
+      const { data, error } = await supabase.rpc(
+        friendsOnly ? "friends_only_games" : "nearby_games",
+        {
           lat: location.coords.latitude,
           long: location.coords.longitude,
           dist_limit: filterDist,
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
           offset,
-          limit: 20, 
-        });
+          limit: 20,
+        },
+      );
       if (error) throw error;
 
       if (data) {
@@ -206,8 +208,9 @@ function useQueryGames() {
           };
           return feedGame;
         });
-        offset === 0 && (friendsOnly ? clearFeedGamesFriendsOnly() : clearFeedGames());
-        friendsOnly ?  setFeedGamesFriendsOnly(games) : setFeedGames(games);
+        offset === 0 &&
+          (friendsOnly ? clearFeedGamesFriendsOnly() : clearFeedGames());
+        friendsOnly ? setFeedGamesFriendsOnly(games) : setFeedGames(games);
         return games;
       } else {
         throw new Error("Error fetching feed games! Please try again later.");

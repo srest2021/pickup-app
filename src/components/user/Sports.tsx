@@ -3,7 +3,7 @@ import { View, Text, H5 } from "tamagui";
 import { UserSport } from "../../lib/types";
 import Sport from "./Sport";
 
-export default function Sports({ sports}: { sports: any}) {
+export default function Sports({ sports }: { sports: any }) {
   return (
     <View paddingBottom="$3" paddingTop="$3">
       <H5>My Sports</H5>

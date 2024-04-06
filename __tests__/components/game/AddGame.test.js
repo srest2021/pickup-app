@@ -3,12 +3,13 @@ import {
   fireEvent,
   waitFor,
   screen,
+  act,
 } from "@testing-library/react-native";
 import AddGame from "../../../src/components/game/AddGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
-import { ToastProvider } from "@tamagui/toast";
+import { Alert } from "react-native";
 
 // mock user
 const mockUser = {
@@ -56,9 +57,7 @@ describe("AddGame", () => {
 
     const { root } = render(
       <TamaguiProvider config={appConfig}>
-        <ToastProvider>
-          <AddGame navigation={navigation} />
-        </ToastProvider>
+        <AddGame navigation={navigation} />
       </TamaguiProvider>,
     );
 
@@ -109,9 +108,7 @@ describe("AddGame", () => {
 
     const { root } = render(
       <TamaguiProvider config={appConfig}>
-        <ToastProvider>
-          <AddGame navigation={navigation} />
-        </ToastProvider>
+        <AddGame navigation={navigation} />
       </TamaguiProvider>,
     );
 
@@ -119,7 +116,6 @@ describe("AddGame", () => {
     fireEvent.changeText(screen.getByTestId("titleInput"), "New Game Title");
     fireEvent.changeText(screen.getByTestId("dateInput"), new Date());
     fireEvent.changeText(screen.getByTestId("timeInput"), new Date());
-    //fireEvent(screen.getByTestId("visibilityInput"), "onCheckedChange", true);
     fireEvent.changeText(screen.getByTestId("streetInput"), "Homewood");
     fireEvent.changeText(screen.getByTestId("cityInput"), "Baltimore");
     fireEvent.changeText(screen.getByTestId("stateInput"), "MD");
@@ -156,6 +152,52 @@ describe("AddGame", () => {
 
       // Ensure navigation to 'MyGames' is triggered after creating the game
       expect(navigation.navigate).toHaveBeenCalledWith("MyGames");
+    });
+  });
+});
+
+describe("AddGame", () => {
+  beforeEach(() => {
+    jest.spyOn(Alert, "alert");
+  });
+
+  test("should alert the user when not all required fields are filled", async () => {
+    const navigation = { navigate: jest.fn() };
+
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <AddGame navigation={navigation} />
+      </TamaguiProvider>,
+    );
+
+    // Simulate user input changes
+    //act(() => {
+    //fireEvent.changeText(screen.getByTestId("titleInput"), "New Game Title");
+    fireEvent.changeText(screen.getByTestId("dateInput"), new Date());
+    fireEvent.changeText(screen.getByTestId("timeInput"), new Date());
+    fireEvent.changeText(screen.getByTestId("streetInput"), "Homewood");
+    fireEvent.changeText(screen.getByTestId("cityInput"), "Baltimore");
+    fireEvent.changeText(screen.getByTestId("stateInput"), "MD");
+    fireEvent.changeText(screen.getByTestId("zipInput"), "21218");
+    // Simulate changing the value of the Select component
+    fireEvent(screen.getByTestId("sportInput"), "onValueChange", "basketball");
+    // Simulate changing the value of the RadioGroup component
+    fireEvent(screen.getByTestId("skillInput"), "onValueChange", "1");
+    fireEvent.changeText(screen.getByTestId("maxPlayerInput"), "10");
+    fireEvent.changeText(
+      screen.getByTestId("descriptionInput"),
+      "Test Description",
+    );
+
+    // Simulate button press to create a new game
+    const publishButton = screen.getByTestId("addGameButton");
+    fireEvent.press(publishButton);
+    //});
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Please fill out all required fields.",
+      );
     });
   });
 });

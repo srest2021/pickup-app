@@ -12,6 +12,8 @@ function useQueryUsers() {
     setOtherUser,
     setFriends,
     setFriendRequests,
+    setSearchResults,
+    addAvatarUrls,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -19,11 +21,11 @@ function useQueryUsers() {
     state.setOtherUser,
     state.setFriends,
     state.setFriendRequests,
+    state.setSearchResults,
+    state.addAvatarUrls,
   ]);
 
-  const searchByUsername = async (
-    username: string,
-  ): Promise<ThumbnailUser[] | undefined> => {
+  const searchByUsername = async (username: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -44,9 +46,18 @@ function useQueryUsers() {
           };
           return user;
         });
-        return users;
+        setSearchResults(users);
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatar_url,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
       } else {
-        throw new Error("Error processing your search! Please try again later");
+        throw new Error(
+          "Error processing your search! Please try again later.",
+        );
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -89,7 +100,7 @@ function useQueryUsers() {
       let { data, error } = await supabase.rpc("get_friends");
       if (error) throw error;
       if (data == null && error == null) {
-        data = []
+        data = [];
       }
 
       if (data) {
@@ -103,8 +114,15 @@ function useQueryUsers() {
           };
           return myFriend;
         });
-
         setFriends(friends);
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatarUrl,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
+
         return friends;
       } else {
         throw new Error("Error fetching friends! Please try again later.");
@@ -128,7 +146,7 @@ function useQueryUsers() {
       let { data, error } = await supabase.rpc("get_friend_requests");
       if (error) throw error;
       if (data == null && error == null) {
-        data = []
+        data = [];
       }
 
       if (data) {
@@ -142,9 +160,15 @@ function useQueryUsers() {
           };
           return myFriendRequest;
         });
-
         setFriendRequests(friendRequests);
-        
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatarUrl,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
+
         return friendRequests;
       } else {
         throw new Error(

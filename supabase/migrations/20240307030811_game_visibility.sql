@@ -166,48 +166,6 @@ create policy "Users can update their own sports." on sports
 create policy "Users can delete their own sports." on sports
   for delete using (auth.uid() = user_id);
 
--- get another user profile (includes has_requested and is_friend fields)
-create or replace function get_other_profile(player_id "uuid")
-returns jsonb as $$
-declare 
-  data jsonb;
-begin
-  select jsonb_build_object(
-    'id', p.id,
-    'username', p.username,
-    'displayName', p.display_name,
-    'bio', p.bio,
-    'avatarUrl', p.avatar_url,
-    'sports', (
-      SELECT jsonb_agg(
-        jsonb_build_object(
-          'id', s.id,
-          'sport', s.name,
-          'skillLevel', s.skill_level
-        )
-      )
-      from public.sports as s
-      where p.id = s.user_id
-    ),
-    'hasRequested', auth.uid() in (
-      select fr.request_sent_by
-      from friend_requests as fr
-      where fr.request_sent_to = player_id
-    ),
-    'isFriend', exists (
-      select 1
-      from friends as f
-      where (f.player1_id = auth.uid() and f.player2_id = p.id)
-        or (f.player1_id = p.id and f.player2_id = auth.uid())
-    )
-  )
-  from public.profiles as p
-  where p.id = player_id
-  into data;
-  return data;
-end;
-$$ language plpgsql;
-
 -- get the user id from a string or partial string!
 create or replace function username_search(username text)
 returns jsonb as $$
@@ -257,14 +215,6 @@ using btree (organizer_id);
 
 alter table games
   enable row level security;
-
-create policy "Public games are viewable by everyone; friends-only games are viewable by the organizer's friends." on games
-  for select using (is_public or ((not is_public) and exists (
-    select 1
-    from friends as f
-    where (f.player1_id = auth.uid() and f.player2_id = organizer_id)
-      or (f.player1_id = organizer_id and f.player2_id = auth.uid())
-  )));
 
 create policy "Users can insert their own games." on games
   for insert with check (auth.uid() = organizer_id);
@@ -455,7 +405,7 @@ create policy "Players cannot update existing friend requests." on friend_reques
   for update with check (false);
 
 create policy "Players can remove their own friend requests" on friend_requests
-  for delete using (request_sent_by = auth.uid());
+  for delete using (request_sent_by = auth.uid() or request_sent_to = auth.uid());
 
 -- friends table
 
@@ -488,6 +438,14 @@ create policy "Players cannot update existing friends." on friends
 
 create policy "Players can remove their own friends" on friends
   for delete using (player1_id = auth.uid() or player2_id = auth.uid());
+
+create policy "Public games are viewable by everyone; friends-only games are viewable by the organizer's friends." on games
+  for select using (is_public or ((not is_public) and exists (
+    select 1
+    from friends as f
+    where (f.player1_id = auth.uid() and f.player2_id = organizer_id)
+      or (f.player1_id = organizer_id and f.player2_id = auth.uid())
+  )));
 
 -- messages table
 create table messages (
@@ -1189,18 +1147,67 @@ begin
 end;
 $$ language plpgsql;
 
+-- get another user profile (includes has_requested and is_friend fields)
+create or replace function get_other_profile(player_id "uuid")
+returns jsonb as $$
+declare 
+  data jsonb;
+begin
+  select jsonb_build_object(
+    'id', p.id,
+    'username', p.username,
+    'displayName', p.display_name,
+    'bio', p.bio,
+    'avatarUrl', p.avatar_url,
+    'sports', (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', s.id,
+          'sport', s.name,
+          'skillLevel', s.skill_level
+        )
+      )
+      from public.sports as s
+      where p.id = s.user_id
+    ),
+    'hasRequested', auth.uid() in (
+      select fr.request_sent_by
+      from friend_requests as fr
+      where fr.request_sent_to = player_id
+    ),
+    'isFriend', exists (
+      select 1
+      from friends as f
+      where (f.player1_id = auth.uid() and f.player2_id = p.id)
+        or (f.player1_id = p.id and f.player2_id = auth.uid())
+    )
+  )
+  from public.profiles as p
+  where p.id = player_id
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
 -- accept friend request
-create or replace function accept_friend_request(request_sent_to "uuid")
+create or replace function accept_friend_request(sent_by "uuid")
 returns void as $$
 begin
   -- remove friend request from friend_requests table
-  delete from friend_requests
-  where friend_requests.request_sent_by = auth.uid()
-  and friend_requests.request_sent_to = accept_friend_request.request_sent_to;
+  delete from friend_requests as fr
+  where (
+    (
+      fr.request_sent_to = auth.uid()
+      and fr.request_sent_by = sent_by
+    ) or (
+      fr.request_sent_to = sent_by
+      and fr.request_sent_by = auth.uid()
+    )
+  );
 
   -- add entry to friends table
   insert into friends (player1_id, player2_id)
-  values (request_sent_by, request_sent_to);
+  values (auth.uid(), sent_by);
 end;
 $$ language plpgsql;
 
@@ -1225,22 +1232,24 @@ begin
     select jsonb_agg (
       case
         when f.player1_id = auth.uid() then jsonb_build_object (
-          'id', p1.id,
-          'username', p1.username,
-          'displayName', p1.display_name,
-          'avatarUrl', p1.avatar_url
-        )
-        else jsonb_build_object (
           'id', p2.id,
           'username', p2.username,
           'displayName', p2.display_name,
-          'avatarUrl', p2.avatar_url
+          'avatarUrl', p2.avatar_url,
+          'bio', p.bio
+        )
+        else jsonb_build_object (
+          'id', p1.id,
+          'username', p1.username,
+          'displayName', p1.display_name,
+          'avatarUrl', p1.avatar_url,
+          'bio', p.bio
         )
       end
     )
     from public.friends as f
-    join public.profiles as p1 on (f.player2_id = p1.id)
-    join public.profiles as p2 on (f.player1_id = p2.id)
+    join public.profiles as p2 on (f.player2_id = p2.id)
+    join public.profiles as p1 on (f.player1_id = p1.id)
     where f.player1_id = auth.uid() or f.player2_id = auth.uid()
     into data;
     return data;
@@ -1259,11 +1268,13 @@ begin
         'id', p.id,
         'username', p.username,
         'displayName', p.display_name,
-        'avatarUrl', p.avatar_url
+        'avatarUrl', p.avatar_url,
+        'bio', p.bio
       )
     )
     from public.friend_requests as fr
     join public.profiles as p on fr.request_sent_by = p.id
+    where fr.request_sent_to = auth.uid()
     into data;
     return data;
 end;

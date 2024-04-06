@@ -1,13 +1,10 @@
 import { ThumbnailUser } from "../../lib/types";
-import { Button, View, Paragraph, XStack, YStack, Avatar, Text, Checkbox } from "tamagui";
+import { Button, View, Paragraph, XStack, YStack } from "tamagui";
 import { ArrowRightSquare, Check, X } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
 import SmallAvatar from "./SmallAvatar";
-import useMutationGame from "../../hooks/use-mutation-game";
 import useMutationUser from "../../hooks/use-mutation-user";
-import { useNavigation } from '@react-navigation/native';
+import { useStore } from "../../lib/store";
 
 export default function OtherUserThumbnail({
   navigation,
@@ -20,14 +17,8 @@ export default function OtherUserThumbnail({
   isFriend: boolean;
   isSearch: boolean;
 }) {
+  const [loading] = useStore((state) => [state.loading]);
   const { getOtherProfile } = useQueryUsers();
-  //const [url, setAvatarUrl] = useState<string | null>(null);
-
-  //const nav = useNavigation();
-  //const isOnSpecificPage = nav && navigation.getState().routes.some(route => route.name === 'SearchForFriends');
-  //console.log('Current route name:', navigation.getState().routes[navigation.getState().index].name);
-  //console.log("HIIII")
-  //console.log(isOnSpecificPage)
 
   const avatarUrl =
     user.avatarUrl && user.avatarUrl.length > 0 ? user.avatarUrl : undefined;
@@ -45,18 +36,20 @@ export default function OtherUserThumbnail({
   };
 
   const handleAccept = async () => {
-    console.log("handleaccept")
     await acceptFriendRequestById(user.id);
-  }
+  };
 
   return (
-    <View style={{ paddingLeft:3, paddingRight:5, borderBottomWidth: 1, borderColor: "#014cc6" }}>
+    <View
+      style={{
+        paddingLeft: 3,
+        paddingRight: 5,
+        borderBottomWidth: 1,
+        borderColor: "#014cc6",
+      }}
+    >
       <XStack space="$2" alignItems="center" paddingTop={20}>
-          <SmallAvatar
-            url={user.avatarUrl}
-            onUpload={() => {}}
-            allowUpload={false}
-          />
+        <SmallAvatar url={avatarUrl} user={user} />
         <YStack>
           <Paragraph fontSize={18}>
             {user.displayName ? user.displayName : user.username}
@@ -66,28 +59,39 @@ export default function OtherUserThumbnail({
           </Paragraph>
         </YStack>
 
-
-        <XStack space="$3" style={{ flex: 1, justifyContent: "flex-end"}}>
+        <XStack space="$3" style={{ flex: 1, justifyContent: "flex-end" }}>
           {!isSearch && isFriend ? (
             <Button
               icon={X}
               testID="remove-button"
               size="$5"
-              style={{ backgroundColor: "#e90d52", color: "white", width: 50, height: 50 }}
+              disabled={loading}
+              style={{
+                backgroundColor: "#e90d52",
+                color: "white",
+                width: 50,
+                height: 50,
+              }}
               onPress={() => handleRemove()}
             />
           ) : (
             !isSearch && (
-            <Button
-              icon={Check}
-              testID="accept-button"
-              size="$5"
-              style={{ backgroundColor: "#05a579", color: "white", width: 50, height: 50 }}
-              onPress={() => handleAccept()}
-            />
+              <Button
+                icon={Check}
+                testID="accept-button"
+                size="$5"
+                disabled={loading}
+                style={{
+                  backgroundColor: "#05a579",
+                  color: "white",
+                  width: 50,
+                  height: 50,
+                }}
+                onPress={() => handleAccept()}
+              />
             )
           )}
-          
+
           <Button
             icon={<ArrowRightSquare />}
             style={{
@@ -101,10 +105,7 @@ export default function OtherUserThumbnail({
               navigation.navigate("OtherProfileView");
             }}
           />
-          
         </XStack>
-    
-        
       </XStack>
       <View padding={5}>
         <Paragraph fontSize={15}>
