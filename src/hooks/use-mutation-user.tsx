@@ -16,9 +16,12 @@ function useMutationUser() {
     addUserSport,
     editUserSport,
     setUserSports,
+    addFriendRequest,
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
+    addAvatarUrls,
+    editAvatarPath,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -30,9 +33,12 @@ function useMutationUser() {
     state.addUserSport,
     state.editUserSport,
     state.setUserSports,
+    state.addFriendRequest,
     state.acceptFriendRequest,
     state.rejectFriendRequest,
     state.removeFriend,
+    state.addAvatarUrls,
+    state.editAvatarPath,
   ]);
 
   useEffect(() => {
@@ -46,8 +52,10 @@ function useMutationUser() {
   }, []);
 
   useEffect(() => {
-    if (session) getProfile();
-  }, [session]);
+    if (session) {
+      getProfile();
+    }
+  }, [session?.access_token]);
 
   const getProfile = async () => {
     try {
@@ -94,6 +102,9 @@ function useMutationUser() {
         };
         setUser(user);
         setUserSports(user.sports);
+        addAvatarUrls([
+          { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
+        ]);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -220,6 +231,7 @@ function useMutationUser() {
         avatarUrl: avatar_url,
       };
       editUser(updatedUser);
+      editAvatarPath(session?.user.id, avatar_url);
       return updatedUser;
     } catch (error) {
       if (error instanceof Error) {
@@ -230,7 +242,7 @@ function useMutationUser() {
     }
   };
 
-  const addFriendRequest = async (userId: string) => {
+  const sendFriendRequest = async (userId: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -247,6 +259,7 @@ function useMutationUser() {
       if (error) throw error;
 
       if (data) {
+        addFriendRequest();
         return friendRequest;
       }
     } catch (error) {
@@ -331,7 +344,7 @@ function useMutationUser() {
     getProfile,
     updateProfile,
     setSport,
-    addFriendRequest,
+    sendFriendRequest,
     acceptFriendRequestById,
     rejectFriendRequestById,
     removeFriendById,

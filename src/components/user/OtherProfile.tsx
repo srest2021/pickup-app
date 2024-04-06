@@ -8,6 +8,8 @@ import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { OtherUser } from "../../lib/types";
+import useQueryUsers from "../../hooks/use-query-users";
+import { useEffect } from "react";
 
 // Get the height of the screen
 const windowHeight = Dimensions.get("window").height;
@@ -15,21 +17,37 @@ const windowHeight = Dimensions.get("window").height;
 // Calculate the height for the top third
 const topThirdHeight = windowHeight / 4;
 
-export default function OtherProfile({ navigation }: { navigation: any }) {
-  const [loading, setLoading, otherUser, user] = useStore((state) => [
-    state.loading,
-    state.setLoading,
+export default function OtherProfile({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) {
+  const { userId } = route.params;
+
+  const [otherUser, setOtherUser, user] = useStore((state) => [
     state.otherUser,
+    state.setOtherUser,
     state.user,
   ]);
   const toast = useToastController();
-  const { addFriendRequest } = useMutationUser();
+
+  const { sendFriendRequest } = useMutationUser();
+  const { getOtherProfile } = useQueryUsers();
+
+  useEffect(() => {
+    getOtherProfile(userId);
+    return () => {
+      setOtherUser(null);
+    };
+  }, []);
 
   // Returns true if the user has requested
   const handleRequestLogic = async () => {
     // Send friend request
     // using !, otherUser should never be null if this page appears.
-    const friendRequest = await addFriendRequest(otherUser!.id);
+    const friendRequest = await sendFriendRequest(otherUser!.id);
 
     if (friendRequest) {
       toast.show("Success!", {
@@ -71,6 +89,7 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
               >
                 <Avatar
                   url={otherUser.avatarUrl}
+                  user={otherUser}
                   onUpload={() => {}}
                   allowUpload={false}
                 />
@@ -107,29 +126,31 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
               </YStack>
 
               <Sports sports={otherUser.sports} />
+
+              <YStack space="$6" paddingTop="$5" alignItems="center">
+                {!otherUser?.isFriend ? (
+                  <Button
+                    variant="outlined"
+                    disabled={otherUser?.hasRequested}
+                    onPress={() => handleRequestLogic()}
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor={"#ffffff"}
+                    width="100%"
+                  >
+                    {otherUser?.hasRequested
+                      ? "Requested"
+                      : "Send Friend Request"}
+                  </Button>
+                ) : (
+                  <Text>You are friends!</Text>
+                )}
+              </YStack>
             </View>
           ) : (
             <Text>Loading user profile...</Text>
           )}
-
-          <YStack space="$6" paddingTop="$5" alignItems="center">
-            {!otherUser?.isFriend ? (
-              <Button
-                variant="outlined"
-                disabled={otherUser?.hasRequested}
-                onPress={() => handleRequestLogic()}
-                size="$5"
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor={"#ffffff"}
-                width="100%"
-              >
-                {otherUser?.hasRequested ? "Requested" : "Send Friend Request"}
-              </Button>
-            ) : (
-              <Text>You are friends!</Text>
-            )}
-          </YStack>
         </View>
       </ScrollView>
     </View>

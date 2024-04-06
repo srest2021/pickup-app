@@ -7,23 +7,17 @@ function useQueryAvatars() {
     state.addAvatarUrl,
   ]);
 
-  async function fetchAvatar(
-    userId: string,
-    avatarPath: string,
-  ): Promise<string | undefined> {
+  async function fetchAvatar(userId: string, avatarPath: string) {
     if (avatarPath) {
-      const avatarUrlAlreadyExists = avatarUrls.find(
-        (elem) => elem.userId === userId,
-      );
+      const avatarUrlAlreadyExists =
+        avatarUrls.find((elem) => elem.userId === userId)?.avatarUrl != null;
       if (avatarUrlAlreadyExists) {
-        return avatarUrlAlreadyExists.avatarUrl;
+        return;
       }
       try {
-        const res = await downloadImage(userId, avatarPath);
-        return res;
+        await downloadImage(userId, avatarPath);
       } catch (error) {
         addAvatarUrl(userId, null);
-        return undefined;
       }
     }
   }
@@ -38,9 +32,7 @@ function useQueryAvatars() {
     fr.readAsDataURL(data);
     fr.onload = () => {
       addAvatarUrl(userId, fr.result as string);
-      return fr.result as string;
     };
-    return undefined;
   }
 
   return { fetchAvatar };

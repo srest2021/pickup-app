@@ -1,5 +1,5 @@
 import { ScrollView, Text } from "react-native";
-import { H4, Separator, Spinner, Tabs, View } from "tamagui";
+import { H4, Separator, Spinner, Tabs, View, ListItem, YGroup } from "tamagui";
 import { useEffect, useState } from "react";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import SearchProfiles from "./SearchProfiles";
@@ -86,87 +86,107 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               </Tabs.Tab>
             </Tabs.List>
           </Tabs>
-          <ScrollView
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            onScroll={(e) => {
-              const { contentOffset } = e.nativeEvent;
-              if (contentOffset.y < -50 && !refreshing) {
-                handleRefresh();
-              }
-            }}
-            contentContainerStyle={{ paddingTop: 20 }}
-          >
-            <View flex={1} padding="$5">
-              {refreshing && (
-                <Spinner size="small" color="#ff7403" testID="spinner" />
-              )}
+          {toggle === "searchForFriends" ? (
+            <SearchProfiles navigation={navigation} />
+          ) : (
+            <ScrollView
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              onScroll={(e) => {
+                const { contentOffset } = e.nativeEvent;
+                if (contentOffset.y < -50 && !refreshing) {
+                  handleRefresh();
+                }
+              }}
+              contentContainerStyle={{ paddingTop: 10 }}
+            >
+              <View flex={1} padding="$5">
+                {refreshing && (
+                  <Spinner size="small" color="#ff7403" testID="spinner" />
+                )}
 
-              {toggle === "friends" && myFriends ? (
-                <View>
-                  {myFriends.length > 0 ? (
-                    <View>
+                {toggle === "friends" && myFriends ? (
+                  <View flex={1}>
+                    {myFriends.length > 0 ? (
+                      <View flex={1} space="$3">
+                        <H4 style={{ textAlign: "center" }}>
+                          {myFriends.length}{" "}
+                          {myFriends.length == 1 ? "friend" : "friends"}
+                        </H4>
+                        <YGroup
+                          alignSelf="center"
+                          bordered
+                          width="100%"
+                          size="$4"
+                          flex={1}
+                          space="$3"
+                        >
+                          {myFriends.map((friend) => (
+                            <YGroup.Item key={`friend-${friend.id}`}>
+                              <OtherUserThumbnail
+                                navigation={navigation}
+                                user={friend}
+                                isFriend={true}
+                                isSearch={false}
+                              />
+                            </YGroup.Item>
+                          ))}
+                        </YGroup>
+                      </View>
+                    ) : refreshing ? (
+                      <View flex={1} alignSelf="center" justifyContent="center">
+                        <H4 textAlign="center">Loading friends...</H4>
+                      </View>
+                    ) : (
+                      <View flex={1} alignSelf="center" justifyContent="center">
+                        <H4 textAlign="center">No friends yet</H4>
+                      </View>
+                    )}
+                  </View>
+                ) : (
+                  toggle === "friendRequests" &&
+                  myFriendReqs &&
+                  (myFriendReqs.length > 0 ? (
+                    <View space="$3">
                       <H4 style={{ textAlign: "center" }}>
-                        {myFriends.length}{" "}
-                        {myFriends.length == 1 ? "friend" : "friends"}
+                        {myFriendReqs.length} pending friend requests
                       </H4>
-                      {myFriends.map((friend) => (
-                        <OtherUserThumbnail
-                          key={`friend-${friend.id}`}
-                          navigation={navigation}
-                          user={friend}
-                          isFriend={true}
-                          isSearch={false}
-                        />
-                      ))}
+                      <YGroup
+                        alignSelf="center"
+                        bordered
+                        width="100%"
+                        size="$4"
+                        flex={1}
+                        space="$3"
+                      >
+                        {myFriendReqs.map(
+                          (friendReq) =>
+                            friendReq.id !== session.user.id && (
+                              <YGroup.Item key={`req-${friendReq.id}`}>
+                                <OtherUserThumbnail
+                                  navigation={navigation}
+                                  user={friendReq}
+                                  isFriend={false}
+                                  isSearch={false}
+                                />
+                              </YGroup.Item>
+                            ),
+                        )}
+                      </YGroup>
                     </View>
                   ) : refreshing ? (
                     <View flex={1} alignSelf="center" justifyContent="center">
-                      <H4 textAlign="center">Loading friends...</H4>
+                      <H4 textAlign="center">Loading friend requests...</H4>
                     </View>
                   ) : (
                     <View flex={1} alignSelf="center" justifyContent="center">
-                      <H4 textAlign="center">No friends yet</H4>
+                      <H4 textAlign="center">No friend requests yet</H4>
                     </View>
-                  )}
-                </View>
-              ) : toggle === "friendRequests" ? (
-                myFriendReqs.length > 0 ? (
-                  <View>
-                    <H4 style={{ textAlign: "center" }}>
-                      {myFriendReqs.length} pending friend requests
-                    </H4>
-                    {myFriendReqs.map(
-                      (friendReq) =>
-                        friendReq.id !== session.user.id && (
-                          <OtherUserThumbnail
-                            key={`req-${friendReq.id}`}
-                            navigation={navigation}
-                            user={friendReq}
-                            isFriend={false}
-                            isSearch={false}
-                          />
-                        ),
-                    )}
-                  </View>
-                ) : refreshing ? (
-                  <View flex={1} alignSelf="center" justifyContent="center">
-                    <H4 textAlign="center">Loading friend requests...</H4>
-                  </View>
-                ) : (
-                  <View flex={1} alignSelf="center" justifyContent="center">
-                    <H4 textAlign="center">No friend requests yet</H4>
-                  </View>
-                )
-              ) : toggle === "searchForFriends" ? (
-                <SearchProfiles navigation={navigation} />
-              ) : (
-                <View flex={1} alignSelf="center" justifyContent="center">
-                  <H4 textAlign="center">No search results</H4>
-                </View>
-              )}
-            </View>
-          </ScrollView>
+                  ))
+                )}
+              </View>
+            </ScrollView>
+          )}
         </View>
       ) : (
         <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
