@@ -1,6 +1,11 @@
 import { ThumbnailUser } from "../../lib/types";
-import { Button, View, Paragraph, XStack, YStack } from "tamagui";
-import { ArrowRightSquare, Check, X } from "@tamagui/lucide-icons";
+import { Button, View, Paragraph, XStack, YStack, Separator } from "tamagui";
+import {
+  ArrowRightSquare,
+  Check,
+  ChevronRight,
+  X,
+} from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import SmallAvatar from "./SmallAvatar";
 import useMutationUser from "../../hooks/use-mutation-user";
@@ -44,8 +49,6 @@ export default function OtherUserThumbnail({
       style={{
         paddingLeft: 3,
         paddingRight: 5,
-        borderBottomWidth: 1,
-        borderColor: "#014cc6",
       }}
     >
       <XStack space="$2" alignItems="center" paddingTop={20}>
@@ -93,11 +96,10 @@ export default function OtherUserThumbnail({
           )}
 
           <Button
-            icon={<ArrowRightSquare />}
+            icon={ChevronRight}
+            size="$3"
             style={{
               backgroundColor: "#ff7403",
-              width: 50,
-              height: 50,
               borderRadius: 50,
             }}
             onPress={() => {
@@ -112,6 +114,7 @@ export default function OtherUserThumbnail({
           {abbrevBio ? abbrevBio.trim() : null}
         </Paragraph>
       </View>
+      <Separator marginTop={5} alignSelf="stretch" borderColor="#014cc6" />
     </View>
   );
 }

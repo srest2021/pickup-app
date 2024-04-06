@@ -71,6 +71,7 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
               >
                 <Avatar
                   url={otherUser.avatarUrl}
+                  user={otherUser}
                   onUpload={() => {}}
                   allowUpload={false}
                 />
@@ -107,29 +108,31 @@ export default function OtherProfile({ navigation }: { navigation: any }) {
               </YStack>
 
               <Sports sports={otherUser.sports} />
+
+              <YStack space="$6" paddingTop="$5" alignItems="center">
+                {!otherUser?.isFriend ? (
+                  <Button
+                    variant="outlined"
+                    disabled={otherUser?.hasRequested}
+                    onPress={() => handleRequestLogic()}
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor={"#ffffff"}
+                    width="100%"
+                  >
+                    {otherUser?.hasRequested
+                      ? "Requested"
+                      : "Send Friend Request"}
+                  </Button>
+                ) : (
+                  <Text>You are friends!</Text>
+                )}
+              </YStack>
             </View>
           ) : (
             <Text>Loading user profile...</Text>
           )}
-
-          <YStack space="$6" paddingTop="$5" alignItems="center">
-            {!otherUser?.isFriend ? (
-              <Button
-                variant="outlined"
-                disabled={otherUser?.hasRequested}
-                onPress={() => handleRequestLogic()}
-                size="$5"
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor={"#ffffff"}
-                width="100%"
-              >
-                {otherUser?.hasRequested ? "Requested" : "Send Friend Request"}
-              </Button>
-            ) : (
-              <Text>You are friends!</Text>
-            )}
-          </YStack>
         </View>
       </ScrollView>
     </View>

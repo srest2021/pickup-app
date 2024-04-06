@@ -81,6 +81,9 @@ function useQueryUsers() {
 
       if (data) {
         const user: OtherUser = data;
+        addAvatarUrls([
+          { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
+        ]);
         setOtherUser(user);
         return user;
       }

@@ -7,14 +7,10 @@ function useQueryAvatars() {
     state.addAvatarUrl,
   ]);
 
-  async function fetchAvatar(
-    userId: string,
-    avatarPath: string,
-  ) {
+  async function fetchAvatar(userId: string, avatarPath: string) {
     if (avatarPath) {
-      const avatarUrlAlreadyExists = avatarUrls.find(
-        (elem) => elem.userId === userId,
-      );
+      const avatarUrlAlreadyExists =
+        avatarUrls.find((elem) => elem.userId === userId)?.avatarUrl != null;
       if (avatarUrlAlreadyExists) {
         return;
       }
@@ -36,9 +32,7 @@ function useQueryAvatars() {
     fr.readAsDataURL(data);
     fr.onload = () => {
       addAvatarUrl(userId, fr.result as string);
-      //return fr.result as string;
     };
-    //return undefined;
   }
 
   return { fetchAvatar };

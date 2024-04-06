@@ -19,6 +19,8 @@ function useMutationUser() {
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
+    addAvatarUrls,
+    editAvatarPath,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -33,6 +35,8 @@ function useMutationUser() {
     state.acceptFriendRequest,
     state.rejectFriendRequest,
     state.removeFriend,
+    state.addAvatarUrls,
+    state.editAvatarPath,
   ]);
 
   useEffect(() => {
@@ -46,8 +50,10 @@ function useMutationUser() {
   }, []);
 
   useEffect(() => {
-    if (session) getProfile();
-  }, [session]);
+    if (session) {
+      getProfile();
+    }
+  }, [session?.access_token]);
 
   const getProfile = async () => {
     try {
@@ -94,6 +100,9 @@ function useMutationUser() {
         };
         setUser(user);
         setUserSports(user.sports);
+        addAvatarUrls([
+          { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
+        ]);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -220,6 +229,7 @@ function useMutationUser() {
         avatarUrl: avatar_url,
       };
       editUser(updatedUser);
+      editAvatarPath(session?.user.id, avatar_url);
       return updatedUser;
     } catch (error) {
       if (error instanceof Error) {
