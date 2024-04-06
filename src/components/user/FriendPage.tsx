@@ -97,26 +97,38 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             }}
             contentContainerStyle={{ paddingTop: 20 }}
           >
-            <View flex={1}>
+            <View flex={1} padding="$5">
               {refreshing && (
                 <Spinner size="small" color="#ff7403" testID="spinner" />
               )}
 
               {toggle === "friends" && myFriends ? (
                 <View>
-                  <H4 style={{ textAlign: "center" }}>
-                    {myFriends.length}{" "}
-                    {myFriends.length == 1 ? "friend" : "friends"}
-                  </H4>
-                  {myFriends.map((friend) => (
-                    <OtherUserThumbnail
-                      key={`friend-${friend.id}`}
-                      navigation={navigation}
-                      user={friend}
-                      isFriend={true}
-                      isSearch={false}
-                    />
-                  ))}
+                  {myFriends.length > 0 ? (
+                    <View>
+                      <H4 style={{ textAlign: "center" }}>
+                        {myFriends.length}{" "}
+                        {myFriends.length == 1 ? "friend" : "friends"}
+                      </H4>
+                      {myFriends.map((friend) => (
+                        <OtherUserThumbnail
+                          key={`friend-${friend.id}`}
+                          navigation={navigation}
+                          user={friend}
+                          isFriend={true}
+                          isSearch={false}
+                        />
+                      ))}
+                    </View>
+                  ) : refreshing ? (
+                    <View flex={1} alignSelf="center" justifyContent="center">
+                      <H4 textAlign="center">Loading friends...</H4>
+                    </View>
+                  ) : (
+                    <View flex={1} alignSelf="center" justifyContent="center">
+                      <H4 textAlign="center">No friends yet</H4>
+                    </View>
+                  )}
                 </View>
               ) : toggle === "friendRequests" ? (
                 myFriendReqs.length > 0 ? (
@@ -137,11 +149,13 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                         ),
                     )}
                   </View>
+                ) : refreshing ? (
+                  <View flex={1} alignSelf="center" justifyContent="center">
+                    <H4 textAlign="center">Loading friend requests...</H4>
+                  </View>
                 ) : (
                   <View flex={1} alignSelf="center" justifyContent="center">
-                    <H4 textAlign="center">
-                      Refresh to check for friend requests
-                    </H4>
+                    <H4 textAlign="center">No friend requests yet</H4>
                   </View>
                 )
               ) : toggle === "searchForFriends" ? (

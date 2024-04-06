@@ -11,14 +11,13 @@ import { useStore } from "../../lib/store";
 import { OtherUser } from "../../lib/types";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
-  const [loading, setLoading, results, setResults] = useStore((state) => [
-    state.loading,
-    state.setLoading,
+  const [results, setResults] = useStore((state) => [
     state.searchResults,
     state.setSearchResults,
   ]);
   const { searchByUsername } = useQueryUsers();
   const [currentInput, setCurrentInput] = useState<string>("");
+  const [searching, setSearching] = useState(false);
 
   const handleSearch = async () => {
     if (currentInput.trim().length < 1) {
@@ -28,13 +27,13 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
     }
     setResults([]);
 
-    setLoading(true);
+    setSearching(true);
     await searchByUsername(currentInput.trim());
-    setLoading(false);
+    setSearching(false);
   };
 
   return (
-    <View padding="$5">
+    <View>
       <Form flexDirection="row" onSubmit={handleSearch}>
         <XStack flex={1} space="$3">
           <Input
@@ -48,7 +47,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
           <Form.Trigger asChild>
             <Button
               backgroundColor="#e54b07"
-              icon={loading ? () => <Spinner /> : UserSearch}
+              icon={searching ? () => <Spinner /> : UserSearch}
             ></Button>
           </Form.Trigger>
         </XStack>
