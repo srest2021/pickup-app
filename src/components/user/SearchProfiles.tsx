@@ -57,6 +57,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
             />
             <Form.Trigger asChild>
               <Button
+                testID="search-button"
                 backgroundColor="#e54b07"
                 icon={searching ? () => <Spinner /> : UserSearch}
               ></Button>
