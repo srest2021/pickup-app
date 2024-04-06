@@ -44,7 +44,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   return (
     <>
       {session && session.user ? (
-        <View flex={1}>
+        <View style={{ flex: 1 }}>
           <Tabs
             alignSelf="center"
             justifyContent="center"

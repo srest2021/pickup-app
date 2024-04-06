@@ -259,7 +259,6 @@ function useMutationUser() {
   };
 
   const acceptFriendRequestById = async (userId: string) => {
-    console.log(userId);
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -267,7 +266,7 @@ function useMutationUser() {
       let { data, error } = await supabase.rpc("accept_friend_request", {
         sent_by: userId,
       });
-      if (error) console.error(error);
+      if (error) throw error;
 
       if (data) {
         // Friend Request successfully accepted.
@@ -291,7 +290,7 @@ function useMutationUser() {
       let { data, error } = await supabase.rpc("reject_friend_request", {
         request_sent_to: userId,
       });
-      if (error) console.error(error);
+      if (error) throw error;
 
       if (data) {
         // Friend Request successfully rejected.
@@ -316,7 +315,7 @@ function useMutationUser() {
         user1_id: user?.id,
         user2_id: userId,
       });
-      if (error) console.error(error);
+      if (error) throw error;
 
       if (data) {
         removeFriend(userId);
