@@ -25,6 +25,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
       Alert.alert("Please enter a search first!");
       return;
     }
+    setResults([]);
 
     setLoading(true);
     const results = await searchByUsername(currentInput.trim());
@@ -59,7 +60,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
           {results ? (
             results.map((user: ThumbnailUser) => (
               <OtherUserThumbnail
-                key={user.id}
+              key={`search-${user.id}`}
                 navigation={navigation}
                 user={user}
                 isFriend={false}

@@ -12,6 +12,7 @@ function useQueryUsers() {
     setOtherUser,
     setFriends,
     setFriendRequests,
+    addAvatarUrls,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -19,6 +20,7 @@ function useQueryUsers() {
     state.setOtherUser,
     state.setFriends,
     state.setFriendRequests,
+    state.addAvatarUrls,
   ]);
 
   const searchByUsername = async (
@@ -44,6 +46,14 @@ function useQueryUsers() {
           };
           return user;
         });
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatar_url,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
+
         return users;
       } else {
         throw new Error(
@@ -105,8 +115,15 @@ function useQueryUsers() {
           };
           return myFriend;
         });
-
         setFriends(friends);
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatarUrl,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
+
         return friends;
       } else {
         throw new Error("Error fetching friends! Please try again later.");
@@ -144,8 +161,14 @@ function useQueryUsers() {
           };
           return myFriendRequest;
         });
-
         setFriendRequests(friendRequests);
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatarUrl,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
 
         return friendRequests;
       } else {

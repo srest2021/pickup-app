@@ -1,25 +1,13 @@
 import { ScrollView, Text } from "react-native";
-import {
-  Button,
-  Card,
-  H4,
-  Separator,
-  SizableText,
-  Spinner,
-  Tabs,
-  XStack,
-  YStack,
-  View,
-} from "tamagui";
-import useMutationUser from "../../hooks/use-mutation-user";
-import { useStore } from "../../lib/store";
+import { H4, Separator, Spinner, Tabs, View } from "tamagui";
 import { useEffect, useState } from "react";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import SearchProfiles from "./SearchProfiles";
 import useQueryUsers from "../../hooks/use-query-users";
+import { useStore } from "../../lib/store";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
-  const [session, myFriends = [], myFriendReqs] = useStore((state) => [
+  const [session, myFriends, myFriendReqs] = useStore((state) => [
     state.session,
     state.friends,
     state.friendRequests,
@@ -28,41 +16,30 @@ export default function FriendPage({ navigation }: { navigation: any }) {
   const { getFriends } = useQueryUsers();
   const { getFriendRequests } = useQueryUsers();
 
-  // Create a set to store unique user IDs
-  const uniqueUserIds = new Set<string>();
-
-  // Remove duplicate users from myFriends array
-  const uniqueFriends = myFriends.filter((friend) => {
-    if (uniqueUserIds.has(friend.id)) {
-      return false; // Skip this user, it's a duplicate
-    }
-    uniqueUserIds.add(friend.id); // Add user ID to set
-    return true; // Include this user in the unique friends list
-  });
-
   const [refreshing, setRefreshing] = useState(false);
-  //const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("friends");
 
+  // on component render, get all friends and friend requests
   useEffect(() => {
-    handleRefresh();
+    const getAll = async () => {
+      setRefreshing(true);
+      await getFriends();
+      await getFriendRequests();
+      setRefreshing(false);
+    };
+    getAll();
   }, []);
 
+  // on refresh, just refresh the tab we're on
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "friends") {
-      const loadedFriends = await getFriends();
+      await getFriends();
     } else if (toggle === "friendRequests") {
-      const loadedReqs = await getFriendRequests();
-    } else if (toggle === "searchForFriends") {
+      await getFriendRequests();
     }
     setRefreshing(false);
   };
-
-  const filteredFriendReqs = myFriendReqs.filter(
-    (friendReq) => friendReq.id !== session.user.id,
-  );
-  const pendingRequestsCount = filteredFriendReqs.length;
 
   return (
     <>
@@ -125,41 +102,38 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                 <Spinner size="small" color="#ff7403" testID="spinner" />
               )}
 
-              {toggle === "friends" && uniqueFriends ? (
+              {toggle === "friends" && myFriends ? (
                 <View>
                   <H4 style={{ textAlign: "center" }}>
-                    {uniqueFriends.length}{" "}
-                    {uniqueFriends.length == 1 ? "friend" : "friends"}
+                    {myFriends.length}{" "}
+                    {myFriends.length == 1 ? "friend" : "friends"}
                   </H4>
-                  {uniqueFriends.map((friend) => (
-                    <View>
+                  {myFriends.map((friend) => (
                       <OtherUserThumbnail
+                        key={`friend-${friend.id}`}
                         navigation={navigation}
                         user={friend}
                         isFriend={true}
                         isSearch={false}
                       />
-                    </View>
                   ))}
                 </View>
               ) : toggle === "friendRequests" ? (
                 myFriendReqs.length > 0 ? (
                   <View>
                     <H4 style={{ textAlign: "center" }}>
-                      {" "}
-                      {pendingRequestsCount} pending friend requests
+                      {myFriendReqs.length} pending friend requests
                     </H4>
                     {myFriendReqs.map(
                       (friendReq) =>
                         friendReq.id !== session.user.id && (
-                          <View>
                             <OtherUserThumbnail
+                              key={`req-${friendReq.id}`}
                               navigation={navigation}
                               user={friendReq}
                               isFriend={false}
                               isSearch={false}
                             />
-                          </View>
                         ),
                     )}
                   </View>

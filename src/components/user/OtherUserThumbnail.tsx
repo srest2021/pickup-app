@@ -1,22 +1,10 @@
 import { ThumbnailUser } from "../../lib/types";
-import {
-  Button,
-  View,
-  Paragraph,
-  XStack,
-  YStack,
-  Avatar,
-  Text,
-  Checkbox,
-} from "tamagui";
+import { Button, View, Paragraph, XStack, YStack } from "tamagui";
 import { ArrowRightSquare, Check, X } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
 import SmallAvatar from "./SmallAvatar";
-import useMutationGame from "../../hooks/use-mutation-game";
 import useMutationUser from "../../hooks/use-mutation-user";
-import { useNavigation } from "@react-navigation/native";
+import { useStore } from "../../lib/store";
 
 export default function OtherUserThumbnail({
   navigation,
@@ -29,6 +17,7 @@ export default function OtherUserThumbnail({
   isFriend: boolean;
   isSearch: boolean;
 }) {
+  const [loading] = useStore((state) => [state.loading]);
   const { getOtherProfile } = useQueryUsers();
 
   const avatarUrl =
@@ -47,7 +36,6 @@ export default function OtherUserThumbnail({
   };
 
   const handleAccept = async () => {
-    console.log("handleaccept");
     await acceptFriendRequestById(user.id);
   };
 
@@ -61,7 +49,7 @@ export default function OtherUserThumbnail({
       }}
     >
       <XStack space="$2" alignItems="center" paddingTop={20}>
-        <SmallAvatar url={avatarUrl} onUpload={() => {}} allowUpload={false} />
+        <SmallAvatar url={avatarUrl} user={user} />
         <YStack>
           <Paragraph fontSize={18}>
             {user.displayName ? user.displayName : user.username}
@@ -77,6 +65,7 @@ export default function OtherUserThumbnail({
               icon={X}
               testID="remove-button"
               size="$5"
+              disabled={loading}
               style={{
                 backgroundColor: "#e90d52",
                 color: "white",
@@ -91,6 +80,7 @@ export default function OtherUserThumbnail({
                 icon={Check}
                 testID="accept-button"
                 size="$5"
+                disabled={loading}
                 style={{
                   backgroundColor: "#05a579",
                   color: "white",

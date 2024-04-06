@@ -9,18 +9,10 @@ import FeedFilter from "./FeedFilter";
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
 
-  const [
-    session,
-    publicGames,
-    clearPublicGames,
-    friendsOnlyGames,
-    clearFriendsOnlyGames,
-  ] = useStore((state) => [
+  const [session, publicGames, friendsOnlyGames] = useStore((state) => [
     state.session,
     state.feedGames,
-    state.clearFeedGames,
     state.feedGamesFriendsOnly,
-    state.clearFeedGamesFriendsOnly,
   ]);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -120,6 +112,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
               alignSelf="center"
               justifyContent="space-between"
               flex={0}
+              paddingBottom="$3"
               defaultValue="PublicGames"
             >
               <Tabs.List>
@@ -177,7 +170,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                     <Spinner size="small" color="#ff7403" testID="spinner" />
                   )
                 }
-                contentContainerStyle={{ gap: 10 }}
+                contentContainerStyle={{ gap: 23 }}
               />
             ) : refreshing ? (
               toggle === "publicGames" ? (
