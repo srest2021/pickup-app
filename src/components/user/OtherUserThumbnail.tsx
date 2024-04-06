@@ -30,6 +30,7 @@ export default function OtherUserThumbnail({
 
   const { removeFriendById } = useMutationUser();
   const { acceptFriendRequestById } = useMutationUser();
+  const { rejectFriendRequestById } = useMutationUser();
 
   const handleRemove = async () => {
     await removeFriendById(user.id);
@@ -37,6 +38,10 @@ export default function OtherUserThumbnail({
 
   const handleAccept = async () => {
     await acceptFriendRequestById(user.id);
+  };
+
+  const handleReject = async () => {
+    await rejectFriendRequestById(user.id);
   };
 
   return (
@@ -59,7 +64,7 @@ export default function OtherUserThumbnail({
           </Paragraph>
         </YStack>
 
-        <XStack space="$3" style={{ flex: 1, justifyContent: "flex-end" }}>
+        <XStack space="$1" style={{ flex: 1, justifyContent: "flex-end" }}>
           {!isSearch && isFriend ? (
             <Button
               icon={X}
@@ -76,6 +81,7 @@ export default function OtherUserThumbnail({
             />
           ) : (
             !isSearch && (
+              <View space="$1" style={{ flexDirection: 'row' }}>
               <Button
                 icon={Check}
                 testID="accept-button"
@@ -89,6 +95,20 @@ export default function OtherUserThumbnail({
                 }}
                 onPress={() => handleAccept()}
               />
+              <Button
+                icon={X}
+                testID="reject-button"
+                size="$5"
+                disabled={loading}
+                style={{
+                  backgroundColor: "#e90d52",
+                  color: "white",
+                  width: 50,
+                  height: 50,
+                }}
+                onPress={() => handleReject()}
+              />
+              </View>
             )
           )}
 
