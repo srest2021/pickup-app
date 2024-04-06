@@ -41,6 +41,7 @@ type State = {
 
   friends: ThumbnailUser[];
   friendRequests: ThumbnailUser[];
+  searchResults: ThumbnailUser[];
 
   channel: RealtimeChannel | undefined;
   roomCode: string | null;
@@ -122,6 +123,7 @@ type Action = {
   setRoomCode: (roomCode: string) => void;
   addAvatarUrls: (newAvatarUrls: any[]) => void;
   addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
+  clearAvatarUrls: () => void;
 
   // friends
   setFriends: (friends: ThumbnailUser[]) => void;
@@ -129,6 +131,9 @@ type Action = {
   acceptFriendRequest: (userId: string) => void;
   rejectFriendRequest: (userId: string) => void;
   removeFriend: (userId: string) => void;
+
+  // search results
+  setSearchResults: (results: ThumbnailUser[]) => void;
 };
 
 const initialState: State = {
@@ -154,6 +159,7 @@ const initialState: State = {
   avatarUrls: [],
   friends: [],
   friendRequests: [],
+  searchResults: [],
 };
 
 export const useStore = create<State & Action>()(
@@ -398,6 +404,8 @@ export const useStore = create<State & Action>()(
       set({ avatarUrls: newAvatarUrls });
     },
 
+    clearAvatarUrls: () => set({ avatarUrls: [] }),
+
     // friends
 
     setFriends: (myfriends) => set({ friends: myfriends }),
@@ -438,5 +446,7 @@ export const useStore = create<State & Action>()(
       //update friends list
       set({ friends: updatedFriends });
     },
+
+    setSearchResults: (results) => set({ searchResults: results }),
   })),
 );

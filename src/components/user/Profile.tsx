@@ -32,7 +32,7 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearJoinedGames,
     clearSelectedJoinedGame,
     clearMessages,
-    setAvatarUrls,
+    clearAvatarUrls,
     setChannel,
   ] = useStore((state) => [
     state.loading,
@@ -48,7 +48,7 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearJoinedGames,
     state.clearSelectedJoinedGame,
     state.clearMessages,
-    state.setAvatarUrls,
+    state.clearAvatarUrls,
     state.setChannel,
   ]);
   const { setSport } = useMutationUser();
@@ -83,7 +83,7 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearJoinedGames();
     clearSelectedJoinedGame();
     clearMessages();
-    setAvatarUrls([]);
+    clearAvatarUrls();
     setChannel(undefined);
     setLoading(false);
   };

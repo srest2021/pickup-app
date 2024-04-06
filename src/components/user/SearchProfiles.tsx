@@ -11,13 +11,14 @@ import { useStore } from "../../lib/store";
 import { OtherUser } from "../../lib/types";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
-  const [loading, setLoading] = useStore((state) => [
+  const [loading, setLoading, results, setResults] = useStore((state) => [
     state.loading,
     state.setLoading,
+    state.searchResults,
+    state.setSearchResults,
   ]);
   const { searchByUsername } = useQueryUsers();
   const [currentInput, setCurrentInput] = useState<string>("");
-  const [results, setResults] = useState<ThumbnailUser[]>([]);
 
   const handleSearch = async () => {
     if (currentInput.trim().length < 1) {
@@ -28,10 +29,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
     setResults([]);
 
     setLoading(true);
-    const results = await searchByUsername(currentInput.trim());
-    if (results) {
-      setResults(results);
-    }
+    await searchByUsername(currentInput.trim());
     setLoading(false);
   };
 

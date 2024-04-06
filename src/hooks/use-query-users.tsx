@@ -12,6 +12,7 @@ function useQueryUsers() {
     setOtherUser,
     setFriends,
     setFriendRequests,
+    setSearchResults,
     addAvatarUrls,
   ] = useStore((state) => [
     state.session,
@@ -20,12 +21,11 @@ function useQueryUsers() {
     state.setOtherUser,
     state.setFriends,
     state.setFriendRequests,
+    state.setSearchResults,
     state.addAvatarUrls,
   ]);
 
-  const searchByUsername = async (
-    username: string,
-  ): Promise<ThumbnailUser[] | undefined> => {
+  const searchByUsername = async (username: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -46,6 +46,7 @@ function useQueryUsers() {
           };
           return user;
         });
+        setSearchResults(users);
 
         const avatarUrls = data.map((elem: any) => ({
           userId: elem.id,
@@ -53,8 +54,6 @@ function useQueryUsers() {
           avatarUrl: null,
         }));
         addAvatarUrls(avatarUrls);
-
-        return users;
       } else {
         throw new Error(
           "Error processing your search! Please try again later.",

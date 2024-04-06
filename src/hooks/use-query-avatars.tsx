@@ -17,16 +17,16 @@ function useQueryAvatars() {
       );
       if (avatarUrlAlreadyExists) {
         // already downloaded
-        //console.log("# already exists")
+        //console.log("# already exists",userId)
         return avatarUrlAlreadyExists.avatarUrl;
       }
       try {
         const res = await downloadImage(userId, avatarPath);
-        //console.log("# download")
+        //console.log("# download",userId)
         return res;
       } catch (error) {
         addAvatarUrl(userId, null);
-        //console.log("# undefined")
+        //console.log("# undefined",userId)
         return undefined;
       }
     }
