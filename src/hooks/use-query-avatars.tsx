@@ -2,12 +2,9 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 
 function useQueryAvatars() {
-  const [
-    avatarUrls,
-    addAvatarUrl
-  ] = useStore((state) => [
+  const [avatarUrls, addAvatarUrl] = useStore((state) => [
     state.avatarUrls,
-    state.addAvatarUrl
+    state.addAvatarUrl,
   ]);
 
   async function fetchAvatar(
@@ -34,11 +31,13 @@ function useQueryAvatars() {
       }
     }
   }
-  
+
   async function downloadImage(userId: string, path: string) {
-    const { data, error } = await supabase.storage.from("avatars").download(path);
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .download(path);
     if (error) throw error;
-  
+
     const fr = new FileReader();
     fr.readAsDataURL(data);
     fr.onload = () => {
@@ -48,7 +47,7 @@ function useQueryAvatars() {
     return undefined;
   }
 
-  return {fetchAvatar};
+  return { fetchAvatar };
 }
 
 export default useQueryAvatars;

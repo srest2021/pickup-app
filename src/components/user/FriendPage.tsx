@@ -109,13 +109,13 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                     {myFriends.length == 1 ? "friend" : "friends"}
                   </H4>
                   {myFriends.map((friend) => (
-                      <OtherUserThumbnail
-                        key={`friend-${friend.id}`}
-                        navigation={navigation}
-                        user={friend}
-                        isFriend={true}
-                        isSearch={false}
-                      />
+                    <OtherUserThumbnail
+                      key={`friend-${friend.id}`}
+                      navigation={navigation}
+                      user={friend}
+                      isFriend={true}
+                      isSearch={false}
+                    />
                   ))}
                 </View>
               ) : toggle === "friendRequests" ? (
@@ -127,13 +127,13 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                     {myFriendReqs.map(
                       (friendReq) =>
                         friendReq.id !== session.user.id && (
-                            <OtherUserThumbnail
-                              key={`req-${friendReq.id}`}
-                              navigation={navigation}
-                              user={friendReq}
-                              isFriend={false}
-                              isSearch={false}
-                            />
+                          <OtherUserThumbnail
+                            key={`req-${friendReq.id}`}
+                            navigation={navigation}
+                            user={friendReq}
+                            isFriend={false}
+                            isSearch={false}
+                          />
                         ),
                     )}
                   </View>

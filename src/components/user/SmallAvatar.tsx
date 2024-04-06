@@ -26,9 +26,7 @@ export default function SmallAvatar({
   }, []);
 
   useEffect(() => {
-    setAvatarUrl(
-      avatarUrls.find((elem) => elem.userId === user.id)?.avatarUrl,
-    );
+    setAvatarUrl(avatarUrls.find((elem) => elem.userId === user.id)?.avatarUrl);
   }, [avatarUrls]);
 
   return (

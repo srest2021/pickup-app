@@ -60,7 +60,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
           {results ? (
             results.map((user: ThumbnailUser) => (
               <OtherUserThumbnail
-              key={`search-${user.id}`}
+                key={`search-${user.id}`}
                 navigation={navigation}
                 user={user}
                 isFriend={false}
