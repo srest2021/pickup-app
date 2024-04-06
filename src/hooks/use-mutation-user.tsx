@@ -268,11 +268,9 @@ function useMutationUser() {
       });
       if (error) throw error;
 
-      if (data) {
-        // Friend Request successfully accepted.
-        acceptFriendRequest(userId);
-        return true;
-      }
+      // Friend Request successfully accepted.
+      acceptFriendRequest(userId);
+      return true;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -292,11 +290,9 @@ function useMutationUser() {
       });
       if (error) throw error;
 
-      if (data) {
-        // Friend Request successfully rejected.
-        rejectFriendRequest(userId);
-        return true;
-      }
+      // Friend Request successfully rejected.
+      rejectFriendRequest(userId);
+      return true;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -317,10 +313,9 @@ function useMutationUser() {
       });
       if (error) throw error;
 
-      if (data) {
-        removeFriend(userId);
-        return userId;
-      }
+      // friend successfully removed
+      removeFriend(userId);
+      return userId;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
