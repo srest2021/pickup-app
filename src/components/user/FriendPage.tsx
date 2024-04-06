@@ -187,11 +187,6 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               </View>
             </ScrollView>
           )}
-          {/* //     // ) : (
-          //     //   <View flex={1} alignSelf="center" justifyContent="center">
-          //     //     <H4 textAlign="center">No search results</H4>
-          //     //   </View>
-          //     // )} */}
         </View>
       ) : (
         <View padding="$7" flex={1} alignSelf="center" justifyContent="center">

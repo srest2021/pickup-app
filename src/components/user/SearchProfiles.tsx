@@ -7,6 +7,7 @@ import {
   XStack,
   YGroup,
   ListItem,
+  H4,
 } from "tamagui";
 import { Alert } from "react-native";
 import { Text } from "tamagui";
@@ -19,7 +20,8 @@ import OtherUserThumbnail from "./OtherUserThumbnail";
 import { useStore } from "../../lib/store";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
-  const [results, setResults] = useStore((state) => [
+  const [loading, results, setResults] = useStore((state) => [
+    state.loading,
     state.searchResults,
     state.setSearchResults,
   ]);
@@ -28,12 +30,12 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [searching, setSearching] = useState(false);
 
   const handleSearch = async () => {
-    // if (currentInput.trim().length < 1) {
-    //   setCurrentInput("");
-    //   Alert.alert("Please enter a search first!");
-    //   return;
-    // }
-    setResults([]);
+    if (currentInput.trim().length < 1) {
+      setCurrentInput("");
+      Alert.alert("Please enter a search first!");
+      return;
+    }
+    setResults(null);
 
     setSearching(true);
     await searchByUsername(currentInput.trim());
@@ -62,43 +64,51 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
           </XStack>
         </Form>
         <ScrollView>
-          <YStack space="$3">
-            {results ? (
-              <YGroup
-                alignSelf="center"
-                bordered
-                width="100%"
-                size="$4"
-                flex={1}
-                space="$3"
-              >
-                {results.map((user: ThumbnailUser) => (
-                  <YGroup.Item key={`search-${user.id}`}>
-                    <OtherUserThumbnail
-                      navigation={navigation}
-                      user={user}
-                      isFriend={false}
-                      isSearch={true}
-                    />
-                  </YGroup.Item>
-                ))}
-              </YGroup>
+          {results ? (
+            results.length > 0 ? (
+              <YStack space="$3">
+                <YGroup
+                  alignSelf="center"
+                  bordered
+                  width="100%"
+                  size="$4"
+                  flex={1}
+                  space="$3"
+                >
+                  {results.map((user: ThumbnailUser) => (
+                    <YGroup.Item key={`search-${user.id}`}>
+                      <OtherUserThumbnail
+                        navigation={navigation}
+                        user={user}
+                        isFriend={false}
+                        isSearch={true}
+                      />
+                    </YGroup.Item>
+                  ))}
+                </YGroup>
+                <Button
+                  backgroundColor="#e54b07"
+                  onPress={() => {
+                    setResults(null);
+                    setCurrentInput("");
+                  }}
+                >
+                  Clear All
+                </Button>
+              </YStack>
             ) : (
-              <Text>No Search Yet</Text>
-            )}
-          </YStack>
+              <View flex={1} alignSelf="center" justifyContent="center">
+                <H4 textAlign="center">No Search Results</H4>
+              </View>
+            )
+          ) : (
+            !loading && (
+              <View flex={1} alignSelf="center" justifyContent="center">
+                <H4 textAlign="center">No Search Yet</H4>
+              </View>
+            )
+          )}
         </ScrollView>
-        {results.length > 0 && (
-          <Button
-            backgroundColor="#e54b07"
-            onPress={() => {
-              setResults([]);
-              setCurrentInput("");
-            }}
-          >
-            Clear All
-          </Button>
-        )}
       </YStack>
     </View>
   );

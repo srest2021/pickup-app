@@ -41,7 +41,7 @@ type State = {
 
   friends: ThumbnailUser[];
   friendRequests: ThumbnailUser[];
-  searchResults: ThumbnailUser[];
+  searchResults: ThumbnailUser[] | null;
 
   channel: RealtimeChannel | undefined;
   roomCode: string | null;
@@ -134,7 +134,7 @@ type Action = {
   removeFriend: (userId: string) => void;
 
   // search results
-  setSearchResults: (results: ThumbnailUser[]) => void;
+  setSearchResults: (results: ThumbnailUser[] | null) => void;
 };
 
 const initialState: State = {
@@ -160,7 +160,7 @@ const initialState: State = {
   avatarUrls: [],
   friends: [],
   friendRequests: [],
-  searchResults: [],
+  searchResults: null,
 };
 
 export const useStore = create<State & Action>()(
