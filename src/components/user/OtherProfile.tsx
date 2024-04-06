@@ -33,7 +33,7 @@ export default function OtherProfile({
   ]);
   const toast = useToastController();
 
-  const { addFriendRequest } = useMutationUser();
+  const { sendFriendRequest } = useMutationUser();
   const { getOtherProfile } = useQueryUsers();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function OtherProfile({
   const handleRequestLogic = async () => {
     // Send friend request
     // using !, otherUser should never be null if this page appears.
-    const friendRequest = await addFriendRequest(otherUser!.id);
+    const friendRequest = await sendFriendRequest(otherUser!.id);
 
     if (friendRequest) {
       toast.show("Success!", {

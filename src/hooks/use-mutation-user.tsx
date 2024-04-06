@@ -16,6 +16,7 @@ function useMutationUser() {
     addUserSport,
     editUserSport,
     setUserSports,
+    addFriendRequest,
     acceptFriendRequest,
     rejectFriendRequest,
     removeFriend,
@@ -32,6 +33,7 @@ function useMutationUser() {
     state.addUserSport,
     state.editUserSport,
     state.setUserSports,
+    state.addFriendRequest,
     state.acceptFriendRequest,
     state.rejectFriendRequest,
     state.removeFriend,
@@ -240,7 +242,7 @@ function useMutationUser() {
     }
   };
 
-  const addFriendRequest = async (userId: string) => {
+  const sendFriendRequest = async (userId: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -257,6 +259,7 @@ function useMutationUser() {
       if (error) throw error;
 
       if (data) {
+        addFriendRequest();
         return friendRequest;
       }
     } catch (error) {
@@ -341,7 +344,7 @@ function useMutationUser() {
     getProfile,
     updateProfile,
     setSport,
-    addFriendRequest,
+    sendFriendRequest,
     acceptFriendRequestById,
     rejectFriendRequestById,
     removeFriendById,

@@ -129,6 +129,7 @@ type Action = {
   // friends
   setFriends: (friends: ThumbnailUser[]) => void;
   setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
+  addFriendRequest: () => void;
   acceptFriendRequest: (userId: string) => void;
   rejectFriendRequest: (userId: string) => void;
   removeFriend: (userId: string) => void;
@@ -423,6 +424,10 @@ export const useStore = create<State & Action>()(
     setFriends: (myfriends) => set({ friends: myfriends }),
     setFriendRequests: (myFriendRequests) =>
       set({ friendRequests: myFriendRequests }),
+
+    addFriendRequest: () => {
+      get().otherUser!.hasRequested = true;
+    },
 
     acceptFriendRequest: (userId) => {
       // Save the newly accepted friend only!

@@ -98,7 +98,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
                   handleRefresh();
                 }
               }}
-              contentContainerStyle={{ paddingTop: 20 }}
+              contentContainerStyle={{ paddingTop: 10 }}
             >
               <View flex={1} padding="$5">
                 {refreshing && (
