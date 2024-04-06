@@ -81,11 +81,10 @@ function useQueryUsers() {
 
       if (data) {
         const user: OtherUser = data;
+        setOtherUser(user);
         addAvatarUrls([
           { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
         ]);
-        setOtherUser(user);
-        return user;
       }
     } catch (error) {
       if (error instanceof Error) {

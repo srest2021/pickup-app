@@ -8,6 +8,8 @@ import { ToastViewport, useToastController } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { OtherUser } from "../../lib/types";
+import useQueryUsers from "../../hooks/use-query-users";
+import { useEffect } from "react";
 
 // Get the height of the screen
 const windowHeight = Dimensions.get("window").height;
@@ -15,15 +17,31 @@ const windowHeight = Dimensions.get("window").height;
 // Calculate the height for the top third
 const topThirdHeight = windowHeight / 4;
 
-export default function OtherProfile({ navigation }: { navigation: any }) {
-  const [loading, setLoading, otherUser, user] = useStore((state) => [
-    state.loading,
-    state.setLoading,
+export default function OtherProfile({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) {
+  const { userId } = route.params;
+
+  const [otherUser, setOtherUser, user] = useStore((state) => [
     state.otherUser,
+    state.setOtherUser,
     state.user,
   ]);
   const toast = useToastController();
+
   const { addFriendRequest } = useMutationUser();
+  const { getOtherProfile } = useQueryUsers();
+
+  useEffect(() => {
+    getOtherProfile(userId);
+    return () => {
+      setOtherUser(null);
+    };
+  }, []);
 
   // Returns true if the user has requested
   const handleRequestLogic = async () => {
