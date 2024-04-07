@@ -54,7 +54,7 @@ function useMutationGame() {
       console.log("game overlap: ", data, error);
       if (error) throw error;
 
-      if (data) {
+      if (data !== null) {
         return data as boolean;
       } else {
         throw new Error("Error publishing game! Please try again later.");
