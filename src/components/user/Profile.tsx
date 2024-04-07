@@ -18,10 +18,38 @@ const windowHeight = Dimensions.get("window").height;
 const topThirdHeight = windowHeight / 4;
 
 export default function Profile({ navigation }: { navigation: any }) {
-  const [loading, user, userSports] = useStore((state) => [
+  const [
+    loading,
+    setLoading,
+    user,
+    userSports,
+    setUser,
+    clearUserSports,
+    clearMyGames,
+    clearSelectedMyGame,
+    clearFeedGames,
+    clearSelectedFeedGame,
+    clearJoinedGames,
+    clearSelectedJoinedGame,
+    clearMessages,
+    clearAvatarUrls,
+    setChannel,
+  ] = useStore((state) => [
     state.loading,
+    state.setLoading,
     state.user,
     state.userSports,
+    state.setUser,
+    state.clearUserSports,
+    state.clearMyGames,
+    state.clearSelectedMyGame,
+    state.clearFeedGames,
+    state.clearSelectedFeedGame,
+    state.clearJoinedGames,
+    state.clearSelectedJoinedGame,
+    state.clearMessages,
+    state.clearAvatarUrls,
+    state.setChannel,
   ]);
   const { setSport } = useMutationUser();
   const toast = useToastController();
@@ -32,13 +60,25 @@ export default function Profile({ navigation }: { navigation: any }) {
   ) => {
     // Handle the new sport as needed
     const userSport = await setSport(sportName, sportSkillLevel);
-    // Comment out this toast, because if you go to My Game View,
-    // it will pop up there as well.
-    // if (userSport) {
-    //   toast.show("Success!", {
-    //     message: "Sport added.",
-    //   });
-    // }
+  };
+
+  const handleLogOut = async () => {
+    setLoading(true);
+    await supabase.auth.signOut();
+
+    // clear store
+    setUser(null);
+    clearUserSports();
+    clearMyGames();
+    clearSelectedMyGame();
+    clearFeedGames();
+    clearSelectedFeedGame();
+    clearJoinedGames();
+    clearSelectedJoinedGame();
+    clearMessages();
+    clearAvatarUrls();
+    setChannel(undefined);
+    setLoading(false);
   };
 
   return (
@@ -84,6 +124,7 @@ export default function Profile({ navigation }: { navigation: any }) {
               >
                 <Avatar
                   url={user.avatarUrl}
+                  user={user}
                   onUpload={() => {}}
                   allowUpload={false}
                 />
@@ -124,7 +165,7 @@ export default function Profile({ navigation }: { navigation: any }) {
           <YStack space="$6" paddingTop="$5" alignItems="center">
             <Button
               variant="outlined"
-              onPress={() => supabase.auth.signOut()}
+              onPress={() => handleLogOut()}
               size="$5"
               color="#ff7403"
               borderColor="#ff7403"

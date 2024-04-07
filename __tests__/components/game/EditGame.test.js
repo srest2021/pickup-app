@@ -5,10 +5,11 @@ import {
   screen,
 } from "@testing-library/react-native";
 import EditGame from "../../../src/components/game/EditGame";
+import useMutationGame from "../../../src/hooks/use-mutation-game";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
-import { ToastProvider } from "@tamagui/toast";
+import { Alert } from "react-native";
 
 // mock user
 const mockUser = {
@@ -69,7 +70,7 @@ jest.mock("../../../src/lib/store", () => ({
 // mock useMutationGame hook
 const mockEditGameById = jest.fn();
 jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
-  //editGameById: mockEditGameById,
+  editGameById: mockEditGameById,
   default: jest.fn(() => ({
     editGameById: mockEditGameById,
   })),
@@ -82,9 +83,7 @@ describe("EditGame", () => {
 
     const { root } = render(
       <TamaguiProvider config={appConfig}>
-        <ToastProvider>
-          <EditGame navigation={navigation} route={route} />
-        </ToastProvider>
+        <EditGame navigation={navigation} route={route} />
       </TamaguiProvider>,
     );
 
@@ -130,12 +129,11 @@ describe("EditGame", () => {
   test('should call editGameById with updated title attribute and navigate back when "Edit" button is pressed', async () => {
     const navigation = { goBack: jest.fn() };
     const route = { params: { gameId: "testid" } };
+    const spy = jest.spyOn(useMutationGame, "editGameById");
 
     const { root } = render(
       <TamaguiProvider config={appConfig}>
-        <ToastProvider>
-          <EditGame navigation={navigation} route={route} />
-        </ToastProvider>
+        <EditGame navigation={navigation} route={route} />
       </TamaguiProvider>,
     );
 
@@ -145,6 +143,7 @@ describe("EditGame", () => {
     fireEvent.press(editButton);
 
     await waitFor(() => {
+      expect(spy).toHaveBeenCalledTimes(1);
       expect(mockEditGameById).toHaveBeenCalledWith(
         "testid",
         "New Title", // only updating title
@@ -161,5 +160,35 @@ describe("EditGame", () => {
     });
 
     expect(navigation.goBack).toHaveBeenCalled();
+  });
+});
+
+describe("EditGame", () => {
+  beforeEach(() => {
+    jest.spyOn(Alert, "alert");
+  });
+
+  test("should alert the user when not all required fields are filled", async () => {
+    const navigation = { navigate: jest.fn() };
+    const route = { params: { gameId: "testid" } };
+
+    const { root } = render(
+      <TamaguiProvider config={appConfig}>
+        <EditGame navigation={navigation} route={route} />
+      </TamaguiProvider>,
+    );
+
+    // Simulate user input changes
+    fireEvent.changeText(screen.getByTestId("titleInput"), "");
+
+    // Simulate button press to create a new game
+    const editButton = screen.getByTestId("editButton");
+    fireEvent.press(editButton);
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Please fill out all required fields.",
+      );
+    });
   });
 });

@@ -1,5 +1,5 @@
 import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
-import { Alert, View } from "react-native";
+import { Alert, Button, View } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import { Tabs, Text } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
@@ -76,8 +76,9 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               <Spinner size="small" color="#ff7403" testID="spinner" />
             )}
 
-            {myGamesToggle === "myGames" ? (
-              myGames.length > 0 ? (
+            {(myGamesToggle === "myGames" && myGames.length > 0) ||
+            (myGamesToggle === "joinedGames" && joinedGames.length > 0) ? (
+              myGamesToggle === "myGames" ? (
                 <YStack space="$5" paddingTop={5} paddingBottom="$5">
                   {myGames.map((myGame) => (
                     <GameThumbnail
@@ -89,24 +90,34 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                   ))}
                 </YStack>
               ) : (
+                <YStack space="$5" paddingTop={5} paddingBottom="$5">
+                  {joinedGames.map((joinedGame) => (
+                    <GameThumbnail
+                      navigation={navigation}
+                      game={joinedGame}
+                      gametype="joined"
+                      key={joinedGame.id}
+                    />
+                  ))}
+                </YStack>
+              )
+            ) : refreshing ? (
+              myGamesToggle === "myGames" ? (
                 <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No published games yet</H4>
+                  <H4>Fetching published games...</H4>
+                </View>
+              ) : (
+                <View className="items-center justify-center flex-1 p-12 text-center">
+                  <H4>Fetching joined games...</H4>
                 </View>
               )
-            ) : joinedGames.length > 0 ? (
-              <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                {joinedGames.map((joinedGame) => (
-                  <GameThumbnail
-                    navigation={navigation}
-                    game={joinedGame}
-                    gametype="joined"
-                    key={joinedGame.id}
-                  />
-                ))}
-              </YStack>
             ) : (
               <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No joined games yet</H4>
+                <H4>
+                  No {myGamesToggle === "myGames" ? "published" : "joined"}{" "}
+                  games.
+                </H4>
+                <Button title="Click to Refresh" onPress={handleRefresh} />
               </View>
             )}
           </ScrollView>

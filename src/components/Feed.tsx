@@ -1,42 +1,106 @@
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, FlatList, RefreshControl, Button } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import FeedFilter from "./FeedFilter";
 
-//
-// add event listener so that page is constantly updating!
-// add switch so that you can go between myGame and AllGames
-// PICK A MINWIDTH SO THAT text always shown
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
-  const [session, feedGames] = useStore((state) => [
+
+  const [session, publicGames, friendsOnlyGames] = useStore((state) => [
     state.session,
     state.feedGames,
+    state.feedGamesFriendsOnly,
   ]);
+
   const [refreshing, setRefreshing] = useState(false);
   const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("publicGames");
 
+  const [publicOffset, setPublicOffset] = useState(publicGames.length);
+  const [friendsOnlyOffset, setFriendsOnlyOffset] = useState(
+    friendsOnlyGames.length,
+  );
+  const [allPublicGamesFetched, setAllPublicGamesFetched] = useState(false);
+  const [allFriendsOnlyGamesFetched, setAllFriendsOnlyGamesFetched] =
+    useState(false);
+
+  // on component render, clear state and get all games
   useEffect(() => {
-    handleRefresh();
+    const getAllGames = async () => {
+      setRefreshing(true);
+      await handlePublicGamesRefresh();
+      await handleFriendsOnlyGamesRefresh();
+      setRefreshing(false);
+    };
+    getAllGames();
   }, []);
 
+  // clear public games state and get public games
+  const handlePublicGamesRefresh = async () => {
+    setAllPublicGamesFetched(false);
+    setPublicOffset(0);
+    const games = await fetchFeedGames(false, 0);
+    if (games) {
+      setPublicOffset(games.length);
+      setHasLocation(true);
+    } else {
+      setHasLocation(false);
+    }
+  };
+
+  // clear friends-only games state and get friends-only games
+  const handleFriendsOnlyGamesRefresh = async () => {
+    setAllFriendsOnlyGamesFetched(false);
+    setFriendsOnlyOffset(0);
+    const games = await fetchFeedGames(true, 0);
+    if (games) {
+      setFriendsOnlyOffset(games.length);
+      setHasLocation(true);
+    } else {
+      setHasLocation(false);
+    }
+  };
+
+  // on refresh, clear state and get games only for current toggle
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "publicGames") {
-      const games = await fetchFeedGames();
-      if (!games) {
-        setHasLocation(false);
-      } else {
-        setHasLocation(true);
-      }
+      await handlePublicGamesRefresh();
     } else if (toggle === "friendsOnlyGames") {
-      //await fetchFriendsOnlyGames();
+      await handleFriendsOnlyGamesRefresh();
     }
     setRefreshing(false);
+  };
+
+  // once reach bottom, get more games using corresponding offset
+  const handleLoadMore = async () => {
+    let games;
+    if (toggle === "publicGames") {
+      if (!refreshing && !allPublicGamesFetched) {
+        setRefreshing(true);
+        games = await fetchFeedGames(false, publicOffset);
+        setRefreshing(false);
+
+        setPublicOffset(publicOffset + games.length);
+        if (!games || games.length === 0) {
+          setAllPublicGamesFetched(true);
+        }
+      }
+    } else if (toggle === "friendsOnlyGames") {
+      if (!refreshing && !allFriendsOnlyGamesFetched) {
+        setRefreshing(true);
+        games = await fetchFeedGames(true, friendsOnlyOffset);
+        setRefreshing(false);
+
+        setFriendsOnlyOffset(friendsOnlyOffset + games.length);
+        if (!games || games.length === 0) {
+          setAllFriendsOnlyGamesFetched(true);
+        }
+      }
+    }
   };
 
   return (
@@ -48,12 +112,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
               alignSelf="center"
               justifyContent="space-between"
               flex={0}
+              paddingBottom="$3"
               defaultValue="PublicGames"
             >
               <Tabs.List>
                 <FeedFilter handleRefresh={handleRefresh} />
                 <Tabs.Tab
-                  //width={150}
                   testID="public-games"
                   value="PublicGames"
                   onInteraction={() => {
@@ -64,7 +128,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
                 <Separator vertical></Separator>
                 <Tabs.Tab
-                  //width={150}
                   testID="friends-only-games"
                   value="FriendsOnlyGames"
                   onInteraction={() => {
@@ -75,44 +138,56 @@ const Feed = ({ navigation }: { navigation: any }) => {
                 </Tabs.Tab>
               </Tabs.List>
             </Tabs>
-            <ScrollView
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
-              onScroll={(e) => {
-                const { contentOffset } = e.nativeEvent;
-                if (contentOffset.y < -50 && !refreshing) {
-                  handleRefresh();
+            {(toggle === "publicGames" && publicGames.length > 0) ||
+            (toggle === "friendsOnlyGames" && friendsOnlyGames.length > 0) ? (
+              <FlatList
+                data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
+                renderItem={({ item }) => (
+                  <GameThumbnail
+                    navigation={navigation}
+                    game={item}
+                    gametype="feed"
+                    key={item.id}
+                  />
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                onEndReached={() => {
+                  handleLoadMore();
+                }}
+                onEndReachedThreshold={0.05}
+                refreshControl={
+                  <RefreshControl
+                    size={10}
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    colors={["#ff7403"]}
+                    tintColor="#ff7403"
+                    titleColor="#ff7403"
+                  />
                 }
-              }}
-              contentContainerStyle={{ paddingTop: 20 }}
-            >
-              {refreshing && (
-                <Spinner size="small" color="#ff7403" testID="spinner" />
-              )}
-
-              {toggle === "publicGames" ? (
-                feedGames.length > 0 ? (
-                  <YStack space="$5" paddingTop={5} paddingBottom="$5">
-                    {feedGames.map((game) => (
-                      <GameThumbnail
-                        navigation={navigation}
-                        game={game}
-                        gametype="feed"
-                        key={game.id}
-                      />
-                    ))}
-                  </YStack>
-                ) : (
-                  <View className="items-center justify-center flex-1 p-12 text-center">
-                    <H4>No games nearby</H4>
-                  </View>
-                )
+                ListFooterComponent={() =>
+                  refreshing && (
+                    <Spinner size="small" color="#ff7403" testID="spinner" />
+                  )
+                }
+                contentContainerStyle={{ gap: 23 }}
+              />
+            ) : refreshing ? (
+              toggle === "publicGames" ? (
+                <View className="items-center justify-center flex-1 p-12 text-center">
+                  <H4>Fetching Public Games...</H4>
+                </View>
               ) : (
                 <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>No friends-only games yet</H4>
+                  <H4>Fetching Friends Only Games...</H4>
                 </View>
-              )}
-            </ScrollView>
+              )
+            ) : (
+              <View className="items-center justify-center flex-1 p-12 text-center">
+                <H4>No games nearby.</H4>
+                <Button title="Click to Refresh" onPress={handleRefresh} />
+              </View>
+            )}
           </View>
         ) : (
           <View className="items-center justify-center flex-1 p-12 text-center">

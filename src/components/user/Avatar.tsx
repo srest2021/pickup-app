@@ -4,42 +4,36 @@ import { View, Alert, Image, Text } from "react-native";
 import { Button } from "tamagui";
 import * as ImagePicker from "expo-image-picker";
 import { Camera, Plus } from "@tamagui/lucide-icons";
+import useQueryAvatars from "../../hooks/use-query-avatars";
+import { useStore } from "../../lib/store";
+import { User, OtherUser } from "../../lib/types";
 
 interface Props {
   url: string | null;
+  user: User | OtherUser;
   onUpload: (filePath: string) => void;
   allowUpload: boolean;
 }
 
-export default function Avatar({ url, onUpload, allowUpload }: Props) {
+export default function Avatar({ url, user, onUpload, allowUpload }: Props) {
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
+  const [avatarUrls] = useStore((state) => [state.avatarUrls]);
+  const { fetchAvatar } = useQueryAvatars();
+
   useEffect(() => {
-    if (url) downloadImage(url);
+    const getData = async () => {
+      if (url) {
+        await fetchAvatar(user.id, url);
+      }
+    };
+    getData();
   }, [url]);
 
-  async function downloadImage(path: string) {
-    try {
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .download(path);
-
-      if (error) {
-        throw error;
-      }
-
-      const fr = new FileReader();
-      fr.readAsDataURL(data);
-      fr.onload = () => {
-        setAvatarUrl(fr.result as string);
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log("Error downloading image: ", error.message);
-      }
-    }
-  }
+  useEffect(() => {
+    setAvatarUrl(avatarUrls.find((elem) => elem.userId === user.id)?.avatarUrl);
+  }, [avatarUrls]);
 
   async function uploadAvatar() {
     try {
@@ -91,8 +85,6 @@ export default function Avatar({ url, onUpload, allowUpload }: Props) {
     }
   }
 
-  //className="object-cover max-w-full pt-0 overflow-hidden rounded-full h-36 w-36"
-  //className="max-w-full overflow-hidden border-2 border-solid rounded-full h-36 w-36 border-slate-300 bg-slate-200"
   return (
     <View style={{ alignItems: "center" }}>
       <View

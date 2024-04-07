@@ -1,3 +1,4 @@
+// when viewing my profile
 export type User = {
   id: string;
   username: string;
@@ -5,6 +6,25 @@ export type User = {
   bio: string;
   avatarUrl: string;
   sports: UserSport[];
+};
+
+// when viewing another user's profile
+export type OtherUser = User & {
+  hasRequested: boolean;
+  isFriend: boolean;
+};
+
+// this is the type used for:
+// - organizer, accepted players, and join requests when querying games
+// - friends and friend requests when querying list of friends or list of friend requests
+// this will essentially lower our egress
+// and we can query the entire user profile if the user navigates to the OtherProfile component
+export type ThumbnailUser = {
+  id: string;
+  username: string;
+  displayName: string;
+  bio: string;
+  avatarUrl: string;
 };
 
 export interface Sport {
@@ -72,20 +92,28 @@ export interface Game {
 
 export type MyGame = Game & {
   address: Address;
-  joinRequests: User[];
-  acceptedPlayers: User[];
+  joinRequests: ThumbnailUser[];
+  acceptedPlayers: ThumbnailUser[];
 };
 
 export type JoinedGame = Game & {
   address: Address;
-  acceptedPlayers: User[];
-  organizer: User;
+  acceptedPlayers: ThumbnailUser[];
+  organizer: ThumbnailUser;
 };
 
 export type FeedGame = Game & {
   hasRequested: boolean;
-  acceptedPlayers: User[];
-  organizer: User;
+  acceptedPlayers: ThumbnailUser[];
+  organizer: ThumbnailUser;
+};
+
+export type Message = {
+  id: string;
+  roomCode: string;
+  sentAt: Date;
+  content: string;
+  user: ThumbnailUser;
 };
 
 export const sports = [

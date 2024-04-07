@@ -32,6 +32,38 @@ function useMutationGame() {
     state.removeJoinedGame,
   ]);
 
+  const checkGameOverlap = async (
+    datetime: Date,
+    street: string,
+    city: string,
+    state: string,
+    zip: string,
+  ) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { data, error } = await supabase.rpc("is_game_overlap", {
+        city_param: city,
+        datetime_param: datetime,
+        state_param: state,
+        street_param: street,
+        zip_param: zip,
+      });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error publishing game! Please try again later.");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const createGame = async (
     title: string,
     datetime: Date,
@@ -317,15 +349,13 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      let { data, error } = await supabase.rpc("can_user_leave_game", {
+      let { data, error } = await supabase.rpc("remove_player", {
         game_id: gameId,
         player_id: playerId,
       });
       if (error) throw error;
 
-      //Update Joined Games (remove game)
       removeJoinedGame(gameId);
-      //Update users in game (remove player)?
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -347,6 +377,7 @@ function useMutationGame() {
     removePlayerById,
     requestToJoinById,
     leaveJoinedGameById,
+    checkGameOverlap,
   };
 }
 
