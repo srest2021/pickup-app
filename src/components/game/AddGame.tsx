@@ -46,8 +46,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [selectedLocation, setSelectedLocation] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [proceed, setProceed] = useState(true);
-  // Toasts
-  const toast = useToastController();
 
   function clearGameAttributes() {
     setTitle("");
