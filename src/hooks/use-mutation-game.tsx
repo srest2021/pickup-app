@@ -32,6 +32,46 @@ function useMutationGame() {
     state.removeJoinedGame,
   ]);
 
+
+  const checkGameOverlap = async (
+    datetime: Date,
+    street: string,
+    city: string,
+    state: string,
+    zip: string,
+  ) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { data, error } = await supabase.rpc("is_game_overlap", {
+        city_param: city,
+        datetime_param: datetime,
+        state_param: state,
+        street_param: street,
+        zip_param: zip,
+      });
+      console.log("game overlap: ", data, error);
+      if (error) throw error;
+
+      if (data) {
+        return data as boolean;
+      } else {
+        throw new Error("Error publishing game! Please try again later.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error publishing game! Please try again later.");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const createGame = async (
     title: string,
     datetime: Date,
@@ -52,21 +92,6 @@ function useMutationGame() {
       //if no location, for now, default location is charmander marmander
       const lat = location ? location.coords.latitude : 39.3289357;
       const long = location ? location.coords.longitude : -76.6172978;
-
-
-      //Checking for overlap
-      const doesGameOverlap = await supabase.rpc("is_game_overlap" , {
-        city,
-        state,
-        street,
-        zip,
-        datetime
-      })
-
-      if (doesGameOverlap) {
-        //Do something here with an error/warning for them to update their game time, probably a return statement
-        throw new Error("Someone else already planned a game here! Either join them or schedule your game for another time.")
-      }
 
       const { data, error } = await supabase.rpc("create_game", {
         title,
@@ -120,7 +145,7 @@ function useMutationGame() {
       setLoading(false);
     }
   };
-
+  
   const removeMyGameById = async (id: string) => {
     try {
       setLoading(true);
@@ -360,6 +385,7 @@ function useMutationGame() {
     removePlayerById,
     requestToJoinById,
     leaveJoinedGameById,
+    checkGameOverlap,
   };
 }
 
