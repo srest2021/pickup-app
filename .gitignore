@@ -4,6 +4,7 @@
 coverage/
 
 .vscode/
+coverage/
 
 # dependencies
 node_modules/

@@ -1,4 +1,4 @@
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert, TouchableOpacity, Text } from "react-native";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
   Adapt,
@@ -14,16 +14,17 @@ import {
   H4,
   Switch,
 } from "tamagui";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const AddGame = ({ navigation }: { navigation: any }) => {
-  const { createGame } = useMutationGame();
-  const [loading, session] = useStore((state) => [
+  const { createGame, checkGameOverlap } = useMutationGame();
+  const [loading, setLoading, session] = useStore((state) => [
     state.loading,
+    state.setLoading,
     state.session,
   ]);
 
@@ -40,11 +41,20 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [playerLimit, setPlayerLimit] = useState("1");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [proceed, setProceed] = useState(true);
+  // Toasts
+  const toast = useToastController();
 
   function clearGameAttributes() {
     setTitle("");
     setDate(new Date());
     setTime(new Date());
+    setSearchTerm("");
+    setSearchResults([]);
     setStreet("");
     setCity("");
     setState("");
@@ -100,6 +110,16 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       return;
     }
 
+    const isOverlap = await checkGameOverlap(
+      combinedDateTime,
+      street,
+      city,
+      state,
+      zip,
+    );
+    let ok = await handleAlert(isOverlap);
+    if (!ok) return;
+
     const myNewGame = await createGame(
       title,
       combinedDateTime,
@@ -119,6 +139,75 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       navigation.navigate("My Games", { screen: "MyGames" });
     }
   };
+
+  const handleAlert = async (isOverlap: boolean): Promise<boolean> => {
+    return new Promise((resolve) => {
+      setProceed(false);
+      if (isOverlap) {
+        Alert.alert(
+          "This game overlaps in date and time with other games in nearby locations!",
+          "Do you want to proceed?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => {
+                resolve(false);
+              },
+              style: "cancel",
+            },
+            {
+              text: "Proceed",
+              onPress: () => {
+                resolve(true);
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+      } else {
+        resolve(true);
+      }
+    });
+  };
+
+  const handleSelectLocation = (location: any) => {
+    // Fill address fields with selected location's details
+    if (location && location.address) {
+      const { house_number, road, city, state, postcode } = location.address;
+
+      // Update the state values with the selected location's details
+      setStreet(house_number + " " + road);
+      setCity(city);
+      setState(state);
+      setZip(postcode);
+      setSelectedLocation(true);
+      setSearchTerm(house_number + " " + road);
+    }
+  };
+
+  //API KEY = pk.9ab0d93044f3a83dc41aad0677a190e9
+  useEffect(() => {
+    if (!searchTerm) {
+      setSearchResults([]);
+      return;
+    }
+
+    const fetchLocations = async () => {
+      try {
+        const response = await fetch(
+          `https://us1.locationiq.com/v1/autocomplete?key=pk.9ab0d93044f3a83dc41aad0677a190e9&q=${searchTerm}&countrycode=us&limit=5`,
+        );
+        const data = await response.json();
+        setSearchResults(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const timeoutId = setTimeout(fetchLocations, 500); // debounce to avoid too many requests
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   return (
     <View className="p-12">
@@ -223,13 +312,37 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               </Label>
               <YStack space="$2">
                 <Input
-                  flex={1}
-                  size="$5"
                   placeholder="Street"
-                  testID="streetInput"
-                  value={street}
-                  onChangeText={(text: string) => setStreet(text)}
+                  value={
+                    isSearchFocused
+                      ? searchTerm
+                      : selectedLocation
+                        ? street
+                        : searchTerm
+                  }
+                  onChangeText={setSearchTerm}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
                 />
+
+                {searchTerm !== street && searchResults.length > 0 && (
+                  <>
+                    {searchResults.map((result, index) => (
+                      <TouchableOpacity
+                        style={{
+                          paddingVertical: 10,
+                          paddingHorizontal: 10,
+                          borderBottomWidth: 1,
+                          borderBottomColor: "lightgray",
+                        }}
+                        key={index}
+                        onPress={() => handleSelectLocation(result)}
+                      >
+                        <Text>{result.display_name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </>
+                )}
 
                 <Input
                   flex={1}
@@ -237,7 +350,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                   placeholder="City"
                   testID="cityInput"
                   value={city}
-                  onChangeText={(text: string) => setCity(text)}
+                  onChangeText={setCity}
                 />
 
                 <XStack
@@ -251,7 +364,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                     placeholder="State"
                     value={state}
                     testID="stateInput"
-                    onChangeText={(text: string) => setState(text)}
+                    onChangeText={setState}
                   />
 
                   <Input
@@ -261,7 +374,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                     value={zip}
                     keyboardType="numeric"
                     testID="zipInput"
-                    onChangeText={(text: string) => setZip(text)}
+                    onChangeText={setZip}
                   />
                 </XStack>
               </YStack>
