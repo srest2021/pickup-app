@@ -12,6 +12,8 @@ function useQueryUsers() {
     setOtherUser,
     setFriends,
     setFriendRequests,
+    setSearchResults,
+    addAvatarUrls,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -19,11 +21,11 @@ function useQueryUsers() {
     state.setOtherUser,
     state.setFriends,
     state.setFriendRequests,
+    state.setSearchResults,
+    state.addAvatarUrls,
   ]);
 
-  const searchByUsername = async (
-    username: string,
-  ): Promise<ThumbnailUser[] | undefined> => {
+  const searchByUsername = async (username: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -31,6 +33,7 @@ function useQueryUsers() {
         .from("profiles")
         .select("id, username, display_name, bio, avatar_url")
         .or(`username.ilike.%${username}%, display_name.ilike.%${username}%`)
+        .not("id", "eq", session.user.id)
         .order("username", { ascending: true });
       if (error) throw error;
       if (data) {
@@ -44,9 +47,18 @@ function useQueryUsers() {
           };
           return user;
         });
-        return users;
+        setSearchResults(users);
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatar_url,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
       } else {
-        throw new Error("Error processing your search! Please try again later");
+        throw new Error(
+          "Error processing your search! Please try again later.",
+        );
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -70,7 +82,9 @@ function useQueryUsers() {
       if (data) {
         const user: OtherUser = data;
         setOtherUser(user);
-        return user;
+        addAvatarUrls([
+          { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
+        ]);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -87,7 +101,10 @@ function useQueryUsers() {
       if (!session?.user) throw new Error("No user on the session!");
 
       let { data, error } = await supabase.rpc("get_friends");
-      if (error) console.error(error);
+      if (error) throw error;
+      if (data == null && error == null) {
+        data = [];
+      }
 
       if (data) {
         const friends = data.map((friend: any) => {
@@ -100,8 +117,15 @@ function useQueryUsers() {
           };
           return myFriend;
         });
-
         setFriends(friends);
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatarUrl,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
+
         return friends;
       } else {
         throw new Error("Error fetching friends! Please try again later.");
@@ -123,7 +147,10 @@ function useQueryUsers() {
       if (!session?.user) throw new Error("No user on the session!");
 
       let { data, error } = await supabase.rpc("get_friend_requests");
-      if (error) console.error(error);
+      if (error) throw error;
+      if (data == null && error == null) {
+        data = [];
+      }
 
       if (data) {
         const friendRequests = data.map((friendRequest: any) => {
@@ -136,8 +163,15 @@ function useQueryUsers() {
           };
           return myFriendRequest;
         });
-
         setFriendRequests(friendRequests);
+
+        const avatarUrls = data.map((elem: any) => ({
+          userId: elem.id,
+          avatarPath: elem.avatarUrl,
+          avatarUrl: null,
+        }));
+        addAvatarUrls(avatarUrls);
+
         return friendRequests;
       } else {
         throw new Error(

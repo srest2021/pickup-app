@@ -5,13 +5,13 @@ import {
   waitFor,
   act,
 } from "@testing-library/react-native";
-import MyGames from "../../../src/components/MyGames";
+import MyGames from "../../src/components/MyGames";
 import { TamaguiProvider } from "tamagui";
-import appConfig from "../../../tamagui.config";
+import appConfig from "../../tamagui.config";
 import "@testing-library/jest-dom";
 import { useState } from "react";
 
-jest.mock("../../../src/hooks/use-query-games", () => ({
+jest.mock("../../src/hooks/use-query-games", () => ({
   __esModule: true,
   default: () => ({
     myGames: [],
@@ -53,7 +53,7 @@ const mockSession = {
 };
 
 // mock useMutationUser hook
-jest.mock("../../../src/hooks/use-mutation-user", () => ({
+jest.mock("../../src/hooks/use-mutation-user", () => ({
   __esModule: true,
   default: jest.fn(() => ({
     session: mockSession,
@@ -63,12 +63,12 @@ jest.mock("../../../src/hooks/use-mutation-user", () => ({
 }));
 
 // mock store
-jest.mock("../../../src/lib/store", () => ({
+jest.mock("../../src/lib/store", () => ({
   useStore: jest.fn(() => [{ session: mockSession }, [], []]),
 }));
 
 // mock useQueryGames hook
-jest.mock("../../../src/hooks/use-query-games", () => ({
+jest.mock("../../src/hooks/use-query-games", () => ({
   __esModule: true,
   default: () => ({
     fetchMyGames: jest.fn(),

@@ -41,6 +41,7 @@ type State = {
 
   friends: ThumbnailUser[];
   friendRequests: ThumbnailUser[];
+  searchResults: ThumbnailUser[] | null;
 
   channel: RealtimeChannel | undefined;
   roomCode: string | null;
@@ -120,15 +121,21 @@ type Action = {
   addMessage: (message: Message) => void;
   setChannel: (channel: RealtimeChannel | undefined) => void;
   setRoomCode: (roomCode: string) => void;
+  editAvatarPath: (userId: string, avatarPath: string | null) => void;
   addAvatarUrls: (newAvatarUrls: any[]) => void;
   addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
+  clearAvatarUrls: () => void;
 
   // friends
   setFriends: (friends: ThumbnailUser[]) => void;
   setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
+  addFriendRequest: () => void;
   acceptFriendRequest: (userId: string) => void;
   rejectFriendRequest: (userId: string) => void;
   removeFriend: (userId: string) => void;
+
+  // search results
+  setSearchResults: (results: ThumbnailUser[] | null) => void;
 };
 
 const initialState: State = {
@@ -154,6 +161,7 @@ const initialState: State = {
   avatarUrls: [],
   friends: [],
   friendRequests: [],
+  searchResults: null,
 };
 
 export const useStore = create<State & Action>()(
@@ -377,6 +385,18 @@ export const useStore = create<State & Action>()(
 
     setRoomCode: (roomCode) => set({ roomCode }),
 
+    editAvatarPath: (userId, avatarPath) => {
+      const newAvatarUrls = get().avatarUrls.map((elem) => {
+        if (elem.userId === userId) {
+          // replace avatar path and clear downloaded url
+          elem.avatarPath = avatarPath;
+          elem.avatarUrl = null;
+        }
+        return elem;
+      });
+      set({ avatarUrls: newAvatarUrls });
+    },
+
     addAvatarUrls: (newAvatarUrls) => {
       // filter out avatar urls that already exist in store
       const filteredAvatarUrls = newAvatarUrls.filter(
@@ -384,7 +404,6 @@ export const useStore = create<State & Action>()(
           !get().avatarUrls.some((old) => old.userId === updated.userId),
       );
       // add new avatar urls
-      //const updatedAvatarUrls = get().avatarUrls.concat(filteredAvatarUrls);
       set({ avatarUrls: [...get().avatarUrls, ...filteredAvatarUrls] });
     },
 
@@ -398,11 +417,17 @@ export const useStore = create<State & Action>()(
       set({ avatarUrls: newAvatarUrls });
     },
 
+    clearAvatarUrls: () => set({ avatarUrls: [] }),
+
     // friends
 
     setFriends: (myfriends) => set({ friends: myfriends }),
     setFriendRequests: (myFriendRequests) =>
       set({ friendRequests: myFriendRequests }),
+
+    addFriendRequest: () => {
+      get().otherUser!.hasRequested = true;
+    },
 
     acceptFriendRequest: (userId) => {
       // Save the newly accepted friend only!
@@ -438,5 +463,7 @@ export const useStore = create<State & Action>()(
       //update friends list
       set({ friends: updatedFriends });
     },
+
+    setSearchResults: (results) => set({ searchResults: results }),
   })),
 );

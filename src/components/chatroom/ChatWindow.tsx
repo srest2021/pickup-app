@@ -6,41 +6,15 @@ import MyMessage from "./MyMessage";
 import OtherMessage from "./OtherMessage";
 import { ScrollView, Alert } from "react-native";
 import { supabase } from "../../lib/supabase";
+import useQueryAvatars from "../../hooks/use-query-avatars";
 
 const ChatWindow = () => {
-  const [user, loading, messages, addAvatarUrl] = useStore((state) => [
-    state.user,
-    state.loading,
-    state.messages,
-    state.addAvatarUrl,
-  ]);
+  const [user, messages] = useStore((state) => [state.user, state.messages]);
+
   const { getChatroomMessages, getChatroomUsers } = useQueryMessages();
+  const { fetchAvatar } = useQueryAvatars();
 
   const scrollViewRef = useRef();
-
-  const fetchData = async (userId: string, avatarPath: string) => {
-    if (avatarPath) {
-      try {
-        await downloadImage(userId, avatarPath);
-      } catch (error) {
-        //Alert.alert("Error getting avatar");
-        addAvatarUrl(userId, null);
-      }
-    }
-  };
-
-  async function downloadImage(userId: string, path: string) {
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .download(path);
-    if (error) throw error;
-
-    const fr = new FileReader();
-    fr.readAsDataURL(data);
-    fr.onload = () => {
-      addAvatarUrl(userId, fr.result as string);
-    };
-  }
 
   useEffect(() => {
     const getData = async () => {
@@ -50,7 +24,7 @@ const ChatWindow = () => {
       if (avatarUrls && avatarUrls.length > 0) {
         avatarUrls.forEach((avatarUrl) => {
           if (avatarUrl.avatarPath) {
-            fetchData(avatarUrl.userId, avatarUrl.avatarPath);
+            fetchAvatar(avatarUrl.userId, avatarUrl.avatarPath);
           }
         });
       }

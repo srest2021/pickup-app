@@ -1,4 +1,14 @@
-import { YStack, ScrollView, Spinner, Button, View, XStack } from "tamagui";
+import {
+  YStack,
+  ScrollView,
+  Spinner,
+  Button,
+  View,
+  XStack,
+  YGroup,
+  ListItem,
+  H4,
+} from "tamagui";
 import { Alert } from "react-native";
 import { Text } from "tamagui";
 import { useState } from "react";
@@ -10,13 +20,14 @@ import OtherUserThumbnail from "./OtherUserThumbnail";
 import { useStore } from "../../lib/store";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
-  const [loading, setLoading] = useStore((state) => [
+  const [loading, results, setResults] = useStore((state) => [
     state.loading,
-    state.setLoading,
+    state.searchResults,
+    state.setSearchResults,
   ]);
   const { searchByUsername } = useQueryUsers();
   const [currentInput, setCurrentInput] = useState<string>("");
-  const [results, setResults] = useState<ThumbnailUser[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const handleSearch = async () => {
     if (currentInput.trim().length < 1) {
@@ -24,61 +35,82 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
       Alert.alert("Please enter a search first!");
       return;
     }
+    setResults(null);
 
-    setLoading(true);
-    const results = await searchByUsername(currentInput.trim());
-    if (results) {
-      setResults(results);
-    }
-    setLoading(false);
+    setSearching(true);
+    await searchByUsername(currentInput.trim());
+    setSearching(false);
   };
 
   return (
-    <View padding="$5">
-      <Form flexDirection="row" onSubmit={handleSearch}>
-        <XStack flex={1} space="$3">
-          <Input
-            flex={1}
-            borderWidth={2}
-            placeholder="Search by username"
-            autoCapitalize="none"
-            onChangeText={(text: string) => setCurrentInput(text)}
-            value={currentInput}
-          />
-          <Form.Trigger asChild>
-            <Button
-              backgroundColor="#e54b07"
-              icon={loading ? () => <Spinner /> : UserSearch}
-            ></Button>
-          </Form.Trigger>
-        </XStack>
-      </Form>
-      <ScrollView contentContainerStyle={{}}>
-        <YStack paddingVertical="$3" space="$3">
+    <View flex={1} padding="$5">
+      <YStack flex={1} space="$3">
+        <Form flexDirection="row" onSubmit={handleSearch}>
+          <XStack flex={1} space="$3">
+            <Input
+              flex={1}
+              borderWidth={2}
+              placeholder="Search by username"
+              autoCapitalize="none"
+              onChangeText={(text: string) => setCurrentInput(text)}
+              value={currentInput}
+            />
+            <Form.Trigger asChild>
+              <Button
+                testID="search-button"
+                backgroundColor="#e54b07"
+                icon={searching ? () => <Spinner /> : UserSearch}
+              ></Button>
+            </Form.Trigger>
+          </XStack>
+        </Form>
+        <ScrollView>
           {results ? (
-            results.map((user: ThumbnailUser) => (
-              <OtherUserThumbnail
-                key={user.id}
-                navigation={navigation}
-                user={user}
-              />
-            ))
+            results.length > 0 ? (
+              <YStack space="$3">
+                <YGroup
+                  alignSelf="center"
+                  bordered
+                  width="100%"
+                  size="$4"
+                  flex={1}
+                  space="$3"
+                >
+                  {results.map((user: ThumbnailUser) => (
+                    <YGroup.Item key={`search-${user.id}`}>
+                      <OtherUserThumbnail
+                        navigation={navigation}
+                        user={user}
+                        isFriend={false}
+                        isSearch={true}
+                      />
+                    </YGroup.Item>
+                  ))}
+                </YGroup>
+                <Button
+                  backgroundColor="#e54b07"
+                  onPress={() => {
+                    setResults(null);
+                    setCurrentInput("");
+                  }}
+                >
+                  Clear All
+                </Button>
+              </YStack>
+            ) : (
+              <View flex={1} alignSelf="center" justifyContent="center">
+                <H4 textAlign="center">No Search Results</H4>
+              </View>
+            )
           ) : (
-            <Text>No Search Yet</Text>
+            !loading && (
+              <View flex={1} alignSelf="center" justifyContent="center">
+                <H4 textAlign="center">No Search Yet</H4>
+              </View>
+            )
           )}
-          {results.length > 0 && (
-            <Button
-              backgroundColor="#e54b07"
-              onPress={() => {
-                setResults([]);
-                setCurrentInput("");
-              }}
-            >
-              Clear All
-            </Button>
-          )}
-        </YStack>
-      </ScrollView>
+        </ScrollView>
+      </YStack>
     </View>
   );
 };

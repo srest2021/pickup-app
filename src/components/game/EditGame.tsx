@@ -18,15 +18,7 @@ import { useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
-import {
-  Toast,
-  ToastProvider,
-  ToastViewport,
-  useToastController,
-  useToastState,
-} from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { ToastDemo } from "../Toast";
 
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -78,9 +70,6 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const [description, setDescription] = useState(selectedMyGame?.description);
   const [isPublic, setIsPublic] = useState(selectedMyGame!.isPublic);
 
-  // Toasts
-  const toast = useToastController();
-
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
     if (skillLevel === "0") {
@@ -106,9 +95,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       !state ||
       !zip
     ) {
-      toast.show("Error!", {
-        message: "Please fill out all required fields.",
-      });
+      Alert.alert("Please fill out all required fields.");
       return;
     }
 
@@ -122,9 +109,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     );
 
     if (combinedDateTime < new Date()) {
-      toast.show("Error!", {
-        message: "Date and time are in the past.",
-      });
+      Alert.alert("Error: Date and time are in the past!");
       return;
     }
 
@@ -149,8 +134,6 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
 
   return (
     <View className="p-12">
-      <ToastViewport />
-      <ToastDemo />
       {user ? (
         <ScrollView
           contentContainerStyle={{ paddingBottom: 100 }}

@@ -15,7 +15,7 @@ export default function Sport({ sport }: { sport: UserSport }) {
             marginRight: 10, // Adjust margin as needed
           }}
         >
-          <Text className="text-lg" style={{ color: "white" }}>
+          <Text key={sport.id} className="text-lg" style={{ color: "white" }}>
             {sport.name}
           </Text>
         </View>

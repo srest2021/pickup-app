@@ -7,7 +7,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\" --config \".prettierrc\"",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "jest": {
     "preset": "jest-expo",
@@ -34,9 +34,9 @@
     "@tamagui/toast": "^1.90.7",
     "@testing-library/jest-dom": "^6.4.2",
     "burnt": "^0.12.2",
-    "expo": "^50.0.11",
+    "expo": "^50.0.14",
     "expo-app-loading": "^2.1.1",
-    "expo-dev-client": "~3.3.9",
+    "expo-dev-client": "~3.3.11",
     "expo-font": "~11.10.3",
     "expo-image-picker": "~14.7.1",
     "expo-location": "^16.5.5",
@@ -46,7 +46,7 @@
     "jest-expo": "~50.0.3",
     "nativewind": "^4.0.36",
     "react": "18.2.0",
-    "react-native": "0.73.4",
+    "react-native": "0.73.6",
     "react-native-css-interop": "^0.0.34",
     "react-native-elements": "^3.4.3",
     "react-native-reanimated": "~3.6.3",

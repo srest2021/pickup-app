@@ -8,12 +8,9 @@ import {
   renderHook,
   act,
 } from "@testing-library/react-native";
-import MyGames from "../../../src/components/MyGames";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
-import { ToastProvider } from "@tamagui/toast";
-import { ToastViewport } from "@tamagui/toast";
 import MyGamePlayers from "../../../src/components/game/MyGamePlayers";
 
 describe("MyGamePlayers", () => {
@@ -53,9 +50,7 @@ describe("MyGamePlayers", () => {
   test("renders accepted players correctly", async () => {
     const { findByTestId } = render(
       <TamaguiProvider config={appConfig}>
-        <ToastProvider>
-          <MyGamePlayers navigation={1} />
-        </ToastProvider>
+        <MyGamePlayers navigation={1} />
       </TamaguiProvider>,
     );
 
@@ -77,9 +72,7 @@ describe("MyGamePlayers", () => {
   test("render join request correctly", async () => {
     const { getByTestId } = render(
       <TamaguiProvider config={appConfig}>
-        <ToastProvider>
-          <MyGamePlayers navigation={1} />
-        </ToastProvider>
+        <MyGamePlayers navigation={1} />
       </TamaguiProvider>,
     );
     const joinRequestsContainer = await getByTestId("join-requests-container");

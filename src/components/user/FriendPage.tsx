@@ -1,68 +1,42 @@
-import { supabase } from "../../lib/supabase";
-import { ScrollView, View, Text } from "react-native";
-import Avatar from "./Avatar";
-import Sports from "./Sports";
-import {
-  Button,
-  Card,
-  H4,
-  Separator,
-  SizableText,
-  Spinner,
-  Tabs,
-  XStack,
-  YStack,
-} from "tamagui";
-import useMutationUser from "../../hooks/use-mutation-user";
-import { useStore } from "../../lib/store";
-import { Dimensions } from "react-native";
-import { Edit3, Loader } from "@tamagui/lucide-icons";
-import AddSport from "./AddSport";
-import { ToastViewport, useToastController } from "@tamagui/toast";
-import { ToastDemo } from "../Toast";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { ScrollView, Text } from "react-native";
+import { H4, Separator, Spinner, Tabs, View, ListItem, YGroup } from "tamagui";
 import { useEffect, useState } from "react";
-import { OtherUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import SearchProfiles from "./SearchProfiles";
 import useQueryUsers from "../../hooks/use-query-users";
+import { useStore } from "../../lib/store";
 
 export default function FriendPage({ navigation }: { navigation: any }) {
-  const [session, myFriends = [], myFriendReqs] = useStore((state) => [
+  const [session, myFriends, myFriendReqs] = useStore((state) => [
     state.session,
     state.friends,
     state.friendRequests,
   ]);
 
-  //mock friend list for now
-  const friendsList: string[] = ["maddie", "clarissa", "kate"];
-  const {getFriends} = useQueryUsers()
-  const {getFriendRequests} = useQueryUsers()
-  const {acceptFriendRequestById} = useMutationUser()
-  const {rejectFriendRequestById} = useMutationUser()
+  const { getFriends } = useQueryUsers();
+  const { getFriendRequests } = useQueryUsers();
 
-  //const { fetchFeedGames } = useQueryGames(); Joe is making this but for friends
-  //const [session, friendList] = useStore((state) => [
-  //state.session,
-  //state.friendList,
-  //]);
   const [refreshing, setRefreshing] = useState(false);
-  const [hasLocation, setHasLocation] = useState(true);
   const [toggle, setToggle] = useState("friends");
 
+  // on component render, get all friends and friend requests
   useEffect(() => {
-    handleRefresh();
+    const getAll = async () => {
+      setRefreshing(true);
+      await getFriends();
+      await getFriendRequests();
+      setRefreshing(false);
+    };
+    getAll();
   }, []);
 
+  // on refresh, just refresh the tab we're on
   const handleRefresh = async () => {
     setRefreshing(true);
     if (toggle === "friends") {
-      const loadedFriends = await getFriends();
-      console.log("friends")
-      console.log(loadedFriends)
+      await getFriends();
     } else if (toggle === "friendRequests") {
-      const loadedReqs = await getFriendRequests();
-    } else if (toggle === "searchForFriends") {
+      await getFriendRequests();
     }
     setRefreshing(false);
   };
@@ -112,75 +86,111 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               </Tabs.Tab>
             </Tabs.List>
           </Tabs>
-          <ScrollView
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            onScroll={(e) => {
-              const { contentOffset } = e.nativeEvent;
-              if (contentOffset.y < -50 && !refreshing) {
-                handleRefresh();
-              }
-            }}
-            contentContainerStyle={{ paddingTop: 20 }}
-          >
-            {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
-            )}
+          {toggle === "searchForFriends" ? (
+            <SearchProfiles navigation={navigation} />
+          ) : (
+            <ScrollView
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              onScroll={(e) => {
+                const { contentOffset } = e.nativeEvent;
+                if (contentOffset.y < -50 && !refreshing) {
+                  handleRefresh();
+                }
+              }}
+              contentContainerStyle={{ paddingTop: 10 }}
+            >
+              <View flex={1} padding="$5">
+                {refreshing && (
+                  <Spinner size="small" color="#ff7403" testID="spinner" />
+                )}
 
-            {toggle === "friends" && myFriends ? (
-                <View>
-                  <H4 style={{ textAlign: "center" }}>
-                    {" "}
-                    {myFriends.length} friends
-                  </H4>
-                  {myFriends.map((friend) => (
-                    <View>
-                      <OtherUserThumbnail navigation={navigation} user={friend} isFriend={true}/>
-                    </View>
-                  ))}
-                </View>
-              ) : toggle === "friendRequests" ? (
-                  myFriendReqs.length > 0 ? (
-                    <View>
-                      <H4 style={{ textAlign: 'center' }}> {myFriendReqs.length} pending friend requests</H4>
-                      {myFriendReqs.map((friendReq) => (
-                        <View>
-                          <Text key={friendReq.id}>{friendReq.username}</Text>
-                          <XStack justifyContent="flex-end" space="$2">
-                            <Button
-                              testID="reject-button"
-                              size="$2"
-                              style={{ backgroundColor: "#e90d52", color: "white" }}
-                              onPress={() => rejectFriendRequestById(friendReq.username)}
-                            />
-                            <Button
-                              testID="accept-button"
-                              size="$2"
-                              style={{ backgroundColor: "#05a579", color: "white" }}
-                              onPress={() => acceptFriendRequestById(friendReq.username)}
-                            />
-                          </XStack>
-                        </View>
-                    ))}
-    
-                    </View>
-                    ) : (
-                      <View className="items-center justify-center flex-1 p-12 text-center">
-                        <H4>No friend requests</H4>
+                {toggle === "friends" && myFriends ? (
+                  <View flex={1}>
+                    {myFriends.length > 0 ? (
+                      <View flex={1} space="$3">
+                        <H4 style={{ textAlign: "center" }}>
+                          {myFriends.length}{" "}
+                          {myFriends.length == 1 ? "friend" : "friends"}
+                        </H4>
+                        <YGroup
+                          alignSelf="center"
+                          bordered
+                          width="100%"
+                          size="$4"
+                          flex={1}
+                          space="$3"
+                        >
+                          {myFriends.map((friend) => (
+                            <YGroup.Item key={`friend-${friend.id}`}>
+                              <OtherUserThumbnail
+                                navigation={navigation}
+                                user={friend}
+                                isFriend={true}
+                                isSearch={false}
+                              />
+                            </YGroup.Item>
+                          ))}
+                        </YGroup>
                       </View>
-                    )
-              ) : toggle === "searchForFriends" ? (
-                <SearchProfiles navigation={navigation} />
-              ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No friends search results</H4>
+                    ) : refreshing ? (
+                      <View flex={1} alignSelf="center" justifyContent="center">
+                        <H4 textAlign="center">Loading friends...</H4>
+                      </View>
+                    ) : (
+                      <View flex={1} alignSelf="center" justifyContent="center">
+                        <H4 textAlign="center">No friends yet</H4>
+                      </View>
+                    )}
+                  </View>
+                ) : (
+                  toggle === "friendRequests" &&
+                  myFriendReqs &&
+                  (myFriendReqs.length > 0 ? (
+                    <View space="$3">
+                      <H4 style={{ textAlign: "center" }}>
+                        {myFriendReqs.length} pending friend requests
+                      </H4>
+                      <YGroup
+                        alignSelf="center"
+                        bordered
+                        width="100%"
+                        size="$4"
+                        flex={1}
+                        space="$3"
+                      >
+                        {myFriendReqs.map(
+                          (friendReq) =>
+                            friendReq.id !== session.user.id && (
+                              <YGroup.Item key={`req-${friendReq.id}`}>
+                                <OtherUserThumbnail
+                                  navigation={navigation}
+                                  user={friendReq}
+                                  isFriend={false}
+                                  isSearch={false}
+                                />
+                              </YGroup.Item>
+                            ),
+                        )}
+                      </YGroup>
+                    </View>
+                  ) : refreshing ? (
+                    <View flex={1} alignSelf="center" justifyContent="center">
+                      <H4 textAlign="center">Loading friend requests...</H4>
+                    </View>
+                  ) : (
+                    <View flex={1} alignSelf="center" justifyContent="center">
+                      <H4 textAlign="center">No friend requests yet</H4>
+                    </View>
+                  ))
+                )}
               </View>
-            )}
-          </ScrollView>
+            </ScrollView>
+          )}
         </View>
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Loading...</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Loading...</H4>
         </View>
       )}
     </>
