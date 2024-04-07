@@ -21,12 +21,13 @@ import { SkillLevel, sports } from "../../lib/types";
 import { ToastViewport, useToastController } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { ToastDemo } from "../Toast";
-import AddressFields from "./AddressFields";
+//import AddressFields from "./AddressFields";
 
 const AddGame = ({ navigation }: { navigation: any }) => {
   const { createGame, checkGameOverlap } = useMutationGame();
-  const [loading, session] = useStore((state) => [
+  const [loading, setLoading, session] = useStore((state) => [
     state.loading,
+    state.setLoading,
     state.session,
   ]);
 
@@ -43,7 +44,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [playerLimit, setPlayerLimit] = useState("1");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -100,7 +101,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       return;
     }
 
-
     // Combine date and time to one object
     const combinedDateTime = new Date(
       date.getFullYear(),
@@ -122,11 +122,11 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       street,
       city,
       state,
-      zip
+      zip,
     );
     let ok = await handleAlert(isOverlap);
     if (!ok) return;
- 
+
     const myNewGame = await createGame(
       title,
       combinedDateTime,
@@ -142,48 +142,46 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (myNewGame) {
-      // toast.show("Success!", {
-      //   message: "Game added.",
-      // });
       clearGameAttributes();
       navigation.navigate("My Games", { screen: "MyGames" });
     }
   };
 
-  const handleAlert = async (isOverlap: boolean) => {
-    setProceed(false);
-    if (isOverlap) {
-      Alert.alert(
-        "This game overlaps in date and time with other games in nearby locations!",
-        "Do you want to proceed?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => {
-              setProceed(false);
+  const handleAlert = async (isOverlap: boolean): Promise<boolean> => {
+    return new Promise((resolve) => {
+      setProceed(false);
+      if (isOverlap) {
+        Alert.alert(
+          "This game overlaps in date and time with other games in nearby locations!",
+          "Do you want to proceed?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => {
+                resolve(false);
+              },
+              style: "cancel",
             },
-            style: "cancel",
-          },
-          {
-            text: "Proceed",
-            onPress: () => {
-              setProceed(true);
+            {
+              text: "Proceed",
+              onPress: () => {
+                resolve(true);
+              },
             },
-          },
-        ],
-        { cancelable: false },
-      );
-    } else {
-      setProceed(true);
-    }
-    return proceed;
+          ],
+          { cancelable: false },
+        );
+      } else {
+        resolve(true);
+      }
+    });
   };
 
   const handleSelectLocation = (location: any) => {
     // Fill address fields with selected location's details
     if (location && location.address) {
       const { house_number, road, city, state, postcode } = location.address;
-      
+
       // Update the state values with the selected location's details
       setStreet(house_number + " " + road);
       setCity(city);
@@ -192,7 +190,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       setSelectedLocation(true);
       setSearchTerm(house_number + " " + road);
     }
-
   };
 
   //API KEY = pk.9ab0d93044f3a83dc41aad0677a190e9
@@ -203,16 +200,15 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     }
 
     const fetchLocations = async () => {
-      
       try {
         const response = await fetch(
-          `https://us1.locationiq.com/v1/autocomplete?key=pk.9ab0d93044f3a83dc41aad0677a190e9&q=${searchTerm}&countrycode=us&limit=5`
+          `https://us1.locationiq.com/v1/autocomplete?key=pk.9ab0d93044f3a83dc41aad0677a190e9&q=${searchTerm}&countrycode=us&limit=5`,
         );
         const data = await response.json();
         setSearchResults(data);
       } catch (error) {
-        console.log(error)
-      } 
+        console.log(error);
+      }
     };
 
     const timeoutId = setTimeout(fetchLocations, 500); // debounce to avoid too many requests
@@ -326,26 +322,36 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               <YStack space="$2">
                 <Input
                   placeholder="Street"
-                  value={isSearchFocused ? searchTerm : selectedLocation ? street : searchTerm}
+                  value={
+                    isSearchFocused
+                      ? searchTerm
+                      : selectedLocation
+                        ? street
+                        : searchTerm
+                  }
                   onChangeText={setSearchTerm}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                 />
+                />
 
-              {(searchTerm !== street) && searchResults.length > 0 && (
-                <>
-              {searchResults.map((result, index) => (
-                <TouchableOpacity
-                  style = {{paddingVertical: 10,paddingHorizontal: 10,borderBottomWidth: 1,borderBottomColor: 'lightgray',}}
-                  key={index}
-                  onPress={() => handleSelectLocation(result)} 
-                >
-                  <Text>{result.display_name}</Text>
-              </TouchableOpacity>
-              ))}
-              </>
-            )}
-
+                {searchTerm !== street && searchResults.length > 0 && (
+                  <>
+                    {searchResults.map((result, index) => (
+                      <TouchableOpacity
+                        style={{
+                          paddingVertical: 10,
+                          paddingHorizontal: 10,
+                          borderBottomWidth: 1,
+                          borderBottomColor: "lightgray",
+                        }}
+                        key={index}
+                        onPress={() => handleSelectLocation(result)}
+                      >
+                        <Text>{result.display_name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </>
+                )}
 
                 <Input
                   flex={1}

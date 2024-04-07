@@ -32,7 +32,6 @@ function useMutationGame() {
     state.removeJoinedGame,
   ]);
 
-
   const checkGameOverlap = async (
     datetime: Date,
     street: string,
@@ -51,14 +50,8 @@ function useMutationGame() {
         street_param: street,
         zip_param: zip,
       });
-      console.log("game overlap: ", data, error);
       if (error) throw error;
-
-      if (data) {
-        return data as boolean;
-      } else {
-        throw new Error("Error publishing game! Please try again later.");
-      }
+      return data;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -70,7 +63,6 @@ function useMutationGame() {
       setLoading(false);
     }
   };
-
 
   const createGame = async (
     title: string,
@@ -145,7 +137,7 @@ function useMutationGame() {
       setLoading(false);
     }
   };
-  
+
   const removeMyGameById = async (id: string) => {
     try {
       setLoading(true);
