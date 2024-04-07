@@ -7,7 +7,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\" --config \".prettierrc\"",
-    "test": "jest --coverage --collectCoverageFrom='src/**/*.tsx'"
+    "test": "jest --coverage"
   },
   "jest": {
     "preset": "jest-expo",
