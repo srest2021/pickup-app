@@ -1,7 +1,16 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { Session } from "@supabase/supabase-js";
-import { UserSport, User, MyGame, JoinedGame, FeedGame } from "./types";
+import { RealtimeChannel, Session } from "@supabase/supabase-js";
+import {
+  UserSport,
+  User,
+  MyGame,
+  JoinedGame,
+  FeedGame,
+  Message,
+  OtherUser,
+  ThumbnailUser,
+} from "./types";
 import * as Location from "expo-location";
 
 type State = {
@@ -10,6 +19,8 @@ type State = {
 
   user: User | null;
   userSports: UserSport[];
+
+  otherUser: OtherUser | null;
 
   myGames: MyGame[];
   selectedMyGame: MyGame | null;
@@ -20,11 +31,22 @@ type State = {
   feedGames: FeedGame[];
   selectedFeedGame: FeedGame | null;
 
+  feedGamesFriendsOnly: FeedGame[];
+
   location: Location.LocationObject | null;
 
   filterSport: string | null;
   filterDist: number;
   filterLevel: string | null;
+
+  friends: ThumbnailUser[];
+  friendRequests: ThumbnailUser[];
+  searchResults: ThumbnailUser[] | null;
+
+  channel: RealtimeChannel | undefined;
+  roomCode: string | null;
+  messages: Message[];
+  avatarUrls: any[];
 };
 
 type Action = {
@@ -34,6 +56,8 @@ type Action = {
 
   setUser: (user: User | null) => void;
   editUser: (updated: any) => void;
+
+  setOtherUser: (otherUser: OtherUser | null) => void;
 
   addUserSport: (userSport: UserSport) => void;
   editUserSport: (userSport: UserSport) => void;
@@ -59,6 +83,9 @@ type Action = {
 
   setFeedGames: (feedGames: FeedGame[]) => void;
   clearFeedGames: () => void;
+
+  setFeedGamesFriendsOnly: (feedGames: FeedGame[]) => void;
+  clearFeedGamesFriendsOnly: () => void;
 
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
@@ -87,6 +114,28 @@ type Action = {
   getFilterSport: () => string | null;
   getFilterDist: () => number;
   getFilterLevel: () => string | null;
+
+  // chatroom
+  setMessages: (messages: Message[]) => void;
+  clearMessages: () => void;
+  addMessage: (message: Message) => void;
+  setChannel: (channel: RealtimeChannel | undefined) => void;
+  setRoomCode: (roomCode: string) => void;
+  editAvatarPath: (userId: string, avatarPath: string | null) => void;
+  addAvatarUrls: (newAvatarUrls: any[]) => void;
+  addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
+  clearAvatarUrls: () => void;
+
+  // friends
+  setFriends: (friends: ThumbnailUser[]) => void;
+  setFriendRequests: (friendRequests: ThumbnailUser[]) => void;
+  addFriendRequest: () => void;
+  acceptFriendRequest: (userId: string) => void;
+  rejectFriendRequest: (userId: string) => void;
+  removeFriend: (userId: string) => void;
+
+  // search results
+  setSearchResults: (results: ThumbnailUser[] | null) => void;
 };
 
 const initialState: State = {
@@ -94,9 +143,11 @@ const initialState: State = {
   loading: false,
   user: null,
   userSports: [],
+  otherUser: null,
   myGames: [],
   selectedMyGame: null,
   feedGames: [],
+  feedGamesFriendsOnly: [],
   selectedFeedGame: null,
   joinedGames: [],
   selectedJoinedGame: null,
@@ -104,6 +155,13 @@ const initialState: State = {
   filterSport: null,
   filterDist: 15,
   filterLevel: null,
+  messages: [],
+  channel: undefined,
+  roomCode: null,
+  avatarUrls: [],
+  friends: [],
+  friendRequests: [],
+  searchResults: null,
 };
 
 export const useStore = create<State & Action>()(
@@ -115,6 +173,8 @@ export const useStore = create<State & Action>()(
     setLoading: (loading) => set({ loading }),
 
     setUser: (user) => set({ user }),
+
+    setOtherUser: (user) => set({ otherUser: user }),
 
     editUser: (updated) => {
       let updatedUser = { ...get().user };
@@ -145,9 +205,17 @@ export const useStore = create<State & Action>()(
 
     // feed games
 
-    setFeedGames: (feedGames) => set({ feedGames }),
+    setFeedGames: (newGames) =>
+      set((state) => ({ feedGames: [...state.feedGames, ...newGames] })),
 
     clearFeedGames: () => set({ feedGames: [] }),
+
+    setFeedGamesFriendsOnly: (newGames) =>
+      set((state) => ({
+        feedGamesFriendsOnly: [...state.feedGamesFriendsOnly, ...newGames],
+      })),
+
+    clearFeedGamesFriendsOnly: () => set({ feedGamesFriendsOnly: [] }),
 
     setSelectedFeedGame: (feedGame) => set({ selectedFeedGame: feedGame }),
 
@@ -304,5 +372,98 @@ export const useStore = create<State & Action>()(
     getFilterLevel: () => {
       return get().filterLevel;
     },
+
+    // chatroom
+
+    setMessages: (messages) => set({ messages }),
+
+    clearMessages: () => set({ messages: [] }),
+
+    addMessage: (message) => set({ messages: [...get().messages, message] }),
+
+    setChannel: (channel) => set({ channel }),
+
+    setRoomCode: (roomCode) => set({ roomCode }),
+
+    editAvatarPath: (userId, avatarPath) => {
+      const newAvatarUrls = get().avatarUrls.map((elem) => {
+        if (elem.userId === userId) {
+          // replace avatar path and clear downloaded url
+          elem.avatarPath = avatarPath;
+          elem.avatarUrl = null;
+        }
+        return elem;
+      });
+      set({ avatarUrls: newAvatarUrls });
+    },
+
+    addAvatarUrls: (newAvatarUrls) => {
+      // filter out avatar urls that already exist in store
+      const filteredAvatarUrls = newAvatarUrls.filter(
+        (updated) =>
+          !get().avatarUrls.some((old) => old.userId === updated.userId),
+      );
+      // add new avatar urls
+      set({ avatarUrls: [...get().avatarUrls, ...filteredAvatarUrls] });
+    },
+
+    addAvatarUrl: (userId, avatarUrl) => {
+      const newAvatarUrls = get().avatarUrls.map((elem) => {
+        if (elem.userId === userId) {
+          elem.avatarUrl = avatarUrl;
+        }
+        return elem;
+      });
+      set({ avatarUrls: newAvatarUrls });
+    },
+
+    clearAvatarUrls: () => set({ avatarUrls: [] }),
+
+    // friends
+
+    setFriends: (myfriends) => set({ friends: myfriends }),
+    setFriendRequests: (myFriendRequests) =>
+      set({ friendRequests: myFriendRequests }),
+
+    addFriendRequest: () => {
+      get().otherUser!.hasRequested = true;
+    },
+
+    acceptFriendRequest: (userId) => {
+      // Save the newly accepted friend only!
+      const acceptedFriend = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id == userId,
+      );
+
+      // Remove the accepted friend from the friend requests lists
+      const updatedFriendRequests = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id != userId,
+      );
+
+      // update requests list
+      set({ friendRequests: updatedFriendRequests });
+
+      // add newly accepted friend to friends list
+      set({ friends: [acceptedFriend[0], ...get().friends] });
+    },
+
+    rejectFriendRequest: (userId) => {
+      const updatedFriendRequests = get().friendRequests.filter(
+        (friendRequest) => friendRequest.id != userId,
+      );
+      // update requests list
+      set({ friendRequests: updatedFriendRequests });
+    },
+
+    removeFriend: (userId) => {
+      const updatedFriends = get().friends.filter(
+        (friend) => friend.id != userId,
+      );
+
+      //update friends list
+      set({ friends: updatedFriends });
+    },
+
+    setSearchResults: (results) => set({ searchResults: results }),
   })),
 );

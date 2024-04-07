@@ -16,6 +16,12 @@ function useMutationUser() {
     addUserSport,
     editUserSport,
     setUserSports,
+    addFriendRequest,
+    acceptFriendRequest,
+    rejectFriendRequest,
+    removeFriend,
+    addAvatarUrls,
+    editAvatarPath,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -27,6 +33,12 @@ function useMutationUser() {
     state.addUserSport,
     state.editUserSport,
     state.setUserSports,
+    state.addFriendRequest,
+    state.acceptFriendRequest,
+    state.rejectFriendRequest,
+    state.removeFriend,
+    state.addAvatarUrls,
+    state.editAvatarPath,
   ]);
 
   useEffect(() => {
@@ -40,8 +52,10 @@ function useMutationUser() {
   }, []);
 
   useEffect(() => {
-    if (session) getProfile();
-  }, [session]);
+    if (session) {
+      getProfile();
+    }
+  }, [session?.access_token]);
 
   const getProfile = async () => {
     try {
@@ -88,6 +102,9 @@ function useMutationUser() {
         };
         setUser(user);
         setUserSports(user.sports);
+        addAvatarUrls([
+          { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
+        ]);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -214,6 +231,7 @@ function useMutationUser() {
         avatarUrl: avatar_url,
       };
       editUser(updatedUser);
+      editAvatarPath(session?.user.id, avatar_url);
       return updatedUser;
     } catch (error) {
       if (error instanceof Error) {
@@ -224,7 +242,7 @@ function useMutationUser() {
     }
   };
 
-  const addFriendRequest = async (userId: string) => {
+  const sendFriendRequest = async (userId: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -241,6 +259,7 @@ function useMutationUser() {
       if (error) throw error;
 
       if (data) {
+        addFriendRequest();
         return friendRequest;
       }
     } catch (error) {
@@ -252,12 +271,71 @@ function useMutationUser() {
     }
   };
 
-  const acceptFriendRequest = async (userId: string) => {
-    // use custom SQL function accept_friend_request(userId)
+  const acceptFriendRequestById = async (userId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("accept_friend_request", {
+        sent_by: userId,
+      });
+      if (error) throw error;
+
+      // Friend Request successfully accepted.
+      acceptFriendRequest(userId);
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const rejectFriendRequest = async (userId: string) => {
-    // use custom SQL function reject_friend_request(userId)
+  const rejectFriendRequestById = async (userId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("reject_friend_request", {
+        request_sent_to: userId,
+      });
+      if (error) throw error;
+
+      // Friend Request successfully rejected.
+      rejectFriendRequest(userId);
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removeFriendById = async (userId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      let { data, error } = await supabase.rpc("remove_friend", {
+        user1_id: user?.id,
+        user2_id: userId,
+      });
+      if (error) throw error;
+
+      // friend successfully removed
+      removeFriend(userId);
+      return userId;
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
@@ -266,9 +344,10 @@ function useMutationUser() {
     getProfile,
     updateProfile,
     setSport,
-    addFriendRequest,
-    acceptFriendRequest,
-    rejectFriendRequest,
+    sendFriendRequest,
+    acceptFriendRequestById,
+    rejectFriendRequestById,
+    removeFriendById,
   };
 }
 

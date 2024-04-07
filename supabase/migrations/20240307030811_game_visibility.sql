@@ -166,47 +166,28 @@ create policy "Users can update their own sports." on sports
 create policy "Users can delete their own sports." on sports
   for delete using (auth.uid() = user_id);
 
--- get another user profile (includes has_requested and is_friend fields)
-create or replace function get_other_profile(player_id "uuid")
+-- get the user id from a string or partial string!
+create or replace function username_search(username text)
 returns jsonb as $$
-declare 
+declare
   data jsonb;
 begin
-  select jsonb_build_object(
+  SELECT jsonb_agg(
+    jsonb_build_object (
     'id', p.id,
-    'username', p.username,
+    'username',p.username,
     'displayName', p.display_name,
     'bio', p.bio,
-    'avatarUrl', p.avatar_url,
-    'sports', (
-      SELECT jsonb_agg(
-        jsonb_build_object(
-          'id', s.id,
-          'sport', s.name,
-          'skillLevel', s.skill_level
-        )
-      )
-      from public.sports as s
-      where p.id = s.user_id
-    ),
-    'hasRequested', auth.uid() in (
-      select fr.request_sent_by
-      from friend_requests as fr
-      where fr.request_sent_to = player_id
-    ),
-    'isFriend', exists (
-      select 1
-      from friends as f
-      where (f.player1_id = auth.uid() and f.player2_id = p.id)
-        or (f.player1_id = p.id and f.player2_id = auth.uid())
+    'avatarUrl',p.avatar_url
     )
   )
   from public.profiles as p
-  where p.id = player_id
+  where p.username like '%' || username || '%'
   into data;
   return data;
 end;
 $$ language plpgsql;
+
 
 -- games table
 
@@ -234,12 +215,6 @@ using btree (organizer_id);
 
 alter table games
   enable row level security;
-
-create policy "Public games are viewable by everyone." on games
-  for select using (is_public);
-
-create policy "Friends-only games are viewable by the organizer's friends." on games
-  for select using ((not is_public) and true); --(auth.id() is organizer's friend)
 
 create policy "Users can insert their own games." on games
   for insert with check (auth.uid() = organizer_id);
@@ -430,7 +405,7 @@ create policy "Players cannot update existing friend requests." on friend_reques
   for update with check (false);
 
 create policy "Players can remove their own friend requests" on friend_requests
-  for delete using (request_sent_by = auth.uid());
+  for delete using (request_sent_by = auth.uid() or request_sent_to = auth.uid());
 
 -- friends table
 
@@ -463,6 +438,50 @@ create policy "Players cannot update existing friends." on friends
 
 create policy "Players can remove their own friends" on friends
   for delete using (player1_id = auth.uid() or player2_id = auth.uid());
+
+create policy "Public games are viewable by everyone; friends-only games are viewable by the organizer's friends." on games
+  for select using (is_public or ((not is_public) and exists (
+    select 1
+    from friends as f
+    where (f.player1_id = auth.uid() and f.player2_id = organizer_id)
+      or (f.player1_id = organizer_id and f.player2_id = auth.uid())
+  )));
+
+-- messages table
+create table messages (
+  "id" "uuid" primary key unique not null default "gen_random_uuid"(),
+  "sent_at" timestamp with time zone default "now"() not null,
+  "game_id" "uuid" references "games" on delete cascade not null,
+  "player_id" "uuid" references "profiles" on delete cascade not null,
+  "content" text not null
+);
+
+alter table messages
+  enable row level security;
+
+create policy "Players can see messages for a game if they've joined the game." on messages
+  for select using (
+    exists (
+      select 1
+      from joined_game AS jg
+      where jg.game_id = game_id and jg.player_id = auth.uid()
+    )
+  );
+
+create policy "Players can send messages for a game if they've joined the game." on messages
+  for insert with check (
+    exists (
+        select 1
+        from joined_game AS jg
+        where jg.game_id = game_id and jg.player_id = auth.uid()
+    )
+  );
+
+create policy "Players cannot edit existing messages." on messages
+  for update with check (false);
+
+create policy "Players cannot delete messages" on messages
+  for delete using (false);
 
 -- helper functions
 
@@ -784,8 +803,7 @@ end;
 $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
--- to do: organizer and accepted players should only have id, username, and avatar url returned
-create or replace function nearby_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null) 
+create or replace function nearby_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null) 
 returns table(
   id "uuid", 
   organizer_id "uuid", 
@@ -801,10 +819,8 @@ returns table(
   dist_meters double precision,
   accepted_players jsonb,
   organizer jsonb
-) as $$
-begin
-  return query execute
-  'with distances as (
+) language "sql" as $$
+  with distances as (
     select 
       gl.game_id,
       st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
@@ -828,48 +844,47 @@ begin
     ) as has_requested,
     d.dist_meters,
     (
-      SELECT jsonb_agg(
+      select jsonb_agg(
         jsonb_build_object(
-          ''id'', p.id,
-          ''username'', p.username,
-          ''displayName'', p.display_name,
-          ''avatarUrl'', p.avatar_url
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'avatarUrl', p.avatar_url
         )
       )
-      FROM public.joined_game AS jg
-      JOIN public.profiles AS p ON jg.player_id = p.id and jg.player_id != g.organizer_id
-      WHERE jg.game_id = g.id
-    ) AS accepted_players,
+      from public.joined_game as jg
+      join public.profiles as p on jg.player_id = p.id and jg.player_id != g.organizer_id
+      where jg.game_id = g.id
+    ) as accepted_players,
     (
       select
         jsonb_build_object(
-          ''id'', p.id,
-          ''username'', p.username,
-          ''displayName'', p.display_name,
-          ''avatarUrl'', p.avatar_url
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'avatarUrl', p.avatar_url
         )
-      FROM public.profiles AS p
+      from public.profiles as p
       where p.id = g.organizer_id
     ) as organizer
   from public.games as g
   inner join distances d on g.id = d.game_id
-  where g.organizer_id != auth.uid() and g.is_public and d.dist_meters <= $3' ||
-  case when sport_filter is not null then 
-    ' and g.sport = $4' 
-  else '' 
-  end ||
-  case when skill_level_filter is not null then 
-    ' and g.skill_level = $5'
-  else '' 
-  end ||
-  ' and not auth.uid() in (select player_id from joined_game where joined_game.game_id = g.id)
-  and g.datetime > CURRENT_TIMESTAMP - INTERVAL ''1 day'' -- only show games from yesterday on
-  order by d.dist_meters'
-  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter";
-end;
-$$ language plpgsql;
+  where 
+    g.is_public -- public game
+    and d.dist_meters <= dist_limit -- within distance limit
+    and (sport_filter is null or g.sport = sport_filter) -- apply sport filter
+    and (skill_level_filter is null or g.skill_level = skill_level_filter) -- apply skill level filter
+    and not auth.uid() in (
+      select player_id from joined_game where joined_game.game_id = g.id -- not joined yet
+    )
+    and g.organizer_id != auth.uid() -- not organizer
+    and g.datetime > CURRENT_TIMESTAMP - INTERVAL '1 day' -- only show games from yesterday on
+  order by d.dist_meters
+  offset "offset"
+  limit "limit";
+$$;
 
-create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "sport_filter" varchar default null, "skill_level_filter" int default null)
+create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null)
 returns table (
   id "uuid", 
   organizer_id "uuid", 
@@ -885,10 +900,8 @@ returns table (
   dist_meters double precision,
   accepted_players jsonb,
   organizer jsonb
-) as $$
-begin
-  return query execute
-  'with distances as (
+) language "sql" as $$
+  with distances as (
     select 
       gl.game_id,
       st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
@@ -914,10 +927,10 @@ begin
     (
       SELECT jsonb_agg(
         jsonb_build_object(
-          ''id'', p.id,
-          ''username'', p.username,
-          ''displayName'', p.display_name,
-          ''avatarUrl'', p.avatar_url 
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'avatarUrl', p.avatar_url 
         )
       )
       FROM public.joined_game AS jg
@@ -927,35 +940,34 @@ begin
     (
       select
         jsonb_build_object(
-          ''id'', p.id,
-          ''username'', p.username,
-          ''displayName'', p.display_name,
-          ''avatarUrl'', p.avatar_url
+          'id', p.id,
+          'username', p.username,
+          'displayName', p.display_name,
+          'avatarUrl', p.avatar_url
         )
       FROM public.profiles AS p
       where p.id = g.organizer_id
     ) as organizer
   from public.games as g
-  join friends f on (g.organizer_id = f.player1_id OR g.organizer_id = f.player2_id)
-  inner join distances d on g.id = d.game_id
-  where f.player1_id = $6 OR f.player2_id = $6 ' || --friends with the organizer
-  case when sport_filter is not null then 
-    ' and g.sport = $4' 
-  else '' 
-  end ||
-  case when skill_level_filter is not null then 
-    ' and g.skill_level = $5'
-  else '' 
-  end ||
-  ' and g.is_public = false -- friends-only
-  and d.dist_meters <= $3 -- within distance range
-  and not $6 in (select player_id from joined_game where joined_game.game_id = g.id) -- not joined yet
-  and g.organizer_id != $6 -- not organizer
-  and g.datetime > CURRENT_TIMESTAMP - INTERVAL ''1 day'' -- only show games from yesterday on
-  order by d.dist_meters'
-  using "lat", "long", "dist_limit", "sport_filter", "skill_level_filter", auth.uid();
-end;
-$$ language plpgsql;
+  join friends f on (
+    (f.player1_id = g.organizer_id and f.player2_id = auth.uid()) 
+    or (f.player1_id = auth.uid() and f.player2_id =g.organizer_id)
+  ) -- friends with the organizer
+  join distances d on g.id = d.game_id
+  where 
+    g.is_public is false -- friends-only
+    and d.dist_meters <= dist_limit -- within distance limit
+    and (sport_filter is null or g.sport = sport_filter) -- apply sport filter
+    and (skill_level_filter is null or g.skill_level = skill_level_filter) -- apply skill level filter
+    and not auth.uid() in (
+      select player_id from joined_game where joined_game.game_id = g.id -- not joined yet
+    )
+    and g.organizer_id != auth.uid() -- not organizer
+    and g.datetime > CURRENT_TIMESTAMP - INTERVAL '1 day' -- only show games from yesterday on
+  order by d.dist_meters
+  offset "offset"
+  limit "limit";
+$$;
 
 create or replace function my_games("lat" double precision, "long" double precision) 
 returns table(
@@ -1135,18 +1147,67 @@ begin
 end;
 $$ language plpgsql;
 
+-- get another user profile (includes has_requested and is_friend fields)
+create or replace function get_other_profile(player_id "uuid")
+returns jsonb as $$
+declare 
+  data jsonb;
+begin
+  select jsonb_build_object(
+    'id', p.id,
+    'username', p.username,
+    'displayName', p.display_name,
+    'bio', p.bio,
+    'avatarUrl', p.avatar_url,
+    'sports', (
+      SELECT jsonb_agg(
+        jsonb_build_object(
+          'id', s.id,
+          'sport', s.name,
+          'skillLevel', s.skill_level
+        )
+      )
+      from public.sports as s
+      where p.id = s.user_id
+    ),
+    'hasRequested', auth.uid() in (
+      select fr.request_sent_by
+      from friend_requests as fr
+      where fr.request_sent_to = player_id
+    ),
+    'isFriend', exists (
+      select 1
+      from friends as f
+      where (f.player1_id = auth.uid() and f.player2_id = p.id)
+        or (f.player1_id = p.id and f.player2_id = auth.uid())
+    )
+  )
+  from public.profiles as p
+  where p.id = player_id
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
 -- accept friend request
-create or replace function accept_friend_request(request_sent_to "uuid")
+create or replace function accept_friend_request(sent_by "uuid")
 returns void as $$
 begin
   -- remove friend request from friend_requests table
-  delete from friend_requests
-  where friend_requests.request_sent_by = auth.uid()
-  and friend_requests.request_sent_to = accept_friend_request.request_sent_to;
+  delete from friend_requests as fr
+  where (
+    (
+      fr.request_sent_to = auth.uid()
+      and fr.request_sent_by = sent_by
+    ) or (
+      fr.request_sent_to = sent_by
+      and fr.request_sent_by = auth.uid()
+    )
+  );
 
   -- add entry to friends table
   insert into friends (player1_id, player2_id)
-  values (request_sent_by, request_sent_to);
+  values (auth.uid(), sent_by);
 end;
 $$ language plpgsql;
 
@@ -1171,22 +1232,24 @@ begin
     select jsonb_agg (
       case
         when f.player1_id = auth.uid() then jsonb_build_object (
-          'id', p1.id,
-          'username', p1.username,
-          'displayName', p1.display_name,
-          'avatarUrl', p1.avatar_url
-        )
-        else jsonb_build_object (
           'id', p2.id,
           'username', p2.username,
           'displayName', p2.display_name,
-          'avatarUrl', p2.avatar_url
+          'avatarUrl', p2.avatar_url,
+          'bio', p.bio
+        )
+        else jsonb_build_object (
+          'id', p1.id,
+          'username', p1.username,
+          'displayName', p1.display_name,
+          'avatarUrl', p1.avatar_url,
+          'bio', p.bio
         )
       end
     )
     from public.friends as f
-    join public.profiles as p1 on (f.player2_id = p1.id)
-    join public.profiles as p2 on (f.player1_id = p2.id)
+    join public.profiles as p2 on (f.player2_id = p2.id)
+    join public.profiles as p1 on (f.player1_id = p1.id)
     where f.player1_id = auth.uid() or f.player2_id = auth.uid()
     into data;
     return data;
@@ -1205,12 +1268,45 @@ begin
         'id', p.id,
         'username', p.username,
         'displayName', p.display_name,
-        'avatarUrl', p.avatar_url
+        'avatarUrl', p.avatar_url,
+        'bio', p.bio
       )
     )
     from public.friend_requests as fr
     join public.profiles as p on fr.request_sent_by = p.id
+    where fr.request_sent_to = auth.uid()
     into data;
     return data;
+end;
+$$ language plpgsql;
+
+create or replace function add_message(game_id "uuid", content text)
+returns jsonb as $$
+declare
+  message_id "uuid";
+  sent_at timestamp with time zone;
+  data jsonb;
+begin
+  message_id := uuid_generate_v4();
+  sent_at := CURRENT_TIMESTAMP;
+  insert into messages (id, sent_at, content, game_id, player_id)
+  values (message_id, sent_at, content, game_id, auth.uid());
+
+  select jsonb_build_object (
+    'id', message_id,
+    'roomCode', game_id,
+    'sentAt', sent_at,
+    'content', content,
+    'user', jsonb_build_object (
+      'id', p.id,
+      'username', p.username,
+      'displayName', p.display_name,
+      'avatarUrl', p.avatar_url
+    )
+  )
+  from profiles as p
+  where p.id = auth.uid()
+  into data;
+  return data;
 end;
 $$ language plpgsql;

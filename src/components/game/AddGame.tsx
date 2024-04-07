@@ -18,10 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
-import { ToastViewport, useToastController } from "@tamagui/toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { ToastDemo } from "../Toast";
-//import AddressFields from "./AddressFields";
 
 const AddGame = ({ navigation }: { navigation: any }) => {
   const { createGame, checkGameOverlap } = useMutationGame();
@@ -95,9 +92,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       !state ||
       !zip
     ) {
-      toast.show("Error!", {
-        message: "Please fill out all required fields.",
-      });
+      Alert.alert("Please fill out all required fields.");
       return;
     }
 
@@ -111,9 +106,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     );
 
     if (combinedDateTime < new Date()) {
-      toast.show("Error!", {
-        message: "Date and time are in the past.",
-      });
+      Alert.alert("Error: Date and time are in the past!");
       return;
     }
 
@@ -218,8 +211,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
   return (
     <View className="p-12">
-      <ToastViewport />
-      <ToastDemo />
       {session && session.user ? (
         <ScrollView
           contentContainerStyle={{ paddingBottom: 100 }}

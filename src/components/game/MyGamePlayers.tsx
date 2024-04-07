@@ -1,8 +1,6 @@
 import { View, ScrollView, Alert } from "react-native";
 import { Label, YStack, Text, H6, Card } from "tamagui";
 import { useStore } from "../../lib/store";
-import { ToastViewport, useToastController } from "@tamagui/toast";
-import { ToastDemo } from "../Toast";
 import AcceptedPlayer from "./AcceptedPlayer";
 import NonAcceptedPlayer from "./NonAcceptedPlayers";
 
@@ -16,12 +14,10 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
   const joinRequests = selectedMyGame?.joinRequests;
 
   return (
-    <View style={{ display: "flex", marginTop: 20 }}>
-      <ToastViewport />
-      <ToastDemo />
+    <View style={{ display: "flex" }}>
       {session && session.user ? (
         <YStack style={{ flex: 1 }}>
-          <YStack style={{ flex: 1, alignItems: "center", paddingBottom: 30 }}>
+          <YStack style={{ flex: 1, alignItems: "center", paddingBottom: 20 }}>
             <Label size={5} paddingBottom="$2">
               <H6>
                 Accepted Players ({selectedMyGame?.currentPlayers}/

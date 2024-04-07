@@ -16,9 +16,7 @@ export default function EditProfile({ navigation }: { navigation: any }) {
 
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [bio, setBio] = useState(user?.bio || "");
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
-
-  useEffect(() => {}, [avatarUrl]);
+  const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatarUrl || "");
 
   const handleUpdate = async (
     username: string,
@@ -26,7 +24,8 @@ export default function EditProfile({ navigation }: { navigation: any }) {
     bio: string,
     avatarUrl: string,
   ) => {
-    await updateProfile(username, displayName, bio, avatarUrl);
+    const update = await updateProfile(username, displayName, bio, avatarUrl);
+    setAvatarUrl(avatarUrl);
     navigation.goBack();
   };
 
@@ -45,10 +44,10 @@ export default function EditProfile({ navigation }: { navigation: any }) {
           <YStack space="$5">
             <View className="items-center">
               <Avatar
-                url={user.avatarUrl}
+                url={avatarUrl}
+                user={user}
                 onUpload={(url: string) => {
-                  setAvatarUrl(url);
-                  handleUpdate(user.username, displayName, bio, url); //avatarUrl
+                  handleUpdate(user.username, displayName, bio, url);
                 }}
                 allowUpload={true}
               />

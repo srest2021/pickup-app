@@ -88,6 +88,8 @@ View the tutorial to set up Supabase local development [here](https://supabase.c
 
 6. To deploy a local database migration: `npx supabase db push`.
 
+7. To run the unit tests: `npx supabase test db`.
+
 ### Create a development build
 
 Follow the instructions to cretae a build [here](https://docs.expo.dev/build/setup/) and [here](https://docs.expo.dev/develop/development-builds/create-a-build/).

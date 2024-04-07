@@ -13,6 +13,8 @@ function useQueryGames() {
     clearMyGames,
     setFeedGames,
     clearFeedGames,
+    setFeedGamesFriendsOnly,
+    clearFeedGamesFriendsOnly,
     setJoinedGames,
     clearJoinedGames,
     location,
@@ -27,6 +29,8 @@ function useQueryGames() {
     state.clearMyGames,
     state.setFeedGames,
     state.clearFeedGames,
+    state.setFeedGamesFriendsOnly,
+    state.clearFeedGamesFriendsOnly,
     state.setJoinedGames,
     state.clearJoinedGames,
     state.location,
@@ -155,7 +159,7 @@ function useQueryGames() {
     }
   };
 
-  const fetchFeedGames = async () => {
+  const fetchFeedGames = async (friendsOnly: Boolean, offset: number) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view feed games");
@@ -168,15 +172,18 @@ function useQueryGames() {
       const filterDist = getFilterDist();
       const filterLevel = getFilterLevel();
 
-      const { data, error } = await supabase
-        .rpc("nearby_games", {
+      const { data, error } = await supabase.rpc(
+        friendsOnly ? "friends_only_games" : "nearby_games",
+        {
           lat: location.coords.latitude,
           long: location.coords.longitude,
           dist_limit: filterDist,
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
-        })
-        .limit(20);
+          offset,
+          limit: 20,
+        },
+      );
       if (error) throw error;
 
       if (data) {
@@ -201,8 +208,12 @@ function useQueryGames() {
           };
           return feedGame;
         });
-        setFeedGames(games);
+        offset === 0 &&
+          (friendsOnly ? clearFeedGamesFriendsOnly() : clearFeedGames());
+        friendsOnly ? setFeedGamesFriendsOnly(games) : setFeedGames(games);
         return games;
+      } else {
+        throw new Error("Error fetching feed games! Please try again later.");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -210,7 +221,7 @@ function useQueryGames() {
       } else {
         Alert.alert("Error fetching feed games! Please try again later.");
       }
-      clearFeedGames();
+      friendsOnly ? clearFeedGamesFriendsOnly() : clearFeedGames();
     } finally {
       setLoading(false);
     }

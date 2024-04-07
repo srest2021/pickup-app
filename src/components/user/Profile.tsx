@@ -31,6 +31,9 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearSelectedFeedGame,
     clearJoinedGames,
     clearSelectedJoinedGame,
+    clearMessages,
+    clearAvatarUrls,
+    setChannel,
   ] = useStore((state) => [
     state.loading,
     state.setLoading,
@@ -44,6 +47,9 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearSelectedFeedGame,
     state.clearJoinedGames,
     state.clearSelectedJoinedGame,
+    state.clearMessages,
+    state.clearAvatarUrls,
+    state.setChannel,
   ]);
   const { setSport } = useMutationUser();
   const toast = useToastController();
@@ -54,13 +60,6 @@ export default function Profile({ navigation }: { navigation: any }) {
   ) => {
     // Handle the new sport as needed
     const userSport = await setSport(sportName, sportSkillLevel);
-    // Comment out this toast, because if you go to My Game View,
-    // it will pop up there as well.
-    // if (userSport) {
-    //   toast.show("Success!", {
-    //     message: "Sport added.",
-    //   });
-    // }
   };
 
   const handleLogOut = async () => {
@@ -76,7 +75,9 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearSelectedFeedGame();
     clearJoinedGames();
     clearSelectedJoinedGame();
-
+    clearMessages();
+    clearAvatarUrls();
+    setChannel(undefined);
     setLoading(false);
   };
 
@@ -123,6 +124,7 @@ export default function Profile({ navigation }: { navigation: any }) {
               >
                 <Avatar
                   url={user.avatarUrl}
+                  user={user}
                   onUpload={() => {}}
                   allowUpload={false}
                 />
