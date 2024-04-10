@@ -183,7 +183,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     }
   };
 
-  //API KEY = pk.9ab0d93044f3a83dc41aad0677a190e9
   useEffect(() => {
     if (!searchTerm) {
       setSearchResults([]);
@@ -193,7 +192,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     const fetchLocations = async () => {
       try {
         const response = await fetch(
-          `https://us1.locationiq.com/v1/autocomplete?key=pk.9ab0d93044f3a83dc41aad0677a190e9&q=${searchTerm}&countrycode=us&limit=5`,
+          `https://us1.locationiq.com/v1/autocomplete?key=${process.env.AUTOCOMPLETE_API_KEY}&q=${searchTerm}&countrycode=us&limit=5`,
         );
         const data = await response.json();
         setSearchResults(data);
