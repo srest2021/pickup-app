@@ -180,7 +180,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
               }}
               variant="outlined"
               theme="active"
-              size="$5"
+              size="$6"
               position="absolute"
               alignSelf="flex-end"
               right="$7"

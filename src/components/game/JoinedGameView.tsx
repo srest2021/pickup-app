@@ -173,7 +173,7 @@ const JoinedGameView = ({
               }}
               variant="outlined"
               theme="active"
-              size="$5"
+              size="$6"
               position="absolute"
               alignSelf="flex-end"
               right="$7"

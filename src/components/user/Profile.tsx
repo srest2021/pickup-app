@@ -82,7 +82,7 @@ export default function Profile({ navigation }: { navigation: any }) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#08348c" }}>
       <ToastViewport />
       <ToastDemo />
       <ScrollView
@@ -90,6 +90,7 @@ export default function Profile({ navigation }: { navigation: any }) {
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "space-between",
+          backgroundColor: "#f2f2f2",
         }}
       >
         <View
@@ -105,12 +106,17 @@ export default function Profile({ navigation }: { navigation: any }) {
         >
           <Button
             icon={loading ? Loader : Edit3}
+            style={{
+              width: 55,
+              height: 60,
+              borderColor: "#ffffff",
+              color: "#ffffff",
+              borderRadius: 50,
+            }}
             theme="active"
             disabled={loading}
             onPress={() => navigation.navigate("EditProfile")}
-            size="$5"
-            color="#ffffff"
-            borderColor="#ffffff"
+            size="$6"
             variant="outlined"
           ></Button>
         </View>
@@ -120,7 +126,7 @@ export default function Profile({ navigation }: { navigation: any }) {
             <View>
               <View
                 className="items-center mb-10"
-                style={{ marginTop: -topThirdHeight / 2 }}
+                style={{ marginTop: -topThirdHeight / 1.3 }}
               >
                 <Avatar
                   url={user.avatarUrl}
@@ -132,7 +138,7 @@ export default function Profile({ navigation }: { navigation: any }) {
 
               <View className="self-stretch py-0">
                 <Text className="text-2xl text-center">
-                  {user.displayName ? user.displayName : "No display name"}
+                  {user.displayName ? user.displayName : "No display name yet"}
                 </Text>
               </View>
               <View className="self-stretch py-2">
@@ -154,7 +160,7 @@ export default function Profile({ navigation }: { navigation: any }) {
                 </Card>
               </YStack>
 
-              <Sports sports={userSports} />
+              <Sports sports={userSports} otherUser={false} />
 
               <AddSport onSportSelect={handleSportSelect} />
             </View>

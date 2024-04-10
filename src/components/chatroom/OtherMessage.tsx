@@ -12,7 +12,13 @@ import { Message } from "../../lib/types";
 import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
 
-const OtherMessage = ({ message }: { message: Message }) => {
+const OtherMessage = ({
+  message,
+  navigation,
+}: {
+  message: Message;
+  navigation: any;
+}) => {
   const [avatarUrls] = useStore((state) => [state.avatarUrls]);
 
   const [avatarUrl, setAvatarUrl] = useState(undefined);
@@ -41,7 +47,15 @@ const OtherMessage = ({ message }: { message: Message }) => {
 
         <YStack space="$0">
           <XStack style={{ maxWidth: "70%" }} space="$2">
-            <Avatar circular size="$3">
+            <Avatar
+              circular
+              size="$3"
+              onPress={() =>
+                navigation.navigate("OtherProfileView", {
+                  userId: message.user.id,
+                })
+              }
+            >
               <Avatar.Image
                 accessibilityLabel={message.user.username}
                 src={avatarUrl}

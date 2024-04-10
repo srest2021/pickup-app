@@ -59,7 +59,7 @@ export default function OtherProfile({
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#08348c" }}>
       <ToastViewport />
       <ToastDemo />
       <ScrollView
@@ -67,6 +67,7 @@ export default function OtherProfile({
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "space-between",
+          backgroundColor: "#f2f2f2",
         }}
       >
         <View
@@ -82,10 +83,10 @@ export default function OtherProfile({
         ></View>
         <View className="p-12">
           {otherUser && user ? (
-            <View>
+            <YStack space="$4">
               <View
-                className="items-center mb-10"
-                style={{ marginTop: -topThirdHeight / 2 }}
+                className="items-center"
+                style={{ marginTop: -topThirdHeight / 1.3 }}
               >
                 <Avatar
                   url={otherUser.avatarUrl}
@@ -95,39 +96,43 @@ export default function OtherProfile({
                 />
               </View>
 
-              <View className="self-stretch py-0">
-                <Text className="text-2xl text-center">
-                  {otherUser.displayName ? (
-                    otherUser.displayName
-                  ) : (
-                    <Text> "No display name" </Text>
+              <YStack space="$2" paddingVertical="$3">
+                {otherUser.displayName &&
+                  otherUser.displayName.trim().length > 0 && (
+                    <View className="self-stretch">
+                      <Text className="text-2xl text-center">
+                        {otherUser.displayName}
+                      </Text>
+                    </View>
                   )}
-                </Text>
-              </View>
-              <View className="self-stretch py-2">
-                <Text className="text-xl text-center">
-                  @{otherUser.username}
-                </Text>
-              </View>
 
-              <YStack paddingTop="$3" paddingBottom="$4">
-                <Card elevate size="$5">
-                  <View marginLeft={25} marginRight={25}>
-                    <SizableText
-                      size="$5"
-                      fontWeight="500"
-                      paddingTop="$3"
-                      paddingBottom="$3"
-                    >
-                      {otherUser.bio ? otherUser.bio : "No bio yet"}
-                    </SizableText>
-                  </View>
-                </Card>
+                <View className="self-stretch">
+                  <Text className="text-xl text-center">
+                    @{otherUser.username}
+                  </Text>
+                </View>
               </YStack>
 
-              <Sports sports={otherUser.sports} />
+              {otherUser.bio && otherUser.bio.trim().length > 0 && (
+                <YStack>
+                  <Card elevate size="$5">
+                    <View marginLeft={25} marginRight={25}>
+                      <SizableText
+                        size="$5"
+                        fontWeight="500"
+                        paddingTop="$3"
+                        paddingBottom="$3"
+                      >
+                        {otherUser.bio}
+                      </SizableText>
+                    </View>
+                  </Card>
+                </YStack>
+              )}
 
-              <YStack space="$6" paddingTop="$5" alignItems="center">
+              <Sports sports={otherUser.sports} otherUser={true} />
+
+              <YStack space="$6" alignItems="center">
                 {!otherUser?.isFriend ? (
                   <Button
                     variant="outlined"
@@ -147,7 +152,7 @@ export default function OtherProfile({
                   <Text>You are friends!</Text>
                 )}
               </YStack>
-            </View>
+            </YStack>
           ) : (
             <Text>Loading user profile...</Text>
           )}
