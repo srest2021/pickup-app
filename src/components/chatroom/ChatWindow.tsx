@@ -9,7 +9,11 @@ import { supabase } from "../../lib/supabase";
 import useQueryAvatars from "../../hooks/use-query-avatars";
 
 const ChatWindow = ({ navigation }: { navigation: any }) => {
-  const [user, messages, setMessages] = useStore((state) => [state.user, state.messages, state.setMessages]);
+  const [user, messages, setMessages] = useStore((state) => [
+    state.user,
+    state.messages,
+    state.setMessages,
+  ]);
 
   const { getChatroomMessages, getChatroomUsers } = useQueryMessages();
   const { fetchAvatar } = useQueryAvatars();
