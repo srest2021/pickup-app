@@ -11,12 +11,6 @@ import AddSport from "./AddSport";
 import { ToastViewport } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 
-// Get the height of the screen
-const windowHeight = Dimensions.get("window").height;
-
-// Calculate the height for the top third
-const topThirdHeight = windowHeight / 4;
-
 export default function Profile({ navigation }: { navigation: any }) {
   const [
     loading,
@@ -51,6 +45,7 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearAvatarUrls,
     state.setChannel,
   ]);
+
   const { setSport } = useMutationUser();
 
   const handleSportSelect = async (
@@ -79,6 +74,12 @@ export default function Profile({ navigation }: { navigation: any }) {
     setChannel(undefined);
     setLoading(false);
   };
+
+  // Get the height of the screen
+  const windowHeight = Dimensions.get("window").height;
+
+  // Calculate the height for the top third
+  const topThirdHeight = windowHeight / 5;
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
@@ -129,7 +130,7 @@ export default function Profile({ navigation }: { navigation: any }) {
             <View>
               <View
                 className="items-center mb-10"
-                style={{ marginTop: -topThirdHeight / 1.3 }}
+                style={{ marginTop: -topThirdHeight / 1.05 }}
               >
                 <Avatar
                   url={user.avatarUrl}

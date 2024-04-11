@@ -15,10 +15,6 @@ export const getUserCacheKey = (userId: string) => {
   return `otherUser:${userId}`;
 };
 
-// TODO: add TTL for users or flush cache on app start
-// and/or add refresh for otherProfile that ignores existing object in cache
-// and/or on change to isFriend or hasRequested, update user in cache by setting to OtherUser
-
 export const addUserToCache = async (user: OtherUser) => {
   const cacheKey = getUserCacheKey(user.id);
   await redis.hset(cacheKey, user);

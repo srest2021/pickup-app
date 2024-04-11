@@ -1,18 +1,12 @@
 import { ScrollView, View, Text } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
-import { Button, Card, SizableText, YStack } from "tamagui";
+import { Button, Card, SizableText, Spinner, YStack } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
 import useQueryUsers from "../../hooks/use-query-users";
-import { useEffect } from "react";
-
-// Get the height of the screen
-const windowHeight = Dimensions.get("window").height;
-
-// Calculate the height for the top third
-const topThirdHeight = windowHeight / 4;
+import { useEffect, useState } from "react";
 
 export default function OtherProfile({
   navigation,
@@ -33,6 +27,8 @@ export default function OtherProfile({
   const { sendFriendRequest } = useMutationUser();
   const { getOtherProfile } = useQueryUsers();
 
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     getOtherProfile(userId, false);
     return () => {
@@ -40,12 +36,24 @@ export default function OtherProfile({
     };
   }, []);
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await getOtherProfile(userId, true);
+    setRefreshing(false);
+  };
+
   // Returns true if the user has requested
   const handleRequestLogic = async () => {
     // Send friend request
     // using !, otherUser should never be null if this page appears.
     const friendRequest = await sendFriendRequest(otherUser!.id);
   };
+
+  // Get the height of the screen
+  const windowHeight = Dimensions.get("window").height;
+
+  // Calculate the height for the top third
+  const topThirdHeight = windowHeight / 5;
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
@@ -60,7 +68,23 @@ export default function OtherProfile({
           justifyContent: "space-between",
           backgroundColor: "#f2f2f2",
         }}
+        scrollEventThrottle={16}
+        onScroll={(e) => {
+          const { contentOffset } = e.nativeEvent;
+          if (contentOffset.y < -50 && !refreshing) {
+            handleRefresh();
+          }
+        }}
       >
+        {refreshing && (
+          <Spinner
+            paddingTop="$5"
+            size="small"
+            color="#f2f2f2"
+            backgroundColor="#08348c"
+            testID="spinner"
+          />
+        )}
         <View
           style={{
             backgroundColor: "#08348c",
@@ -71,13 +95,13 @@ export default function OtherProfile({
             alignItems: "flex-start",
             padding: 12,
           }}
-        ></View>
+        />
         <View className="p-12">
           {otherUser && user ? (
             <YStack space="$4">
               <View
                 className="items-center"
-                style={{ marginTop: -topThirdHeight / 1.3 }}
+                style={{ marginTop: -topThirdHeight / 1.05 }}
               >
                 <Avatar
                   url={otherUser.avatarUrl}
@@ -124,10 +148,10 @@ export default function OtherProfile({
               <Sports sports={otherUser.sports} otherUser={true} />
 
               <YStack space="$6" alignItems="center">
-                {!otherUser?.isFriend ? (
+                {/* {!otherUser.isFriend ? ( */}
                   <Button
                     variant="outlined"
-                    disabled={otherUser?.hasRequested}
+                    disabled={otherUser.hasRequested || otherUser.isFriend}
                     onPress={() => handleRequestLogic()}
                     size="$5"
                     color="#ff7403"
@@ -137,13 +161,15 @@ export default function OtherProfile({
                   >
                     {loading
                       ? "Loading..."
-                      : otherUser?.hasRequested
+                      : otherUser.hasRequested
                         ? "Requested"
+                        : otherUser.isFriend
+                        ? "Friends"
                         : "Send Friend Request"}
                   </Button>
-                ) : (
+                {/* ) : (
                   <Text>You are friends!</Text>
-                )}
+                )} */}
               </YStack>
             </YStack>
           ) : (
