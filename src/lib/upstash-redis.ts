@@ -33,6 +33,17 @@ export const getUserFromCache = async (userId: string) => {
   return data;
 };
 
+export const updateIsFriendInCache = async (userId: string, isFriend: boolean) => {
+  //console.log("updating isFriend in cache")
+  const cacheKey = getUserCacheKey(userId);
+  const data: OtherUser | null = await redis.hgetall(cacheKey);
+  if (data) {
+    data.isFriend = isFriend;
+    //console.log("updated data: ",data)
+    await redis.hset(cacheKey, data);
+  }
+}
+
 // export const getLocalAvatarUrlFromCache = async (userId: string) => {
 //   const cacheKey = getUserCacheKey(userId);
 //   const data = await redis.hget(cacheKey, 'localAvatarUrl');
