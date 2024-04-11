@@ -29,7 +29,6 @@ function useQueryMessages() {
   ]);
 
   const MESSAGE_LIMIT = 50;
-
   const username = user?.username;
   const cacheKey = `room:${roomCode}`;
 
@@ -37,6 +36,11 @@ function useQueryMessages() {
     await redis.lpush(cacheKey, payload);
     await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
   };
+
+  const addMessagesToCache = async (messages: Message[]) => {
+    await redis.lpush(cacheKey, ...messages);
+    await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
+  }
 
   useEffect(() => {
     if (roomCode && username) {
@@ -151,12 +155,8 @@ function useQueryMessages() {
         .eq("game_id", roomCode);
       if (mostRecentSentAt) query.gt("sent_at", mostRecentSentAt);
       query.order("sent_at", { ascending: true }).limit(MESSAGE_LIMIT);
-      //startTime = performance.now()
       const { data, error } = await query;
-      //endTime = performance.now()
       if (error) throw error;
-      // console.log("supabase results: ",data.length)
-      // console.log(endTime-startTime, 'ms')
 
       if (data) {
         if (data.length > 0) {
@@ -177,8 +177,7 @@ function useQueryMessages() {
           addMessages(messages);
 
           // add to cache
-          await redis.lpush(cacheKey, ...messages);
-          await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
+          addMessagesToCache(messages);
         }
       } else {
         throw new Error("Error getting messages! Please try again later.");
