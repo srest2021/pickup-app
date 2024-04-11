@@ -3,6 +3,7 @@ import { OtherUser } from "./types";
 
 export const MESSAGE_LIMIT = 50;
 export const OTHER_USER_LIMIT = 50;
+const EXPIRATION_TIME = 7200;
 
 export const redis = new Redis({
   url: "https://us1-pleased-kangaroo-41719.upstash.io",
@@ -21,6 +22,7 @@ export const getUserCacheKey = (userId: string) => {
 export const addUserToCache = async (user: OtherUser) => {
   const cacheKey = getUserCacheKey(user.id);
   await redis.hset(cacheKey, user);
+  await redis.expire(cacheKey, EXPIRATION_TIME);
 };
 
 export const addUsersToCache = async (users: OtherUser[]) => {
@@ -54,5 +56,6 @@ export const updatehasRequestedInCache = async (
   if (data) {
     data.hasRequested = hasRequested;
     await redis.hset(cacheKey, data);
+    await redis.expire(cacheKey, EXPIRATION_TIME);
   }
 };

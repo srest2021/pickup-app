@@ -4,10 +4,7 @@ import Sports from "./Sports";
 import { Button, Card, SizableText, YStack } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
-// import { ToastViewport, useToastController } from "@tamagui/toast";
-// import { ToastDemo } from "../Toast";
 import useMutationUser from "../../hooks/use-mutation-user";
-import { OtherUser } from "../../lib/types";
 import useQueryUsers from "../../hooks/use-query-users";
 import { useEffect } from "react";
 
@@ -138,9 +135,11 @@ export default function OtherProfile({
                     backgroundColor={"#ffffff"}
                     width="100%"
                   >
-                    {loading ? "Loading..." : otherUser?.hasRequested
-                      ? "Requested"
-                      : "Send Friend Request"}
+                    {loading
+                      ? "Loading..."
+                      : otherUser?.hasRequested
+                        ? "Requested"
+                        : "Send Friend Request"}
                   </Button>
                 ) : (
                   <Text>You are friends!</Text>
