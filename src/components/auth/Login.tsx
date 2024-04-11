@@ -62,7 +62,7 @@ export default function Login({ navigation }: { navigation: any }) {
         />
       </YStack>
 
-      <YStack space="$6" paddingTop="$2">
+      <YStack space="$3" paddingTop="$2">
         <Button
           testID="signin-button"
           theme="active"
@@ -79,13 +79,11 @@ export default function Login({ navigation }: { navigation: any }) {
 
         <Button
           testID="register-button"
-          variant="outlined"
           disabled={loading}
           onPress={() => navigation.navigate("Register")}
           size="$5"
           color="#ff7403"
-          borderColor="#ff7403"
-          backgroundColor="#e8e8e8"
+          backgroundColor="#f2f2f2"
         >
           Create an account instead
         </Button>
