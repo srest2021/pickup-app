@@ -33,6 +33,7 @@
     "@tamagui/slider": "^1.91.4",
     "@tamagui/toast": "^1.90.7",
     "@testing-library/jest-dom": "^6.4.2",
+    "@upstash/redis": "^1.29.0",
     "burnt": "^0.12.2",
     "expo": "^50.0.14",
     "expo-app-loading": "^2.1.1",

@@ -119,6 +119,7 @@ type Action = {
   setMessages: (messages: Message[]) => void;
   clearMessages: () => void;
   addMessage: (message: Message) => void;
+  addMessages: (messages: Message[]) => void;
   setChannel: (channel: RealtimeChannel | undefined) => void;
   setRoomCode: (roomCode: string) => void;
   editAvatarPath: (userId: string, avatarPath: string | null) => void;
@@ -380,6 +381,8 @@ export const useStore = create<State & Action>()(
     clearMessages: () => set({ messages: [] }),
 
     addMessage: (message) => set({ messages: [...get().messages, message] }),
+
+    addMessages: (messages) => set({ messages: [...get().messages, ...messages] }),
 
     setChannel: (channel) => set({ channel }),
 
