@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
-import { updateIsFriendInCache } from "../lib/upstash-redis";
+import { updateIsFriendInCache, updatehasRequestedInCache } from "../lib/upstash-redis";
 
 function useMutationUser() {
   const [
@@ -261,6 +261,7 @@ function useMutationUser() {
 
       if (data) {
         addFriendRequest();
+        updatehasRequestedInCache(userId, true);
         return friendRequest;
       }
     } catch (error) {
