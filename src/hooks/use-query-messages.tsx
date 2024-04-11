@@ -3,7 +3,7 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Message, ThumbnailUser } from "../lib/types";
-import { redis } from "../lib/upstash-redis";
+import { redis, MESSAGE_LIMIT } from "../lib/upstash-redis";
 
 function useQueryMessages() {
   const [
@@ -28,7 +28,6 @@ function useQueryMessages() {
     state.addAvatarUrls,
   ]);
 
-  const MESSAGE_LIMIT = 50;
   const username = user?.username;
   const cacheKey = `room:${roomCode}`;
 
@@ -40,7 +39,7 @@ function useQueryMessages() {
   const addMessagesToCache = async (messages: Message[]) => {
     await redis.lpush(cacheKey, ...messages);
     await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
-  }
+  };
 
   useEffect(() => {
     if (roomCode && username) {

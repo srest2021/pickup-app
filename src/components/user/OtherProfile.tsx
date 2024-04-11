@@ -37,7 +37,7 @@ export default function OtherProfile({
   const { getOtherProfile } = useQueryUsers();
 
   useEffect(() => {
-    getOtherProfile(userId);
+    getOtherProfile(userId, false);
     return () => {
       setOtherUser(null);
     };
