@@ -9,7 +9,7 @@ import { supabase } from "../../lib/supabase";
 import useQueryAvatars from "../../hooks/use-query-avatars";
 
 const ChatWindow = ({ navigation }: { navigation: any }) => {
-  const [user, messages] = useStore((state) => [state.user, state.messages]);
+  const [user, messages, setMessages] = useStore((state) => [state.user, state.messages, state.setMessages]);
 
   const { getChatroomMessages, getChatroomUsers } = useQueryMessages();
   const { fetchAvatar } = useQueryAvatars();
@@ -30,6 +30,9 @@ const ChatWindow = ({ navigation }: { navigation: any }) => {
       }
     };
     getData();
+    return () => {
+      setMessages([]);
+    };
   }, []);
 
   return (

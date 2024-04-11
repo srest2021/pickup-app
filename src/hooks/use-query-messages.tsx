@@ -28,9 +28,17 @@ function useQueryMessages() {
     state.addAvatarUrls,
   ]);
 
-  const messageLimit = 50
+  const MESSAGE_LIMIT = 50
 
   const username = user?.username;
+
+  const addMessageToCache = async (payload: any) => {
+    if (roomCode) {
+      //console.log("adding payload to cache: ",payload)
+      await redis.lpush(roomCode, payload);
+      await redis.ltrim(roomCode, 0, MESSAGE_LIMIT);
+    }
+  }
 
   useEffect(() => {
     if (roomCode && username) {
@@ -48,7 +56,7 @@ function useQueryMessages() {
         addMessage(payload);
 
         // add message to cache
-
+        addMessageToCache(payload);
       });
 
       channel.subscribe();
@@ -105,15 +113,16 @@ function useQueryMessages() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      //redis.flushall()
+      //edis.flushall()
+      // setMessages([]);
 
       // get messages from cache
       if (!roomCode) throw new Error("Error getting messages! Please try again later.");
-      //var startTime = performance.now()
-      const cachedData: Message[] | null = await redis.lrange(roomCode, 0, messageLimit);
-      //var endTime = performance.now()
-      //console.log("cached data: ",cachedData);
-      //console.log(endTime-startTime, 'ms')
+      // var startTime = performance.now()
+      const cachedData: Message[] | null = await redis.lrange(roomCode, 0, MESSAGE_LIMIT);
+      // var endTime = performance.now()
+      // console.log("cached results: ",cachedData.length);
+      // console.log(endTime-startTime, 'ms')
       
       let mostRecentSentAt = null;
       if (cachedData && cachedData.length > 0) {
@@ -121,11 +130,10 @@ function useQueryMessages() {
         setMessages(cachedData.reverse());
 
         // get most recent sent_at 
-        const mostRecentMessage = cachedData[0];
-        mostRecentSentAt = mostRecentMessage.sentAt;
+        mostRecentSentAt = cachedData[cachedData.length-1].sentAt;
       }
-      //console.log("most recent sentAt: ", mostRecentSentAt)
-      //return;
+      //cachedData.forEach((message) => console.log(`message ${message.content} at ${message.sentAt}`))
+      //console.log("cached most recent sentAt: ", mostRecentSentAt)
 
       // implement spinner at bottom until query complete
 
@@ -146,10 +154,13 @@ function useQueryMessages() {
       )
       .eq("game_id", roomCode);
       if (mostRecentSentAt) query.gt('sent_at', mostRecentSentAt);
-      query.order("sent_at", { ascending: false }).limit(messageLimit);
+      query.order("sent_at", { ascending: true }).limit(MESSAGE_LIMIT);
+      //startTime = performance.now()
       const { data, error } = await query;
+      //endTime = performance.now()
       if (error) throw error;
-      //console.log("supabase results: ",data,error)
+      // console.log("supabase results: ",data.length)
+      // console.log(endTime-startTime, 'ms')
 
       if (data) {
         if (data.length > 0) {
@@ -165,12 +176,14 @@ function useQueryMessages() {
               avatarUrl: message.profiles.avatarUrl,
             } as ThumbnailUser,
           }));
+          //console.log("queried most recent sentAt: ", messages[messages.length-1].sentAt)
   
           // add to store
-          addMessages(messages.reverse());
+          addMessages(messages); 
   
           // add to cache
           await redis.lpush(roomCode, ...messages);
+          await redis.ltrim(roomCode, 0, MESSAGE_LIMIT);
         }
       } else {
         throw new Error("Error getting messages! Please try again later.");
