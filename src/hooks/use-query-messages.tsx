@@ -115,21 +115,15 @@ function useQueryMessages() {
       if (!session?.user) throw new Error("No user on the session!");
 
       // get messages from cache
-      // var startTime = performance.now()
       const cachedData: Message[] | null = await redis.lrange(
         cacheKey,
         0,
         MESSAGE_LIMIT,
       );
-      // var endTime = performance.now()
-      // console.log("cached results: ",cachedData.length);
-      // console.log(endTime-startTime, 'ms')
-
       let mostRecentSentAt = null;
       if (cachedData && cachedData.length > 0) {
         // set store
         setMessages(cachedData.reverse());
-
         // get most recent sent_at
         mostRecentSentAt = cachedData[cachedData.length - 1].sentAt;
       }

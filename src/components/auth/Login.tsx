@@ -74,7 +74,7 @@ export default function Login({ navigation }: { navigation: any }) {
           backgroundColor={"white"}
           variant="outlined"
         >
-          Login
+          {loading ? "Loading..." : "Login"}
         </Button>
 
         <Button

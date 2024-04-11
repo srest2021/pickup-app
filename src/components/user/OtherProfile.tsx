@@ -148,28 +148,26 @@ export default function OtherProfile({
               <Sports sports={otherUser.sports} otherUser={true} />
 
               <YStack space="$6" alignItems="center">
-                {/* {!otherUser.isFriend ? ( */}
-                <Button
-                  variant="outlined"
-                  disabled={otherUser.hasRequested || otherUser.isFriend}
-                  onPress={() => handleRequestLogic()}
-                  size="$5"
-                  color="#ff7403"
-                  borderColor="#ff7403"
-                  backgroundColor={"#ffffff"}
-                  width="100%"
-                >
-                  {loading
-                    ? "Loading..."
-                    : otherUser.hasRequested
-                      ? "Requested"
-                      : otherUser.isFriend
-                        ? "Friends"
+                {!otherUser.isFriend ? (
+                  <Button
+                    variant="outlined"
+                    disabled={otherUser.hasRequested || otherUser.isFriend}
+                    onPress={() => handleRequestLogic()}
+                    size="$5"
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor={"#ffffff"}
+                    width="100%"
+                  >
+                    {loading
+                      ? "Loading..."
+                      : otherUser.hasRequested
+                        ? "Requested"
                         : "Send Friend Request"}
-                </Button>
-                {/* ) : (
+                  </Button>
+                ) : (
                   <Text>You are friends!</Text>
-                )} */}
+                )}
               </YStack>
             </YStack>
           ) : (

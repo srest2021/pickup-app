@@ -76,9 +76,7 @@ function useQueryUsers() {
       if (!session?.user) throw new Error("No user on the session!");
 
       if (!refresh) {
-        //console.log("getting user from cache");
         const user: OtherUser | null = await getUserFromCache(userId);
-        //console.log("got user user from cache: ",user);
         if (user) {
           setOtherUser(user);
           addAvatarUrls([
@@ -96,7 +94,6 @@ function useQueryUsers() {
       if (data) {
         const user: OtherUser = data;
         setOtherUser(user);
-        //console.log("adding user to cache: ",user);
         await addUserToCache(user);
         addAvatarUrls([
           { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
