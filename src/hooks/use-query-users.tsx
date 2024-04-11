@@ -74,12 +74,11 @@ function useQueryUsers() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-
-      // TODO: first query cache, then query supabase if not found
+      
       if (!refresh) {
-        console.log("getting user from cache");
+        //console.log("getting user from cache");
         const user: OtherUser | null = await getUserFromCache(userId);
-        console.log("got user user from cache: ",user);
+        //console.log("got user user from cache: ",user);
         if (user) {
           setOtherUser(user);
           addAvatarUrls([
@@ -97,7 +96,7 @@ function useQueryUsers() {
       if (data) {
         const user: OtherUser = data;
         setOtherUser(user);
-        console.log("adding user to cache: ",user);
+        //console.log("adding user to cache: ",user);
         await addUserToCache(user);
         addAvatarUrls([
           { userId: user.id, avatarPath: user.avatarUrl, avatarUrl: null },
