@@ -70,6 +70,9 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 **Supabase**:
 - @supabase/supabase-js: ^2.39.7
 
+**Upstash Redis**:
+- @upstash/redis: ^1.29.0
+
 **State Management**:
 - zustand: ^4.5.1
 - immer: ^10.0.3
