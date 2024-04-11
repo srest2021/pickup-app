@@ -74,7 +74,7 @@ function useQueryUsers() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-      
+
       if (!refresh) {
         //console.log("getting user from cache");
         const user: OtherUser | null = await getUserFromCache(userId);

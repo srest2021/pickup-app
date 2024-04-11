@@ -59,11 +59,15 @@ export default function OtherProfile({
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#08348c" }}>
+    <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
       <ToastViewport />
       <ToastDemo />
+      <View
+        style={{ flex: 1, backgroundColor: "#08348c", flexDirection: "column" }}
+      />
+      <View style={{ flex: 1, flexDirection: "column" }} />
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, position: "absolute", width: "100%", height: "100%" }}
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "space-between",

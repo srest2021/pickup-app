@@ -3,7 +3,10 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
-import { updateIsFriendInCache, updatehasRequestedInCache } from "../lib/upstash-redis";
+import {
+  updateIsFriendInCache,
+  updatehasRequestedInCache,
+} from "../lib/upstash-redis";
 
 function useMutationUser() {
   const [

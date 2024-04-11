@@ -8,7 +8,7 @@ import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
 import { Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
-import { ToastViewport, useToastController } from "@tamagui/toast";
+import { ToastViewport } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
 
 // Get the height of the screen
@@ -52,7 +52,6 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.setChannel,
   ]);
   const { setSport } = useMutationUser();
-  const toast = useToastController();
 
   const handleSportSelect = async (
     sportName: string,
@@ -82,11 +81,15 @@ export default function Profile({ navigation }: { navigation: any }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#08348c" }}>
+    <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
       <ToastViewport />
       <ToastDemo />
+      <View
+        style={{ flex: 1, backgroundColor: "#08348c", flexDirection: "column" }}
+      />
+      <View style={{ flex: 1, flexDirection: "column" }} />
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, position: "absolute", width: "100%", height: "100%" }}
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "space-between",
