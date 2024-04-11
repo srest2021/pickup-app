@@ -4,8 +4,8 @@ import Sports from "./Sports";
 import { Button, Card, SizableText, YStack } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
-import { ToastViewport, useToastController } from "@tamagui/toast";
-import { ToastDemo } from "../Toast";
+// import { ToastViewport, useToastController } from "@tamagui/toast";
+// import { ToastDemo } from "../Toast";
 import useMutationUser from "../../hooks/use-mutation-user";
 import { OtherUser } from "../../lib/types";
 import useQueryUsers from "../../hooks/use-query-users";
@@ -26,12 +26,12 @@ export default function OtherProfile({
 }) {
   const { userId } = route.params;
 
-  const [otherUser, setOtherUser, user] = useStore((state) => [
+  const [loading, otherUser, setOtherUser, user] = useStore((state) => [
+    state.loading,
     state.otherUser,
     state.setOtherUser,
     state.user,
   ]);
-  const toast = useToastController();
 
   const { sendFriendRequest } = useMutationUser();
   const { getOtherProfile } = useQueryUsers();
@@ -48,20 +48,10 @@ export default function OtherProfile({
     // Send friend request
     // using !, otherUser should never be null if this page appears.
     const friendRequest = await sendFriendRequest(otherUser!.id);
-
-    if (friendRequest) {
-      toast.show("Success!", {
-        message: "Request sent.",
-      });
-    }
-
-    // No navigation, since user can choose to continue viewing the profile.
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
-      <ToastViewport />
-      <ToastDemo />
       <View
         style={{ flex: 1, backgroundColor: "#08348c", flexDirection: "column" }}
       />
@@ -148,7 +138,7 @@ export default function OtherProfile({
                     backgroundColor={"#ffffff"}
                     width="100%"
                   >
-                    {otherUser?.hasRequested
+                    {loading ? "Loading..." : otherUser?.hasRequested
                       ? "Requested"
                       : "Send Friend Request"}
                   </Button>
