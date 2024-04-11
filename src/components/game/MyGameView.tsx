@@ -43,7 +43,10 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
       {session && session.user && user ? (
         selectedMyGame ? (
           <View padding="$7" flex={1}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 100 }}
+              showsVerticalScrollIndicator={false}
+            >
               <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
@@ -173,14 +176,15 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 borderColor: "#ff7403",
                 backgroundColor: "#ff7403",
                 color: "#ffffff",
+                width: 55,
               }}
               variant="outlined"
               theme="active"
-              size="$5"
+              size="$6"
               position="absolute"
               alignSelf="flex-end"
               right="$7"
-              top="$7"
+              bottom="$7"
               onPress={() => {
                 setRoomCode(gameId);
                 navigation.navigate("Chatroom");

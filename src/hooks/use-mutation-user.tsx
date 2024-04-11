@@ -3,6 +3,10 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
+import {
+  updateIsFriendInCache,
+  updatehasRequestedInCache,
+} from "../lib/upstash-redis";
 
 function useMutationUser() {
   const [
@@ -260,6 +264,7 @@ function useMutationUser() {
 
       if (data) {
         addFriendRequest();
+        updatehasRequestedInCache(userId, true);
         return friendRequest;
       }
     } catch (error) {
@@ -283,6 +288,7 @@ function useMutationUser() {
 
       // Friend Request successfully accepted.
       acceptFriendRequest(userId);
+      updateIsFriendInCache(userId, true);
       return true;
     } catch (error) {
       if (error instanceof Error) {
@@ -328,6 +334,7 @@ function useMutationUser() {
 
       // friend successfully removed
       removeFriend(userId);
+      updateIsFriendInCache(userId, false);
       return userId;
     } catch (error) {
       if (error instanceof Error) {
