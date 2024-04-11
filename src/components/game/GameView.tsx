@@ -10,12 +10,15 @@ import {
   ScrollView,
   H6,
   View,
+  AlertDialog,
+  Checkbox,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Alert } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
+import { Check } from "@tamagui/lucide-icons";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, username } = route.params;
@@ -143,24 +146,83 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   gametype="feed"
                 />
 
-                <XStack paddingTop="$5">
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    disabled={selectedFeedGame.hasRequested ? true : false}
-                    flex={1}
-                    onPress={() => requestToJoinGame()}
-                  >
-                    {loading
-                      ? "Loading..."
-                      : selectedFeedGame.hasRequested
-                        ? "Requested"
-                        : "Request to Join"}
-                  </Button>
-                </XStack>
+                <AlertDialog modal>
+                  <AlertDialog.Trigger asChild>
+                    <Button
+                      variant="outlined"
+                      size="$5"
+                      color="#ff7403"
+                      borderColor="#ff7403"
+                      backgroundColor="#ffffff"
+                      disabled={selectedFeedGame.hasRequested ? true : false}
+                      flex={1}
+                      // onPress={() => requestToJoinGame()}
+                    >
+                      {loading
+                        ? "Loading..."
+                        : selectedFeedGame.hasRequested
+                          ? "Requested"
+                          : "Request to Join"}
+                    </Button>
+                  </AlertDialog.Trigger>
+                  <AlertDialog.Portal>
+                    <AlertDialog.Overlay
+                      key="overlay"
+                      animation="quick"
+                      opacity={0.5}
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+
+                    <AlertDialog.Content
+                      bordered
+                      elevate
+                      key="content"
+                      animation={[
+                        "quick",
+                        {
+                          opacity: {
+                            overshootClamping: true,
+                          },
+                        },
+                      ]}
+                      enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
+                      exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
+                      x={0}
+                      scale={1}
+                      opacity={1}
+                      y={0}
+                    >
+                      <YStack space>
+                        <AlertDialog.Title>Request to join</AlertDialog.Title>
+                        <XStack>
+                          <AlertDialog.Description>
+                            Bringing someone?
+                            <Checkbox size="$4">
+                              <Checkbox.Indicator>
+                                <Check />
+                              </Checkbox.Indicator>
+                            </Checkbox>
+                          </AlertDialog.Description>
+                        </XStack>
+
+                        <XStack space="$3" justifyContent="flex-end">
+                          <AlertDialog.Cancel asChild>
+                            <Button>Cancel</Button>
+                          </AlertDialog.Cancel>
+                          <AlertDialog.Action asChild>
+                            <Button
+                              theme="active"
+                              onPress={() => requestToJoinGame()}
+                            >
+                              Accept
+                            </Button>
+                          </AlertDialog.Action>
+                        </XStack>
+                      </YStack>
+                    </AlertDialog.Content>
+                  </AlertDialog.Portal>
+                </AlertDialog>
               </YStack>
             </ScrollView>
           </View>
