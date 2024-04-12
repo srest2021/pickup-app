@@ -10,12 +10,14 @@ import {
   ScrollView,
   H6,
   View,
+  Text,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
 import { MessageCircle } from "@tamagui/lucide-icons";
+import { TouchableOpacity } from "react-native";
 
 const JoinedGameView = ({
   navigation,
@@ -24,7 +26,7 @@ const JoinedGameView = ({
   navigation: any;
   route: any;
 }) => {
-  const { gameId, username } = route.params;
+  const { gameId, username, userId } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
   const [session, user, setRoomCode] = useStore((state) => [
@@ -81,9 +83,14 @@ const JoinedGameView = ({
                   </YStack>
 
                   <YStack alignItems="center">
-                    <SizableText alignItems="center" size="$4">
-                      by @{username}
-                    </SizableText>
+                  <TouchableOpacity onPress={() => {
+                      navigation.navigate("OtherProfileView", { userId: userId });
+                      }}>
+                      <Text fontSize="$5" ellipsizeMode="tail">
+                          <Text style={{ textDecorationLine: "none" }}>@</Text>
+                          <Text style={{ textDecorationLine: "underline" }}>{username}</Text>
+                      </Text>
+                  </TouchableOpacity>
                   </YStack>
                 </YStack>
 
@@ -141,7 +148,7 @@ const JoinedGameView = ({
                 </YStack>
 
                 <GamePlayers
-                  navigation={undefined}
+                  navigation={navigation}
                   game={selectedJoinedGame}
                   gametype="joined"
                 />

@@ -48,6 +48,7 @@ const GamePlayers = ({
                         user={user}
                         gameId={convertedGame.id}
                         isOrganizer={false}
+                        navigation={navigation}
                       />
                     ))}
                   </YStack>

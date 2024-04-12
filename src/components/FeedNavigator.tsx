@@ -3,6 +3,7 @@ import EditGame from "./game/EditGame";
 import JoinedGameView from "./game/JoinedGameView";
 import Feed from "./Feed";
 import GameView from "./game/GameView";
+import OtherProfile from "./user/OtherProfile";
 
 export default function FeedNavigator() {
   const Stack = createNativeStackNavigator();
@@ -37,6 +38,22 @@ export default function FeedNavigator() {
           headerTintColor: "#ffffff",
         }}
       />
-    </Stack.Navigator>
+    
+    <Stack.Screen
+    name="OtherProfileView"
+    component={OtherProfile}
+    options={{
+      title: "Other Profile",
+      headerShown: true,
+      headerStyle: {
+        backgroundColor: "#08348c",
+      },
+      headerTitleStyle: {
+        color: "#ffffff",
+      },
+      headerTintColor: "#ffffff",
+    }}
+  />
+</Stack.Navigator>
   );
 }
