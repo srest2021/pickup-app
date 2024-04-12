@@ -141,7 +141,7 @@ const JoinedGameView = ({
                 </YStack>
 
                 <GamePlayers
-                  navigation={undefined}
+                  navigation={navigation}
                   game={selectedJoinedGame}
                   gametype="joined"
                 />

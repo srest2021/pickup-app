@@ -11,11 +11,13 @@ const NonAcceptedPlayer = ({
   gameId,
   maxPlayers,
   currentPlayers,
+  navigation,
 }: {
   user: ThumbnailUser;
   gameId: string;
   currentPlayers: number;
   maxPlayers: number;
+  navigation: any;
 }) => {
   const [loading] = useStore((state) => [state.loading]);
   const { acceptJoinRequestById, rejectJoinRequestById } = useMutationGame();
@@ -39,7 +41,10 @@ const NonAcceptedPlayer = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        <Text fontSize="$5" ellipsizeMode="tail">
+        <Text fontSize="$5" ellipsizeMode="tail"
+        onPress={() => {
+          navigation.navigate("OtherProfileView", { userId: user.id });
+        }}>
           @{user.username}
         </Text>
         <XStack justifyContent="flex-end" space="$2">

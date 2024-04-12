@@ -10,10 +10,12 @@ const AcceptedPlayer = ({
   user,
   gameId,
   isOrganizer,
+  navigation,
 }: {
   user: ThumbnailUser;
   gameId: string;
   isOrganizer: boolean;
+  navigation: any;
 }) => {
   const [loading] = useStore((state) => [state.loading]);
 
@@ -30,7 +32,10 @@ const AcceptedPlayer = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        <Text fontSize="$5" ellipsizeMode="tail">
+        <Text fontSize="$5" ellipsizeMode="tail"
+        onPress={() => {
+          navigation.navigate("OtherProfileView", { userId: user.id });
+        }}>
           @{user.username}
         </Text>
         {isOrganizer && (
