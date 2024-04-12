@@ -78,7 +78,12 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
 
                   <YStack alignItems="center">
-                    <SizableText alignItems="center" size="$4">
+                    <SizableText
+                     alignItems="center" size="$4"
+                     onPress={() => {
+                      navigation.navigate("OtherProfileView", { userId: user.id });
+                    }}
+                  >
                       by @{username}
                     </SizableText>
                   </YStack>

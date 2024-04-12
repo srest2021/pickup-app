@@ -40,6 +40,7 @@ export default function GameThumbnail({
   ]);
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const[userId, setUserId] = useState<string | null>(null);
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
     hour: "numeric",
@@ -71,6 +72,7 @@ export default function GameThumbnail({
       const gameWithOrganizer =
         gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
       setUsername(gameWithOrganizer.organizer.username);
+      setUserId(gameWithOrganizer.organizerId);
       gameWithOrganizer.organizer.avatarUrl &&
         fetchData(gameWithOrganizer.organizer.avatarUrl);
     }
@@ -119,7 +121,10 @@ export default function GameThumbnail({
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <Paragraph>@{username}</Paragraph>
+                  <Paragraph onPress={() => {
+                      navigation.navigate("OtherProfileView", { userId: userId });
+                    }}
+                  >@{username}</Paragraph>
                 </XStack>
               )}
             </View>
