@@ -9,11 +9,12 @@ import {
   View,
   Paragraph,
   XStack,
+  Text,
 } from "tamagui";
 import SportSkill from "../SportSkill";
 import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import { supabase } from "../../lib/supabase";
 
 export default function GameThumbnail({
@@ -121,10 +122,14 @@ export default function GameThumbnail({
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <Paragraph onPress={() => {
+                  <TouchableOpacity onPress={() => {
                       navigation.navigate("OtherProfileView", { userId: userId });
-                    }}
-                  >@{username}</Paragraph>
+                      }}>
+                      <Text fontSize="$5" ellipsizeMode="tail">
+                          <Text textDecorationLine="none" >@</Text>
+                          <Text textDecorationLine="underline">{username}</Text>
+                      </Text>
+                  </TouchableOpacity>
                 </XStack>
               )}
             </View>

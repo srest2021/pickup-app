@@ -1,5 +1,5 @@
 import { XStack, Button } from "tamagui";
-import { Alert, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { Text } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Check, X, Loader } from "@tamagui/lucide-icons";
@@ -41,12 +41,14 @@ const NonAcceptedPlayer = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        <Text fontSize="$5" ellipsizeMode="tail"
-        onPress={() => {
-          navigation.navigate("OtherProfileView", { userId: user.id });
-        }}>
-          @{user.username}
-        </Text>
+        <TouchableOpacity onPress={() => {
+            navigation.navigate("OtherProfileView", { userId: user.id });
+            }}>
+            <Text fontSize="$5" ellipsizeMode="tail">
+                <Text style={{ textDecorationLine: "none" }}>@</Text>
+                <Text style={{ textDecorationLine: "underline" }}>{user.username}</Text>
+            </Text>
+        </TouchableOpacity>
         <XStack justifyContent="flex-end" space="$2">
           <Button
             testID="reject-button"

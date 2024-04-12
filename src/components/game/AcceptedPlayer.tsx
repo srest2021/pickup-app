@@ -1,5 +1,5 @@
 import { XStack, Button } from "tamagui";
-import { Alert, View } from "react-native";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { Tabs, Text } from "tamagui";
 import { X, Loader } from "@tamagui/lucide-icons";
 import { ThumbnailUser } from "../../lib/types";
@@ -32,12 +32,20 @@ const AcceptedPlayer = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        <Text fontSize="$5" ellipsizeMode="tail"
+        { /*<Text fontSize="$5" ellipsizeMode="tail" textDecorationLine="underline"
         onPress={() => {
           navigation.navigate("OtherProfileView", { userId: user.id });
         }}>
           @{user.username}
+      </Text> */}
+      <TouchableOpacity onPress={() => {
+        navigation.navigate("OtherProfileView", { userId: user.id });
+         }}>
+        <Text fontSize="$5" ellipsizeMode="tail">
+            <Text style={{ textDecorationLine: "none" }}>@</Text>
+            <Text style={{ textDecorationLine: "underline" }}>{user.username}</Text>
         </Text>
+    </TouchableOpacity>
         {isOrganizer && (
           <Button
             testID="remove-button"

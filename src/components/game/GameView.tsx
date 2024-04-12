@@ -10,9 +10,10 @@ import {
   ScrollView,
   H6,
   View,
+  Text,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
@@ -78,7 +79,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
 
                   <YStack alignItems="center">
-                    <SizableText
+                    {/* <SizableText
                      alignItems="center" size="$4"
                      onPress={() => {
                       navigation.navigate("OtherProfileView", { userId: userId });
@@ -86,6 +87,15 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   >
                       by @{username}
                     </SizableText>
+                  </YStack> */}
+                  <TouchableOpacity onPress={() => {
+                      navigation.navigate("OtherProfileView", { userId: userId });
+                      }}>
+                      <Text fontSize="$5" ellipsizeMode="tail">
+                          <Text style={{ textDecorationLine: "none" }}>@</Text>
+                          <Text style={{ textDecorationLine: "underline" }}>{username}</Text>
+                      </Text>
+                  </TouchableOpacity>
                   </YStack>
                 </YStack>
 
