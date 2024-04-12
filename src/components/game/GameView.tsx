@@ -13,6 +13,7 @@ import {
   AlertDialog,
   Checkbox,
   Text,
+  Switch,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Alert, TouchableOpacity } from "react-native";
@@ -30,6 +31,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
     state.selectedFeedGame,
   ]);
   const { requestToJoinById } = useMutationGame();
+  let plusOne: boolean = false;
 
   // Request to Join Game Logic:
   function requestToJoinGame() {
@@ -177,7 +179,6 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       backgroundColor="#ffffff"
                       disabled={selectedFeedGame.hasRequested ? true : false}
                       flex={1}
-                      // onPress={() => requestToJoinGame()}
                     >
                       {loading
                         ? "Loading..."
@@ -215,15 +216,32 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       y={0}
                     >
                       <YStack space>
-                        <AlertDialog.Title>Request to join</AlertDialog.Title>
-                        <XStack>
-                          <AlertDialog.Description>
-                            Bringing someone?
-                            <Checkbox size="$4">
-                              <Checkbox.Indicator>
-                                <Check />
-                              </Checkbox.Indicator>
-                            </Checkbox>
+                        <AlertDialog.Title size={"$6"}>
+                          Bringing someone?
+                        </AlertDialog.Title>
+                        <XStack justifyContent="space-evenly">
+                          <AlertDialog.Description size={"$3"}>
+                            No
+                          </AlertDialog.Description>
+                          <AlertDialog.Description size={"$3"}>
+                            <Switch
+                              size="$4"
+                              defaultChecked={plusOne}
+                              onCheckedChange={(checked: boolean) => {
+                                plusOne = !checked;
+                              }}
+                              style={{
+                                backgroundColor: "#ff7403",
+                              }}
+                            >
+                              <Switch.Thumb
+                                style={{ backgroundColor: "#e54b07" }}
+                                animation="bouncy"
+                              />
+                            </Switch>
+                          </AlertDialog.Description>
+                          <AlertDialog.Description size={"$3"}>
+                            Yes
                           </AlertDialog.Description>
                         </XStack>
 
@@ -236,7 +254,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                               theme="active"
                               onPress={() => requestToJoinGame()}
                             >
-                              Accept
+                              Request
                             </Button>
                           </AlertDialog.Action>
                         </XStack>
