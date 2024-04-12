@@ -7,7 +7,7 @@ const EXPIRATION_TIME = 7200;
 
 export const redis = new Redis({
   url: "https://us1-pleased-kangaroo-41719.upstash.io",
-  token: process.env.UPSTASH_TOKEN,
+  token: process.env.UPSTASH_TOKEN as string,
   responseEncoding: false,
 });
 

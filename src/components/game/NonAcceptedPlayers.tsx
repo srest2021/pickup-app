@@ -41,13 +41,17 @@ const NonAcceptedPlayer = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        <TouchableOpacity onPress={() => {
+        <TouchableOpacity
+          onPress={() => {
             navigation.navigate("OtherProfileView", { userId: user.id });
-            }}>
-            <Text fontSize="$5" ellipsizeMode="tail">
-                <Text style={{ textDecorationLine: "none" }}>@</Text>
-                <Text style={{ textDecorationLine: "underline" }}>{user.username}</Text>
+          }}
+        >
+          <Text fontSize="$5" ellipsizeMode="tail">
+            <Text style={{ textDecorationLine: "none" }}>@</Text>
+            <Text style={{ textDecorationLine: "underline" }}>
+              {user.username}
             </Text>
+          </Text>
         </TouchableOpacity>
         <XStack justifyContent="flex-end" space="$2">
           <Button

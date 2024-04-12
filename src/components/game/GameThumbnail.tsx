@@ -41,7 +41,7 @@ export default function GameThumbnail({
   ]);
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const[userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
     hour: "numeric",
@@ -122,13 +122,17 @@ export default function GameThumbnail({
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <TouchableOpacity onPress={() => {
-                      navigation.navigate("OtherProfileView", { userId: userId });
-                      }}>
-                      <Text fontSize="$5" ellipsizeMode="tail">
-                          <Text textDecorationLine="none" >@</Text>
-                          <Text textDecorationLine="underline">{username}</Text>
-                      </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("OtherProfileView", {
+                        userId: userId,
+                      });
+                    }}
+                  >
+                    <Text fontSize="$5" ellipsizeMode="tail">
+                      <Text textDecorationLine="none">@</Text>
+                      <Text textDecorationLine="underline">{username}</Text>
+                    </Text>
                   </TouchableOpacity>
                 </XStack>
               )}
@@ -143,7 +147,11 @@ export default function GameThumbnail({
                     navigation.navigate("MyGameView", { gameId });
                   } else if (gametype === "feed") {
                     setSelectedFeedGame(game as FeedGame);
-                    navigation.navigate("GameView", { gameId, username, userId });
+                    navigation.navigate("GameView", {
+                      gameId,
+                      username,
+                      userId,
+                    });
                   } else if (gametype === "joined") {
                     setSelectedJoinedGame(game as JoinedGame);
                     navigation.navigate("JoinedGameView", {
