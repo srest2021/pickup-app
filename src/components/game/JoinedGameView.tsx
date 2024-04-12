@@ -83,14 +83,20 @@ const JoinedGameView = ({
                   </YStack>
 
                   <YStack alignItems="center">
-                  <TouchableOpacity onPress={() => {
-                      navigation.navigate("OtherProfileView", { userId: userId });
-                      }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("OtherProfileView", {
+                          userId: userId,
+                        });
+                      }}
+                    >
                       <Text fontSize="$5" ellipsizeMode="tail">
-                          <Text style={{ textDecorationLine: "none" }}>@</Text>
-                          <Text style={{ textDecorationLine: "underline" }}>{username}</Text>
+                        <Text style={{ textDecorationLine: "none" }}>@</Text>
+                        <Text style={{ textDecorationLine: "underline" }}>
+                          {username}
+                        </Text>
                       </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
                   </YStack>
                 </YStack>
 

@@ -32,20 +32,24 @@ const AcceptedPlayer = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        { /*<Text fontSize="$5" ellipsizeMode="tail" textDecorationLine="underline"
+        {/*<Text fontSize="$5" ellipsizeMode="tail" textDecorationLine="underline"
         onPress={() => {
           navigation.navigate("OtherProfileView", { userId: user.id });
         }}>
           @{user.username}
       </Text> */}
-      <TouchableOpacity onPress={() => {
-        navigation.navigate("OtherProfileView", { userId: user.id });
-         }}>
-        <Text fontSize="$5" ellipsizeMode="tail">
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("OtherProfileView", { userId: user.id });
+          }}
+        >
+          <Text fontSize="$5" ellipsizeMode="tail">
             <Text style={{ textDecorationLine: "none" }}>@</Text>
-            <Text style={{ textDecorationLine: "underline" }}>{user.username}</Text>
-        </Text>
-    </TouchableOpacity>
+            <Text style={{ textDecorationLine: "underline" }}>
+              {user.username}
+            </Text>
+          </Text>
+        </TouchableOpacity>
         {isOrganizer && (
           <Button
             testID="remove-button"
