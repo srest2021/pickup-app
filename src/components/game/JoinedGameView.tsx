@@ -24,7 +24,7 @@ const JoinedGameView = ({
   navigation: any;
   route: any;
 }) => {
-  const { gameId, username } = route.params;
+  const { gameId, username, userId } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
   const [session, user, setRoomCode] = useStore((state) => [
@@ -78,7 +78,10 @@ const JoinedGameView = ({
                   </YStack>
 
                   <YStack alignItems="center">
-                    <SizableText alignItems="center" size="$4">
+                    <SizableText alignItems="center" size="$4"
+                    onPress={() => {
+                      navigation.navigate("OtherProfileView", { userId: userId });
+                    }}>
                       by @{username}
                     </SizableText>
                   </YStack>

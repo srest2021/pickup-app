@@ -18,7 +18,7 @@ import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { gameId, username } = route.params;
+  const { gameId, username, userId } = route.params;
   const [session, user, loading, selectedFeedGame] = useStore((state) => [
     state.session,
     state.user,
@@ -81,7 +81,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <SizableText
                      alignItems="center" size="$4"
                      onPress={() => {
-                      navigation.navigate("OtherProfileView", { userId: user.id });
+                      navigation.navigate("OtherProfileView", { userId: userId });
                     }}
                   >
                       by @{username}

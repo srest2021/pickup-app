@@ -138,12 +138,13 @@ export default function GameThumbnail({
                     navigation.navigate("MyGameView", { gameId });
                   } else if (gametype === "feed") {
                     setSelectedFeedGame(game as FeedGame);
-                    navigation.navigate("GameView", { gameId, username });
+                    navigation.navigate("GameView", { gameId, username, userId });
                   } else if (gametype === "joined") {
                     setSelectedJoinedGame(game as JoinedGame);
                     navigation.navigate("JoinedGameView", {
                       gameId,
                       username,
+                      userId,
                     });
                   }
                 }}
