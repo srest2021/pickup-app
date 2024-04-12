@@ -30,7 +30,7 @@ const Chatroom = ({ navigation }: { navigation: any }) => {
           }}
         >
           <View flex={1}>
-            <ChatWindow />
+            <ChatWindow navigation={navigation} />
             <MessageInput />
           </View>
         </KeyboardAvoidingView>

@@ -8,8 +8,12 @@ import { ScrollView, Alert } from "react-native";
 import { supabase } from "../../lib/supabase";
 import useQueryAvatars from "../../hooks/use-query-avatars";
 
-const ChatWindow = () => {
-  const [user, messages] = useStore((state) => [state.user, state.messages]);
+const ChatWindow = ({ navigation }: { navigation: any }) => {
+  const [user, messages, setMessages] = useStore((state) => [
+    state.user,
+    state.messages,
+    state.setMessages,
+  ]);
 
   const { getChatroomMessages, getChatroomUsers } = useQueryMessages();
   const { fetchAvatar } = useQueryAvatars();
@@ -30,6 +34,9 @@ const ChatWindow = () => {
       }
     };
     getData();
+    return () => {
+      setMessages([]);
+    };
   }, []);
 
   return (
@@ -47,7 +54,11 @@ const ChatWindow = () => {
               message.user.id === user?.id ? (
                 <MyMessage key={message.id} message={message} />
               ) : (
-                <OtherMessage key={message.id} message={message} />
+                <OtherMessage
+                  key={message.id}
+                  message={message}
+                  navigation={navigation}
+                />
               ),
             )}
           </YStack>

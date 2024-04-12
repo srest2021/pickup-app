@@ -1,21 +1,12 @@
 import { ScrollView, View, Text } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
-import { Button, Card, SizableText, YStack } from "tamagui";
+import { Button, Card, SizableText, Spinner, YStack } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
-import { ToastViewport, useToastController } from "@tamagui/toast";
-import { ToastDemo } from "../Toast";
 import useMutationUser from "../../hooks/use-mutation-user";
-import { OtherUser } from "../../lib/types";
 import useQueryUsers from "../../hooks/use-query-users";
-import { useEffect } from "react";
-
-// Get the height of the screen
-const windowHeight = Dimensions.get("window").height;
-
-// Calculate the height for the top third
-const topThirdHeight = windowHeight / 4;
+import { useEffect, useState } from "react";
 
 export default function OtherProfile({
   navigation,
@@ -26,49 +17,74 @@ export default function OtherProfile({
 }) {
   const { userId } = route.params;
 
-  const [otherUser, setOtherUser, user] = useStore((state) => [
+  const [loading, otherUser, setOtherUser, user] = useStore((state) => [
+    state.loading,
     state.otherUser,
     state.setOtherUser,
     state.user,
   ]);
-  const toast = useToastController();
 
   const { sendFriendRequest } = useMutationUser();
   const { getOtherProfile } = useQueryUsers();
 
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
-    getOtherProfile(userId);
+    getOtherProfile(userId, false);
     return () => {
       setOtherUser(null);
     };
   }, []);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await getOtherProfile(userId, true);
+    setRefreshing(false);
+  };
 
   // Returns true if the user has requested
   const handleRequestLogic = async () => {
     // Send friend request
     // using !, otherUser should never be null if this page appears.
     const friendRequest = await sendFriendRequest(otherUser!.id);
-
-    if (friendRequest) {
-      toast.show("Success!", {
-        message: "Request sent.",
-      });
-    }
-
-    // No navigation, since user can choose to continue viewing the profile.
   };
 
+  // Get the height of the screen
+  const windowHeight = Dimensions.get("window").height;
+
+  // Calculate the height for the top third
+  const topThirdHeight = windowHeight / 5;
+
   return (
-    <View style={{ flex: 1 }}>
-      <ToastViewport />
-      <ToastDemo />
+    <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
+      <View
+        style={{ flex: 1, backgroundColor: "#08348c", flexDirection: "column" }}
+      />
+      <View style={{ flex: 1, flexDirection: "column" }} />
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, position: "absolute", width: "100%", height: "100%" }}
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "space-between",
+          backgroundColor: "#f2f2f2",
+        }}
+        scrollEventThrottle={16}
+        onScroll={(e) => {
+          const { contentOffset } = e.nativeEvent;
+          if (contentOffset.y < -50 && !refreshing) {
+            handleRefresh();
+          }
         }}
       >
+        {refreshing && (
+          <Spinner
+            paddingTop="$5"
+            size="small"
+            color="#f2f2f2"
+            backgroundColor="#08348c"
+            testID="spinner"
+          />
+        )}
         <View
           style={{
             backgroundColor: "#08348c",
@@ -79,13 +95,13 @@ export default function OtherProfile({
             alignItems: "flex-start",
             padding: 12,
           }}
-        ></View>
+        />
         <View className="p-12">
           {otherUser && user ? (
-            <View>
+            <YStack space="$4">
               <View
-                className="items-center mb-10"
-                style={{ marginTop: -topThirdHeight / 2 }}
+                className="items-center"
+                style={{ marginTop: -topThirdHeight / 1.05 }}
               >
                 <Avatar
                   url={otherUser.avatarUrl}
@@ -95,43 +111,47 @@ export default function OtherProfile({
                 />
               </View>
 
-              <View className="self-stretch py-0">
-                <Text className="text-2xl text-center">
-                  {otherUser.displayName ? (
-                    otherUser.displayName
-                  ) : (
-                    <Text> "No display name" </Text>
+              <YStack space="$2" paddingVertical="$3">
+                {otherUser.displayName &&
+                  otherUser.displayName.trim().length > 0 && (
+                    <View className="self-stretch">
+                      <Text className="text-2xl text-center">
+                        {otherUser.displayName}
+                      </Text>
+                    </View>
                   )}
-                </Text>
-              </View>
-              <View className="self-stretch py-2">
-                <Text className="text-xl text-center">
-                  @{otherUser.username}
-                </Text>
-              </View>
 
-              <YStack paddingTop="$3" paddingBottom="$4">
-                <Card elevate size="$5">
-                  <View marginLeft={25} marginRight={25}>
-                    <SizableText
-                      size="$5"
-                      fontWeight="500"
-                      paddingTop="$3"
-                      paddingBottom="$3"
-                    >
-                      {otherUser.bio ? otherUser.bio : "No bio yet"}
-                    </SizableText>
-                  </View>
-                </Card>
+                <View className="self-stretch">
+                  <Text className="text-xl text-center">
+                    @{otherUser.username}
+                  </Text>
+                </View>
               </YStack>
 
-              <Sports sports={otherUser.sports} />
+              {otherUser.bio && otherUser.bio.trim().length > 0 && (
+                <YStack>
+                  <Card elevate size="$5">
+                    <View marginLeft={25} marginRight={25}>
+                      <SizableText
+                        size="$5"
+                        fontWeight="500"
+                        paddingTop="$3"
+                        paddingBottom="$3"
+                      >
+                        {otherUser.bio}
+                      </SizableText>
+                    </View>
+                  </Card>
+                </YStack>
+              )}
 
-              <YStack space="$6" paddingTop="$5" alignItems="center">
-                {!otherUser?.isFriend ? (
+              <Sports sports={otherUser.sports} otherUser={true} />
+
+              <YStack space="$6" alignItems="center">
+                {!otherUser.isFriend ? (
                   <Button
                     variant="outlined"
-                    disabled={otherUser?.hasRequested}
+                    disabled={otherUser.hasRequested || otherUser.isFriend}
                     onPress={() => handleRequestLogic()}
                     size="$5"
                     color="#ff7403"
@@ -139,15 +159,17 @@ export default function OtherProfile({
                     backgroundColor={"#ffffff"}
                     width="100%"
                   >
-                    {otherUser?.hasRequested
-                      ? "Requested"
-                      : "Send Friend Request"}
+                    {loading
+                      ? "Loading..."
+                      : otherUser.hasRequested
+                        ? "Requested"
+                        : "Send Friend Request"}
                   </Button>
                 ) : (
                   <Text>You are friends!</Text>
                 )}
               </YStack>
-            </View>
+            </YStack>
           ) : (
             <Text>Loading user profile...</Text>
           )}

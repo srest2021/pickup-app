@@ -12,16 +12,17 @@ import {
   View,
   AlertDialog,
   Checkbox,
+  Text,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
 import { Check } from "@tamagui/lucide-icons";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { gameId, username } = route.params;
+  const { gameId, username, userId } = route.params;
   const [session, user, loading, selectedFeedGame] = useStore((state) => [
     state.session,
     state.user,
@@ -81,9 +82,23 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
 
                   <YStack alignItems="center">
-                    <SizableText alignItems="center" size="$4">
+                    {/* <SizableText
+                     alignItems="center" size="$4"
+                     onPress={() => {
+                      navigation.navigate("OtherProfileView", { userId: userId });
+                    }}
+                  >
                       by @{username}
                     </SizableText>
+                  </YStack> */}
+                  <TouchableOpacity onPress={() => {
+                      navigation.navigate("OtherProfileView", { userId: userId });
+                      }}>
+                      <Text fontSize="$5" ellipsizeMode="tail">
+                          <Text style={{ textDecorationLine: "none" }}>@</Text>
+                          <Text style={{ textDecorationLine: "underline" }}>{username}</Text>
+                      </Text>
+                  </TouchableOpacity>
                   </YStack>
                 </YStack>
 

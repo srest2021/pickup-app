@@ -1310,3 +1310,25 @@ begin
   return data;
 end;
 $$ language plpgsql;
+
+create or replace function is_game_overlap(city_param text, state_param text, street_param text, zip_param text, datetime_param timestamp with time zone)
+returns boolean as $$
+DECLARE
+    game_exists BOOLEAN := false;
+BEGIN
+    -- Check if there are any matching games at the given location within the specified time interval
+    SELECT EXISTS (
+        SELECT 1
+        FROM game_locations gl
+        JOIN games g ON gl.game_id = g.id
+        WHERE gl.city = city_param
+        AND gl.state = state_param
+        AND gl.street = street_param
+        AND gl.zip = zip_param
+        AND g.datetime >= datetime_param - interval '30 minutes'
+        AND g.datetime <= datetime_param + interval '30 minutes'
+    ) INTO game_exists;
+
+    RETURN game_exists;
+END;
+$$ language plpgsql;
