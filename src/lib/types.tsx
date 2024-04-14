@@ -27,6 +27,8 @@ export type ThumbnailUser = {
   avatarUrl: string;
 };
 
+export type PlusOneUser = ThumbnailUser & { hasPlusOne: boolean };
+
 export interface Sport {
   name: string;
   skillLevel: SkillLevel;
