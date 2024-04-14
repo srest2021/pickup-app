@@ -34,20 +34,9 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
   // Request to Join Game Logic:
   function requestToJoinGame() {
-    const numOfPlayersRequesting = hasPlusOne ? 2 : 1;
-    // Checking if the num of current players is already at capacity or if num of current players (plus requesting players) exceeds the maximum.
-    if (
-      selectedFeedGame &&
-      (selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers ||
-        selectedFeedGame?.currentPlayers + numOfPlayersRequesting >
-          selectedFeedGame?.maxPlayers)
-    ) {
-      Alert.alert("This game is already full!");
-    } else {
-      requestToJoinById(gameId, user!.id, hasPlusOne);
-      // Go back to feed once request is sent.
-      navigation.goBack();
-    }
+    requestToJoinById(gameId, user!.id, hasPlusOne);
+    // Go back to feed once request is sent.
+    navigation.goBack();
   }
 
   return (
