@@ -324,13 +324,14 @@ function useMutationGame() {
       if (!session?.user) throw new Error("No user on the session!");
 
       // Check if game full or if num of players requesting will exceed max
-      let { data, error } = await supabase.rpc("can_user_join_game", {
+      let { data, error } = await supabase.rpc("check_game_capacity", {
         game_id: gameId,
         player_id: playerId,
         plus_one: plusOne,
       });
 
       if (error) throw error;
+      console.log(data);
       if (!data) {
         Alert.alert("This game is already full!");
         return null;
