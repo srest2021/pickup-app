@@ -98,22 +98,6 @@ export default function MyGamesNavigator() {
           },
         }}
       />
-
-      <Stack.Screen
-        name="OtherProfileView"
-        component={OtherProfile}
-        options={{
-          title: "Other Profile",
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: "#08348c",
-          },
-          headerTitleStyle: {
-            color: "#ffffff",
-          },
-          headerTintColor: "#ffffff",
-        }}
-      />
     </Stack.Navigator>
   );
 }
