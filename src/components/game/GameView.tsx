@@ -20,7 +20,6 @@ import { Alert, TouchableOpacity } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
-import { Check } from "@tamagui/lucide-icons";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, username, userId } = route.params;
@@ -31,17 +30,21 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
     state.selectedFeedGame,
   ]);
   const { requestToJoinById } = useMutationGame();
-  let plusOne: boolean = false;
+  let hasPlusOne: boolean = false;
 
   // Request to Join Game Logic:
   function requestToJoinGame() {
+    const numOfPlayersRequesting = hasPlusOne ? 2 : 1;
+    // Checking if the num of current players is already at capacity or if num of current players (plus requesting players) exceeds the maximum.
     if (
       selectedFeedGame &&
-      selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers
+      (selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers ||
+        selectedFeedGame?.currentPlayers + numOfPlayersRequesting >
+          selectedFeedGame?.maxPlayers)
     ) {
       Alert.alert("This game is already full!");
     } else {
-      requestToJoinById(gameId, user!.id);
+      requestToJoinById(gameId, user!.id, hasPlusOne);
       // Go back to feed once request is sent.
       navigation.goBack();
     }
@@ -226,9 +229,9 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                           <AlertDialog.Description size={"$3"}>
                             <Switch
                               size="$4"
-                              defaultChecked={plusOne}
-                              onCheckedChange={(checked: boolean) => {
-                                plusOne = !checked;
+                              defaultChecked={hasPlusOne}
+                              onCheckedChange={() => {
+                                hasPlusOne = !hasPlusOne;
                               }}
                               style={{
                                 backgroundColor: "#ff7403",

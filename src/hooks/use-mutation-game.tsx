@@ -314,7 +314,11 @@ function useMutationGame() {
     }
   };
 
-  const requestToJoinById = async (gameId: string, playerId: string) => {
+  const requestToJoinById = async (
+    gameId: string,
+    playerId: string,
+    plusOne: boolean,
+  ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -325,6 +329,7 @@ function useMutationGame() {
           {
             game_id: gameId,
             player_id: playerId,
+            plus_one: plusOne,
           },
         ])
         .select();
