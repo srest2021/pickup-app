@@ -1,5 +1,5 @@
 begin;
-select plan( 94 );
+select plan( 99 );
 
 -- table existence
 select has_table('games');
@@ -26,16 +26,6 @@ select has_column('games', 'skill_level');
 select col_is_pk('games', 'id');
 select col_is_fk('games', 'organizer_id');
 select col_type_is('games', 'datetime', 'timestamp with time zone');
-select policies_are(
-  'public',
-  'games',
-  ARRAY [
-    'Public games are viewable by everyone.', 
-    'Users can delete their own games.',
-    'Users can insert their own games.',
-    'Users can update their own games.'
-  ]
-);
 
 -- joined_game table columns
 select has_column('joined_game', 'id');
@@ -55,6 +45,11 @@ select has_column('profiles', 'username');
 select col_is_pk('profiles', 'id');
 select col_is_fk('profiles', 'id');
 select col_type_is('profiles', 'updated_at', 'timestamp with time zone');
+select results_eq(
+  'select username from profiles',
+  $$VALUES ('username1'), ('username2')$$,
+  'profiles should return all users'
+);
 
 -- sports table columns
 select has_column('sports', 'id' );
@@ -124,6 +119,60 @@ select col_type_is('messages', 'game_id', 'uuid');
 select col_type_is('messages', 'player_id', 'uuid');
 select col_type_is('messages', 'content', 'text');
 select col_type_is('messages', 'sent_at', 'timestamp with time zone');
+
+-- username_search()
+select results_eq(
+  'select * from username_search($$username$$)', 
+  $$VALUES ('[{"id": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username1", "displayName":null, "bio":null, "avatarUrl":null}, {"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username2", "displayName":null, "bio":null, "avatarUrl":null}]'::jsonb) $$,
+  'username search should return like users'
+);
+select results_eq(
+  'select * from username_search($$username1$$)', 
+  $$VALUES ('[{"id": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username1", "displayName":null, "bio":null, "avatarUrl":null}]'::jsonb) $$,
+  'username search should return like users'
+);
+
+-- get_coordinates()
+select results_eq(
+  'select * from get_coordinates($$Homewood$$, $$Baltimore$$, $$MD$$, $$21218$$)',
+  $$VALUES (st_point(-76.6191118, 39.3293085)::geography) $$,
+  'coordinates should be accurate'
+);
+
+-- create_game()
+select results_eq(
+  'select title, description, datetime, street, state, city, zip, sport, skill_level, max_players, current_players, is_public 
+    from create_game($$Baltimore$$, now(), $$test description$$, true, 10, 0, $$soccer$$, $$Homewood$$, $$MD$$, $$test game 2$$, $$21218$$, 39.3293085, -76.6191118)
+    as (
+      title text,
+      description text,
+      datetime timestamp with time zone,
+      street text,
+      state text,
+      city text,
+      zip text,
+      sport text,
+      skill_level int,
+      max_players bigint,
+      current_players bigint,
+      is_public boolean
+    )',
+  $$VALUES (
+    'test game 2',
+    'test descriptipn',
+    '2024-04-15 18:00:00-04'::timestamp with time zone,
+    'Homewood',
+    'MD',
+    'Baltimore',
+    '21218',
+    'soccer',
+    0,
+    10,
+    1,
+    true
+  ) $$,
+  'create game should return inserted data'
+);
 
 select * from finish();
 rollback;

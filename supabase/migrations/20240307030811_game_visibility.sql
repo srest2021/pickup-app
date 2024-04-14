@@ -167,7 +167,7 @@ create policy "Users can delete their own sports." on sports
   for delete using (auth.uid() = user_id);
 
 -- get the user id from a string or partial string!
-create or replace function username_search(username text)
+create or replace function username_search(username_param text)
 returns jsonb as $$
 declare
   data jsonb;
@@ -182,12 +182,11 @@ begin
     )
   )
   from public.profiles as p
-  where p.username like '%' || username || '%'
+  where p.username like '%' || username_param || '%'
   into data;
   return data;
 end;
 $$ language plpgsql;
-
 
 -- games table
 
