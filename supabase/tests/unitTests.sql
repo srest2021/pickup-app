@@ -26,6 +26,16 @@ select has_column('games', 'skill_level');
 select col_is_pk('games', 'id');
 select col_is_fk('games', 'organizer_id');
 select col_type_is('games', 'datetime', 'timestamp with time zone');
+select policies_are(
+  'public',
+  'games',
+  ARRAY [
+    'Public games are viewable by everyone.', 
+    'Users can delete their own games.',
+    'Users can insert their own games.',
+    'Users can update their own games.'
+  ]
+);
 
 -- joined_game table columns
 select has_column('joined_game', 'id');
