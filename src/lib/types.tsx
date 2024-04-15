@@ -94,8 +94,8 @@ export interface Game {
 
 export type MyGame = Game & {
   address: Address;
-  joinRequests: ThumbnailUser[];
-  acceptedPlayers: ThumbnailUser[];
+  joinRequests: PlusOneUser[];
+  acceptedPlayers: PlusOneUser[];
 };
 
 export type JoinedGame = Game & {

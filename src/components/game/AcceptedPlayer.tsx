@@ -2,7 +2,7 @@ import { XStack, Button } from "tamagui";
 import { Alert, TouchableOpacity, View } from "react-native";
 import { Tabs, Text } from "tamagui";
 import { X, Loader } from "@tamagui/lucide-icons";
-import { ThumbnailUser } from "../../lib/types";
+import { PlusOneUser, ThumbnailUser } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
 import { useStore } from "../../lib/store";
 
@@ -12,7 +12,7 @@ const AcceptedPlayer = ({
   isOrganizer,
   navigation,
 }: {
-  user: ThumbnailUser;
+  user: PlusOneUser;
   gameId: string;
   isOrganizer: boolean;
   navigation: any;
@@ -50,6 +50,7 @@ const AcceptedPlayer = ({
             </Text>
           </Text>
         </TouchableOpacity>
+        { user.hasPlusOne ? <Text fontSize="$5" ellipsizeMode="tail"> + 1 </Text> : <Text></Text>}
         {isOrganizer && (
           <Button
             testID="remove-button"
