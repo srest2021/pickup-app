@@ -100,13 +100,13 @@ export type MyGame = Game & {
 
 export type JoinedGame = Game & {
   address: Address;
-  acceptedPlayers: ThumbnailUser[];
+  acceptedPlayers: PlusOneUser[];
   organizer: ThumbnailUser;
 };
 
 export type FeedGame = Game & {
   hasRequested: boolean;
-  acceptedPlayers: ThumbnailUser[];
+  acceptedPlayers: PlusOneUser[];
   organizer: ThumbnailUser;
 };
 
