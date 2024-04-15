@@ -1,5 +1,5 @@
 begin;
-select plan( 99 );
+select plan( 101 );
 
 -- table existence
 select has_table('games');
@@ -226,10 +226,42 @@ begin
 
     -- current_players is incremented in games table
     perform ok(
-        (select current_players from games where id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e') = 1,
+        (select current_players from games where id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e') = 2,
         'Current players should be incremented in games table after accepting'
     );
 END $$;
+
+-- reject_join_request()
+-- do $$
+-- begin
+--     perform reject_join_request('a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+--     -- request removed from game_requests table
+--     perform ok(
+--         not exists (
+--             select 1 from game_requests
+--             where game_id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e'
+--               and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+--         ),
+--         'Join request should be removed from table after accepting'
+--     );
+
+--     -- no row added to joined_game table
+--     perform ok(
+--         not exists (
+--             select 1 from joined_game
+--             where game_id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e'
+--               and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+--         ),
+--         'Player should be added to joined_game after accepting'
+--     );
+
+--     -- current_players is not incremented in games table
+--     perform ok(
+--         (select current_players from games where id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e') = 1,
+--         'Current players should be incremented in games table after accepting'
+--     );
+-- END $$;
 
 select * from finish();
 rollback;

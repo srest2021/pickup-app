@@ -116,8 +116,6 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 
 ### 5.4 Advanced Features
 
-### 5.5 Troubleshooting
-
 ## Database Schema
 
 ### 7.1 Entity-Relationship Diagram
@@ -150,37 +148,19 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 
 We planned two approaches to testing our app: (a) unit tests and (b) frontend tests. All tests are run automatically on pushes or pull requests to `main` or `dev` via GitHub Actions.
 
-The first approach, unit tests, targets the backend tables and custom postgreSQL functions written for our use case. The tests were written using pgTap and are applied to a test database schema built by a migration file which contains all of our tables and functions. We first seed our database with example records of profiles, games, and more. Then, we test that all database tables are built with the correct columns, foreign key relationships, and data types. Lastly, we test that our custom postgreSQL functions behave as expected by manipulating the seed data, calling the function, and verifying the results.
+The first approach, unit tests, targets the backend tables and custom postgreSQL functions written for our use case. The tests were written using pgTAP and are applied to a test database schema built by a migration file which contains all of our tables and functions. We first seed our database with example records of profiles, games, and more. Then, we test that all database tables are built with the correct columns, foreign key relationships, and data types. Lastly, we test that our custom postgreSQL functions behave as expected by manipulating the seed data, calling the function, and verifying the results.
 
 Our second approach, frontend tests, targets our frontend components and tests whether they render correctly and handle data in the expected way. We used Jest to write our frontend tests. We focused on determining whether components render as expected, mocking the store and hooks, and verifying that button presses or other user interations were handled as expected. 
 
-### 8.2 Test Cases
+### 8.2 Test Results
 
-### 8.3 Test Results
+### 8.3 Known Issues and Limitations
 
 ## Deployment
 
 ### 9.1 Deployment Process
 
 We build and deploy our app automatically on pushes to `main` via GitHub Actions using Expo EAS.
-
-### 9.2 Release Notes
-
-### 9.3 Known Issues and Limitations
-
-## Support and Maintenance
-
-### 10.1 Troubleshooting Guide
-
-### 10.2 Frequently Asked Questions (FAQs)
-
-### 10.3 Contact Information
-
-## Change Log
-
-### 11.1 Version History
-
-### 11.2 Change Summary
 
 ## Glossary
 
