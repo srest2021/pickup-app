@@ -242,18 +242,38 @@ function useMutationGame() {
     }
   };
 
-  const acceptJoinRequestById = async (gameId: string, playerId: string) => {
+  const acceptJoinRequestById = async (
+    gameId: string,
+    playerId: string,
+    plusOne: boolean,
+  ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const { error } = await supabase.rpc("accept_join_request", {
+      // Check if game full or if num of players requesting will exceed max
+      let { data, error } = await supabase.rpc("check_game_capacity", {
+        game_id: gameId,
+        player_id: playerId,
+        plus_one: plusOne,
+      });
+
+      if (error) throw error;
+
+      if (!data) {
+        Alert.alert(
+          "Accepting this request will exceed the max player capacity!",
+        );
+        return null;
+      }
+
+      const { error: error1 } = await supabase.rpc("accept_join_request", {
         game_id: gameId,
         player_id: playerId,
       });
-      if (error) throw error;
+      if (error1) throw error1;
 
-      acceptJoinRequest(gameId, playerId);
+      acceptJoinRequest(gameId, playerId, plusOne);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

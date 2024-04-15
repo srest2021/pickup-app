@@ -72,7 +72,11 @@ type Action = {
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
-  acceptJoinRequest: (gameId: string, playerId: string) => void;
+  acceptJoinRequest: (
+    gameId: string,
+    playerId: string,
+    plusOne: boolean,
+  ) => void;
   rejectJoinRequest: (gameId: string, playerId: string) => void;
   removePlayer: (gameId: string, playerId: string) => void;
 
@@ -274,7 +278,7 @@ export const useStore = create<State & Action>()(
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
-    acceptJoinRequest: (gameId, playerId) => {
+    acceptJoinRequest: (gameId, playerId, plusOne) => {
       // find player object in join requests
       const newPlayer = get()
         .myGames.find((game) => game.id === gameId)
@@ -289,7 +293,9 @@ export const useStore = create<State & Action>()(
           );
           // add player object to acceptedPlayers and increment count
           if (newPlayer) {
-            myGame.currentPlayers += 1;
+            plusOne
+              ? (myGame.currentPlayers += 2)
+              : (myGame.currentPlayers += 1);
             myGame.acceptedPlayers.push(newPlayer);
           }
           set({ selectedMyGame: { ...myGame } });
