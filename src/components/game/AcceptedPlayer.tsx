@@ -50,7 +50,14 @@ const AcceptedPlayer = ({
             </Text>
           </Text>
         </TouchableOpacity>
-        { user.hasPlusOne ? <Text fontSize="$5" ellipsizeMode="tail"> + 1 </Text> : <Text></Text>}
+        {user.hasPlusOne ? (
+          <Text fontSize="$5" ellipsizeMode="tail">
+            {" "}
+            + 1{" "}
+          </Text>
+        ) : (
+          <Text></Text>
+        )}
         {isOrganizer && (
           <Button
             testID="remove-button"

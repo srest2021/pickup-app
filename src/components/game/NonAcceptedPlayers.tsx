@@ -53,7 +53,14 @@ const NonAcceptedPlayer = ({
             </Text>
           </Text>
         </TouchableOpacity>
-        { user.hasPlusOne ? <Text fontSize="$5" ellipsizeMode="tail"> + 1 </Text> : <Text></Text>}
+        {user.hasPlusOne ? (
+          <Text fontSize="$5" justifyContent="flex-start">
+            {" "}
+            + 1{" "}
+          </Text>
+        ) : (
+          <Text></Text>
+        )}
         <XStack justifyContent="flex-end" space="$2">
           <Button
             testID="reject-button"
