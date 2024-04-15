@@ -29,3 +29,8 @@ insert into game_locations
 values
   (uuid_generate_v4(),'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', 'Homewood', 'Baltimore', 'MD', '21218', st_point(-76.6172978, 39.3289357)::geography),
   (uuid_generate_v4(),'78d89525-46bf-4032-8572-5428bec482eb', 'Homewood', 'Baltimore', 'MD', '21218', st_point(-76.6172978, 39.3289357)::geography);
+
+insert into game_requests
+  (id, game_id, player_id)
+values
+  (uuid_generate_v4(), 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');

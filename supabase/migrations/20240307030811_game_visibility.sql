@@ -822,7 +822,7 @@ returns table(
   with distances as (
     select 
       gl.game_id,
-      st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
+      st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters
     from game_locations gl
   )
   select 
