@@ -326,7 +326,7 @@ export const useStore = create<State & Action>()(
           myGame.acceptedPlayers = myGame.acceptedPlayers.filter(
             (user) => user.id != playerId,
           );
-          plusOne ? myGame.currentPlayers -= 2 : myGame.currentPlayers -= 1;
+          plusOne ? (myGame.currentPlayers -= 2) : (myGame.currentPlayers -= 1);
           set({ selectedMyGame: { ...myGame } });
         }
         return myGame;
