@@ -21,7 +21,7 @@ export default function FriendNavigator() {
         }}
       />
       <Stack.Screen
-        name="OtherProfileViewFriends"
+        name="OtherProfileView"
         component={OtherProfile}
         options={{
           title: "Other Profile",

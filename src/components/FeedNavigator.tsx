@@ -40,7 +40,7 @@ export default function FeedNavigator() {
       />
     
     <Stack.Screen
-    name="OtherProfileViewFeed"
+    name="OtherProfileView"
     component={OtherProfile}
     options={{
       title: "Other Profile",

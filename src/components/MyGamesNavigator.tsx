@@ -70,7 +70,7 @@ export default function MyGamesNavigator() {
         }}
       />
       <Stack.Screen
-        name="OtherProfileViewGames"
+        name="OtherProfileView"
         component={OtherProfile}
         options={{
           title: "Other Profile",
