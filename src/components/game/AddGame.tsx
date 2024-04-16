@@ -171,6 +171,16 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const handleSelectLocation = (location: any) => {
     // Fill address fields with selected location's details
     if (location && location.address) {
+      // handle edge cases
+      if (location.address.country !== 'United States of America') {
+        Alert.alert("Error: Address must be in the US!");
+        return;
+      }
+      if (!location.address.house_number || !location.address.road) {
+        Alert.alert("Error: Address must have a valid street!");
+        return;
+      }
+
       const { house_number, road, city, state, postcode } = location.address;
 
       // Update the state values with the selected location's details
