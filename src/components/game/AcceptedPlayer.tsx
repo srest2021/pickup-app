@@ -22,7 +22,7 @@ const AcceptedPlayer = ({
   const { removePlayerById } = useMutationGame();
 
   const handleRemove = async () => {
-    await removePlayerById(gameId, user.id);
+    await removePlayerById(gameId, user.id, user.hasPlusOne);
   };
 
   return (

@@ -310,7 +310,7 @@ function useMutationGame() {
     }
   };
 
-  const removePlayerById = async (gameId: string, playerId: string) => {
+  const removePlayerById = async (gameId: string, playerId: string, plusOne: boolean) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -321,7 +321,7 @@ function useMutationGame() {
       });
       if (error) throw error;
 
-      removePlayer(gameId, playerId);
+      removePlayer(gameId, playerId, plusOne);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
