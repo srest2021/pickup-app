@@ -176,24 +176,25 @@ const AddGame = ({ navigation }: { navigation: any }) => {
         Alert.alert("Error: Address must be in the US!");
         return;
       }
-      if (!location.address.house_number || !location.address.road) {
+
+      const { house_number, road, city, state, postcode } = location.address;
+
+      if (!house_number || !road) {
         Alert.alert("Error: Address must have a valid street!");
         return;
       }
-      if (!location.address.city) {
+      if (!city) {
         Alert.alert("Error: Address must have a valid city!");
         return;
       }
-      if (!location.address.state) {
+      if (!state) {
         Alert.alert("Error: Address must have a valid state!");
         return;
       }
-      if (!location.address.postcode) {
+      if (!postcode) {
         Alert.alert("Error: Address must have a valid postcode!");
         return;
       }
-
-      const { house_number, road, city, state, postcode } = location.address;
 
       // Update the state values with the selected location's details
       setStreet(house_number + " " + road);
