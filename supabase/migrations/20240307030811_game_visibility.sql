@@ -584,7 +584,7 @@ $$;
 
 -- miscellaneous functions
 
-create or replace function public.create_game(
+create or replace function create_game(
   city text,
   datetime timestamp with time zone,
   description text,
