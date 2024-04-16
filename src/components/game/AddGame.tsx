@@ -180,6 +180,18 @@ const AddGame = ({ navigation }: { navigation: any }) => {
         Alert.alert("Error: Address must have a valid street!");
         return;
       }
+      if (!location.address.city) {
+        Alert.alert("Error: Address must have a valid city!");
+        return;
+      }
+      if (!location.address.state) {
+        Alert.alert("Error: Address must have a valid state!");
+        return;
+      }
+      if (!location.address.postcode) {
+        Alert.alert("Error: Address must have a valid postcode!");
+        return;
+      }
 
       const { house_number, road, city, state, postcode } = location.address;
 
@@ -190,6 +202,9 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       setZip(postcode);
       setSelectedLocation(true);
       setSearchTerm(house_number + " " + road);
+    } else {
+      Alert.alert("Error selecting location! Please try again later.");
+      return;
     }
   };
 
