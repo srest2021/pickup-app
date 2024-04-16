@@ -309,6 +309,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               </Label>
               <YStack space="$2">
                 <Input
+                  size="$5"
                   placeholder="Street"
                   value={
                     isSearchFocused
