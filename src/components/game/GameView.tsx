@@ -10,7 +10,10 @@ import {
   ScrollView,
   H6,
   View,
+  AlertDialog,
+  Checkbox,
   Text,
+  Switch,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Alert, TouchableOpacity } from "react-native";
@@ -27,19 +30,13 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
     state.selectedFeedGame,
   ]);
   const { requestToJoinById } = useMutationGame();
+  let hasPlusOne: boolean = false;
 
   // Request to Join Game Logic:
   function requestToJoinGame() {
-    if (
-      selectedFeedGame &&
-      selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers
-    ) {
-      Alert.alert("This game is already full!");
-    } else {
-      requestToJoinById(gameId, user!.id);
-      // Go back to feed once request is sent.
-      navigation.goBack();
-    }
+    requestToJoinById(gameId, user!.id, hasPlusOne);
+    // Go back to feed once request is sent.
+    navigation.goBack();
   }
 
   return (
@@ -88,14 +85,20 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       by @{username}
                     </SizableText>
                   </YStack> */}
-                  <TouchableOpacity onPress={() => {
-                      navigation.navigate("OtherProfileView", { userId: userId });
-                      }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("OtherProfileView", {
+                          userId: userId,
+                        });
+                      }}
+                    >
                       <Text fontSize="$5" ellipsizeMode="tail">
-                          <Text style={{ textDecorationLine: "none" }}>@</Text>
-                          <Text style={{ textDecorationLine: "underline" }}>{username}</Text>
+                        <Text style={{ textDecorationLine: "none" }}>@</Text>
+                        <Text style={{ textDecorationLine: "underline" }}>
+                          {username}
+                        </Text>
                       </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
                   </YStack>
                 </YStack>
 
@@ -158,24 +161,99 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   gametype="feed"
                 />
 
-                <XStack paddingTop="$5">
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    disabled={selectedFeedGame.hasRequested ? true : false}
-                    flex={1}
-                    onPress={() => requestToJoinGame()}
-                  >
-                    {loading
-                      ? "Loading..."
-                      : selectedFeedGame.hasRequested
-                        ? "Requested"
-                        : "Request to Join"}
-                  </Button>
-                </XStack>
+                <AlertDialog modal>
+                  <AlertDialog.Trigger asChild>
+                    <Button
+                      variant="outlined"
+                      size="$5"
+                      color="#ff7403"
+                      borderColor="#ff7403"
+                      backgroundColor="#ffffff"
+                      disabled={selectedFeedGame.hasRequested ? true : false}
+                      flex={1}
+                    >
+                      {loading
+                        ? "Loading..."
+                        : selectedFeedGame.hasRequested
+                          ? "Requested"
+                          : "Request to Join"}
+                    </Button>
+                  </AlertDialog.Trigger>
+                  <AlertDialog.Portal>
+                    <AlertDialog.Overlay
+                      key="overlay"
+                      animation="quick"
+                      opacity={0.5}
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+
+                    <AlertDialog.Content
+                      bordered
+                      elevate
+                      key="content"
+                      animation={[
+                        "quick",
+                        {
+                          opacity: {
+                            overshootClamping: true,
+                          },
+                        },
+                      ]}
+                      enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
+                      exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
+                      x={0}
+                      scale={1}
+                      opacity={1}
+                      y={0}
+                    >
+                      <YStack space>
+                        <AlertDialog.Title size={"$6"}>
+                          Bringing someone?
+                        </AlertDialog.Title>
+                        <XStack justifyContent="space-evenly">
+                          <AlertDialog.Description size={"$3"}>
+                            No
+                          </AlertDialog.Description>
+                          <AlertDialog.Description size={"$3"}>
+                            <Switch
+                              size="$4"
+                              defaultChecked={hasPlusOne}
+                              onCheckedChange={() => {
+                                hasPlusOne = !hasPlusOne;
+                              }}
+                              style={{
+                                backgroundColor: "#ff7403",
+                              }}
+                            >
+                              <Switch.Thumb
+                                style={{ backgroundColor: "#e54b07" }}
+                                animation="bouncy"
+                              />
+                            </Switch>
+                          </AlertDialog.Description>
+                          <AlertDialog.Description size={"$3"}>
+                            Yes
+                          </AlertDialog.Description>
+                        </XStack>
+
+                        <XStack space="$3" justifyContent="flex-end">
+                          <AlertDialog.Cancel asChild>
+                            <Button>Cancel</Button>
+                          </AlertDialog.Cancel>
+                          <AlertDialog.Action asChild>
+                            <Button
+                              theme="active"
+                              onPress={() => requestToJoinGame()}
+                            >
+                              Request
+                            </Button>
+                          </AlertDialog.Action>
+                        </XStack>
+                      </YStack>
+                    </AlertDialog.Content>
+                  </AlertDialog.Portal>
+                </AlertDialog>
               </YStack>
             </ScrollView>
           </View>
