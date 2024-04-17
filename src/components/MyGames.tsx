@@ -50,6 +50,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 icon={PlusCircle}
                 variant="outlined"
                 disabled={loading}
+                onPress={() => navigation.navigate("AddGame")}
                 style={{ alignSelf: "flex-start" }}
                 padding="$3"
               />

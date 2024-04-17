@@ -8,7 +8,6 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "./tamagui.config";
 import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import AddGame from "./src/components/game/AddGame";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
 import FriendPage from "./src/components/user/FriendPage";
 import { useFonts } from "expo-font";
@@ -96,17 +95,6 @@ export default function App() {
                     <AlignJustify color={focused ? "grey" : "#ffffff"} />
                   ),
                   headerShown: false,
-                }}
-                initialParams={{ key: session.user.id }}
-              />
-              <Tab.Screen
-                name="Add Game"
-                component={AddGame}
-                options={{
-                  tabBarLabel: "Add Game",
-                  tabBarIcon: ({ color, size, focused }) => (
-                    <PlusCircle color={focused ? "grey" : "#ffffff"} />
-                  ),
                 }}
                 initialParams={{ key: session.user.id }}
               />
