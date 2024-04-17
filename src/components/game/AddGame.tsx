@@ -235,13 +235,13 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   }, [searchTerm]);
 
   return (
-    <View className="p-12 overflow-visible">
+    <View className="p-12">
       {session && session.user ? (
         <ScrollView
           contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
         >
-          <YStack space="$4" paddingBottom="$4" >
+          <YStack space="$4" paddingBottom="$4">
             <Label> * indicates required fields </Label>
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
@@ -288,61 +288,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               />
             </XStack>
 
-            {/* <XStack width={200} alignItems="center" padding="$2"> */}
-            {/* <XStack alignItems="center" space="$3">
-              <Label
-                //paddingRight="$0"
-                //minWidth={90}
-                //justifyContent="flex-end"
-                htmlFor={"switch-public-friends-only"}
-              >
-                <XStack flex={1} space="$2">
-                  <Unlock color={isPublic ? "#e90d52" : "#08348c"} />
-                  <SizableText
-                    size="$5"
-                    style={{
-                      color: isPublic ? "#e90d52" : "#08348c",
-                    }}
-                  >
-                    Public
-                  </SizableText>
-                </XStack>
-              </Label>
-              <Switch
-                testID="visibilityInput"
-                size="$4"
-                defaultChecked={false}
-                onCheckedChange={(checked: boolean) => {
-                  setIsPublic(!checked);
-                }}
-                style={{
-                  backgroundColor: "#e90d52",
-                }}
-              >
-                <Switch.Thumb
-                  style={{ backgroundColor: "#b90a41" }}
-                  animation="bouncy"
-                />
-              </Switch>
-              <Label
-                //paddingRight="$0"
-                //minWidth={90}
-                //justifyContent="flex-end"
-                htmlFor={"switch-public-friends-only"}
-              >
-                <XStack flex={1} space="$2">
-                  <Lock color={isPublic ? "#08348c" : "#e90d52"} />
-                  <SizableText
-                    size="$5"
-                    style={{
-                      color: isPublic ? "#08348c" : "#e90d52",
-                    }}
-                  >
-                    Friends-Only
-                  </SizableText>
-                </XStack>
-              </Label>
-            </XStack> */}
             <XStack width={200} alignItems="center" padding="$2">
               <Label
                 paddingRight="$0"
@@ -351,7 +296,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? "#e90d52" : "black",
+                  color: isPublic ? "#e90d52" : "#08348c",
                 }}
               >
                 Public
@@ -379,7 +324,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 size="$5"
                 htmlFor={"switch-public-friends-only"}
                 style={{
-                  color: isPublic ? "black" : "#e90d52",
+                  color: isPublic ? "#08348c" : "#e90d52",
                 }}
               >
                 Friends-Only
