@@ -1,16 +1,19 @@
 import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
-import { Alert, Button, View } from "react-native";
+import { Alert, Button } from "react-native";
+import { View } from "tamagui";
 import useQueryGames from "../hooks/use-query-games";
-import { Tabs, Text } from "tamagui";
+import { Tabs, Text, Button as TamaguiButton } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
+import { PlusCircle } from "@tamagui/lucide-icons";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [session, myGames, joinedGames] = useStore((state) => [
+  const [session, myGames, joinedGames, loading] = useStore((state) => [
     state.session,
     state.myGames,
     state.joinedGames,
+    state.loading,
   ]);
   const { fetchMyGames, fetchJoinedGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
@@ -33,13 +36,25 @@ const MyGames = ({ navigation }: { navigation: any }) => {
         <View style={{ flex: 1 }}>
           <Tabs
             alignSelf="center"
-            justifyContent="center"
+            justifyContent="space-between"
             flex={0}
+            paddingBottom="$3"
             defaultValue="MyGames"
           >
-            <Tabs.List>
+            <Tabs.List paddingTop="$1">
+              <TamaguiButton
+                size="$4"
+                color="#ffffff"
+                borderColor="#08348c"
+                backgroundColor="#08348c"
+                icon={PlusCircle}
+                variant="outlined"
+                disabled={loading}
+                onPress={() => navigation.navigate("AddGame")}
+                style={{ alignSelf: "flex-start" }}
+                padding="$3"
+              />
               <Tabs.Tab
-                width={200}
                 testID="my-games"
                 value="MyGames"
                 onInteraction={() => {
@@ -50,7 +65,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               </Tabs.Tab>
               <Separator vertical></Separator>
               <Tabs.Tab
-                width={200}
                 testID="joined-games"
                 value="JoinedGames"
                 onInteraction={() => {
