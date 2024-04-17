@@ -13,10 +13,11 @@ import {
   YStack,
   H4,
   Switch,
+  SizableText,
 } from "tamagui";
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
-import { Check, ChevronDown } from "@tamagui/lucide-icons";
+import { Check, ChevronDown, Unlock, Lock } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -234,13 +235,13 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   }, [searchTerm]);
 
   return (
-    <View className="p-12">
+    <View className="p-12 overflow-visible">
       {session && session.user ? (
         <ScrollView
           contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
         >
-          <YStack space="$4" paddingBottom="$4">
+          <YStack space="$4" paddingBottom="$4" >
             <Label> * indicates required fields </Label>
             <XStack space="$2" alignItems="center">
               <Label size="$5" width={60} color={"#08348c"}>
@@ -287,6 +288,61 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               />
             </XStack>
 
+            {/* <XStack width={200} alignItems="center" padding="$2"> */}
+            {/* <XStack alignItems="center" space="$3">
+              <Label
+                //paddingRight="$0"
+                //minWidth={90}
+                //justifyContent="flex-end"
+                htmlFor={"switch-public-friends-only"}
+              >
+                <XStack flex={1} space="$2">
+                  <Unlock color={isPublic ? "#e90d52" : "#08348c"} />
+                  <SizableText
+                    size="$5"
+                    style={{
+                      color: isPublic ? "#e90d52" : "#08348c",
+                    }}
+                  >
+                    Public
+                  </SizableText>
+                </XStack>
+              </Label>
+              <Switch
+                testID="visibilityInput"
+                size="$4"
+                defaultChecked={false}
+                onCheckedChange={(checked: boolean) => {
+                  setIsPublic(!checked);
+                }}
+                style={{
+                  backgroundColor: "#e90d52",
+                }}
+              >
+                <Switch.Thumb
+                  style={{ backgroundColor: "#b90a41" }}
+                  animation="bouncy"
+                />
+              </Switch>
+              <Label
+                //paddingRight="$0"
+                //minWidth={90}
+                //justifyContent="flex-end"
+                htmlFor={"switch-public-friends-only"}
+              >
+                <XStack flex={1} space="$2">
+                  <Lock color={isPublic ? "#08348c" : "#e90d52"} />
+                  <SizableText
+                    size="$5"
+                    style={{
+                      color: isPublic ? "#08348c" : "#e90d52",
+                    }}
+                  >
+                    Friends-Only
+                  </SizableText>
+                </XStack>
+              </Label>
+            </XStack> */}
             <XStack width={200} alignItems="center" padding="$2">
               <Label
                 paddingRight="$0"
