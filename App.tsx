@@ -8,7 +8,6 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "./tamagui.config";
 import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import AddGame from "./src/components/game/AddGame";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
 import FriendPage from "./src/components/user/FriendPage";
 import { useFonts } from "expo-font";

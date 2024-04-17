@@ -52,6 +52,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                   variant="outlined"
                   disabled={loading}
                   style={{ alignSelf: "flex-start" }}
+                  onPress={() => navigation.navigate("AddGame")}
                 />
               </View>
               <Tabs.Tab
