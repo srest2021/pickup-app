@@ -1,10 +1,19 @@
-import { useEffect, useState } from "react";
-import { View, Text, FlatList, RefreshControl, Button } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { FlatList, RefreshControl, Button } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
-import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";
+import {
+  H4,
+  Separator,
+  Spinner,
+  Tabs,
+  Text,
+  View,
+  Button as TamaguiButton,
+} from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import FeedFilter from "./FeedFilter";
+import { ChevronsUp } from "@tamagui/lucide-icons";
 
 const Feed = ({ navigation }: { navigation: any }) => {
   const { fetchFeedGames } = useQueryGames();
@@ -26,6 +35,12 @@ const Feed = ({ navigation }: { navigation: any }) => {
   const [allPublicGamesFetched, setAllPublicGamesFetched] = useState(false);
   const [allFriendsOnlyGamesFetched, setAllFriendsOnlyGamesFetched] =
     useState(false);
+
+  // for scroll to top
+  const flatListRef = useRef();
+  const scrollToTop = async () => {
+    flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+  };
 
   // on component render, clear state and get all games
   useEffect(() => {
@@ -140,64 +155,106 @@ const Feed = ({ navigation }: { navigation: any }) => {
             </Tabs>
             {(toggle === "publicGames" && publicGames.length > 0) ||
             (toggle === "friendsOnlyGames" && friendsOnlyGames.length > 0) ? (
-              <FlatList
-                //style={{paddingTop: 20}}
-                data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
-                renderItem={({ item }) => (
-                  <GameThumbnail
-                    navigation={navigation}
-                    game={item}
-                    gametype="feed"
-                    key={item.id}
-                  />
-                )}
-                keyExtractor={(item) => item.id.toString()}
-                onEndReached={() => {
-                  handleLoadMore();
-                }}
-                onEndReachedThreshold={0.05}
-                refreshControl={
-                  <RefreshControl
-                    size={10}
-                    refreshing={refreshing}
-                    onRefresh={handleRefresh}
-                    colors={["#ff7403"]}
-                    tintColor="#ff7403"
-                    titleColor="#ff7403"
-                  />
-                }
-                ListFooterComponent={() =>
-                  refreshing && (
-                    <Spinner size="small" color="#ff7403" testID="spinner" />
-                  )
-                }
-                contentContainerStyle={{ gap: 23, paddingTop: 20 }}
-              />
+              <View style={{ flex: 1 }}>
+                <FlatList
+                  ref={flatListRef}
+                  data={
+                    toggle === "publicGames" ? publicGames : friendsOnlyGames
+                  }
+                  renderItem={({ item }) => (
+                    <GameThumbnail
+                      navigation={navigation}
+                      game={item}
+                      gametype="feed"
+                      key={item.id}
+                    />
+                  )}
+                  keyExtractor={(item) => item.id}
+                  onEndReached={() => handleLoadMore()}
+                  onEndReachedThreshold={0.05}
+                  refreshControl={
+                    <RefreshControl
+                      size={10}
+                      refreshing={refreshing}
+                      onRefresh={handleRefresh}
+                      colors={["#ff7403"]}
+                      tintColor="#ff7403"
+                      titleColor="#ff7403"
+                    />
+                  }
+                  ListFooterComponent={() =>
+                    refreshing && (
+                      <Spinner size="small" color="#ff7403" testID="spinner" />
+                    )
+                  }
+                  contentContainerStyle={{ gap: 23, paddingTop: 20 }}
+                />
+                <TamaguiButton
+                  icon={ChevronsUp}
+                  style={{
+                    borderRadius: 50,
+                    borderColor: "#08348c",
+                    backgroundColor: "#08348c",
+                    color: "#ffffff",
+                    width: 45,
+                  }}
+                  variant="outlined"
+                  theme="active"
+                  size="$4"
+                  position="absolute"
+                  alignSelf="flex-end"
+                  right="$7"
+                  bottom="$7"
+                  onPress={scrollToTop}
+                />
+              </View>
             ) : refreshing ? (
               toggle === "publicGames" ? (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching Public Games...</H4>
+                <View
+                  padding="$7"
+                  flex={1}
+                  alignSelf="center"
+                  justifyContent="center"
+                >
+                  <H4 textAlign="center">Fetching public games...</H4>
                 </View>
               ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching Friends Only Games...</H4>
+                <View
+                  padding="$7"
+                  flex={1}
+                  alignSelf="center"
+                  justifyContent="center"
+                >
+                  <H4 textAlign="center">Fetching friends-only games...</H4>
                 </View>
               )
             ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>No games nearby.</H4>
+              <View
+                padding="$7"
+                flex={1}
+                alignSelf="center"
+                justifyContent="center"
+              >
+                <H4 textAlign="center">No games nearby.</H4>
                 <Button title="Click to Refresh" onPress={handleRefresh} />
               </View>
             )}
           </View>
         ) : (
-          <View className="items-center justify-center flex-1 p-12 text-center">
-            <H4>Allow location permissions to view games near you!</H4>
+          <View
+            padding="$7"
+            flex={1}
+            alignSelf="center"
+            justifyContent="center"
+          >
+            <H4 textAlign="center">
+              Allow location permissions to view games near you!
+            </H4>
           </View>
         )
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Loading...</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Loading...</H4>
         </View>
       )}
     </>
