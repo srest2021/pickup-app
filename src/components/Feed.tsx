@@ -141,6 +141,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
             {(toggle === "publicGames" && publicGames.length > 0) ||
             (toggle === "friendsOnlyGames" && friendsOnlyGames.length > 0) ? (
               <FlatList
+                //style={{paddingTop: 20}}
                 data={toggle === "publicGames" ? publicGames : friendsOnlyGames}
                 renderItem={({ item }) => (
                   <GameThumbnail
@@ -170,7 +171,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                     <Spinner size="small" color="#ff7403" testID="spinner" />
                   )
                 }
-                contentContainerStyle={{ gap: 23 }}
+                contentContainerStyle={{ gap: 23, paddingTop: 20 }}
               />
             ) : refreshing ? (
               toggle === "publicGames" ? (

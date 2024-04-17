@@ -43,16 +43,16 @@ const MyGames = ({ navigation }: { navigation: any }) => {
           >
             <Tabs.List paddingTop="$2">
               <View paddingHorizontal="$2">
-              <TamaguiButton
-                size="$3"
-                color="#ffffff"
-                borderColor="#08348c"
-                backgroundColor="#08348c"
-                icon={PlusCircle}
-                variant="outlined"
-                disabled={loading}
-                style={{ alignSelf: "flex-start" }}
-              />
+                <TamaguiButton
+                  size="$3"
+                  color="#ffffff"
+                  borderColor="#08348c"
+                  backgroundColor="#08348c"
+                  icon={PlusCircle}
+                  variant="outlined"
+                  disabled={loading}
+                  style={{ alignSelf: "flex-start" }}
+                />
               </View>
               <Tabs.Tab
                 testID="my-games"

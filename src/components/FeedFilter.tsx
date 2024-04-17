@@ -59,7 +59,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
   };
 
   return (
-    <View padding="$2">
+    <View paddingHorizontal="$2">
       <Dialog modal>
         <Dialog.Trigger asChild>
           <Button

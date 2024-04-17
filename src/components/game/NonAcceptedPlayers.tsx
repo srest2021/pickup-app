@@ -61,7 +61,10 @@ const NonAcceptedPlayer = ({
           </Text>
         </TouchableOpacity>
         {user.hasPlusOne ? (
-          <Text fontSize="$5" justifyContent="flex-start"> + 1 </Text>
+          <Text fontSize="$5" justifyContent="flex-start">
+            {" "}
+            + 1{" "}
+          </Text>
         ) : (
           <Text></Text>
         )}

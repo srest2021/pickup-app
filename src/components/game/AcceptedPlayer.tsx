@@ -52,7 +52,10 @@ const AcceptedPlayer = ({
           </Text>
         </TouchableOpacity>
         {user.hasPlusOne ? (
-          <Text fontSize="$5" ellipsizeMode="tail"> + 1 </Text>
+          <Text fontSize="$5" ellipsizeMode="tail">
+            {" "}
+            + 1{" "}
+          </Text>
         ) : (
           <Text></Text>
         )}
