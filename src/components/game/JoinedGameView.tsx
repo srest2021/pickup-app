@@ -29,19 +29,20 @@ const JoinedGameView = ({
   const { gameId, username, userId } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
-  const [session, user, setRoomCode] = useStore((state) => [
+  const [session, user, loading, setRoomCode] = useStore((state) => [
     state.session,
     state.user,
+    state.loading,
     state.setRoomCode,
   ]);
   const { leaveJoinedGameById } = useMutationGame();
 
   // Leaving a Joined Game Logic:
-  function leaveJoinedGame() {
-    leaveJoinedGameById(gameId, user!.id);
-    //navigate back to myGames
-    navigation.goBack();
-  }
+  const leaveJoinedGame = async () => {
+    const res = await leaveJoinedGameById(gameId, user!.id);
+    //wait for call to complete, then navigate back to myGames
+    if (res) navigation.goBack();
+  };
 
   return (
     <View flex={1}>
@@ -169,7 +170,7 @@ const JoinedGameView = ({
                     flex={1}
                     onPress={() => leaveJoinedGame()}
                   >
-                    Leave Game
+                    {loading ? "Leave Game" : "Loading..."}
                   </Button>
                 </XStack>
               </YStack>

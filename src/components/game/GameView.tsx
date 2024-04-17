@@ -33,18 +33,23 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   let hasPlusOne: boolean = false;
 
   // Request to Join Game Logic:
-  function requestToJoinGame() {
-    requestToJoinById(gameId, user!.id, hasPlusOne);
+  const requestToJoinGame = async () => {
+    const atCapacity = await requestToJoinById(gameId, user!.id, hasPlusOne);
     // Go back to feed once request is sent.
-    navigation.goBack();
-  }
+    if (!atCapacity) {
+      navigation.goBack();
+    }
+  };
 
   return (
     <View flex={1}>
       {session && session.user && user ? (
         selectedFeedGame ? (
           <View padding="$7" flex={1}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 100 }}
+              showsVerticalScrollIndicator={false}
+            >
               <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
@@ -155,11 +160,13 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <GamePlayers
-                  navigation={undefined}
-                  game={selectedFeedGame}
-                  gametype="feed"
-                />
+                <YStack paddingBottom="$5">
+                  <GamePlayers
+                    navigation={undefined}
+                    game={selectedFeedGame}
+                    gametype="feed"
+                  />
+                </YStack>
 
                 <AlertDialog modal>
                   <AlertDialog.Trigger asChild>

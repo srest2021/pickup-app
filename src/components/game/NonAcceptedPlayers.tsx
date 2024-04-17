@@ -3,7 +3,7 @@ import { Alert, TouchableOpacity, View } from "react-native";
 import { Text } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Check, X, Loader } from "@tamagui/lucide-icons";
-import { ThumbnailUser } from "../../lib/types";
+import { PlusOneUser } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
 
 const NonAcceptedPlayer = ({
@@ -13,7 +13,7 @@ const NonAcceptedPlayer = ({
   currentPlayers,
   navigation,
 }: {
-  user: ThumbnailUser;
+  user: PlusOneUser;
   gameId: string;
   currentPlayers: number;
   maxPlayers: number;
@@ -27,7 +27,7 @@ const NonAcceptedPlayer = ({
       Alert.alert("This game is already full!");
       return;
     }
-    await acceptJoinRequestById(gameId, user.id);
+    await acceptJoinRequestById(gameId, user.id, user.hasPlusOne);
   };
 
   const handleReject = async () => {
@@ -53,6 +53,14 @@ const NonAcceptedPlayer = ({
             </Text>
           </Text>
         </TouchableOpacity>
+        {user.hasPlusOne ? (
+          <Text fontSize="$5" justifyContent="flex-start">
+            {" "}
+            + 1{" "}
+          </Text>
+        ) : (
+          <Text></Text>
+        )}
         <XStack justifyContent="flex-end" space="$2">
           <Button
             testID="reject-button"

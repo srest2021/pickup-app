@@ -27,6 +27,8 @@ export type ThumbnailUser = {
   avatarUrl: string;
 };
 
+export type PlusOneUser = ThumbnailUser & { hasPlusOne: boolean };
+
 export interface Sport {
   name: string;
   skillLevel: SkillLevel;
@@ -92,19 +94,19 @@ export interface Game {
 
 export type MyGame = Game & {
   address: Address;
-  joinRequests: ThumbnailUser[];
-  acceptedPlayers: ThumbnailUser[];
+  joinRequests: PlusOneUser[];
+  acceptedPlayers: PlusOneUser[];
 };
 
 export type JoinedGame = Game & {
   address: Address;
-  acceptedPlayers: ThumbnailUser[];
+  acceptedPlayers: PlusOneUser[];
   organizer: ThumbnailUser;
 };
 
 export type FeedGame = Game & {
   hasRequested: boolean;
-  acceptedPlayers: ThumbnailUser[];
+  acceptedPlayers: PlusOneUser[];
   organizer: ThumbnailUser;
 };
 
