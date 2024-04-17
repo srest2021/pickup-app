@@ -117,17 +117,32 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               )
             ) : refreshing ? (
               myGamesToggle === "myGames" ? (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching published games...</H4>
+                <View
+                  padding="$7"
+                  flex={1}
+                  alignSelf="center"
+                  justifyContent="center"
+                >
+                  <H4 textAlign="center">Fetching published games...</H4>
                 </View>
               ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching joined games...</H4>
+                <View
+                  padding="$7"
+                  flex={1}
+                  alignSelf="center"
+                  justifyContent="center"
+                >
+                  <H4 textAlign="center">Fetching joined games...</H4>
                 </View>
               )
             ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>
+              <View
+                padding="$7"
+                flex={1}
+                alignSelf="center"
+                justifyContent="center"
+              >
+                <H4 textAlign="center">
                   No {myGamesToggle === "myGames" ? "published" : "joined"}{" "}
                   games.
                 </H4>
@@ -137,8 +152,8 @@ const MyGames = ({ navigation }: { navigation: any }) => {
           </ScrollView>
         </View>
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Loading...</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Loading...</H4>
         </View>
       )}
     </>
