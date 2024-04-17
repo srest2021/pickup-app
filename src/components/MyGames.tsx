@@ -41,9 +41,10 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             paddingBottom="$3"
             defaultValue="MyGames"
           >
-            <Tabs.List paddingTop="$1">
+            <Tabs.List paddingTop="$2">
+              <View paddingHorizontal="$2">
               <TamaguiButton
-                size="$4"
+                size="$3"
                 color="#ffffff"
                 borderColor="#08348c"
                 backgroundColor="#08348c"
@@ -51,8 +52,8 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 variant="outlined"
                 disabled={loading}
                 style={{ alignSelf: "flex-start" }}
-                padding="$3"
               />
+              </View>
               <Tabs.Tab
                 testID="my-games"
                 value="MyGames"

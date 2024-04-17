@@ -115,7 +115,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
               paddingBottom="$3"
               defaultValue="PublicGames"
             >
-              <Tabs.List>
+              <Tabs.List paddingTop="$2">
                 <FeedFilter handleRefresh={handleRefresh} />
                 <Tabs.Tab
                   testID="public-games"

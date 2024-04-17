@@ -51,7 +51,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             flex={0}
             defaultValue="Friends"
           >
-            <Tabs.List>
+            <Tabs.List paddingTop="$2">
               <Tabs.Tab
                 width="33.33%"
                 testID="friends"
