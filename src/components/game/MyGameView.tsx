@@ -152,7 +152,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     }}
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : "Edit"}
+                    Edit
                   </Button>
                   <Button
                     variant="outlined"
@@ -164,7 +164,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     onPress={() => deleteGame()}
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : "Delete"}
+                    Delete
                   </Button>
                 </XStack>
               </YStack>
