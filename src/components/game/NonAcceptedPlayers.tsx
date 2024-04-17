@@ -19,7 +19,10 @@ const NonAcceptedPlayer = ({
   maxPlayers: number;
   navigation: any;
 }) => {
-  const [loading] = useStore((state) => [state.loading]);
+  const [session, loading] = useStore((state) => [
+    state.session,
+    state.loading,
+  ]);
   const { acceptJoinRequestById, rejectJoinRequestById } = useMutationGame();
 
   const handleAccept = async () => {
@@ -47,17 +50,18 @@ const NonAcceptedPlayer = ({
           }}
         >
           <Text fontSize="$5" ellipsizeMode="tail">
-            <Text style={{ textDecorationLine: "none" }}>@</Text>
-            <Text style={{ textDecorationLine: "underline" }}>
-              {user.username}
-            </Text>
+            <Text>@</Text>
+            {session?.user.id !== user.id ? (
+              <Text style={{ textDecorationLine: "underline" }}>
+                {user.username}
+              </Text>
+            ) : (
+              <Text>{user.username}</Text>
+            )}
           </Text>
         </TouchableOpacity>
         {user.hasPlusOne ? (
-          <Text fontSize="$5" justifyContent="flex-start">
-            {" "}
-            + 1{" "}
-          </Text>
+          <Text fontSize="$5" justifyContent="flex-start"> + 1 </Text>
         ) : (
           <Text></Text>
         )}
@@ -73,7 +77,7 @@ const NonAcceptedPlayer = ({
           <Button
             testID="accept-button"
             icon={loading ? Loader : Check}
-            disabled={loading}
+            disabled={session?.user.id === user.id}
             size="$2"
             style={{ backgroundColor: "#05a579", color: "white" }}
             onPress={() => handleAccept()}

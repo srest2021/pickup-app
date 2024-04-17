@@ -170,7 +170,7 @@ const JoinedGameView = ({
                     flex={1}
                     onPress={() => leaveJoinedGame()}
                   >
-                    {loading ? "Leave Game" : "Loading..."}
+                    {loading ? "Loading..." : "Leave Game"}
                   </Button>
                 </XStack>
               </YStack>

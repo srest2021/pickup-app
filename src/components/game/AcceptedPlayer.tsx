@@ -17,7 +17,10 @@ const AcceptedPlayer = ({
   isOrganizer: boolean;
   navigation: any;
 }) => {
-  const [loading] = useStore((state) => [state.loading]);
+  const [session, loading] = useStore((state) => [
+    state.session,
+    state.loading,
+  ]);
 
   const { removePlayerById } = useMutationGame();
 
@@ -38,17 +41,18 @@ const AcceptedPlayer = ({
           }}
         >
           <Text fontSize="$5" ellipsizeMode="tail">
-            <Text style={{ textDecorationLine: "none" }}>@</Text>
-            <Text style={{ textDecorationLine: "underline" }}>
-              {user.username}
-            </Text>
+            <Text>@</Text>
+            {session?.user.id !== user.id ? (
+              <Text style={{ textDecorationLine: "underline" }}>
+                {user.username}
+              </Text>
+            ) : (
+              <Text>{user.username}</Text>
+            )}
           </Text>
         </TouchableOpacity>
         {user.hasPlusOne ? (
-          <Text fontSize="$5" ellipsizeMode="tail">
-            {" "}
-            + 1{" "}
-          </Text>
+          <Text fontSize="$5" ellipsizeMode="tail"> + 1 </Text>
         ) : (
           <Text></Text>
         )}
@@ -56,7 +60,7 @@ const AcceptedPlayer = ({
           <Button
             testID="remove-button"
             icon={loading ? Loader : X}
-            disabled={loading}
+            disabled={session?.user.id === user.id}
             size="$2"
             style={{ backgroundColor: "#e90d52", color: "white" }}
             onPress={() => handleRemove()}

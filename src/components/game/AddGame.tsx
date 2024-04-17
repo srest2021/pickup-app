@@ -172,7 +172,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     // Fill address fields with selected location's details
     if (location && location.address) {
       // handle edge case
-      if (location.address.country !== 'United States of America') {
+      if (location.address.country !== "United States of America") {
         Alert.alert("Error: Address must be in the US!");
         return;
       }
