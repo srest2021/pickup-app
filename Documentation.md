@@ -93,9 +93,66 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 
 ### 3.1 Prerequisites
 
+Make sure you have these prerequisites installed: [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Expo CLI](https://docs.expo.dev/get-started/installation/).  
+
 ### 3.2 System Requirements
 
 ### 3.3 Installation Steps
+
+Follow the below steps to run the app locally on Expo Go.
+
+1. Clone the repository and navigate to the root folder in the terminal.
+
+2. Add a `.env` file in the root folder of this repository containing the fields in the`.env.example` file, and fill in the required environment variables.
+
+3. Run `npm install` to install dependencies.
+
+4. To use the Expo Go app: 
+
+    a. Download the Expo Go app on your phone.
+
+    b. Run `npx expo start --go`.
+    
+    c. Scan the QR code with the Expo Go app (Android) or the Camera app (iOS) and open the link.
+
+5. To locally build the project:
+
+    a. On iOS, to run the simulator on Xcode:
+
+    ```shell
+    expo prebuild --platform ios
+
+    npx expo run:ios
+    ```
+
+    b. On Android (not tested yet):
+
+    ```shell
+    expo prebuild --platform android
+
+    npx expo run:android
+    ```
+
+7. To login as a test user to the app, use the following credentials:
+
+    ```shell
+    email: admin@example.com
+    password: password
+    ```
+
+Follow the below steps to download the build from the Expo Dashboard and run it on the Xcode simulator.
+
+1. Navigate to our OOSE group's [Expo dashboard](https://expo.dev/accounts/oose-team-01).
+
+2. Navigate to the [Pickup project](https://expo.dev/accounts/oose-team-01/projects/pickup).
+
+3. Click on the most recent build.
+
+4. Click "Download" and wait for the build to download.
+
+5. Unzip the downloaded build.
+
+6. Open Xcode simulator and drag the unzipped build onto the simulator.
 
 ## Configuration Guide
 
@@ -115,6 +172,14 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 ### 5.3 Core Functionality
 
 ### 5.4 Advanced Features
+
+## API Documentation (if applicable)
+
+### 6.1 Endpoints
+
+### 6.2 Request and Response Formats
+
+### 6.3 Authentication and Authorization
 
 ## Database Schema
 
