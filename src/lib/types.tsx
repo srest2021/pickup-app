@@ -29,6 +29,10 @@ export type ThumbnailUser = {
 
 export type PlusOneUser = ThumbnailUser & { hasPlusOne: boolean };
 
+export function capitalizeFirstLetter(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
 export interface Sport {
   name: string;
   skillLevel: SkillLevel;

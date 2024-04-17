@@ -18,6 +18,7 @@ import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
 import { MessageCircle } from "@tamagui/lucide-icons";
 import { TouchableOpacity } from "react-native";
+import { capitalizeFirstLetter } from "../../lib/types";
 
 const JoinedGameView = ({
   navigation,
@@ -36,6 +37,11 @@ const JoinedGameView = ({
     state.setRoomCode,
   ]);
   const { leaveJoinedGameById } = useMutationGame();
+
+  let sportNameCapitalized = "";
+  if (selectedJoinedGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedJoinedGame.sport.name);
+  }
 
   // Leaving a Joined Game Logic:
   const leaveJoinedGame = async () => {
@@ -124,7 +130,7 @@ const JoinedGameView = ({
                       <H6>Status: </H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedJoinedGame.isPublic ? "public" : "friends-only"}
+                      {selectedJoinedGame.isPublic ? "Public" : "Friends-Only"}
                     </SizableText>
                   </XStack>
 
@@ -142,7 +148,7 @@ const JoinedGameView = ({
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedJoinedGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 

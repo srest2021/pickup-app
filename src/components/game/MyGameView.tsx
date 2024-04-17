@@ -16,6 +16,7 @@ import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
 import MyGamePlayers from "./MyGamePlayers";
 import { MessageCircle } from "@tamagui/lucide-icons";
+import { capitalizeFirstLetter } from "../../lib/types";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -28,6 +29,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
     state.setRoomCode,
   ]);
   const { removeMyGameById } = useMutationGame();
+
+  let sportNameCapitalized = "";
+  if (selectedMyGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedMyGame.sport.name);
+  }
 
   const deleteGame = async () => {
     const removedId = await removeMyGameById(gameId);
@@ -107,7 +113,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Status: </H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedMyGame.isPublic ? "public" : "friends-only"}
+                      {selectedMyGame.isPublic ? "Public" : "Friends-Only"}
                     </SizableText>
                   </XStack>
 
@@ -125,7 +131,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedMyGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 

@@ -20,6 +20,7 @@ import { Alert, TouchableOpacity } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
+import { capitalizeFirstLetter } from "../../lib/types";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, username, userId } = route.params;
@@ -31,6 +32,11 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   ]);
   const { requestToJoinById } = useMutationGame();
   let hasPlusOne: boolean = false;
+
+  let sportNameCapitalized = "";
+  if (selectedFeedGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedFeedGame.sport.name);
+  }
 
   // Request to Join Game Logic:
   const requestToJoinGame = async () => {
@@ -130,7 +136,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Status: </H6>
                     </Label>
                     <SizableText size="$5">
-                      {selectedFeedGame.isPublic ? "public" : "friends-only"}
+                      {selectedFeedGame.isPublic ? "Public" : "Friends-Only"}
                     </SizableText>
                   </XStack>
 
@@ -148,7 +154,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedFeedGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 
