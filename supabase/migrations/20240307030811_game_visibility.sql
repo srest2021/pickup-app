@@ -229,7 +229,8 @@ create policy "Users can delete their own games." on games
 create table joined_game (
   "id" "uuid" primary key unique not null default "gen_random_uuid"(),
   "player_id" "uuid" references "profiles" not null,
-  "game_id" "uuid" references "games" on delete cascade not null
+  "game_id" "uuid" references "games" on delete cascade not null,
+  "plus_one" boolean not null
 );
 
 alter table joined_game
@@ -334,7 +335,8 @@ create table game_requests (
   "id" "uuid" primary key unique not null default "gen_random_uuid"(),
   "created_at" timestamp with time zone default "now"() not null,
   "game_id" "uuid" references "games" on delete cascade not null,
-  "player_id" "uuid" references "profiles" not null
+  "player_id" "uuid" references "profiles" not null,
+  "plus_one" boolean not null
 );
 
 create index gameid_gr
