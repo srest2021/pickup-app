@@ -10,6 +10,7 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
 import { Alert } from "react-native";
+import { useStore } from "../../../src/lib/store";
 
 // mock user
 const mockUser = {
@@ -22,7 +23,7 @@ const mockUser = {
 };
 
 // mock session with user object
-const mockSession = {
+const session = {
   access_token: "access_token_test_string",
   refresh_token: "refresh_token_test_string",
   expires_in: 90000000,
@@ -30,20 +31,29 @@ const mockSession = {
   user: mockUser,
 };
 
+
+
+
 // mock useMutationUser hook
 jest.mock("../../../src/hooks/use-mutation-user", () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    session: mockSession,
+    session: session,
     setSession: jest.fn(),
     user: mockUser,
   })),
 }));
 
 // mock store
+
 jest.mock("../../../src/lib/store", () => ({
-  useStore: jest.fn(() => [false, { user: { id: "testid" } }]),
+   useStore: jest.fn(() => [false, {user: { id: "testid"}},  session]),
+   InitialState: [false, { user: { id: "testid"}},  session],
+   State: [false, { user: { id: "testid"}},  session],
+
+
 }));
+
 
 // mock useMutationGame hook
 const mockCreateGameById = jest.fn();
@@ -54,6 +64,8 @@ jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
 describe("AddGame", () => {
   test("Should render component successfully", () => {
     const navigation = { navigate: jest.fn() };
+    console.log(useStore()[1]); // This logs the second element of the array returned by useStore
+    console.log(useStore()[2].user); // Access session.user directly from the third element of the array returned by useStore
 
     const { root } = render(
       <TamaguiProvider config={appConfig}>
