@@ -262,7 +262,7 @@ function useMutationGame() {
 
       if (!data) {
         Alert.alert(
-          "Accepting this request will exceed the max player capacity!",
+          "Error: Accepting this request will exceed the max player capacity!",
         );
         return null;
       }
@@ -353,12 +353,10 @@ function useMutationGame() {
         player_id: playerId,
         plus_one: plusOne,
       });
-
       if (error) throw error;
-      console.log(data);
       if (!data) {
         Alert.alert("This game is already full!");
-        return null;
+        return true;
       }
 
       const { data: data1, error: error1 } = await supabase
@@ -375,6 +373,7 @@ function useMutationGame() {
 
       // update hasRequested for selectedFeedGame and feed games
       updateHasRequestedFeedGame(gameId);
+      return false;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -392,13 +391,14 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      let { data, error } = await supabase.rpc("remove_player", {
+      let { error } = await supabase.rpc("remove_player", {
         game_id: gameId,
         player_id: playerId,
       });
       if (error) throw error;
 
       removeJoinedGame(gameId);
+      return true;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

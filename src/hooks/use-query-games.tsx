@@ -181,7 +181,7 @@ function useQueryGames() {
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
           offset,
-          limit: 20,
+          limit: 10,
         },
       );
       if (error) throw error;

@@ -32,12 +32,6 @@ const AcceptedPlayer = ({
         flexDirection="row"
         justifyContent="space-between"
       >
-        {/*<Text fontSize="$5" ellipsizeMode="tail" textDecorationLine="underline"
-        onPress={() => {
-          navigation.navigate("OtherProfileView", { userId: user.id });
-        }}>
-          @{user.username}
-      </Text> */}
         <TouchableOpacity
           onPress={() => {
             navigation.navigate("OtherProfileView", { userId: user.id });
