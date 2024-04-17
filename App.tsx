@@ -37,6 +37,9 @@ export default function App() {
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
   });
 
+  const focusedColor = "#ff7403";
+  const notFocusedColor = "#ffffff";
+
   useEffect(() => {
     if (loaded) {
       // can hide splash screen here
@@ -61,8 +64,8 @@ export default function App() {
             <Tab.Navigator
               initialRouteName="Feed"
               screenOptions={{
-                tabBarActiveTintColor: "grey",
-                tabBarInactiveTintColor: "white",
+                tabBarActiveTintColor: focusedColor,
+                tabBarInactiveTintColor: notFocusedColor,
                 tabBarStyle: {
                   backgroundColor: "#08348c", // Set background color of the tab bar to blue
                 },
@@ -81,7 +84,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Feed",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <GalleryVerticalEnd color={focused ? "grey" : "#ffffff"} />
+                    <GalleryVerticalEnd
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}
@@ -93,7 +98,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "My Games",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <AlignJustify color={focused ? "grey" : "#ffffff"} />
+                    <AlignJustify
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}
@@ -105,7 +112,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Add Game",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <PlusCircle color={focused ? "grey" : "#ffffff"} />
+                    <PlusCircle
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                 }}
                 initialParams={{ key: session.user.id }}
@@ -116,7 +125,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Profile",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <CircleUser color={focused ? "grey" : "#ffffff"} />
+                    <CircleUser
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}
@@ -128,7 +139,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Friends",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <PersonStanding color={focused ? "grey" : "#ffffff"} />
+                    <PersonStanding
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}
