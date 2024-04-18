@@ -36,7 +36,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
 
   return (
     <Dialog modal>
-      <Dialog.Trigger asChild>
+      <Dialog.Trigger asChild id="add-sport-trigger">
         <Button
           size="$3"
           icon={loading ? Loader : Plus}
@@ -50,38 +50,9 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
           {loading ? "Loading" : "Add Sport"}
         </Button>
       </Dialog.Trigger>
-
-      <Adapt when="sm" platform="touch">
-        <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
-          <Sheet.Frame padding="$4" gap="$4">
-            <Adapt.Contents />
-          </Sheet.Frame>
-          <Sheet.Overlay
-            animation="lazy"
-            enterStyle={{ opacity: 0 }}
-            exitStyle={{ opacity: 0 }}
-          />
-        </Sheet>
-      </Adapt>
-
       <Dialog.Portal>
-        <Dialog.Overlay
-          key="overlay"
-          animation="slow"
-          opacity={0.5}
-          enterStyle={{ opacity: 0 }}
-          exitStyle={{ opacity: 0 }}
-        />
-
-        <Dialog.Content
-          bordered
-          elevate
-          key="content"
-          animateOnly={["transform", "opacity"]}
-          enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
-          exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
-          gap="$4"
-        >
+        <Dialog.Overlay />
+        <Dialog.Content>
           <Dialog.Title>Add sport</Dialog.Title>
 
           <YStack>
@@ -90,6 +61,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
               data-testid="sportInput"
               value={sportName}
               onValueChange={(selectedSport) => setSportName(selectedSport)}
+              native
             >
               <Select.Trigger iconAfter={ChevronDown}>
                 <Select.Value placeholder="Select a sport..." />
@@ -120,7 +92,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                 </Sheet>
               </Adapt>
 
-              <Select.Content>
+              <Select.Content zIndex={200000}>
                 <Select.ScrollUpButton />
                 <Select.Viewport>
                   <Select.Group>
@@ -132,7 +104,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                             <Select.Item
                               index={i}
                               key={sport.name}
-                              value={sport.name.toLowerCase()}
+                              value={sport.name}
                             >
                               <Select.ItemText>{sport.name}</Select.ItemText>
                               <Select.ItemIndicator marginLeft="auto">
@@ -200,7 +172,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
           </YStack>
 
           <XStack space="$3" justifyContent="space-between">
-            <Dialog.Close displayWhenAdapted asChild>
+            <Dialog.Close displayWhenAdapted asChild id="cancel-button">
               <Button
                 theme="active"
                 aria-label="Cancel"
@@ -214,7 +186,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                 Cancel
               </Button>
             </Dialog.Close>
-            <Dialog.Close displayWhenAdapted asChild>
+            <Dialog.Close displayWhenAdapted asChild id="add-sport-button">
               <Button
                 theme="active"
                 aria-label="Close"
