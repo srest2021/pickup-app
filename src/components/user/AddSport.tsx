@@ -88,7 +88,6 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                     enterStyle={{ opacity: 0 }}
                     exitStyle={{ opacity: 0 }}
                   />
-                  <Sheet.Overlay />
                 </Sheet>
               </Adapt>
 
@@ -172,8 +171,9 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
           </YStack>
 
           <XStack space="$3" justifyContent="space-between">
-            <Dialog.Close displayWhenAdapted asChild id="cancel-button">
+            <Dialog.Close displayWhenAdapted asChild>
               <Button
+                id="cancel-button"
                 theme="active"
                 aria-label="Cancel"
                 size="$4"
@@ -186,8 +186,9 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
                 Cancel
               </Button>
             </Dialog.Close>
-            <Dialog.Close displayWhenAdapted asChild id="add-sport-button">
+            <Dialog.Close displayWhenAdapted asChild>
               <Button
+                id="add-sport-button"
                 theme="active"
                 aria-label="Close"
                 onPress={handleSave}

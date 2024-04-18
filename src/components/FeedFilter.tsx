@@ -61,7 +61,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
   return (
     <View paddingHorizontal="$2">
       <Dialog modal>
-        <Dialog.Trigger asChild>
+        <Dialog.Trigger asChild id="feed-filter-trigger">
           <Button
             size="$3"
             color="#ffffff"
@@ -73,20 +73,6 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
             style={{ alignSelf: "flex-start" }}
           />
         </Dialog.Trigger>
-
-        <Adapt when="sm" platform="touch">
-          <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
-            <Sheet.Frame padding="$4" gap="$4">
-              <Adapt.Contents />
-            </Sheet.Frame>
-            <Sheet.Overlay
-              animation="lazy"
-              enterStyle={{ opacity: 0 }}
-              exitStyle={{ opacity: 0 }}
-            />
-          </Sheet>
-        </Adapt>
-
         <Dialog.Portal>
           <Dialog.Overlay />
           <Dialog.Content>
@@ -239,6 +225,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
             <XStack space="$3" justifyContent="space-between">
               <Dialog.Close displayWhenAdapted asChild>
                 <Button
+                  id="cancel-button"
                   theme="active"
                   aria-label="Cancel"
                   size="$4"
@@ -254,6 +241,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
               </Dialog.Close>
               <Dialog.Close displayWhenAdapted asChild>
                 <Button
+                  id="apply-filter-button"
                   theme="active"
                   aria-label="Close"
                   onPress={handleSave}
