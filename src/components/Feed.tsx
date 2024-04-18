@@ -184,7 +184,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   }
                   ListFooterComponent={() =>
                     refreshing && (
-                      <Spinner size="small" color="#ff7403" testID="spinner" />
+                      <Spinner size="large" color="#ff7403" testID="spinner" />
                     )
                   }
                   contentContainerStyle={{ gap: 23, paddingTop: 20 }}
@@ -216,7 +216,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   alignSelf="center"
                   justifyContent="center"
                 >
-                  <H4 textAlign="center">Fetching public games...</H4>
+                  <H4 textAlign="center">Loading public games...</H4>
                 </View>
               ) : (
                 <View
@@ -225,7 +225,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   alignSelf="center"
                   justifyContent="center"
                 >
-                  <H4 textAlign="center">Fetching friends-only games...</H4>
+                  <H4 textAlign="center">Loading friends-only games...</H4>
                 </View>
               )
             ) : (

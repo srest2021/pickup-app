@@ -1144,7 +1144,7 @@ begin
     'hasRequested', auth.uid() in (
       select fr.request_sent_by
       from friend_requests as fr
-      where fr.request_sent_to = player_id
+      where fr.request_sent_to = player_id and fr.request_sent_by = auth.uid()
     ),
     'isFriend', exists (
       select 1

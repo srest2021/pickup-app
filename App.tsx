@@ -4,16 +4,14 @@ import Login from "./src/components/auth/Login";
 import Register from "./src/components/auth/Register";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { TamaguiProvider } from "tamagui";
+import { TamaguiProvider, Text } from "tamagui";
 import appConfig from "./tamagui.config";
 import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
-import FriendPage from "./src/components/user/FriendPage";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import {
-  PlusCircle,
   AlignJustify,
   CircleUser,
   GalleryVerticalEnd,
@@ -106,19 +104,6 @@ export default function App() {
                 initialParams={{ key: session.user.id }}
               />
               <Tab.Screen
-                name="Add Game"
-                component={AddGame}
-                options={{
-                  tabBarLabel: "Add Game",
-                  tabBarIcon: ({ color, size, focused }) => (
-                    <PlusCircle
-                      color={focused ? focusedColor : notFocusedColor}
-                    />
-                  ),
-                }}
-                initialParams={{ key: session.user.id }}
-              />
-              <Tab.Screen
                 name="My Profile"
                 component={EditProfileNavigator}
                 options={{
@@ -163,6 +148,7 @@ export default function App() {
               />
             </Stack.Navigator>
           </NavigationContainer>
+          // <Text>HELLOOOOO WHAT THE FUCK</Text>
         )}
       </ToastProvider>
     </TamaguiProvider>

@@ -47,16 +47,19 @@ function useMutationUser() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      //console.log("set session: ",session)
       setSession(session);
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
+      //console.log("on auth state change, set session: ",session)
       setSession(session);
     });
   }, []);
 
   useEffect(() => {
     if (session) {
+      //console.log("getting profile")
       getProfile();
     }
   }, [session?.access_token]);

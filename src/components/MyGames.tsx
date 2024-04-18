@@ -88,7 +88,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             contentContainerStyle={{ paddingTop: 20 }}
           >
             {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
+              <Spinner size="large" color="#ff7403" testID="spinner" />
             )}
 
             {(myGamesToggle === "myGames" && myGames.length > 0) ||
@@ -124,7 +124,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                   alignSelf="center"
                   justifyContent="center"
                 >
-                  <H4 textAlign="center">Fetching published games...</H4>
+                  <H4 textAlign="center">Loading published games...</H4>
                 </View>
               ) : (
                 <View
@@ -133,7 +133,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                   alignSelf="center"
                   justifyContent="center"
                 >
-                  <H4 textAlign="center">Fetching joined games...</H4>
+                  <H4 textAlign="center">Loading joined games...</H4>
                 </View>
               )
             ) : (
