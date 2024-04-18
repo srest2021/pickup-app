@@ -148,7 +148,6 @@ export default function App() {
               />
             </Stack.Navigator>
           </NavigationContainer>
-          // <Text>HELLOOOOO WHAT THE FUCK</Text>
         )}
       </ToastProvider>
     </TamaguiProvider>

@@ -122,7 +122,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
     <>
       {session && session.user ? (
         hasLocation ? (
-          <View style={{ flex: 1 }}>
+          <View flex={1}>
             <Tabs
               alignSelf="center"
               justifyContent="space-between"
@@ -179,7 +179,6 @@ const Feed = ({ navigation }: { navigation: any }) => {
                       onRefresh={handleRefresh}
                       colors={["#ff7403"]}
                       tintColor="#ff7403"
-                      titleColor="#ff7403"
                     />
                   }
                   ListFooterComponent={() =>
@@ -200,7 +199,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   }}
                   variant="outlined"
                   theme="active"
-                  size="$4"
+                  size="$5"
                   position="absolute"
                   alignSelf="flex-end"
                   right="$7"
