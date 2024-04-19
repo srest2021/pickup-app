@@ -102,7 +102,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       time.getHours(),
       time.getMinutes(),
     );
-
+    console.log(combinedDateTime);
     if (combinedDateTime < new Date()) {
       Alert.alert("Error: Date and time are in the past!");
       return;
