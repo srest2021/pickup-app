@@ -11,7 +11,7 @@ import {
   Select,
 } from "tamagui";
 import { Check, ChevronDown, Plus, Loader } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
+import { SkillLevel, capitalizedSports, sports } from "../../lib/types";
 import { useState, useMemo } from "react";
 import { useStore } from "../../lib/store";
 import useMutationSports from "../../hooks/use-mutation-sports";
@@ -102,7 +102,7 @@ const AddSport = () => {
                       <Select.Label>Sports</Select.Label>
                       {useMemo(
                         () =>
-                          sports.map((sport, i) => {
+                          capitalizedSports.map((sport, i) => {
                             return (
                               <Select.Item
                                 index={i}
@@ -116,7 +116,7 @@ const AddSport = () => {
                               </Select.Item>
                             );
                           }),
-                        [sports],
+                        [capitalizedSports],
                       )}
                     </Select.Group>
                   </Select.Viewport>

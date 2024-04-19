@@ -13,7 +13,7 @@ import {
   View,
 } from "tamagui";
 import { Check, ChevronDown, Filter, Loader } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../lib/types";
+import { SkillLevel, capitalizeFirstLetter, capitalizedSports } from "../lib/types";
 import { useStore } from "../lib/store";
 
 const FeedFilter = (props: { handleRefresh: () => void }) => {
@@ -41,6 +41,11 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
   const [sport, setSport] = filterSport
     ? useState(filterSport)
     : useState("any");
+
+  // const capitalizedSports = sports.map((sport) => {
+  //   sport.name = capitalizeFirstLetter(sport.name);
+  //   return sport;
+  // })
 
   const handleSave = async () => {
     setFilterDist(distance);
@@ -138,11 +143,11 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
                       <Select.Group>
                         <Select.Label>Sports</Select.Label>
                         <Select.Item index={-1} value={"any"}>
-                          <Select.ItemText>all sports</Select.ItemText>
+                          <Select.ItemText>All sports</Select.ItemText>
                         </Select.Item>
                         {useMemo(
                           () =>
-                            sports.map((sport, i) => {
+                          capitalizedSports.map((sport, i) => {
                               return (
                                 <Select.Item
                                   index={i}
@@ -158,7 +163,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
                                 </Select.Item>
                               );
                             }),
-                          [sports],
+                          [capitalizedSports],
                         )}
                       </Select.Group>
                     </Select.Viewport>
