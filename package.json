@@ -44,6 +44,7 @@
     "expo-font": "~11.10.3",
     "expo-image-picker": "~14.7.1",
     "expo-location": "^16.5.5",
+    "expo-sms": "~11.7.1",
     "expo-status-bar": "~1.11.1",
     "expo-updates": "^0.24.12",
     "immer": "^10.0.4",
@@ -58,9 +59,9 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "^14.1.0",
     "react-native-url-polyfill": "^2.0.0",
+    "resend": "^3.2.0",
     "tamagui": "^1.94.4",
-    "zustand": "^4.5.2",
-    "expo-sms": "~11.7.1"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",

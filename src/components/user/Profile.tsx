@@ -10,6 +10,7 @@ import { Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
 import { ToastViewport } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
+import useSendEmails from "../../hooks/send-emails";
 
 export default function Profile({ navigation }: { navigation: any }) {
   const [
@@ -47,6 +48,7 @@ export default function Profile({ navigation }: { navigation: any }) {
   ]);
 
   const { setSport } = useMutationUser();
+  const {send_email} = useSendEmails();
 
   const handleSportSelect = async (
     sportName: string,
@@ -55,6 +57,10 @@ export default function Profile({ navigation }: { navigation: any }) {
     // Handle the new sport as needed
     const userSport = await setSport(sportName, sportSkillLevel);
   };
+
+  const handleEmail = async () => {
+    const email = await send_email(["kateforsberg@live.com"],"Test 1","This is a test");
+  }
 
   const handleLogOut = async () => {
     setLoading(true);
@@ -183,6 +189,9 @@ export default function Profile({ navigation }: { navigation: any }) {
               width="100%"
             >
               Log Out
+            </Button>
+            <Button onPress={()=>handleEmail()}>
+              Send Email
             </Button>
           </YStack>
         </View>

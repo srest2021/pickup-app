@@ -25,14 +25,3 @@ import {
     phoneNumber,
   }: ContactMeEmailProps) => {};
 
-  const previewText = `has a message`;
-
-  <Html>
-  <Head />
-  <Preview>{previewText}</Preview>
-  <Tailwind>
-    <Body className="bg-white my-auto mx-auto font-sans">
-      {...}
-    </Body>
-  </Tailwind>
-</Html>
