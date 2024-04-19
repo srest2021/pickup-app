@@ -184,6 +184,8 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   };
 
   useEffect(() => {
+    console.log(session);
+    //console.log(session.user);
     if (!searchTerm) {
       setSearchResults([]);
       return;
@@ -200,7 +202,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
         console.log(error);
       }
     };
-
+    
     const timeoutId = setTimeout(fetchLocations, 500); // debounce to avoid too many requests
 
     return () => clearTimeout(timeoutId);
@@ -310,6 +312,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
               <YStack space="$2">
                 <Input
                   placeholder="Street"
+                  testID="streetInput"
                   value={
                     isSearchFocused
                       ? searchTerm
