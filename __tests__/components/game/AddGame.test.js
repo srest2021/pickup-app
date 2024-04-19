@@ -70,15 +70,7 @@ jest.useFakeTimers();
 describe("AddGame", () => {
   
   test("Should render component successfully", async () => {
-  
-    
     const navigation = { navigate: jest.fn() };
-    //console.log(useStore());
-    //console.log(useStore()[1]); // This logs the second element of the array returned by useStore
-    //console.log(useStore()[2].user); // Access session.user directly from the third element of the array returned by useStore
-    //console.log(session);
-    //console.log(user);
-    
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <AddGame navigation={navigation} />

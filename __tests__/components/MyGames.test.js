@@ -10,7 +10,7 @@ import { TamaguiProvider } from "tamagui";
 import appConfig from "../../tamagui.config";
 import "@testing-library/jest-dom";
 import { useState } from "react";
-
+/*
 jest.mock("../../src/hooks/use-query-games", () => ({
   __esModule: true,
   default: () => ({
@@ -20,11 +20,13 @@ jest.mock("../../src/hooks/use-query-games", () => ({
     fetchJoinedGames: jest.fn(),
   }),
 }));
-
+*/
+/*
 jest.mock("react", () => ({
   ...jest.requireActual("react"), // Preserve all other exports from 'react'
   useState: jest.fn(), // Mock the useState hook
 }));
+*/
 
 /*jest.mock("../../../src/components/MyGames", () => ({
   __esModule: true,
@@ -78,7 +80,7 @@ jest.mock("../../src/hooks/use-query-games", () => ({
 
 describe("MyGames", () => {
   test("renders MyGames component without crashing", async () => {
-    const navigation = {}; // Mock navigation object
+    const navigation = {navigate: jest.fn()}; // Mock navigation object
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <MyGames navigation={navigation} />
@@ -92,7 +94,7 @@ describe("MyGames", () => {
   });
 
   test("toggles between My Games and Joined Games tabs", async () => {
-    const navigation = {}; // Mock navigation object
+    const navigation = {navigate: jest.fn()}; // Mock navigation object
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <MyGames navigation={navigation} />
@@ -109,7 +111,7 @@ describe("MyGames", () => {
   });
 
   test("Spinner displays properly on refresh", async () => {
-    const navigation = {}; // Mock navigation object
+    const navigation = {navigate: jest.fn()}; // Mock navigation object
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <MyGames navigation={navigation} />
