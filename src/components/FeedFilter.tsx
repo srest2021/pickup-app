@@ -13,7 +13,11 @@ import {
   View,
 } from "tamagui";
 import { Check, ChevronDown, Filter, Loader } from "@tamagui/lucide-icons";
-import { SkillLevel, capitalizeFirstLetter, capitalizedSports } from "../lib/types";
+import {
+  SkillLevel,
+  capitalizeFirstLetter,
+  capitalizedSports,
+} from "../lib/types";
 import { useStore } from "../lib/store";
 
 const FeedFilter = (props: { handleRefresh: () => void }) => {
@@ -147,7 +151,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
                         </Select.Item>
                         {useMemo(
                           () =>
-                          capitalizedSports.map((sport, i) => {
+                            capitalizedSports.map((sport, i) => {
                               return (
                                 <Select.Item
                                   index={i}

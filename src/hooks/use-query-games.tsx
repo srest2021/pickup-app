@@ -78,7 +78,7 @@ function useQueryGames() {
             currentPlayers: Number(game.current_players),
             isPublic: game.is_public,
             distanceAway: location
-              ? game.dist_meters > 0
+              ? Math.trunc(game.dist_meters) !== 0
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10
               : "?",
@@ -142,7 +142,7 @@ function useQueryGames() {
             currentPlayers: Number(game.current_players),
             isPublic: Boolean(game.is_public),
             distanceAway: location
-              ? game.dist_meters > 0
+              ? Math.trunc(game.dist_meters) !== 0
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10
               : "?",
@@ -185,7 +185,7 @@ function useQueryGames() {
         {
           lat: location.coords.latitude,
           long: location.coords.longitude,
-          dist_limit: 30000, //filterDist,
+          dist_limit: filterDist,
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
           offset,

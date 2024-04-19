@@ -153,4 +153,4 @@ export const sports = [
 export const capitalizedSports = sports.map((sport) => {
   sport.name = capitalizeFirstLetter(sport.name);
   return sport;
-})
+});
