@@ -225,7 +225,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
         const data = await response.json();
         setSearchResults(data);
       } catch (error) {
-        error;
+        console.log(error);
       }
     };
 
