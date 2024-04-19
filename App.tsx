@@ -4,16 +4,14 @@ import Login from "./src/components/auth/Login";
 import Register from "./src/components/auth/Register";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { TamaguiProvider } from "tamagui";
+import { TamaguiProvider, Text } from "tamagui";
 import appConfig from "./tamagui.config";
 import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import EditProfileNavigator from "./src/components/EditProfileNavigator";
-import FriendPage from "./src/components/user/FriendPage";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import {
-  PlusCircle,
   AlignJustify,
   CircleUser,
   GalleryVerticalEnd,
@@ -35,6 +33,9 @@ export default function App() {
     Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
     InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
   });
+
+  const focusedColor = "#ff7403";
+  const notFocusedColor = "#ffffff";
 
   useEffect(() => {
     if (loaded) {
@@ -60,8 +61,8 @@ export default function App() {
             <Tab.Navigator
               initialRouteName="Feed"
               screenOptions={{
-                tabBarActiveTintColor: "grey",
-                tabBarInactiveTintColor: "white",
+                tabBarActiveTintColor: focusedColor,
+                tabBarInactiveTintColor: notFocusedColor,
                 tabBarStyle: {
                   backgroundColor: "#08348c", // Set background color of the tab bar to blue
                 },
@@ -80,7 +81,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Feed",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <GalleryVerticalEnd color={focused ? "grey" : "#ffffff"} />
+                    <GalleryVerticalEnd
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}
@@ -92,7 +95,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "My Games",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <AlignJustify color={focused ? "grey" : "#ffffff"} />
+                    <AlignJustify
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}
@@ -104,7 +109,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Profile",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <CircleUser color={focused ? "grey" : "#ffffff"} />
+                    <CircleUser
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}
@@ -116,7 +123,9 @@ export default function App() {
                 options={{
                   tabBarLabel: "Friends",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <PersonStanding color={focused ? "grey" : "#ffffff"} />
+                    <PersonStanding
+                      color={focused ? focusedColor : notFocusedColor}
+                    />
                   ),
                   headerShown: false,
                 }}

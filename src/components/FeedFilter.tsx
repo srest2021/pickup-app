@@ -13,7 +13,11 @@ import {
   View,
 } from "tamagui";
 import { Check, ChevronDown, Filter, Loader } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../lib/types";
+import {
+  SkillLevel,
+  capitalizeFirstLetter,
+  capitalizedSports,
+} from "../lib/types";
 import { useStore } from "../lib/store";
 
 const FeedFilter = (props: { handleRefresh: () => void }) => {
@@ -42,6 +46,11 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
     ? useState(filterSport)
     : useState("any");
 
+  // const capitalizedSports = sports.map((sport) => {
+  //   sport.name = capitalizeFirstLetter(sport.name);
+  //   return sport;
+  // })
+
   const handleSave = async () => {
     setFilterDist(distance);
     sport === "any" ? setFilterSport(null) : setFilterSport(sport);
@@ -59,9 +68,9 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
   };
 
   return (
-    <View padding="$2">
+    <View paddingHorizontal="$2">
       <Dialog modal>
-        <Dialog.Trigger asChild>
+        <Dialog.Trigger asChild id="feed-filter-trigger">
           <Button
             size="$3"
             color="#ffffff"
@@ -69,204 +78,196 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
             backgroundColor="#08348c"
             icon={Filter}
             variant="outlined"
-            disabled={loading}
             style={{ alignSelf: "flex-start" }}
           />
         </Dialog.Trigger>
-
-        <Adapt when="sm" platform="touch">
-          <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
-            <Sheet.Frame padding="$4" gap="$4">
-              <Adapt.Contents />
-            </Sheet.Frame>
-            <Sheet.Overlay
-              animation="lazy"
-              enterStyle={{ opacity: 0 }}
-              exitStyle={{ opacity: 0 }}
-            />
-          </Sheet>
-        </Adapt>
-
         <Dialog.Portal>
-          <Dialog.Overlay />
+          <Dialog.Overlay key="dialog-overlay" />
           <Dialog.Content>
-            <YStack>
-              <Label>Set the maximum distance away from you:</Label>
-              <XStack space="$5" alignItems="center">
-                <Slider
-                  size="$2"
-                  width={270}
-                  defaultValue={[distance]}
-                  max={30}
-                  step={1}
-                  onValueChange={(value: number[]) => setDistance(value[0])}
+            <Dialog.Title>Apply filters</Dialog.Title>
+            <YStack space="$2">
+              <YStack>
+                <Label>Set the maximum distance away from you:</Label>
+                <XStack space="$5" alignItems="center">
+                  <Slider
+                    size="$2"
+                    width={270}
+                    defaultValue={[distance]}
+                    max={30}
+                    step={1}
+                    onValueChange={(value: number[]) => setDistance(value[0])}
+                  >
+                    <Slider.Track>
+                      <Slider.TrackActive />
+                    </Slider.Track>
+                    <Slider.Thumb circular index={0} />
+                  </Slider>
+                  <Label>{distance} mi</Label>
+                </XStack>
+              </YStack>
+
+              <YStack>
+                <Label>Select a sport:</Label>
+                <Select
+                  value={sport}
+                  onValueChange={(selectedSport) => setSport(selectedSport)}
                 >
-                  <Slider.Track>
-                    <Slider.TrackActive />
-                  </Slider.Track>
-                  <Slider.Thumb circular index={0} />
-                </Slider>
-                <Label>{distance} mi</Label>
+                  <Select.Trigger iconAfter={ChevronDown}>
+                    <Select.Value placeholder="Select a sport..." />
+                  </Select.Trigger>
+
+                  <Adapt when="sm" platform="touch">
+                    <Sheet
+                      modal
+                      dismissOnSnapToBottom
+                      animationConfig={{
+                        type: "spring",
+                        damping: 20,
+                        mass: 1.2,
+                        stiffness: 250,
+                      }}
+                    >
+                      <Sheet.Frame>
+                        <Sheet.ScrollView>
+                          <Adapt.Contents />
+                        </Sheet.ScrollView>
+                      </Sheet.Frame>
+                      <Sheet.Overlay
+                        animation="lazy"
+                        enterStyle={{ opacity: 0 }}
+                        exitStyle={{ opacity: 0 }}
+                      />
+                      <Sheet.Overlay />
+                    </Sheet>
+                  </Adapt>
+
+                  <Select.Content>
+                    <Select.ScrollUpButton />
+                    <Select.Viewport>
+                      <Select.Group>
+                        <Select.Label>Sports</Select.Label>
+                        <Select.Item index={-1} value={"any"}>
+                          <Select.ItemText>All sports</Select.ItemText>
+                        </Select.Item>
+                        {useMemo(
+                          () =>
+                            capitalizedSports.map((sport, i) => {
+                              return (
+                                <Select.Item
+                                  index={i}
+                                  key={sport.name}
+                                  value={sport.name.toLowerCase()}
+                                >
+                                  <Select.ItemText>
+                                    {sport.name}
+                                  </Select.ItemText>
+                                  <Select.ItemIndicator marginLeft="auto">
+                                    <Check size={16} />
+                                  </Select.ItemIndicator>
+                                </Select.Item>
+                              );
+                            }),
+                          [capitalizedSports],
+                        )}
+                      </Select.Group>
+                    </Select.Viewport>
+                    <Select.ScrollDownButton />
+                  </Select.Content>
+                </Select>
+              </YStack>
+
+              <YStack>
+                <Label>Select a skill level:</Label>
+                <Label width={160} justifyContent="flex-end">
+                  <RadioGroup
+                    aria-labelledby="Select one item"
+                    defaultValue={!skillLevel ? "-1" : skillLevel}
+                    name="form"
+                    onValueChange={setSkillLevel}
+                  >
+                    <YStack width={300} alignItems="center" space="$0">
+                      <XStack width={300} alignItems="center" space="$4">
+                        <RadioGroup.Item
+                          value={"-1"} // Set value to null to represent "None" or "Unselected"
+                          id={`filter-skill-level-any`}
+                          size={2}
+                        >
+                          <RadioGroup.Indicator />
+                        </RadioGroup.Item>
+                        <Label size={2}>{"All"}</Label>
+                      </XStack>
+
+                      <XStack width={300} alignItems="center" space="$4">
+                        <RadioGroup.Item
+                          value={"0"}
+                          id={`filter-skill-level-${SkillLevel.Beginner}`}
+                          size={2}
+                        >
+                          <RadioGroup.Indicator />
+                        </RadioGroup.Item>
+                        <Label size={2}>{"Beginner"}</Label>
+                      </XStack>
+
+                      <XStack width={300} alignItems="center" space="$4">
+                        <RadioGroup.Item
+                          value={"1"}
+                          id={`filter-skill-level-${SkillLevel.Intermediate}`}
+                          size={2}
+                        >
+                          <RadioGroup.Indicator />
+                        </RadioGroup.Item>
+                        <Label size={2}>{"Intermediate"}</Label>
+                      </XStack>
+
+                      <XStack width={300} alignItems="center" space="$4">
+                        <RadioGroup.Item
+                          value={"2"}
+                          id={`filter-skill-level-${SkillLevel.Advanced}`}
+                          size={2}
+                        >
+                          <RadioGroup.Indicator />
+                        </RadioGroup.Item>
+                        <Label size={2}>{"Advanced"}</Label>
+                      </XStack>
+                    </YStack>
+                  </RadioGroup>
+                </Label>
+              </YStack>
+
+              <XStack space="$3" justifyContent="space-between">
+                <Dialog.Close displayWhenAdapted asChild>
+                  <Button
+                    id="cancel-button"
+                    theme="active"
+                    aria-label="Cancel"
+                    size="$4"
+                    flexGrow={1}
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    variant="outlined"
+                    onPress={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+                </Dialog.Close>
+                <Dialog.Close displayWhenAdapted asChild>
+                  <Button
+                    id="apply-filter-button"
+                    theme="active"
+                    aria-label="Close"
+                    onPress={handleSave}
+                    flexGrow={1}
+                    color="#ff7403"
+                    borderColor="#ff7403"
+                    backgroundColor="#ffffff"
+                    variant="outlined"
+                  >
+                    Apply
+                  </Button>
+                </Dialog.Close>
               </XStack>
             </YStack>
-
-            <YStack>
-              <Label>Select a sport:</Label>
-              <Select
-                value={sport}
-                onValueChange={(selectedSport) => setSport(selectedSport)}
-              >
-                <Select.Trigger iconAfter={ChevronDown}>
-                  <Select.Value placeholder="Select a sport..." />
-                </Select.Trigger>
-
-                <Adapt when="sm" platform="touch">
-                  <Sheet
-                    modal
-                    dismissOnSnapToBottom
-                    animationConfig={{
-                      type: "spring",
-                      damping: 20,
-                      mass: 1.2,
-                      stiffness: 250,
-                    }}
-                  >
-                    <Sheet.Frame>
-                      <Sheet.ScrollView>
-                        <Adapt.Contents />
-                      </Sheet.ScrollView>
-                    </Sheet.Frame>
-                    <Sheet.Overlay
-                      animation="lazy"
-                      enterStyle={{ opacity: 0 }}
-                      exitStyle={{ opacity: 0 }}
-                    />
-                    <Sheet.Overlay />
-                  </Sheet>
-                </Adapt>
-
-                <Select.Content>
-                  <Select.ScrollUpButton />
-                  <Select.Viewport>
-                    <Select.Group>
-                      <Select.Label>Sports</Select.Label>
-                      <Select.Item index={-1} value={"any"}>
-                        <Select.ItemText>all sports</Select.ItemText>
-                      </Select.Item>
-                      {useMemo(
-                        () =>
-                          sports.map((sport, i) => {
-                            return (
-                              <Select.Item
-                                index={i}
-                                key={sport.name}
-                                value={sport.name.toLowerCase()}
-                              >
-                                <Select.ItemText>{sport.name}</Select.ItemText>
-                                <Select.ItemIndicator marginLeft="auto">
-                                  <Check size={16} />
-                                </Select.ItemIndicator>
-                              </Select.Item>
-                            );
-                          }),
-                        [sports],
-                      )}
-                    </Select.Group>
-                  </Select.Viewport>
-                  <Select.ScrollDownButton />
-                </Select.Content>
-              </Select>
-            </YStack>
-
-            <YStack>
-              <Label>Select a skill level:</Label>
-              <Label width={160} justifyContent="flex-end">
-                <RadioGroup
-                  aria-labelledby="Select one item"
-                  defaultValue={!skillLevel ? "-1" : skillLevel}
-                  name="form"
-                  onValueChange={setSkillLevel}
-                >
-                  <YStack width={300} alignItems="center" space="$0">
-                    <XStack width={300} alignItems="center" space="$4">
-                      <RadioGroup.Item
-                        value={"-1"} // Set value to null to represent "None" or "Unselected"
-                        id={`filter-skill-level-any`}
-                        size={2}
-                      >
-                        <RadioGroup.Indicator />
-                      </RadioGroup.Item>
-                      <Label size={2}>{"All"}</Label>
-                    </XStack>
-
-                    <XStack width={300} alignItems="center" space="$4">
-                      <RadioGroup.Item
-                        value={"0"}
-                        id={`filter-skill-level-${SkillLevel.Beginner}`}
-                        size={2}
-                      >
-                        <RadioGroup.Indicator />
-                      </RadioGroup.Item>
-                      <Label size={2}>{"Beginner"}</Label>
-                    </XStack>
-
-                    <XStack width={300} alignItems="center" space="$4">
-                      <RadioGroup.Item
-                        value={"1"}
-                        id={`filter-skill-level-${SkillLevel.Intermediate}`}
-                        size={2}
-                      >
-                        <RadioGroup.Indicator />
-                      </RadioGroup.Item>
-                      <Label size={2}>{"Intermediate"}</Label>
-                    </XStack>
-
-                    <XStack width={300} alignItems="center" space="$4">
-                      <RadioGroup.Item
-                        value={"2"}
-                        id={`filter-skill-level-${SkillLevel.Advanced}`}
-                        size={2}
-                      >
-                        <RadioGroup.Indicator />
-                      </RadioGroup.Item>
-                      <Label size={2}>{"Advanced"}</Label>
-                    </XStack>
-                  </YStack>
-                </RadioGroup>
-              </Label>
-            </YStack>
-
-            <XStack space="$3" justifyContent="space-between">
-              <Dialog.Close displayWhenAdapted asChild>
-                <Button
-                  theme="active"
-                  aria-label="Cancel"
-                  size="$4"
-                  flexGrow={1}
-                  color="#ff7403"
-                  borderColor="#ff7403"
-                  backgroundColor="#ffffff"
-                  variant="outlined"
-                  onPress={handleCancel}
-                >
-                  Cancel
-                </Button>
-              </Dialog.Close>
-              <Dialog.Close displayWhenAdapted asChild>
-                <Button
-                  theme="active"
-                  aria-label="Close"
-                  onPress={handleSave}
-                  flexGrow={1}
-                  color="#ff7403"
-                  borderColor="#ff7403"
-                  backgroundColor="#ffffff"
-                  variant="outlined"
-                >
-                  Apply
-                </Button>
-              </Dialog.Close>
-            </XStack>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog>

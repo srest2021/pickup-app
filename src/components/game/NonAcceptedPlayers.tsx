@@ -5,6 +5,7 @@ import { useStore } from "../../lib/store";
 import { Check, X, Loader } from "@tamagui/lucide-icons";
 import { PlusOneUser } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
+import { useState } from "react";
 
 const NonAcceptedPlayer = ({
   user,
@@ -19,7 +20,10 @@ const NonAcceptedPlayer = ({
   maxPlayers: number;
   navigation: any;
 }) => {
-  const [loading] = useStore((state) => [state.loading]);
+  const [session] = useStore((state) => [state.session]);
+
+  const [clicked, setClicked] = useState(false);
+
   const { acceptJoinRequestById, rejectJoinRequestById } = useMutationGame();
 
   const handleAccept = async () => {
@@ -27,11 +31,15 @@ const NonAcceptedPlayer = ({
       Alert.alert("This game is already full!");
       return;
     }
+    setClicked(true);
     await acceptJoinRequestById(gameId, user.id, user.hasPlusOne);
+    setClicked(false);
   };
 
   const handleReject = async () => {
+    setClicked(true);
     await rejectJoinRequestById(gameId, user.id);
+    setClicked(false);
   };
 
   return (
@@ -42,15 +50,20 @@ const NonAcceptedPlayer = ({
         justifyContent="space-between"
       >
         <TouchableOpacity
+          disabled={session?.user.id === user.id}
           onPress={() => {
             navigation.navigate("OtherProfileView", { userId: user.id });
           }}
         >
           <Text fontSize="$5" ellipsizeMode="tail">
-            <Text style={{ textDecorationLine: "none" }}>@</Text>
-            <Text style={{ textDecorationLine: "underline" }}>
-              {user.username}
-            </Text>
+            <Text>@</Text>
+            {session?.user.id !== user.id ? (
+              <Text style={{ textDecorationLine: "underline" }}>
+                {user.username}
+              </Text>
+            ) : (
+              <Text>{user.username}</Text>
+            )}
           </Text>
         </TouchableOpacity>
         {user.hasPlusOne ? (
@@ -64,16 +77,14 @@ const NonAcceptedPlayer = ({
         <XStack justifyContent="flex-end" space="$2">
           <Button
             testID="reject-button"
-            icon={loading ? Loader : X}
-            disabled={loading}
+            icon={clicked ? Loader : X}
             size="$2"
             style={{ backgroundColor: "#e90d52", color: "white" }}
             onPress={() => handleReject()}
           />
           <Button
             testID="accept-button"
-            icon={loading ? Loader : Check}
-            disabled={loading}
+            icon={clicked ? Loader : Check}
             size="$2"
             style={{ backgroundColor: "#05a579", color: "white" }}
             onPress={() => handleAccept()}

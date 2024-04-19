@@ -167,7 +167,7 @@ create policy "Users can delete their own sports." on sports
   for delete using (auth.uid() = user_id);
 
 -- get the user id from a string or partial string!
-create or replace function username_search(username text)
+create or replace function username_search(username_param text)
 returns jsonb as $$
 declare
   data jsonb;
@@ -182,12 +182,11 @@ begin
     )
   )
   from public.profiles as p
-  where p.username like '%' || username || '%'
+  where p.username like '%' || username_param || '%'
   into data;
   return data;
 end;
 $$ language plpgsql;
-
 
 -- games table
 
@@ -587,7 +586,7 @@ $$;
 
 -- miscellaneous functions
 
-create or replace function public.create_game(
+create or replace function create_game(
   city text,
   datetime timestamp with time zone,
   description text,
@@ -935,7 +934,7 @@ returns table(
           'username', p.username,
           'displayName', p.display_name,
           'avatarUrl', p.avatar_url,
-          'hasPlusOne', jg.plus_one
+          'hasPlusOne', gr.plus_one
         )
       )
       FROM public.game_requests AS gr
@@ -1145,7 +1144,7 @@ begin
     'hasRequested', auth.uid() in (
       select fr.request_sent_by
       from friend_requests as fr
-      where fr.request_sent_to = player_id
+      where fr.request_sent_to = player_id and fr.request_sent_by = auth.uid()
     ),
     'isFriend', exists (
       select 1

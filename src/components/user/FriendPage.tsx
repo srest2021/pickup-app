@@ -51,7 +51,7 @@ export default function FriendPage({ navigation }: { navigation: any }) {
             flex={0}
             defaultValue="Friends"
           >
-            <Tabs.List>
+            <Tabs.List paddingTop="$2">
               <Tabs.Tab
                 width="33.33%"
                 testID="friends"
@@ -100,9 +100,9 @@ export default function FriendPage({ navigation }: { navigation: any }) {
               }}
               contentContainerStyle={{ paddingTop: 10 }}
             >
-              <View flex={1} padding="$5">
+              <View flex={1} padding="$5" space="$3">
                 {refreshing && (
-                  <Spinner size="small" color="#ff7403" testID="spinner" />
+                  <Spinner size="large" color="#ff7403" testID="spinner" />
                 )}
 
                 {toggle === "friends" && myFriends ? (

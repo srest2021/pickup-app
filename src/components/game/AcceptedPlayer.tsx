@@ -5,6 +5,7 @@ import { X, Loader } from "@tamagui/lucide-icons";
 import { PlusOneUser, ThumbnailUser } from "../../lib/types";
 import useMutationGame from "../../hooks/use-mutation-game";
 import { useStore } from "../../lib/store";
+import { useState } from "react";
 
 const AcceptedPlayer = ({
   user,
@@ -17,12 +18,16 @@ const AcceptedPlayer = ({
   isOrganizer: boolean;
   navigation: any;
 }) => {
-  const [loading] = useStore((state) => [state.loading]);
+  const [session] = useStore((state) => [state.session]);
+
+  const [clicked, setClicked] = useState(false);
 
   const { removePlayerById } = useMutationGame();
 
   const handleRemove = async () => {
+    setClicked(true);
     await removePlayerById(gameId, user.id, user.hasPlusOne);
+    setClicked(false);
   };
 
   return (
@@ -33,15 +38,20 @@ const AcceptedPlayer = ({
         justifyContent="space-between"
       >
         <TouchableOpacity
+          disabled={session?.user.id === user.id}
           onPress={() => {
             navigation.navigate("OtherProfileView", { userId: user.id });
           }}
         >
           <Text fontSize="$5" ellipsizeMode="tail">
-            <Text style={{ textDecorationLine: "none" }}>@</Text>
-            <Text style={{ textDecorationLine: "underline" }}>
-              {user.username}
-            </Text>
+            <Text>@</Text>
+            {session?.user.id !== user.id ? (
+              <Text style={{ textDecorationLine: "underline" }}>
+                {user.username}
+              </Text>
+            ) : (
+              <Text>{user.username}</Text>
+            )}
           </Text>
         </TouchableOpacity>
         {user.hasPlusOne ? (
@@ -55,8 +65,7 @@ const AcceptedPlayer = ({
         {isOrganizer && (
           <Button
             testID="remove-button"
-            icon={loading ? Loader : X}
-            disabled={loading}
+            icon={clicked ? Loader : X}
             size="$2"
             style={{ backgroundColor: "#e90d52", color: "white" }}
             onPress={() => handleRemove()}
