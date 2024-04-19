@@ -3,7 +3,6 @@ import { ScrollView, View, Text } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
 import { Button, Card, SizableText, YStack } from "tamagui";
-import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
 import { Edit3, Loader } from "@tamagui/lucide-icons";
@@ -45,16 +44,6 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearAvatarUrls,
     state.setChannel,
   ]);
-
-  const { setSport } = useMutationUser();
-
-  const handleSportSelect = async (
-    sportName: string,
-    sportSkillLevel: number,
-  ) => {
-    // Handle the new sport as needed
-    const userSport = await setSport(sportName, sportSkillLevel);
-  };
 
   const handleLogOut = async () => {
     setLoading(true);
@@ -166,7 +155,7 @@ export default function Profile({ navigation }: { navigation: any }) {
 
               <Sports sports={userSports} otherUser={false} />
 
-              <AddSport onSportSelect={handleSportSelect} />
+              <AddSport />
             </View>
           ) : (
             <Text>No user on the session.</Text>

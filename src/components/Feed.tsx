@@ -179,6 +179,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                       onRefresh={handleRefresh}
                       colors={["#ff7403"]}
                       tintColor="#ff7403"
+                      titleColor="#ff7403"
                     />
                   }
                   ListFooterComponent={() =>

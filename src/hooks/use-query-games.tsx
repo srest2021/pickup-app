@@ -189,7 +189,7 @@ function useQueryGames() {
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
           offset,
-          limit: 5,
+          limit: 20,
         },
       );
       if (error) throw error;
@@ -210,7 +210,7 @@ function useQueryGames() {
             currentPlayers: Number(game.current_players),
             isPublic: Boolean(game.is_public),
             distanceAway:
-              game.dist_meters > 0
+              Math.trunc(game.dist_meters) !== 0
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
