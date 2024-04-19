@@ -934,7 +934,7 @@ returns table(
           'username', p.username,
           'displayName', p.display_name,
           'avatarUrl', p.avatar_url,
-          'hasPlusOne', jg.plus_one
+          'hasPlusOne', gr.plus_one
         )
       )
       FROM public.game_requests AS gr
