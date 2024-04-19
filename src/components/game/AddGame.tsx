@@ -102,7 +102,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       time.getHours(),
       time.getMinutes(),
     );
-    console.log(combinedDateTime);
     if (combinedDateTime < new Date()) {
       Alert.alert("Error: Date and time are in the past!");
       return;
@@ -184,8 +183,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   };
 
   useEffect(() => {
-    console.log(session);
-    //console.log(session.user);
     if (!searchTerm) {
       setSearchResults([]);
       return;

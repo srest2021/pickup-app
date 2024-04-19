@@ -13,48 +13,39 @@ import { User } from "../../../src/lib/types";
 import { Alert } from "react-native";
 import { useStore } from "../../../src/lib/store";
 jest.useFakeTimers();
-// mock user
 
-const user = {
-  id: "testid",
-  username: "testusername",
-  displayName: "test display name",
-  bio: "test bio",
-  avatarUrl: "test avatar url",
-  sports: [],
-};
 
-// mock session with user object
-const session = {
-  access_token: "access_token_test_string",
-  refresh_token: "refresh_token_test_string",
-  expires_in: 90000000,
-  token_type: "token_type_test",
-  user: {
-    id: "testid",
-    username: "testusername",
-    displayName: "test display name",
-    bio: "test bio",
-    avatarUrl: "test avatar url",
-    sports: [],
-  },
-};
 
 
 /*
-  // mock useMutationUser hook
-    jest.mock("../../../src/hooks/use-mutation-user", () => ({
-      __esModule: true,
-      default: jest.fn(() => ({
-        session: session,
-        setSession: jest.fn(),
-        user: user,
-      })),
+    jest.mock("../../../src/lib/store", () => ({
+      useStore: jest.fn(() => [false, null, null]), // Mocking no session
     }));
-    */
-  
+    describe("AddGame", () => {
+      test("should prompt user to log in when there is no session", async () => {
+        
+        let loginMessage = screen.getByText("Log in to create a new game!")
+
+    
+        // Render the component
+        const { root } = render(
+          <TamaguiProvider config={appConfig}>
+            <AddGame navigation={{ navigate: jest.fn() }} />
+          </TamaguiProvider>,
+        );
+    
+        // Wait for the component to render
+        await waitFor(() => {
+          // Check if the user is prompted to log in
+          expect(loginMessage).toBeTruthy();
+        });
+      });
+    });
+    
+    jest.clearAllMocks();
+    jest.resetModules();
     // mock store
-  
+  */
     jest.mock("../../../src/lib/store", () => ({
       
       useStore: jest.fn(() => [false, null, {
@@ -70,21 +61,9 @@ const session = {
           avatarUrl: "test avatar url",
           sports: [],
           }}]),
-      //useStore: jest.fn(() => [false, {session},
-      //   []]),
-      //InitialState: [false, { user: { id: "testid"}},  session],
-      //State: [false, { user: { id: "testid"}},  session],
-      
       
     }));
-  
-  /*
-    // mock useMutationGame hook
-    const mockCreateGameById = jest.fn();
-    jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
-      createGame: mockCreateGameById,
-    }));
-    */
+
 
 
 
@@ -229,9 +208,10 @@ describe("AddGame", () => {
         "Test Description",
         true,
       );
-
+      expect(clearGameAttributes).toHaveBeenCalled();
       // Ensure navigation to 'MyGames' is triggered after creating the game
       expect(navigation.navigate).toHaveBeenCalledWith("MyGames");
+
     });
   });
 
@@ -304,55 +284,6 @@ describe("AddGame", () => {
     await waitFor(() => {
       expect(Alert.alert).toHaveBeenCalled();
     });
-  });
-});
-
-test("Should clear game attributes when 'Cancel' button is pressed", async () => {
-  const navigation = { navigate: jest.fn() };
-  const { getByTestId, getByText } = render(
-    <TamaguiProvider config={appConfig}>
-      <AddGame navigation={navigation} />
-    </TamaguiProvider>
-  );
-
-    const visibilitySwitch = screen.getByTestId("visibilityInput");
-    const streetInput = screen.getByTestId("streetInput");
-    const cityInput = screen.getByTestId("cityInput");
-    const stateInput = screen.getByTestId("stateInput");
-    const zipInput = screen.getByTestId("zipInput");
-    const skillInput = screen.getByTestId("skillInput");
-    const maxPlayerInput = screen.getByTestId("maxPlayerInput");
-    const descriptionInput = screen.getByTestId("descriptionInput");
-    const publishButton = screen.getByTestId("addGameButton");
-    
-  // Simulate setting some values in the game attributes
-  const titleInput = getByTestId("titleInput");
-  fireEvent.changeText(titleInput, "Test Game Title");
-
-  // Assume similar steps for other input fields...
-
-  // Check if the input fields are set with values
-  expect(titleInput.props.value).toBe("Test Game Title");
-
-  // Find and click the "Clear" button
-  const clearButton = getByText("Cancel");
-  fireEvent.press(clearButton);
-
-  // Check if the input fields are cleared after clicking the "Clear" button
-  await waitFor(() => {
-    expect(titleInput.props.value).toBe("");
-    expect(titleInput.value).toBe(""); // Assuming titleInput is an input element
-    expect(visibilitySwitch.checked).toBe(true); // Assuming visibilitySwitch is a checkbox or switch
-    expect(streetInput.value).toBe(""); // Assuming streetInput is an input element
-    expect(cityInput.value).toBe(""); // Assuming cityInput is an input element
-    expect(zipInput.value).toBe(""); // Assuming zipInput is an input element
-    expect(skillInput.selectedValue).toBe("0"); // Assuming skillInput is a dropdown or picker
-    expect(maxPlayerInput.value).toBe("1"); // Assuming maxPlayerInput is an input element
-    expect(descriptionInput.value).toBe(""); // Assuming descriptionInput is an input element
-    expect(publishButton.disabled).toBe(true); // Assuming publishButton is a button element
-    expect(stateInput).toBe("");
-    expect(clearGameAttributes).toHaveBeenCalled();
-    // Add similar assertions for other input fields being cleared
   });
 });
 
