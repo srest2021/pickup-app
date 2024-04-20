@@ -46,7 +46,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [proceed, setProceed] = useState(true);
 
   function clearGameAttributes() {
     setTitle("");
@@ -116,8 +115,8 @@ const AddGame = ({ navigation }: { navigation: any }) => {
       state,
       zip,
     );
-    let ok = await handleAlert(isOverlap);
-    if (!ok) return;
+    let proceed = await handleAlert(isOverlap);
+    if (!proceed) return;
 
     const myNewGame = await createGame(
       title,
@@ -141,7 +140,6 @@ const AddGame = ({ navigation }: { navigation: any }) => {
 
   const handleAlert = async (isOverlap: boolean): Promise<boolean> => {
     return new Promise((resolve) => {
-      setProceed(false);
       if (isOverlap) {
         Alert.alert(
           "This game overlaps in date and time with other games in nearby locations!",

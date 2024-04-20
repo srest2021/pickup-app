@@ -44,7 +44,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             <Tabs.List paddingTop="$2">
               <View paddingHorizontal="$2">
                 <TamaguiButton
-                  size="$3"
+                  size="$4"
                   color="#ffffff"
                   borderColor="#08348c"
                   backgroundColor="#08348c"
@@ -85,10 +85,15 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 handleRefresh();
               }
             }}
-            contentContainerStyle={{ paddingTop: 20 }}
+            contentContainerStyle={{ paddingTop: "$3" }}
           >
             {refreshing && (
-              <Spinner size="large" color="#ff7403" testID="spinner" />
+              <Spinner
+                size="large"
+                color="#ff7403"
+                testID="spinner"
+                paddingBottom="$3"
+              />
             )}
 
             {(myGamesToggle === "myGames" && myGames.length > 0) ||
@@ -119,7 +124,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             ) : refreshing ? (
               myGamesToggle === "myGames" ? (
                 <View
-                  padding="$7"
                   flex={1}
                   alignSelf="center"
                   justifyContent="center"
@@ -128,7 +132,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 </View>
               ) : (
                 <View
-                  padding="$7"
                   flex={1}
                   alignSelf="center"
                   justifyContent="center"
@@ -138,7 +141,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               )
             ) : (
               <View
-                padding="$7"
                 flex={1}
                 alignSelf="center"
                 justifyContent="center"
