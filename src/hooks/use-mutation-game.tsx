@@ -193,7 +193,7 @@ function useMutationGame() {
         addMyGame(myNewGame);
 
         // send email notification to friends
-        await sendEmailToFriends(user?.username, title, datetime);
+        if (!isPublic) await sendEmailToFriends(user?.username, title, datetime);
 
         return myNewGame;
       } else {
