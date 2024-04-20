@@ -48,7 +48,7 @@ export default function Profile({ navigation }: { navigation: any }) {
   ]);
 
   const { setSport } = useMutationUser();
-  const {send_email} = useSendEmails();
+  //const {send_email} = useSendEmails();
 
   const handleSportSelect = async (
     sportName: string,
@@ -59,7 +59,21 @@ export default function Profile({ navigation }: { navigation: any }) {
   };
 
   const handleEmail = async () => {
-    const email = await send_email(["kateforsberg@live.com"],"Test 1","This is a test");
+    //const email = await send_email(["kateforsberg@live.com"],"Test 1","This is a test");
+    const response = await fetch('https://zjtlbrgdqcbazdasfuzk.supabase.co/functions/v1/resend', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any additional headers here, like Authorization headers if needed
+        },
+        body: JSON.stringify({
+          to:"delivered@resend.dev",
+          subject:"Test 1",
+          html:"<strong>test 1 please</strong>",
+        }),
+      });
+
+      const data = await response.json();
   }
 
   const handleLogOut = async () => {

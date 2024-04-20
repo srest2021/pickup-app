@@ -14,6 +14,7 @@ interface EmailCreated{
 }
 
 const handler = async (_request: Request, emailCreated: EmailCreated): Promise<Response> => {
+  const { to, subject, html } = emailCreated;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -30,11 +31,17 @@ const handler = async (_request: Request, emailCreated: EmailCreated): Promise<R
 
   const data = await res.json()
 
-  return new Response(JSON.stringify(data), {
+  const responseData = {
+    to: to,
+    subject: subject,
+    message:message,
+  }
+
+  return new Response(JSON.stringify(responseData), {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-    },
+    }
   })
 }
 
