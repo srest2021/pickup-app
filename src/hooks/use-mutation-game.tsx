@@ -74,7 +74,6 @@ function useMutationGame() {
     try {
       const { data: emails, error: error1 } =
         await supabase.rpc("get_friends_emails");
-      //console.log(emails, error1);
       if (error1) throw error1;
 
       const formattedDate = datetime.toLocaleDateString("en-US", {
@@ -96,10 +95,11 @@ function useMutationGame() {
           },
         },
       );
-      //console.log(data, error2);
       if (error2) throw error2;
     } catch (error) {
       Alert.alert("Error sending email notifications to friends!");
+      // don't do anything else if email notifications failed;
+      // just alert and continue with creating the game as usual
     }
   };
 
@@ -164,7 +164,6 @@ function useMutationGame() {
 
         // send email notification to friends
         await sendEmailToFriends(user?.username, title, datetime);
-        //if (!res) Alert.alert("Error sending email notification to friends!");
 
         return myNewGame;
       } else {
