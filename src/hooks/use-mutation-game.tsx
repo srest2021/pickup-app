@@ -103,16 +103,19 @@ function useMutationGame() {
     }
   };
 
-  const sendEmailForJoinRequest = async(
-    username:string|undefined, 
+  const sendEmailForJoinRequest = async (
+    username: string | undefined,
     gameTitle: string,
-    userId: string) => {
-    try{
-      const {data:email, error: error1} =
-        await supabase.rpc("get_user_email",{user_id: userId});
-      if (error1){
+    userId: string,
+  ) => {
+    try {
+      const { data: email, error: error1 } = await supabase.rpc(
+        "get_user_email",
+        { user_id: userId },
+      );
+      if (error1) {
         throw error1;
-      } 
+      }
       const formattedUsername = username ? `@${username} ` : "a user";
       const formattedHtml = `<strong>${formattedUsername} requested to join your game ${gameTitle}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
@@ -131,7 +134,7 @@ function useMutationGame() {
       // don't do anything else if email notifications failed;
       // just alert and continue with creating the game as usual
     }
-    };
+  };
 
   const createGame = async (
     title: string,
@@ -193,7 +196,8 @@ function useMutationGame() {
         addMyGame(myNewGame);
 
         // send email notification to friends
-        if (!isPublic) await sendEmailToFriends(user?.username, title, datetime);
+        if (!isPublic)
+          await sendEmailToFriends(user?.username, title, datetime);
 
         return myNewGame;
       } else {
@@ -445,11 +449,14 @@ function useMutationGame() {
       if (error1) throw error;
       // update hasRequested for selectedFeedGame and feed games
       updateHasRequestedFeedGame(gameId);
-      const {data:data2, error:error2} = await supabase.rpc("get_game_by_id",{game_id:gameId});
+      const { data: data2, error: error2 } = await supabase.rpc(
+        "get_game_by_id",
+        { game_id: gameId },
+      );
       if (error2) {
         throw error2;
       }
-      const {title, organizerId} = data2;
+      const { title, organizerId } = data2;
       await sendEmailForJoinRequest(user?.username, title, organizerId);
       return false;
     } catch (error) {
