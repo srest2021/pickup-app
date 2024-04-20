@@ -7,7 +7,13 @@
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 
-const handler = async (_request: Request): Promise<Response> => {
+interface EmailCreated{
+  to: string;
+  subject: string;
+  html: string;
+}
+
+const handler = async (_request: Request, emailCreated: EmailCreated): Promise<Response> => {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -16,9 +22,9 @@ const handler = async (_request: Request): Promise<Response> => {
     },
     body: JSON.stringify({
       from: 'onboarding@resend.dev',
-      to: 'kateforsberg@live.com',
-      subject: 'hello world',
-      html: '<strong>it works!</strong>',
+      to,
+      subject,
+      html,
     }),
   })
 
