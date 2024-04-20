@@ -29,8 +29,6 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
 
   const debouncedSearch = useCallback(
     debounce(async (input: string) => {
-      console.log("debounced search: ", input);
-
       setSearching(true);
       await searchByUsername(input.trim());
       setSearching(false);
