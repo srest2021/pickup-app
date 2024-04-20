@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import 'text-encoding';
 import { View, Text, FlatList, RefreshControl, Button } from "react-native";
 import useQueryGames from "../hooks/use-query-games";
 import { H4, ScrollView, Separator, Spinner, Tabs, YStack } from "tamagui";

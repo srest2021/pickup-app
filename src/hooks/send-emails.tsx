@@ -1,9 +1,10 @@
 import {Resend} from "resend";
+import 'web-streams-polyfill';
 
 
 function useSendEmails() {
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend("re_igEh9nUo_g35mBvg2w8yEpURm5SJmRXN2");
 
 const send_email = async (emailAddress:string[], emailSubject:string, emailMessage:string) => {
     try{
