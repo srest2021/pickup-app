@@ -6,11 +6,8 @@ import {
   View,
   XStack,
   YGroup,
-  ListItem,
-  H4,
+  SizableText,
 } from "tamagui";
-import { Alert } from "react-native";
-import { Text } from "tamagui";
 import { useCallback, useEffect, useState } from "react";
 import { Input, Form } from "tamagui";
 import { UserSearch } from "@tamagui/lucide-icons";
@@ -37,7 +34,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
       setSearching(true);
       await searchByUsername(input.trim());
       setSearching(false);
-    }, 500),
+    }, 300),
     [],
   );
 
@@ -91,41 +88,50 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
             </Form.Trigger>
           </XStack>
         </Form>
-        <ScrollView flex={1}>
+        <YStack flex={1}>
           {results ? (
             results.length > 0 ? (
-              <YGroup
-                alignSelf="center"
-                bordered
-                width="100%"
-                size="$4"
-                flex={1}
-                space="$3"
-              >
-                {results.map((user: ThumbnailUser) => (
-                  <YGroup.Item key={`search-${user.id}`}>
-                    <OtherUserThumbnail
-                      navigation={navigation}
-                      user={user}
-                      isFriend={false}
-                      isSearch={true}
-                    />
-                  </YGroup.Item>
-                ))}
-              </YGroup>
+              <View flex={1}>
+                <ScrollView>
+                  <YGroup
+                    alignSelf="center"
+                    bordered
+                    width="100%"
+                    size="$4"
+                    flex={1}
+                    space="$3"
+                  >
+                    {results.map((user: ThumbnailUser) => (
+                      <YGroup.Item key={`search-${user.id}`}>
+                        <OtherUserThumbnail
+                          navigation={navigation}
+                          user={user}
+                          isFriend={false}
+                          isSearch={true}
+                        />
+                      </YGroup.Item>
+                    ))}
+                  </YGroup>
+                </ScrollView>
+              </View>
             ) : (
               <View flex={1} alignSelf="center" justifyContent="center">
-                <H4 textAlign="center">No Search Results</H4>
+                <SizableText size="$5" textAlign="center">
+                  No search results.
+                </SizableText>
               </View>
             )
           ) : (
             !loading && (
               <View flex={1} alignSelf="center" justifyContent="center">
-                <H4 textAlign="center">No Search Yet</H4>
+                <SizableText size="$5" textAlign="center">
+                  No search yet.
+                </SizableText>
               </View>
             )
           )}
-        </ScrollView>
+        </YStack>
+
         <Button
           backgroundColor="#e54b07"
           color="#ffffff"
