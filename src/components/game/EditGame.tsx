@@ -69,13 +69,14 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   );
   const [description, setDescription] = useState(selectedMyGame?.description);
   const [isPublic, setIsPublic] = useState(selectedMyGame!.isPublic);
-  const [searchTerm, setSearchTerm] = useState(selectedMyGame && selectedMyGame.address
-    ? selectedMyGame.address.street
-    : "",);
+  const [searchTerm, setSearchTerm] = useState(
+    selectedMyGame && selectedMyGame.address
+      ? selectedMyGame.address.street
+      : "",
+  );
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [proceed, setProceed] = useState(true);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -126,9 +127,8 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       state,
       zip,
     );
-    let ok = await handleAlert(isOverlap);
-    if (!ok) return;
-
+    let proceed = await handleAlert(isOverlap);
+    if (!proceed) return;
 
     const myEditedGame = await editGameById(
       gameId,
@@ -151,7 +151,6 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
 
   const handleAlert = async (isOverlap: boolean): Promise<boolean> => {
     return new Promise((resolve) => {
-      setProceed(false);
       if (isOverlap) {
         Alert.alert(
           "This game overlaps in date and time with other games in nearby locations!",
@@ -182,7 +181,31 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const handleSelectLocation = (location: any) => {
     // Fill address fields with selected location's details
     if (location && location.address) {
+      // handle edge case
+      if (location.address.country !== "United States of America") {
+        Alert.alert("Error: Address must be in the US!");
+        return;
+      }
+
       const { house_number, road, city, state, postcode } = location.address;
+
+      // handle edge cases
+      if (!house_number || !road) {
+        Alert.alert("Error: Address must have a valid street!");
+        return;
+      }
+      if (!city) {
+        Alert.alert("Error: Address must have a valid city!");
+        return;
+      }
+      if (!state) {
+        Alert.alert("Error: Address must have a valid state!");
+        return;
+      }
+      if (!postcode) {
+        Alert.alert("Error: Address must have a valid postcode!");
+        return;
+      }
 
       // Update the state values with the selected location's details
       setStreet(house_number + " " + road);
@@ -191,6 +214,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       setZip(postcode);
       setSelectedLocation(true);
       setSearchTerm(house_number + " " + road);
+    } else {
+      Alert.alert("Error selecting location! Please try again later.");
+      return;
     }
   };
 
