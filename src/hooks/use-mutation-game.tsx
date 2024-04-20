@@ -108,15 +108,11 @@ function useMutationGame() {
     gameTitle: string,
     userId: string) => {
     try{
-      console.log("in email section join request");
       const {data:email, error: error1} =
         await supabase.rpc("get_user_email",{user_id: userId});
       if (error1){
-        console.log(error1);
         throw error1;
       } 
-      console.log(email);
-      console.log(username);
       const formattedUsername = username ? `@${username} ` : "a user";
       const formattedHtml = `<strong>${formattedUsername} requested to join your game ${gameTitle}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
@@ -451,7 +447,6 @@ function useMutationGame() {
       updateHasRequestedFeedGame(gameId);
       const {data:data2, error:error2} = await supabase.rpc("get_game_by_id",{game_id:gameId});
       if (error2) {
-        console.log(error2)
         throw error2;
       }
       const {title, organizerId} = data2;

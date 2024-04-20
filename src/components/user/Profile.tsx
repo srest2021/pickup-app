@@ -9,7 +9,6 @@ import { Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
 import { ToastViewport } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
-import useSendEmails from "../../hooks/send-emails";
 
 export default function Profile({ navigation }: { navigation: any }) {
   const [
@@ -173,9 +172,6 @@ export default function Profile({ navigation }: { navigation: any }) {
               width="100%"
             >
               Log Out
-            </Button>
-            <Button onPress={()=>handleEmail()}>
-              Send Email
             </Button>
           </YStack>
         </View>
