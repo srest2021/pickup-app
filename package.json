@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.24.4",
+    "@react-email/components": "^0.0.16",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-community/datetimepicker": "^7.6.4",
     "@react-navigation/bottom-tabs": "^6.5.20",
@@ -43,6 +44,7 @@
     "expo-font": "~11.10.3",
     "expo-image-picker": "~14.7.1",
     "expo-location": "^16.5.5",
+    "expo-sms": "~11.7.1",
     "expo-status-bar": "~1.11.1",
     "expo-updates": "^0.24.12",
     "immer": "^10.0.4",
@@ -58,7 +60,10 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "^14.1.0",
     "react-native-url-polyfill": "^2.0.0",
+    "resend": "^3.2.0",
     "tamagui": "^1.94.4",
+    "text-encoding": "^0.7.0",
+    "web-streams-polyfill": "^4.0.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

@@ -1028,6 +1028,22 @@ returns table(
   order by datetime ASC;
 $$;
 
+create or replace function get_game_by_id(game_id "uuid")
+returns jsonb as $$
+declare 
+  data jsonb;
+begin
+  select jsonb_build_object(
+      'title', g.title,
+      'organizerId', g.organizer_id
+    )
+    from public.games as g
+    where g.id = game_id
+    into data;
+    return data;
+end;
+$$ language plpgsql;
+
 create or replace function check_game_capacity(player_id "uuid", game_id "uuid", plus_one boolean)
 returns boolean as $$
 declare
@@ -1304,6 +1320,20 @@ BEGIN
     RETURN game_exists;
 END;
 $$ language plpgsql;
+
+create or replace function get_user_email(user_id "uuid")
+returns TEXT
+as $$
+declare 
+    email TEXT;
+begin
+    select p.email into email
+    from public.profiles as p 
+    where p.id = user_id;
+    return email;
+end;
+$$ language plpgsql;
+
 
 create or replace function get_friends_emails()
 returns TEXT[]

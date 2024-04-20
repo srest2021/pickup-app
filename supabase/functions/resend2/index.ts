@@ -1,4 +1,4 @@
-const RESEND_API_KEY = "re_igEh9nUo_g35mBvg2w8yEpURm5SJmRXN2"; //Deno.env.get("RESEND_API_KEY");
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY"); //"re_igEh9nUo_g35mBvg2w8yEpURm5SJmRXN2"; 
 
 const handler = async (_request: Request): Promise<Response> => {
   const requestBody = await _request.json();
