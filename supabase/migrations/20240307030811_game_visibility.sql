@@ -1311,17 +1311,17 @@ as $$
 declare
     emails TEXT[];
 begin
-    SELECT ARRAY(
+    select array(
       select
         case 
           when f.player1_id = auth.uid() then
-            u2.email 
+            p2.email 
           else 
-            u1.email 
+            p1.email 
         end
-      from public.friends as f
-      join auth.users as u2 on (f.player2_id = u2.id)
-      join auth.users as u1 on (f.player1_id = u1.id)
+      from friends as f
+      join profiles as p2 on (f.player2_id = p2.id)
+      join profiles as p1 on (f.player1_id = p1.id)
       where f.player1_id = auth.uid() or f.player2_id = auth.uid()
     ) into emails;
     return emails;
