@@ -19,13 +19,13 @@ const handler = async (_request: Request, emailCreated: EmailCreated): Promise<R
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${RESEND_API_KEY}`,
+      Authorization: `Bearer re_igEh9nUo_g35mBvg2w8yEpURm5SJmRXN2`,
     },
     body: JSON.stringify({
       from: 'onboarding@resend.dev',
-      to,
-      subject,
-      html,
+      to: to,
+      subject: subject,
+      html: html,
     }),
   })
 
@@ -34,7 +34,7 @@ const handler = async (_request: Request, emailCreated: EmailCreated): Promise<R
   const responseData = {
     to: to,
     subject: subject,
-    message:message,
+    html:html,
   }
 
   return new Response(JSON.stringify(responseData), {
