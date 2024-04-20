@@ -158,15 +158,12 @@ function useMutationUser() {
     username:string|undefined, 
     userId: string) => {
     try{
-      console.log("about to call email RPC");
       const {data:email, error: error1} =
         await supabase.rpc("get_user_email",{user_id: userId});
       if (error1){
-        console.log(error1);
         throw error1;
       } 
-      const formattedUsername = username ? `@${username} ` : "";
-      console.log(email);
+      const formattedUsername = username ? `@${username} ` : "a user";
       const formattedHtml = `<strong>You just recieved a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
@@ -205,7 +202,7 @@ function useMutationUser() {
       if (data) {
         addFriendRequest();
         updatehasRequestedInCache(userId, true);
-        await sendEmailForRequest(session.user?.username,userId);
+        await sendEmailForRequest(user?.username,userId);
         return friendRequest;
       }
     } catch (error) {
