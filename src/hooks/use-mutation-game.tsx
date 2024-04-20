@@ -6,6 +6,7 @@ import { Address, MyGame, GameSport } from "../lib/types";
 function useMutationGame() {
   const [
     session,
+    user,
     location,
     setLoading,
     addMyGame,
@@ -19,6 +20,7 @@ function useMutationGame() {
     removeJoinedGame,
   ] = useStore((state) => [
     state.session,
+    state.user,
     state.location,
     state.setLoading,
     state.addMyGame,
@@ -61,6 +63,43 @@ function useMutationGame() {
       return false;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const sendEmailToFriends = async (
+    username: string | undefined,
+    title: string,
+    datetime: Date,
+  ) => {
+    try {
+      const { data: emails, error: error1 } =
+        await supabase.rpc("get_friends_emails");
+      if (error1) throw error1;
+
+      const formattedDate = datetime.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long",
+      });
+      const formattedUsername = username ? `@${username} ` : "";
+      const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
+
+      const { data, error: error2 } = await supabase.functions.invoke(
+        "resend2",
+        {
+          body: {
+            to: emails,
+            subject: "Your friend just created a game on Pickup!",
+            html: formattedHtml,
+          },
+        },
+      );
+      if (error2) throw error2;
+    } catch (error) {
+      Alert.alert("Error sending email notifications to friends!");
+      // don't do anything else if email notifications failed;
+      // just alert and continue with creating the game as usual
     }
   };
 
@@ -122,6 +161,10 @@ function useMutationGame() {
           acceptedPlayers: [],
         };
         addMyGame(myNewGame);
+
+        // send email notification to friends
+        if (!isPublic) await sendEmailToFriends(user?.username, title, datetime);
+
         return myNewGame;
       } else {
         throw new Error("Error publishing game! Please try again later.");
