@@ -85,10 +85,15 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 handleRefresh();
               }
             }}
-            contentContainerStyle={{ paddingTop: 20 }}
+            contentContainerStyle={{ paddingTop: "$3" }}
           >
             {refreshing && (
-              <Spinner size="large" color="#ff7403" testID="spinner" />
+              <Spinner
+                size="large"
+                color="#ff7403"
+                testID="spinner"
+                paddingBottom="$3"
+              />
             )}
 
             {(myGamesToggle === "myGames" && myGames.length > 0) ||

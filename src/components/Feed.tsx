@@ -184,10 +184,15 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   }
                   ListFooterComponent={() =>
                     refreshing && (
-                      <Spinner size="large" color="#ff7403" testID="spinner" />
+                      <Spinner
+                        size="large"
+                        color="#ff7403"
+                        testID="spinner"
+                        paddingBottom="$5"
+                      />
                     )
                   }
-                  contentContainerStyle={{ gap: 23, paddingTop: 20 }}
+                  contentContainerStyle={{ gap: 23, paddingTop: 18 }}
                 />
                 <TamaguiButton
                   icon={ChevronsUp}

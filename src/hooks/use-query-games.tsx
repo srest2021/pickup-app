@@ -185,7 +185,7 @@ function useQueryGames() {
         {
           lat: location.coords.latitude,
           long: location.coords.longitude,
-          dist_limit: filterDist,
+          dist_limit: 3000, //filterDist,
           sport_filter: filterSport,
           skill_level_filter: filterLevel,
           offset,

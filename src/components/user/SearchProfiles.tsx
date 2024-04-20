@@ -49,8 +49,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
 
   const handleTextChange = async (input: string) => {
     setCurrentInput(input);
-    if (input.trim().length > -1) {
-      // TODO: CHANGE BACK
+    if (input.trim().length > 0) {
       debouncedSearch(input);
     }
   };
