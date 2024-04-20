@@ -105,18 +105,18 @@ function useMutationGame() {
 
   const sendEmailForJoinRequest = async (
     username: string | undefined,
-    gameTitle: string,
-    userId: string,
+    gameTitle: string | undefined,
+    organizerId: string | undefined,
   ) => {
     try {
       const { data: email, error: error1 } = await supabase.rpc(
         "get_user_email",
-        { user_id: userId },
+        { user_id: organizerId },
       );
       if (error1) {
         throw error1;
       }
-      const formattedUsername = username ? `@${username} ` : "a user";
+      const formattedUsername = username ? `@${username} ` : "A user";
       const formattedHtml = `<strong>${formattedUsername} requested to join your game ${gameTitle}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
@@ -417,6 +417,8 @@ function useMutationGame() {
 
   const requestToJoinById = async (
     gameId: string,
+    gameTitle: string | undefined,
+    organizerId: string | undefined,
     playerId: string,
     plusOne: boolean,
   ) => {
@@ -449,15 +451,10 @@ function useMutationGame() {
       if (error1) throw error;
       // update hasRequested for selectedFeedGame and feed games
       updateHasRequestedFeedGame(gameId);
-      const { data: data2, error: error2 } = await supabase.rpc(
-        "get_game_by_id",
-        { game_id: gameId },
-      );
-      if (error2) {
-        throw error2;
-      }
-      const { title, organizerId } = data2;
-      await sendEmailForJoinRequest(user?.username, title, organizerId);
+
+      // send email notification
+      await sendEmailForJoinRequest(user?.username, gameTitle, organizerId);
+
       return false;
     } catch (error) {
       if (error instanceof Error) {
