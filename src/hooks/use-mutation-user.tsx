@@ -154,6 +154,38 @@ function useMutationUser() {
     }
   };
 
+  const sendEmailForRequest = async(
+    username:string|undefined, 
+    userId: string) => {
+    try{
+      console.log("about to call email RPC");
+      const {data:email, error: error1} =
+        await supabase.rpc("get_user_email",{user_id: userId});
+      if (error1){
+        console.log(error1);
+        throw error1;
+      } 
+      const formattedUsername = username ? `@${username} ` : "";
+      console.log(email);
+      const formattedHtml = `<strong>You just recieved a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
+      const { data, error: error2 } = await supabase.functions.invoke(
+        "resend2",
+        {
+          body: {
+            to: email,
+            subject: "You just recieved a friend request on Pickup!",
+            html: formattedHtml,
+          },
+        },
+      );
+      if (error2) throw error2;
+    } catch (error) {
+      Alert.alert("Error sending email notifications to friend requests!");
+      // don't do anything else if email notifications failed;
+      // just alert and continue with creating the game as usual
+    }
+    };
+
   const sendFriendRequest = async (userId: string) => {
     try {
       setLoading(true);
@@ -173,6 +205,7 @@ function useMutationUser() {
       if (data) {
         addFriendRequest();
         updatehasRequestedInCache(userId, true);
+        await sendEmailForRequest(session.user?.username,userId);
         return friendRequest;
       }
     } catch (error) {

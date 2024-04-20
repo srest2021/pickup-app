@@ -1305,6 +1305,20 @@ BEGIN
 END;
 $$ language plpgsql;
 
+create or replace function get_user_email(user_id "uuid")
+returns TEXT
+as $$
+declare 
+    email TEXT;
+begin
+    select p.email into email
+    from public.profiles as p 
+    where p.id = user_id
+    return email;
+end;
+$$ language plpgsql;
+
+
 create or replace function get_friends_emails()
 returns TEXT[]
 as $$
