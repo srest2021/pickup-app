@@ -30,7 +30,6 @@ function useQueryUsers() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-
       const { data, error } = await supabase
         .from("profiles")
         .select("id, username, display_name, bio, avatar_url")
