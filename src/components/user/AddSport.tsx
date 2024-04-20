@@ -11,17 +11,20 @@ import {
   Select,
 } from "tamagui";
 import { Check, ChevronDown, Plus, Loader } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
+import { SkillLevel, capitalizedSports, sports } from "../../lib/types";
 import { useState, useMemo } from "react";
 import { useStore } from "../../lib/store";
+import useMutationSports from "../../hooks/use-mutation-sports";
 
-const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
+const AddSport = () => {
   const [skillLevel, setSkillLevel] = useState("0");
   const [sportName, setSportName] = useState(sports[0].name);
   const [loading] = useStore((state) => [state.loading]);
 
-  const handleSave = () => {
-    onSportSelect(sportName, convertSkillLevel());
+  const { setSport } = useMutationSports();
+
+  const handleSave = async () => {
+    const userSport = await setSport(sportName, convertSkillLevel());
   };
 
   function convertSkillLevel(): number {
@@ -36,7 +39,7 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
 
   return (
     <Dialog modal>
-      <Dialog.Trigger asChild>
+      <Dialog.Trigger asChild id="add-sport-trigger">
         <Button
           size="$3"
           icon={loading ? Loader : Plus}
@@ -51,185 +54,160 @@ const AddSport = ({ onSportSelect }: { onSportSelect: any }) => {
         </Button>
       </Dialog.Trigger>
 
-      <Adapt when="sm" platform="touch">
-        <Sheet animation="medium" zIndex={200000} modal dismissOnSnapToBottom>
-          <Sheet.Frame padding="$4" gap="$4">
-            <Adapt.Contents />
-          </Sheet.Frame>
-          <Sheet.Overlay
-            animation="lazy"
-            enterStyle={{ opacity: 0 }}
-            exitStyle={{ opacity: 0 }}
-          />
-        </Sheet>
-      </Adapt>
-
       <Dialog.Portal>
-        <Dialog.Overlay
-          key="overlay"
-          animation="slow"
-          opacity={0.5}
-          enterStyle={{ opacity: 0 }}
-          exitStyle={{ opacity: 0 }}
-        />
-
-        <Dialog.Content
-          bordered
-          elevate
-          key="content"
-          animateOnly={["transform", "opacity"]}
-          enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
-          exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
-          gap="$4"
-        >
+        <Dialog.Overlay key="dialog-overlay" />
+        <Dialog.Content>
           <Dialog.Title>Add sport</Dialog.Title>
 
-          <YStack>
-            <Label>Select a sport:</Label>
-            <Select
-              data-testid="sportInput"
-              value={sportName}
-              onValueChange={(selectedSport) => setSportName(selectedSport)}
-            >
-              <Select.Trigger iconAfter={ChevronDown}>
-                <Select.Value placeholder="Select a sport..." />
-              </Select.Trigger>
+          <YStack space="$2">
+            <YStack>
+              <Label>Select a sport:</Label>
+              <Select
+                data-testid="sportInput"
+                value={sportName}
+                onValueChange={(selectedSport) => setSportName(selectedSport)}
+              >
+                <Select.Trigger iconAfter={ChevronDown}>
+                  <Select.Value placeholder="Select a sport..." />
+                </Select.Trigger>
 
-              <Adapt when="sm" platform="touch">
-                <Sheet
-                  modal
-                  dismissOnSnapToBottom
-                  animationConfig={{
-                    type: "spring",
-                    damping: 20,
-                    mass: 1.2,
-                    stiffness: 250,
-                  }}
+                <Adapt when="sm" platform="touch">
+                  <Sheet
+                    modal
+                    dismissOnSnapToBottom
+                    animationConfig={{
+                      type: "spring",
+                      damping: 20,
+                      mass: 1.2,
+                      stiffness: 250,
+                    }}
+                  >
+                    <Sheet.Frame>
+                      <Sheet.ScrollView>
+                        <Adapt.Contents />
+                      </Sheet.ScrollView>
+                    </Sheet.Frame>
+                    <Sheet.Overlay
+                      animation="lazy"
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+                  </Sheet>
+                </Adapt>
+
+                <Select.Content zIndex={200000}>
+                  <Select.ScrollUpButton />
+                  <Select.Viewport>
+                    <Select.Group>
+                      <Select.Label>Sports</Select.Label>
+                      {useMemo(
+                        () =>
+                          capitalizedSports.map((sport, i) => {
+                            return (
+                              <Select.Item
+                                index={i}
+                                key={sport.name}
+                                value={sport.name}
+                              >
+                                <Select.ItemText>{sport.name}</Select.ItemText>
+                                <Select.ItemIndicator marginLeft="auto">
+                                  <Check size={16} />
+                                </Select.ItemIndicator>
+                              </Select.Item>
+                            );
+                          }),
+                        [capitalizedSports],
+                      )}
+                    </Select.Group>
+                  </Select.Viewport>
+                  <Select.ScrollDownButton />
+                </Select.Content>
+              </Select>
+            </YStack>
+
+            <YStack>
+              <Label>Select a skill level:</Label>
+              <Label width={160} justifyContent="flex-end">
+                <RadioGroup
+                  testID="skillInput"
+                  aria-labelledby="Select one item"
+                  defaultValue="3"
+                  name="form"
+                  value={skillLevel}
+                  onValueChange={setSkillLevel}
                 >
-                  <Sheet.Frame>
-                    <Sheet.ScrollView>
-                      <Adapt.Contents />
-                    </Sheet.ScrollView>
-                  </Sheet.Frame>
-                  <Sheet.Overlay
-                    animation="lazy"
-                    enterStyle={{ opacity: 0 }}
-                    exitStyle={{ opacity: 0 }}
-                  />
-                  <Sheet.Overlay />
-                </Sheet>
-              </Adapt>
+                  <YStack width={300} alignItems="center" space="$0">
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"0"}
+                        id={`profile-skill-level-${SkillLevel.Beginner}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+                      <Label size={2}>{"Beginner"}</Label>
+                    </XStack>
 
-              <Select.Content>
-                <Select.ScrollUpButton />
-                <Select.Viewport>
-                  <Select.Group>
-                    <Select.Label>Sports</Select.Label>
-                    {useMemo(
-                      () =>
-                        sports.map((sport, i) => {
-                          return (
-                            <Select.Item
-                              index={i}
-                              key={sport.name}
-                              value={sport.name.toLowerCase()}
-                            >
-                              <Select.ItemText>{sport.name}</Select.ItemText>
-                              <Select.ItemIndicator marginLeft="auto">
-                                <Check size={16} />
-                              </Select.ItemIndicator>
-                            </Select.Item>
-                          );
-                        }),
-                      [sports],
-                    )}
-                  </Select.Group>
-                </Select.Viewport>
-                <Select.ScrollDownButton />
-              </Select.Content>
-            </Select>
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"1"}
+                        id={`profile-skill-level-${SkillLevel.Intermediate}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+                      <Label size={2}>{"Intermediate"}</Label>
+                    </XStack>
+
+                    <XStack width={300} alignItems="center" space="$4">
+                      <RadioGroup.Item
+                        value={"2"}
+                        id={`profile-skill-level-${SkillLevel.Advanced}`}
+                        size={2}
+                      >
+                        <RadioGroup.Indicator />
+                      </RadioGroup.Item>
+                      <Label size={2}>{"Advanced"}</Label>
+                    </XStack>
+                  </YStack>
+                </RadioGroup>
+              </Label>
+            </YStack>
+
+            <XStack space="$3" justifyContent="space-between">
+              <Dialog.Close displayWhenAdapted asChild>
+                <Button
+                  id="cancel-button"
+                  theme="active"
+                  aria-label="Cancel"
+                  size="$4"
+                  flexGrow={1}
+                  color="#ff7403"
+                  borderColor="#ff7403"
+                  backgroundColor="#ffffff"
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+              </Dialog.Close>
+              <Dialog.Close displayWhenAdapted asChild>
+                <Button
+                  id="add-sport-button"
+                  theme="active"
+                  aria-label="Close"
+                  onPress={handleSave}
+                  flexGrow={1}
+                  color="#ff7403"
+                  borderColor="#ff7403"
+                  backgroundColor="#ffffff"
+                  variant="outlined"
+                  testID="save-btn"
+                >
+                  Add sport
+                </Button>
+              </Dialog.Close>
+            </XStack>
           </YStack>
-
-          <YStack>
-            <Label>Select a skill level:</Label>
-            <Label width={160} justifyContent="flex-end">
-              <RadioGroup
-                testID="skillInput"
-                aria-labelledby="Select one item"
-                defaultValue="3"
-                name="form"
-                value={skillLevel}
-                onValueChange={setSkillLevel}
-              >
-                <YStack width={300} alignItems="center" space="$0">
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"0"}
-                      id={`profile-skill-level-${SkillLevel.Beginner}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
-                    <Label size={2}>{"Beginner"}</Label>
-                  </XStack>
-
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"1"}
-                      id={`profile-skill-level-${SkillLevel.Intermediate}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
-                    <Label size={2}>{"Intermediate"}</Label>
-                  </XStack>
-
-                  <XStack width={300} alignItems="center" space="$4">
-                    <RadioGroup.Item
-                      value={"2"}
-                      id={`profile-skill-level-${SkillLevel.Advanced}`}
-                      size={2}
-                    >
-                      <RadioGroup.Indicator />
-                    </RadioGroup.Item>
-                    <Label size={2}>{"Advanced"}</Label>
-                  </XStack>
-                </YStack>
-              </RadioGroup>
-            </Label>
-          </YStack>
-
-          <XStack space="$3" justifyContent="space-between">
-            <Dialog.Close displayWhenAdapted asChild>
-              <Button
-                theme="active"
-                aria-label="Cancel"
-                size="$4"
-                flexGrow={1}
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor="#ffffff"
-                variant="outlined"
-              >
-                Cancel
-              </Button>
-            </Dialog.Close>
-            <Dialog.Close displayWhenAdapted asChild>
-              <Button
-                theme="active"
-                aria-label="Close"
-                onPress={handleSave}
-                flexGrow={1}
-                color="#ff7403"
-                borderColor="#ff7403"
-                backgroundColor="#ffffff"
-                variant="outlined"
-                testID="save-btn"
-              >
-                Add sport
-              </Button>
-            </Dialog.Close>
-          </XStack>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog>

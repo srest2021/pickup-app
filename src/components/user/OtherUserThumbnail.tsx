@@ -34,12 +34,6 @@ export default function OtherUserThumbnail({
   const avatarUrl =
     user.avatarUrl && user.avatarUrl.length > 0 ? user.avatarUrl : undefined;
 
-  // don't need this anymore because ListItem trims it for us!
-  // const abbrevBio =
-  //   user.bio && user.bio.trim().length > 85
-  //     ? user.bio.substring(0, 85).trim() + "..."
-  //     : user.bio;
-
   const { removeFriendById } = useMutationUser();
   const { acceptFriendRequestById } = useMutationUser();
   const { rejectFriendRequestById } = useMutationUser();

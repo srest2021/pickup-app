@@ -77,7 +77,11 @@ function useQueryGames() {
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
             isPublic: game.is_public,
-            distanceAway: location ? Math.trunc(Number(game.dist_meters)) : "?",
+            distanceAway: location
+              ? Math.trunc(game.dist_meters) !== 0
+                ? Math.trunc(game.dist_meters)
+                : Math.round(game.dist_meters * 10) / 10
+              : "?",
             joinRequests: game.join_requests ? game.join_requests : [],
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
           };
@@ -137,7 +141,11 @@ function useQueryGames() {
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
             isPublic: Boolean(game.is_public),
-            distanceAway: location ? Math.trunc(Number(game.dist_meters)) : "?",
+            distanceAway: location
+              ? Math.trunc(game.dist_meters) !== 0
+                ? Math.trunc(game.dist_meters)
+                : Math.round(game.dist_meters * 10) / 10
+              : "?",
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
             organizer: { ...game.organizer },
           };
@@ -201,7 +209,10 @@ function useQueryGames() {
             maxPlayers: Number(game.max_players),
             currentPlayers: Number(game.current_players),
             isPublic: Boolean(game.is_public),
-            distanceAway: Math.trunc(Number(game.dist_meters)),
+            distanceAway:
+              Math.trunc(game.dist_meters) !== 0
+                ? Math.trunc(game.dist_meters)
+                : Math.round(game.dist_meters * 10) / 10,
             acceptedPlayers: game.accepted_players ? game.accepted_players : [],
             hasRequested: Boolean(game.has_requested),
             organizer: { ...game.organizer },

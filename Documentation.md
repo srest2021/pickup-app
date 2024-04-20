@@ -93,9 +93,66 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 
 ### 3.1 Prerequisites
 
+Make sure you have these prerequisites installed: [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Expo CLI](https://docs.expo.dev/get-started/installation/).  
+
 ### 3.2 System Requirements
 
 ### 3.3 Installation Steps
+
+Follow the below steps to run the app locally on Expo Go.
+
+1. Clone the repository and navigate to the root folder in the terminal.
+
+2. Add a `.env` file in the root folder of this repository containing the fields in the`.env.example` file, and fill in the required environment variables.
+
+3. Run `npm install` to install dependencies.
+
+4. To use the Expo Go app: 
+
+    a. Download the Expo Go app on your phone.
+
+    b. Run `npx expo start --go`.
+    
+    c. Scan the QR code with the Expo Go app (Android) or the Camera app (iOS) and open the link.
+
+5. To locally build the project:
+
+    a. On iOS, to run the simulator on Xcode:
+
+    ```shell
+    expo prebuild --platform ios
+
+    npx expo run:ios
+    ```
+
+    b. On Android (not tested yet):
+
+    ```shell
+    expo prebuild --platform android
+
+    npx expo run:android
+    ```
+
+7. To login as a test user to the app, use the following credentials:
+
+    ```shell
+    email: admin@example.com
+    password: password
+    ```
+
+Follow the below steps to download the build from the Expo Dashboard and run it on the Xcode simulator.
+
+1. Navigate to our OOSE group's [Expo dashboard](https://expo.dev/accounts/oose-team-01).
+
+2. Navigate to the [Pickup project](https://expo.dev/accounts/oose-team-01/projects/pickup).
+
+3. Click on the most recent build.
+
+4. Click "Download" and wait for the build to download.
+
+5. Unzip the downloaded build.
+
+6. Open Xcode simulator and drag the unzipped build onto the simulator.
 
 ## Configuration Guide
 
@@ -116,9 +173,7 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 
 ### 5.4 Advanced Features
 
-### 5.5 Troubleshooting
-
-## API Documentation
+## API Documentation (if applicable)
 
 ### 6.1 Endpoints
 
@@ -156,31 +211,21 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 
 ### 8.1 Test Plan
 
-### 8.2 Test Cases
+We planned two approaches to testing our app: (a) unit tests and (b) frontend tests. All tests are run automatically on pushes or pull requests to `main` or `dev` via GitHub Actions.
 
-### 8.3 Test Results
+The first approach, unit tests, targets the backend tables and custom postgreSQL functions written for our use case. The tests were written using pgTAP and are applied to a test database schema built by a migration file which contains all of our tables and functions. We first seed our database with example records of profiles, games, and more. Then, we test that all database tables are built with the correct columns, foreign key relationships, and data types. Lastly, we test that our custom postgreSQL functions behave as expected by manipulating the seed data, calling the function, and verifying the results.
+
+Our second approach, frontend tests, targets our frontend components and tests whether they render correctly and handle data in the expected way. We used Jest to write our frontend tests. We focused on determining whether components render as expected, mocking the store and hooks, and verifying that button presses or other user interations were handled as expected. 
+
+### 8.2 Test Results
+
+### 8.3 Known Issues and Limitations
 
 ## Deployment
 
 ### 9.1 Deployment Process
 
-### 9.2 Release Notes
-
-### 9.3 Known Issues and Limitations
-
-## Support and Maintenance
-
-### 10.1 Troubleshooting Guide
-
-### 10.2 Frequently Asked Questions (FAQs)
-
-### 10.3 Contact Information
-
-## Change Log
-
-### 11.1 Version History
-
-### 11.2 Change Summary
+We build and deploy our app automatically on pushes to `main` via GitHub Actions using Expo EAS.
 
 ## Glossary
 

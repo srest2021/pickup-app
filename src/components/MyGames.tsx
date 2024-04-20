@@ -43,19 +43,20 @@ const MyGames = ({ navigation }: { navigation: any }) => {
             paddingBottom="$3"
             defaultValue="MyGames"
           >
-            <Tabs.List paddingTop="$1">
-              <TamaguiButton
-                size="$4"
-                color="#ffffff"
-                borderColor="#08348c"
-                backgroundColor="#08348c"
-                icon={PlusCircle}
-                variant="outlined"
-                disabled={loading}
-                onPress={() => navigation.navigate("AddGame")}
-                style={{ alignSelf: "flex-start" }}
-                padding="$3"
-              />
+            <Tabs.List paddingTop="$2">
+              <View paddingHorizontal="$2">
+                <TamaguiButton
+                  size="$4"
+                  color="#ffffff"
+                  borderColor="#08348c"
+                  backgroundColor="#08348c"
+                  icon={PlusCircle}
+                  variant="outlined"
+                  disabled={loading}
+                  style={{ alignSelf: "flex-start" }}
+                  onPress={() => navigation.navigate("AddGame")}
+                />
+              </View>
               <Tabs.Tab
                 testID="my-games"
                 value="MyGames"
@@ -86,10 +87,15 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 handleRefresh();
               }
             }}
-            contentContainerStyle={{ paddingTop: 20 }}
+            contentContainerStyle={{ paddingTop: "$3" }}
           >
             {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
+              <Spinner
+                size="large"
+                color="#ff7403"
+                testID="spinner"
+                paddingBottom="$3"
+              />
             )}
 
             {(myGamesToggle === "myGames" && myGames.length > 0) ||
@@ -119,17 +125,17 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               )
             ) : refreshing ? (
               myGamesToggle === "myGames" ? (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching published games...</H4>
+                <View flex={1} alignSelf="center" justifyContent="center">
+                  <H4 textAlign="center">Loading published games...</H4>
                 </View>
               ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching joined games...</H4>
+                <View flex={1} alignSelf="center" justifyContent="center">
+                  <H4 textAlign="center">Loading joined games...</H4>
                 </View>
               )
             ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>
+              <View flex={1} alignSelf="center" justifyContent="center">
+                <H4 textAlign="center">
                   No {myGamesToggle === "myGames" ? "published" : "joined"}{" "}
                   games.
                 </H4>
@@ -139,8 +145,8 @@ const MyGames = ({ navigation }: { navigation: any }) => {
           </ScrollView>
         </View>
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Loading...</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Loading...</H4>
         </View>
       )}
     </>

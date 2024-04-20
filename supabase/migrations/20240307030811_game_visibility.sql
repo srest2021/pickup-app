@@ -8,6 +8,7 @@ create table if not exists "public"."profiles" (
   "id" "uuid" unique references auth.users on delete cascade not null primary key default "auth"."uid"(),
   "updated_at" timestamp with time zone,
   "username" text unique not null,
+  "email" text not null,
   "display_name" text,
   "avatar_url" text,
   "bio" text
@@ -30,8 +31,8 @@ create policy "Users can update own profile." on profiles
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, username)
-  values (new.id, new.raw_user_meta_data->>'username');
+  insert into public.profiles (id, username, email)
+  values (new.id, new.raw_user_meta_data->>'username', new.email);
   return new;
 end;
 $$ language plpgsql security definer;
@@ -167,7 +168,7 @@ create policy "Users can delete their own sports." on sports
   for delete using (auth.uid() = user_id);
 
 -- get the user id from a string or partial string!
-create or replace function username_search(username text)
+create or replace function username_search(username_param text)
 returns jsonb as $$
 declare
   data jsonb;
@@ -182,12 +183,11 @@ begin
     )
   )
   from public.profiles as p
-  where p.username like '%' || username || '%'
+  where p.username like '%' || username_param || '%'
   into data;
   return data;
 end;
 $$ language plpgsql;
-
 
 -- games table
 
@@ -220,7 +220,7 @@ create policy "Users can insert their own games." on games
   for insert with check (auth.uid() = organizer_id);
 
 create policy "Users can update their own games." on games
-  for update using (auth.uid() = organizer_id);
+  for update using (true);
 
 create policy "Users can delete their own games." on games
   for delete using (auth.uid() = organizer_id);
@@ -230,7 +230,8 @@ create policy "Users can delete their own games." on games
 create table joined_game (
   "id" "uuid" primary key unique not null default "gen_random_uuid"(),
   "player_id" "uuid" references "profiles" not null,
-  "game_id" "uuid" references "games" on delete cascade not null
+  "game_id" "uuid" references "games" on delete cascade not null,
+  "plus_one" boolean not null
 );
 
 alter table joined_game
@@ -335,7 +336,8 @@ create table game_requests (
   "id" "uuid" primary key unique not null default "gen_random_uuid"(),
   "created_at" timestamp with time zone default "now"() not null,
   "game_id" "uuid" references "games" on delete cascade not null,
-  "player_id" "uuid" references "profiles" not null
+  "player_id" "uuid" references "profiles" not null,
+  "plus_one" boolean not null
 );
 
 create index gameid_gr
@@ -585,7 +587,7 @@ $$;
 
 -- miscellaneous functions
 
-create or replace function public.create_game(
+create or replace function create_game(
   city text,
   datetime timestamp with time zone,
   description text,
@@ -643,87 +645,6 @@ begin
 end;
 $$ language plpgsql; 
 
-create or replace function get_game_with_address(game_id "uuid", "lat" double precision, "long" double precision)
-returns record as $$
-declare
-  coords "extensions"."geography"(Point,4326);
-  street text;
-  city text;
-  state text;
-  zip text;
-  data record; 
-begin
-  -- get location
-  select gl.street, gl.city, gl.state, gl.zip 
-  into street, city, state, zip
-  from game_locations as gl
-  where gl.game_id = get_game_with_address.game_id; 
-  select public.get_coordinates(street, city, state, zip) into coords;
-
-  -- get game data
-  select (
-    g.id,
-    g.organizer_id, 
-    g.title,
-    g.description, 
-    g.datetime,
-    gl.street,
-    gl.city,
-    gl.state,
-    gl.zip,
-    g.sport,
-    g.skill_level, 
-    g.max_players, 
-    g.current_players, 
-    g.is_public,
-    st_distance(coords, st_point(long, lat)::geography)
-  )
-  from public.games as g
-  join public.game_locations as gl on g.id = gl.game_id
-  where g.id = get_game_with_address.game_id
-  into data;
-  return data;
-end;
-$$ language plpgsql;
-
-create or replace function get_game_without_address(game_id "uuid", "lat" double precision, "long" double precision)
-returns record as $$
-declare
-  coords "extensions"."geography"(Point,4326);
-  street text;
-  city text;
-  state text;
-  zip text;
-  data record;
-begin
-  -- get location
-  select gl.street, gl.city, gl.state, gl.zip 
-  into street, city, state, zip
-  from game_locations as gl
-  where gl.game_id = get_game_with_address.game_id; 
-  select public.get_coordinates(street, city, state, zip) into coords;
-
-  -- get game data
-  select (
-    g.id,
-    g.organizer_id, 
-    g.title,
-    g.description, 
-    g.datetime,
-    g.sport,
-    g.skill_level,
-    g.max_players,
-    g.current_players, 
-    g.is_public,
-    st_distance(coords, st_point(long, lat)::geography) 
-  )
-  from public.games as g
-  where g.id = get_game_without_address.game_id
-  into data;
-  return data;
-end;
-$$ language plpgsql;
-
 -- edit game by getting location, updating games and game_locations tables
 create or replace function edit_game(
   game_id "uuid", 
@@ -746,7 +667,7 @@ declare
   coords "extensions"."geography"(Point,4326);
   updated_data record;
 begin
-   -- get location
+  -- get location
   select
     public.get_coordinates(street, city, state, zip)
   into coords;
@@ -823,7 +744,7 @@ returns table(
   with distances as (
     select 
       gl.game_id,
-      st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
+      st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters
     from game_locations gl
   )
   select 
@@ -849,7 +770,8 @@ returns table(
           'id', p.id,
           'username', p.username,
           'displayName', p.display_name,
-          'avatarUrl', p.avatar_url
+          'avatarUrl', p.avatar_url,
+          'hasPlusOne', jg.plus_one
         )
       )
       from public.joined_game as jg
@@ -879,7 +801,7 @@ returns table(
     )
     and g.organizer_id != auth.uid() -- not organizer
     and g.datetime > CURRENT_TIMESTAMP - INTERVAL '1 day' -- only show games from yesterday on
-  order by d.dist_meters
+  order by d.dist_meters, g.id
   offset "offset"
   limit "limit";
 $$;
@@ -930,7 +852,8 @@ returns table (
           'id', p.id,
           'username', p.username,
           'displayName', p.display_name,
-          'avatarUrl', p.avatar_url 
+          'avatarUrl', p.avatar_url,
+          'hasPlusOne', jg.plus_one
         )
       )
       FROM public.joined_game AS jg
@@ -1011,7 +934,8 @@ returns table(
           'id', p.id,
           'username', p.username,
           'displayName', p.display_name,
-          'avatarUrl', p.avatar_url
+          'avatarUrl', p.avatar_url,
+          'hasPlusOne', gr.plus_one
         )
       )
       FROM public.game_requests AS gr
@@ -1079,7 +1003,8 @@ returns table(
           'id', p.id,
           'username', p.username,
           'displayName', p.display_name,
-          'avatarUrl', p.avatar_url
+          'avatarUrl', p.avatar_url,
+          'hasPlusOne', jg.plus_one
         )
       )
       FROM public.joined_game AS jg
@@ -1103,22 +1028,56 @@ returns table(
   order by datetime ASC;
 $$;
 
+create or replace function check_game_capacity(player_id "uuid", game_id "uuid", plus_one boolean)
+returns boolean as $$
+declare
+  is_allowed boolean;
+  total_players INTEGER;
+begin
+  total_players = 1;
+  IF plus_one then
+    total_players = 2;
+  END IF;
+  select
+   (g.organizer_id != player_id) and (g.current_players + total_players <= g.max_players)
+  into is_allowed
+  from games g
+  where g.id = game_id;
+  return is_allowed;
+end;
+$$ language plpgsql;
+
 -- accept player join request
 create or replace function accept_join_request(game_id "uuid", player_id "uuid")
 returns void as $$
+declare
+  has_plus_one boolean;
 begin
+  -- check if plus one
+  select plus_one 
+  into has_plus_one
+  from game_requests
+  where game_requests.game_id = accept_join_request.game_id
+    and game_requests.player_id = accept_join_request.player_id;
+
   -- remove join request from game_requests table
   delete from game_requests
   where game_requests.player_id = accept_join_request.player_id and game_requests.game_id = accept_join_request.game_id;
 
   -- add entry to joined_game table
-  insert into joined_game (player_id, game_id)
-  values (player_id, game_id);
+  insert into joined_game (player_id, game_id, plus_one)
+  values (player_id, game_id, has_plus_one);
 
   -- increment current players in games table
-  update games 
-  set current_players = current_players + 1
-  where id = game_id;
+  if has_plus_one then 
+    update games
+    set current_players = current_players + 2
+    where id = game_id;
+  else
+    update games
+    set current_players = current_players + 1
+    where id = game_id;
+  end if;
 end;
 $$ language plpgsql;
 
@@ -1135,15 +1094,28 @@ $$ language plpgsql;
 -- remove player from game
 create or replace function remove_player(game_id "uuid", player_id "uuid")
 returns void as $$
+declare
+  has_plus_one boolean;
 begin
+  -- check if plus one
+  select plus_one into has_plus_one
+  from joined_game
+  where joined_game.game_id = remove_player.game_id and joined_game.player_id = remove_player.player_id;
+
   -- remove entry from joined_game table
   delete from joined_game
   where joined_game.player_id = remove_player.player_id and joined_game.game_id = remove_player.game_id;
 
   -- decrement current players in games table
-  update games 
-  set current_players = current_players - 1
-  where id = game_id;
+  if has_plus_one then
+    update games 
+    set current_players = current_players - 2
+    where id = game_id;
+  else
+    update games 
+    set current_players = current_players - 1
+    where id = game_id;
+  end if;
 end;
 $$ language plpgsql;
 
@@ -1173,7 +1145,7 @@ begin
     'hasRequested', auth.uid() in (
       select fr.request_sent_by
       from friend_requests as fr
-      where fr.request_sent_to = player_id
+      where fr.request_sent_to = player_id and fr.request_sent_by = auth.uid()
     ),
     'isFriend', exists (
       select 1
@@ -1331,4 +1303,27 @@ BEGIN
 
     RETURN game_exists;
 END;
+$$ language plpgsql;
+
+create or replace function get_friends_emails()
+returns TEXT[]
+as $$
+declare
+    emails TEXT[];
+begin
+    SELECT ARRAY(
+      select
+        case 
+          when f.player1_id = auth.uid() then
+            u2.email 
+          else 
+            u1.email 
+        end
+      from public.friends as f
+      join auth.users as u2 on (f.player2_id = u2.id)
+      join auth.users as u1 on (f.player1_id = u1.id)
+      where f.player1_id = auth.uid() or f.player2_id = auth.uid()
+    ) into emails;
+    return emails;
+end;
 $$ language plpgsql;

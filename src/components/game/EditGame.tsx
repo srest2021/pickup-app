@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Alert } from "react-native";
+import { View, Text, ScrollView, Alert, TouchableOpacity } from "react-native";
 import useMutationUser from "../../hooks/use-mutation-user";
 import useMutationGame from "../../hooks/use-mutation-game";
 import {
@@ -14,7 +14,7 @@ import {
   YStack,
   Switch,
 } from "tamagui";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
 import { SkillLevel, sports } from "../../lib/types";
@@ -28,7 +28,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   ]);
 
   const { user } = useMutationUser();
-  const { editGameById } = useMutationGame();
+  const { editGameById, checkGameOverlap } = useMutationGame();
 
   // existing game attributes
   const [title, setTitle] = useState(
@@ -69,6 +69,14 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   );
   const [description, setDescription] = useState(selectedMyGame?.description);
   const [isPublic, setIsPublic] = useState(selectedMyGame!.isPublic);
+  const [searchTerm, setSearchTerm] = useState(
+    selectedMyGame && selectedMyGame.address
+      ? selectedMyGame.address.street
+      : "",
+  );
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   // Radio group value is only string. Convert string skill level to number
   function convertSkillLevel(): number {
@@ -112,6 +120,15 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       Alert.alert("Error: Date and time are in the past!");
       return;
     }
+    const isOverlap = await checkGameOverlap(
+      combinedDateTime,
+      street,
+      city,
+      state,
+      zip,
+    );
+    let proceed = await handleAlert(isOverlap);
+    if (!proceed) return;
 
     const myEditedGame = await editGameById(
       gameId,
@@ -131,6 +148,100 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
       navigation.goBack();
     }
   };
+
+  const handleAlert = async (isOverlap: boolean): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (isOverlap) {
+        Alert.alert(
+          "This game overlaps in date and time with other games in nearby locations!",
+          "Do you want to proceed?",
+          [
+            {
+              text: "Cancel",
+              onPress: () => {
+                resolve(false);
+              },
+              style: "cancel",
+            },
+            {
+              text: "Proceed",
+              onPress: () => {
+                resolve(true);
+              },
+            },
+          ],
+          { cancelable: false },
+        );
+      } else {
+        resolve(true);
+      }
+    });
+  };
+
+  const handleSelectLocation = (location: any) => {
+    // Fill address fields with selected location's details
+    if (location && location.address) {
+      // handle edge case
+      if (location.address.country !== "United States of America") {
+        Alert.alert("Error: Address must be in the US!");
+        return;
+      }
+
+      const { house_number, road, city, state, postcode } = location.address;
+
+      // handle edge cases
+      if (!house_number || !road) {
+        Alert.alert("Error: Address must have a valid street!");
+        return;
+      }
+      if (!city) {
+        Alert.alert("Error: Address must have a valid city!");
+        return;
+      }
+      if (!state) {
+        Alert.alert("Error: Address must have a valid state!");
+        return;
+      }
+      if (!postcode) {
+        Alert.alert("Error: Address must have a valid postcode!");
+        return;
+      }
+
+      // Update the state values with the selected location's details
+      setStreet(house_number + " " + road);
+      setCity(city);
+      setState(state);
+      setZip(postcode);
+      setSelectedLocation(true);
+      setSearchTerm(house_number + " " + road);
+    } else {
+      Alert.alert("Error selecting location! Please try again later.");
+      return;
+    }
+  };
+
+  useEffect(() => {
+    if (!searchTerm) {
+      setSearchResults([]);
+      return;
+    }
+
+    const fetchLocations = async () => {
+      try {
+        const response = await fetch(
+          `https://us1.locationiq.com/v1/autocomplete?key=${process.env.AUTOCOMPLETE_API_KEY}&q=${searchTerm}&countrycode=us&limit=5`,
+        );
+        const data = await response.json();
+        setSearchResults(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const timeoutId = setTimeout(fetchLocations, 500); // debounce to avoid too many requests
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   return (
     <View className="p-12">
@@ -227,20 +338,43 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               </Label>
             </XStack>
 
-            <YStack>
+            <YStack space="$2">
               <Label size="$5" color={"#08348c"}>
-                Address
+                Address*
               </Label>
-
-              <YStack space="$3">
+              <YStack space="$2">
                 <Input
-                  flex={1}
-                  size="$5"
                   placeholder="Street"
-                  testID="addressInput"
-                  value={street}
-                  onChangeText={(text: string) => setStreet(text)}
+                  value={
+                    isSearchFocused
+                      ? searchTerm
+                      : selectedLocation
+                        ? street
+                        : searchTerm
+                  }
+                  onChangeText={setSearchTerm}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
                 />
+
+                {searchTerm !== street && searchResults.length > 0 && (
+                  <>
+                    {searchResults.map((result, index) => (
+                      <TouchableOpacity
+                        style={{
+                          paddingVertical: 10,
+                          paddingHorizontal: 10,
+                          borderBottomWidth: 1,
+                          borderBottomColor: "lightgray",
+                        }}
+                        key={index}
+                        onPress={() => handleSelectLocation(result)}
+                      >
+                        <Text>{result.display_name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </>
+                )}
 
                 <Input
                   flex={1}
@@ -248,17 +382,21 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                   placeholder="City"
                   testID="cityInput"
                   value={city}
-                  onChangeText={(text: string) => setCity(text)}
+                  onChangeText={setCity}
                 />
 
-                <XStack space="$2">
+                <XStack
+                  space="$2"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
                   <Input
                     flexGrow={1}
                     size="$5"
                     placeholder="State"
                     value={state}
                     testID="stateInput"
-                    onChangeText={(text: string) => setState(text)}
+                    onChangeText={setState}
                   />
 
                   <Input
@@ -268,7 +406,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                     value={zip}
                     keyboardType="numeric"
                     testID="zipInput"
-                    onChangeText={(text: string) => setZip(text)}
+                    onChangeText={setZip}
                   />
                 </XStack>
               </YStack>

@@ -6,6 +6,7 @@ import { Address, MyGame, GameSport } from "../lib/types";
 function useMutationGame() {
   const [
     session,
+    user,
     location,
     setLoading,
     addMyGame,
@@ -19,6 +20,7 @@ function useMutationGame() {
     removeJoinedGame,
   ] = useStore((state) => [
     state.session,
+    state.user,
     state.location,
     state.setLoading,
     state.addMyGame,
@@ -61,6 +63,43 @@ function useMutationGame() {
       return false;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const sendEmailToFriends = async (
+    username: string | undefined,
+    title: string,
+    datetime: Date,
+  ) => {
+    try {
+      const { data: emails, error: error1 } =
+        await supabase.rpc("get_friends_emails");
+      if (error1) throw error1;
+
+      const formattedDate = datetime.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long",
+      });
+      const formattedUsername = username ? `@${username} ` : "";
+      const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
+
+      const { data, error: error2 } = await supabase.functions.invoke(
+        "resend2",
+        {
+          body: {
+            to: emails,
+            subject: "Your friend just created a game on Pickup!",
+            html: formattedHtml,
+          },
+        },
+      );
+      if (error2) throw error2;
+    } catch (error) {
+      Alert.alert("Error sending email notifications to friends!");
+      // don't do anything else if email notifications failed;
+      // just alert and continue with creating the game as usual
     }
   };
 
@@ -122,6 +161,10 @@ function useMutationGame() {
           acceptedPlayers: [],
         };
         addMyGame(myNewGame);
+
+        // send email notification to friends
+        await sendEmailToFriends(user?.username, title, datetime);
+
         return myNewGame;
       } else {
         throw new Error("Error publishing game! Please try again later.");
@@ -242,18 +285,38 @@ function useMutationGame() {
     }
   };
 
-  const acceptJoinRequestById = async (gameId: string, playerId: string) => {
+  const acceptJoinRequestById = async (
+    gameId: string,
+    playerId: string,
+    plusOne: boolean,
+  ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const { error } = await supabase.rpc("accept_join_request", {
+      // Check if game full or if num of players requesting will exceed max
+      let { data, error } = await supabase.rpc("check_game_capacity", {
+        game_id: gameId,
+        player_id: playerId,
+        plus_one: plusOne,
+      });
+
+      if (error) throw error;
+
+      if (!data) {
+        Alert.alert(
+          "Error: Accepting this request will exceed the max player capacity!",
+        );
+        return null;
+      }
+
+      const { error: error1 } = await supabase.rpc("accept_join_request", {
         game_id: gameId,
         player_id: playerId,
       });
-      if (error) throw error;
+      if (error1) throw error1;
 
-      acceptJoinRequest(gameId, playerId);
+      acceptJoinRequest(gameId, playerId, plusOne);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -290,7 +353,11 @@ function useMutationGame() {
     }
   };
 
-  const removePlayerById = async (gameId: string, playerId: string) => {
+  const removePlayerById = async (
+    gameId: string,
+    playerId: string,
+    plusOne: boolean,
+  ) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
@@ -301,7 +368,7 @@ function useMutationGame() {
       });
       if (error) throw error;
 
-      removePlayer(gameId, playerId);
+      removePlayer(gameId, playerId, plusOne);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -329,12 +396,10 @@ function useMutationGame() {
         player_id: playerId,
         plus_one: plusOne,
       });
-
       if (error) throw error;
-      console.log(data);
       if (!data) {
         Alert.alert("This game is already full!");
-        return null;
+        return true;
       }
 
       const { data: data1, error: error1 } = await supabase
@@ -351,6 +416,7 @@ function useMutationGame() {
 
       // update hasRequested for selectedFeedGame and feed games
       updateHasRequestedFeedGame(gameId);
+      return false;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -368,13 +434,14 @@ function useMutationGame() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      let { data, error } = await supabase.rpc("remove_player", {
+      let { error } = await supabase.rpc("remove_player", {
         game_id: gameId,
         player_id: playerId,
       });
       if (error) throw error;
 
       removeJoinedGame(gameId);
+      return true;
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

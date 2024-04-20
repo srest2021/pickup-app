@@ -1,9 +1,10 @@
 import { View, Text } from "react-native";
-import { UserSport } from "../../lib/types";
+import { UserSport, capitalizeFirstLetter } from "../../lib/types";
 import SportSkill from "../SportSkill";
 import { XStack } from "tamagui";
 
 export default function Sport({ sport }: { sport: UserSport }) {
+  const sportName = capitalizeFirstLetter(sport.name);
   return (
     <View className="flex flex-row p-2">
       <XStack>
@@ -16,7 +17,7 @@ export default function Sport({ sport }: { sport: UserSport }) {
           }}
         >
           <Text key={sport.id} className="text-lg" style={{ color: "white" }}>
-            {sport.name}
+            {sportName}
           </Text>
         </View>
         <SportSkill sport={sport} />

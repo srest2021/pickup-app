@@ -20,6 +20,8 @@ import { Alert, TouchableOpacity } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
+import { capitalizeFirstLetter } from "../../lib/types";
+import { Unlock, Lock } from "@tamagui/lucide-icons";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, username, userId } = route.params;
@@ -32,19 +34,29 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { requestToJoinById } = useMutationGame();
   let hasPlusOne: boolean = false;
 
-  // Request to Join Game Logic:
-  function requestToJoinGame() {
-    requestToJoinById(gameId, user!.id, hasPlusOne);
-    // Go back to feed once request is sent.
-    navigation.goBack();
+  let sportNameCapitalized = "";
+  if (selectedFeedGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedFeedGame.sport.name);
   }
+
+  // Request to Join Game Logic:
+  const requestToJoinGame = async () => {
+    const atCapacity = await requestToJoinById(gameId, user!.id, hasPlusOne);
+    // Go back to feed once request is sent.
+    if (!atCapacity) {
+      navigation.goBack();
+    }
+  };
 
   return (
     <View flex={1}>
       {session && session.user && user ? (
         selectedFeedGame ? (
           <View padding="$7" flex={1}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 100 }}
+              showsVerticalScrollIndicator={false}
+            >
               <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
@@ -76,15 +88,6 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
 
                   <YStack alignItems="center">
-                    {/* <SizableText
-                     alignItems="center" size="$4"
-                     onPress={() => {
-                      navigation.navigate("OtherProfileView", { userId: userId });
-                    }}
-                  >
-                      by @{username}
-                    </SizableText>
-                  </YStack> */}
                     <TouchableOpacity
                       onPress={() => {
                         navigation.navigate("OtherProfileView", {
@@ -124,9 +127,21 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
                     </Label>
-                    <SizableText size="$5">
-                      {selectedFeedGame.isPublic ? "public" : "friends-only"}
-                    </SizableText>
+                    {selectedFeedGame.isPublic ? (
+                      <XStack flex={1} space="$2">
+                        <Unlock />
+                        <SizableText flex={1} size="$5">
+                          Public
+                        </SizableText>
+                      </XStack>
+                    ) : (
+                      <XStack flex={1} space="$2">
+                        <Lock />
+                        <SizableText flex={1} size="$5">
+                          Friends-Only
+                        </SizableText>
+                      </XStack>
+                    )}
                   </XStack>
 
                   <XStack space="$2" alignItems="center" flex={1} space="$5">
@@ -143,7 +158,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedFeedGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 
@@ -155,11 +170,13 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <GamePlayers
-                  navigation={undefined}
-                  game={selectedFeedGame}
-                  gametype="feed"
-                />
+                <YStack paddingBottom="$5">
+                  <GamePlayers
+                    navigation={undefined}
+                    game={selectedFeedGame}
+                    gametype="feed"
+                  />
+                </YStack>
 
                 <AlertDialog modal>
                   <AlertDialog.Trigger asChild>

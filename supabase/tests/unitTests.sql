@@ -1,5 +1,5 @@
 begin;
-select plan( 94 );
+select no_plan();
 
 -- table existence
 select has_table('games');
@@ -45,6 +45,11 @@ select has_column('profiles', 'username');
 select col_is_pk('profiles', 'id');
 select col_is_fk('profiles', 'id');
 select col_type_is('profiles', 'updated_at', 'timestamp with time zone');
+select results_eq(
+  'select username from profiles',
+  $$VALUES ('username1'), ('username2')$$,
+  'profiles should return all users'
+);
 
 -- sports table columns
 select has_column('sports', 'id' );
@@ -114,6 +119,106 @@ select col_type_is('messages', 'game_id', 'uuid');
 select col_type_is('messages', 'player_id', 'uuid');
 select col_type_is('messages', 'content', 'text');
 select col_type_is('messages', 'sent_at', 'timestamp with time zone');
+
+-- username_search()
+select results_eq(
+  'select * from username_search($$username$$)', 
+  $$VALUES ('[{"id": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username1", "displayName":null, "bio":null, "avatarUrl":null}, {"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username2", "displayName":null, "bio":null, "avatarUrl":null}]'::jsonb) $$,
+  'username search should return like users'
+);
+select results_eq(
+  'select * from username_search($$username1$$)', 
+  $$VALUES ('[{"id": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username1", "displayName":null, "bio":null, "avatarUrl":null}]'::jsonb) $$,
+  'username search should return like users'
+);
+
+-- get_coordinates()
+select results_eq(
+  'select * from get_coordinates($$Homewood$$, $$Baltimore$$, $$MD$$, $$21218$$)',
+  $$VALUES (st_point(-76.6191118, 39.3293085)::geography) $$,
+  'coordinates should be accurate'
+);
+
+-- create_game()
+do $$
+begin
+  perform pg_sleep(1.0); -- wait for get_coordinates() to run
+  set role authenticated;
+  set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+  perform create_game('Baltimore', now(), 'test description', true, 10, 0, 'soccer', 'Homewood', 'MD', 'my new test game', '21218', 39.3293085, -76.6191118);
+  
+  perform ok(
+    exists (
+      select 1 from games
+        where title = 'my new test game'
+    ),
+    'Created game should be added to games table'
+  );
+end $$;
+
+-- accept_join_request()
+do $$
+begin
+    perform accept_join_request('a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- request removed from game_requests table
+    perform ok(
+        not exists (
+            select 1 from game_requests
+            where game_id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Join request should be removed from table after accepting'
+    );
+
+    -- row added to joined_game table
+    perform ok(
+        exists (
+            select 1 from joined_game
+            where game_id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Player should be added to joined_game after accepting'
+    );
+
+    -- current_players is incremented in games table
+    perform ok(
+        (select current_players from games where id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e') = 2,
+        'Current players should be incremented in games table after accepting'
+    );
+end $$;
+
+-- reject_join_request()
+do $$
+begin
+    perform reject_join_request('a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- request removed from game_requests table
+    perform ok(
+        not exists (
+            select 1 from game_requests
+            where game_id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Join request should be removed from table after accepting'
+    );
+
+    -- no row added to joined_game table
+    perform ok(
+        not exists (
+            select 1 from joined_game
+            where game_id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Player should be added to joined_game after accepting'
+    );
+
+    -- current_players is not incremented in games table
+    perform ok(
+        (select current_players from games where id = 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e') = 1,
+        'Current players should be incremented in games table after accepting'
+    );
+END $$;
 
 select * from finish();
 rollback;

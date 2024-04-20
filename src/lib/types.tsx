@@ -27,6 +27,12 @@ export type ThumbnailUser = {
   avatarUrl: string;
 };
 
+export type PlusOneUser = ThumbnailUser & { hasPlusOne: boolean };
+
+export function capitalizeFirstLetter(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
 export interface Sport {
   name: string;
   skillLevel: SkillLevel;
@@ -92,19 +98,19 @@ export interface Game {
 
 export type MyGame = Game & {
   address: Address;
-  joinRequests: ThumbnailUser[];
-  acceptedPlayers: ThumbnailUser[];
+  joinRequests: PlusOneUser[];
+  acceptedPlayers: PlusOneUser[];
 };
 
 export type JoinedGame = Game & {
   address: Address;
-  acceptedPlayers: ThumbnailUser[];
+  acceptedPlayers: PlusOneUser[];
   organizer: ThumbnailUser;
 };
 
 export type FeedGame = Game & {
   hasRequested: boolean;
-  acceptedPlayers: ThumbnailUser[];
+  acceptedPlayers: PlusOneUser[];
   organizer: ThumbnailUser;
 };
 
@@ -143,3 +149,8 @@ export const sports = [
       "https://i.pinimg.com/originals/8f/75/05/8f7505cd0a85092003023c5958e2a0fd.png",
   },
 ];
+
+export const capitalizedSports = sports.map((sport) => {
+  sport.name = capitalizeFirstLetter(sport.name);
+  return sport;
+});

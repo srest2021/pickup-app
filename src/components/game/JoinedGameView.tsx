@@ -16,8 +16,9 @@ import { useStore } from "../../lib/store";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
-import { MessageCircle } from "@tamagui/lucide-icons";
+import { MessageCircle, Unlock, Lock } from "@tamagui/lucide-icons";
 import { TouchableOpacity } from "react-native";
+import { capitalizeFirstLetter } from "../../lib/types";
 
 const JoinedGameView = ({
   navigation,
@@ -29,19 +30,25 @@ const JoinedGameView = ({
   const { gameId, username, userId } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
-  const [session, user, setRoomCode] = useStore((state) => [
+  const [session, user, loading, setRoomCode] = useStore((state) => [
     state.session,
     state.user,
+    state.loading,
     state.setRoomCode,
   ]);
   const { leaveJoinedGameById } = useMutationGame();
 
-  // Leaving a Joined Game Logic:
-  function leaveJoinedGame() {
-    leaveJoinedGameById(gameId, user!.id);
-    //navigate back to myGames
-    navigation.goBack();
+  let sportNameCapitalized = "";
+  if (selectedJoinedGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedJoinedGame.sport.name);
   }
+
+  // Leaving a Joined Game Logic:
+  const leaveJoinedGame = async () => {
+    const res = await leaveJoinedGameById(gameId, user!.id);
+    //wait for call to complete, then navigate back to myGames
+    if (res) navigation.goBack();
+  };
 
   return (
     <View flex={1}>
@@ -122,9 +129,21 @@ const JoinedGameView = ({
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
                     </Label>
-                    <SizableText flex={1} size="$5">
-                      {selectedJoinedGame.isPublic ? "public" : "friends-only"}
-                    </SizableText>
+                    {selectedJoinedGame.isPublic ? (
+                      <XStack flex={1} space="$2">
+                        <Unlock />
+                        <SizableText flex={1} size="$5">
+                          Public
+                        </SizableText>
+                      </XStack>
+                    ) : (
+                      <XStack flex={1} space="$2">
+                        <Lock />
+                        <SizableText flex={1} size="$5">
+                          Friends-Only
+                        </SizableText>
+                      </XStack>
+                    )}
                   </XStack>
 
                   <XStack space="$2" alignItems="left">
@@ -141,7 +160,7 @@ const JoinedGameView = ({
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedJoinedGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 
@@ -169,7 +188,7 @@ const JoinedGameView = ({
                     flex={1}
                     onPress={() => leaveJoinedGame()}
                   >
-                    Leave Game
+                    {loading ? "Loading..." : "Leave Game"}
                   </Button>
                 </XStack>
               </YStack>
