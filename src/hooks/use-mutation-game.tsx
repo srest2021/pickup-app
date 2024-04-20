@@ -64,25 +64,29 @@ function useMutationGame() {
     }
   };
 
-  const getFriendsEmails = async () => {
+  const sendEmailToFriends = async () => {
     try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
+      const { data: emails, error: error1 } =
+        await supabase.rpc("get_friends_emails");
+      console.log(emails, error1);
+      if (error1) throw error1;
 
-      const { data, error } = await supabase.rpc("get_friends_emails");
-      if (error) throw error;
-      return data;
+      const { data, error: error2 } = await supabase.functions.invoke(
+        "resend2",
+        {
+          body: {
+            to: "srest2021@gmail.com",
+            subject: "hi",
+            html: "<strong>Your mother made a friends-only game</strong>",
+          },
+        },
+      );
+      console.log(data, error2);
+      if (error2) throw error2;
     } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      } else {
-        Alert.alert("Error getting friends' emails! Please try again later.");
-      }
-      return false;
-    } finally {
-      setLoading(false);
+      Alert.alert("Error sending email notifications to friends!");
     }
-  }
+  };
 
   const createGame = async (
     title: string,
@@ -100,9 +104,6 @@ function useMutationGame() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-
-      const emails = await getFriendsEmails();
-      if (!emails) return null;
 
       //if no location, for now, default location is charmander marmander
       const lat = location ? location.coords.latitude : 39.3289357;
@@ -145,6 +146,11 @@ function useMutationGame() {
           acceptedPlayers: [],
         };
         addMyGame(myNewGame);
+
+        // send email notification to friends
+        await sendEmailToFriends();
+        //if (!res) Alert.alert("Error sending email notification to friends!");
+
         return myNewGame;
       } else {
         throw new Error("Error publishing game! Please try again later.");

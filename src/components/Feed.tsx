@@ -131,10 +131,15 @@ const Feed = ({ navigation }: { navigation: any }) => {
               defaultValue="PublicGames"
             >
               <Tabs.List paddingTop="$2">
-                <FeedFilter handleRefresh={async () => {
-                  await flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
-                  handleRefresh();
-                }} />
+                <FeedFilter
+                  handleRefresh={async () => {
+                    await flatListRef.current.scrollToOffset({
+                      animated: true,
+                      offset: 0,
+                    });
+                    handleRefresh();
+                  }}
+                />
                 <Tabs.Tab
                   testID="public-games"
                   value="PublicGames"

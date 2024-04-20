@@ -123,28 +123,16 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               )
             ) : refreshing ? (
               myGamesToggle === "myGames" ? (
-                <View
-                  flex={1}
-                  alignSelf="center"
-                  justifyContent="center"
-                >
+                <View flex={1} alignSelf="center" justifyContent="center">
                   <H4 textAlign="center">Loading published games...</H4>
                 </View>
               ) : (
-                <View
-                  flex={1}
-                  alignSelf="center"
-                  justifyContent="center"
-                >
+                <View flex={1} alignSelf="center" justifyContent="center">
                   <H4 textAlign="center">Loading joined games...</H4>
                 </View>
               )
             ) : (
-              <View
-                flex={1}
-                alignSelf="center"
-                justifyContent="center"
-              >
+              <View flex={1} alignSelf="center" justifyContent="center">
                 <H4 textAlign="center">
                   No {myGamesToggle === "myGames" ? "published" : "joined"}{" "}
                   games.
