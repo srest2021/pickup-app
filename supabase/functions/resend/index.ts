@@ -13,8 +13,11 @@ interface EmailCreated{
   html: string;
 }
 
-const handler = async (_request: Request, emailCreated: EmailCreated): Promise<Response> => {
+const handler = async (_request:Request, emailCreated:EmailCreated): Promise<Response> => {
   const { to, subject, html } = emailCreated;
+  console.log(to)
+  console.log(subject)
+  console.log(html)
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -22,7 +25,7 @@ const handler = async (_request: Request, emailCreated: EmailCreated): Promise<R
       Authorization: `Bearer re_igEh9nUo_g35mBvg2w8yEpURm5SJmRXN2`,
     },
     body: JSON.stringify({
-      from: 'onboarding@resend.dev',
+      from: 'notifications@pickup-app-notifications.com',
       to: to,
       subject: subject,
       html: html,
@@ -31,13 +34,13 @@ const handler = async (_request: Request, emailCreated: EmailCreated): Promise<R
 
   const data = await res.json()
 
-  const responseData = {
+  /*const responseData = {
     to: to,
     subject: subject,
     html:html,
-  }
+  }*/
 
-  return new Response(JSON.stringify(responseData), {
+  return new Response(JSON.stringify(data), {
     status: 200,
     headers: {
       'Content-Type': 'application/json',

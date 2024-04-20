@@ -60,20 +60,19 @@ export default function Profile({ navigation }: { navigation: any }) {
 
   const handleEmail = async () => {
     //const email = await send_email(["kateforsberg@live.com"],"Test 1","This is a test");
-    const response = await fetch('https://zjtlbrgdqcbazdasfuzk.supabase.co/functions/v1/resend', {
+    /*const response = await fetch('https://zjtlbrgdqcbazdasfuzk.supabase.co/functions/v1/resend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           // Add any additional headers here, like Authorization headers if needed
         },
-        body: JSON.stringify({
-          to:"delivered@resend.dev",
-          subject:"Test 1",
-          html:"<strong>test 1 please</strong>",
-        }),
       });
-
       const data = await response.json();
+      */
+     console.log("making call");
+    const { data, error } = await supabase.functions.invoke('resend', {body:{ to: 'kateforsberg@live.com', subject:'TestProfile', html:'<strong>Worked</strong>' }});
+      console.log(data);
+      console.log(error);
   }
 
   const handleLogOut = async () => {
