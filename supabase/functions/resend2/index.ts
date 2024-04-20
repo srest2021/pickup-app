@@ -1,6 +1,9 @@
 const RESEND_API_KEY = "re_igEh9nUo_g35mBvg2w8yEpURm5SJmRXN2"; //Deno.env.get("RESEND_API_KEY"); //process.env.RESEND_API_KEY
 
 const handler = async (_request: Request): Promise<Response> => {
+  const requestBody = await _request.json();
+  const { to, subject, html } = requestBody;
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -8,10 +11,10 @@ const handler = async (_request: Request): Promise<Response> => {
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "onboarding@resend.dev",
-      to: ["kforsbe1@jhu.edu", "delivered@resend.dev"],
-      subject: "this is sofia",
-      html: "<strong>it works!</strong>",
+      from: "notifications@pickup-app-notifications.com",
+      to,
+      subject,
+      html,
     }),
   });
 

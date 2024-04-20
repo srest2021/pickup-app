@@ -6,6 +6,7 @@ import { Address, MyGame, GameSport } from "../lib/types";
 function useMutationGame() {
   const [
     session,
+    user,
     location,
     setLoading,
     addMyGame,
@@ -19,6 +20,7 @@ function useMutationGame() {
     removeJoinedGame,
   ] = useStore((state) => [
     state.session,
+    state.user,
     state.location,
     state.setLoading,
     state.addMyGame,
@@ -64,24 +66,37 @@ function useMutationGame() {
     }
   };
 
-  const sendEmailToFriends = async () => {
+  const sendEmailToFriends = async (
+    username: string | undefined,
+    title: string,
+    datetime: Date,
+  ) => {
     try {
       const { data: emails, error: error1 } =
         await supabase.rpc("get_friends_emails");
-      console.log(emails, error1);
+      //console.log(emails, error1);
       if (error1) throw error1;
+
+      const formattedDate = datetime.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long",
+      });
+      const formattedUsername = username ? `@${username} ` : "";
+      const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
-            to: "srest2021@gmail.com",
-            subject: "hi",
-            html: "<strong>Your mother made a friends-only game</strong>",
+            to: emails,
+            subject: "Your friend just created a game on Pickup!",
+            html: formattedHtml,
           },
         },
       );
-      console.log(data, error2);
+      //console.log(data, error2);
       if (error2) throw error2;
     } catch (error) {
       Alert.alert("Error sending email notifications to friends!");
@@ -148,7 +163,7 @@ function useMutationGame() {
         addMyGame(myNewGame);
 
         // send email notification to friends
-        await sendEmailToFriends();
+        await sendEmailToFriends(user?.username, title, datetime);
         //if (!res) Alert.alert("Error sending email notification to friends!");
 
         return myNewGame;
