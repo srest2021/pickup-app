@@ -72,7 +72,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
       <Dialog modal>
         <Dialog.Trigger asChild id="feed-filter-trigger">
           <Button
-            size="$3"
+            size="$4"
             color="#ffffff"
             borderColor="#08348c"
             backgroundColor="#08348c"

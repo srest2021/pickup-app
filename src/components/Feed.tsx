@@ -131,7 +131,10 @@ const Feed = ({ navigation }: { navigation: any }) => {
               defaultValue="PublicGames"
             >
               <Tabs.List paddingTop="$2">
-                <FeedFilter handleRefresh={handleRefresh} />
+                <FeedFilter handleRefresh={async () => {
+                  await flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+                  handleRefresh();
+                }} />
                 <Tabs.Tab
                   testID="public-games"
                   value="PublicGames"
@@ -158,6 +161,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
               <View style={{ flex: 1 }}>
                 <FlatList
                   ref={flatListRef}
+                  initialNumToRender={5}
                   data={
                     toggle === "publicGames" ? publicGames : friendsOnlyGames
                   }
@@ -170,7 +174,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
                     />
                   )}
                   keyExtractor={(item) => item.id}
-                  onEndReached={() => handleLoadMore()}
+                  onEndReached={handleLoadMore}
                   onEndReachedThreshold={0.05}
                   refreshControl={
                     <RefreshControl

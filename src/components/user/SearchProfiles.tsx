@@ -71,6 +71,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
             />
             <Form.Trigger asChild>
               <Button
+                disabled={searching}
                 size="$4"
                 width={50}
                 testID="search-button"
