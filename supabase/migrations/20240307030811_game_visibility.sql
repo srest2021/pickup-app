@@ -1303,3 +1303,26 @@ BEGIN
     RETURN game_exists;
 END;
 $$ language plpgsql;
+
+create or replace function get_friends_emails()
+returns TEXT[]
+as $$
+declare
+    emails TEXT[];
+begin
+    SELECT ARRAY(
+      select
+        case 
+          when f.player1_id = auth.uid() then
+            u2.email 
+          else 
+            u1.email 
+        end
+      from public.friends as f
+      join auth.users as u2 on (f.player2_id = u2.id)
+      join auth.users as u1 on (f.player1_id = u1.id)
+      where f.player1_id = auth.uid() or f.player2_id = auth.uid()
+    ) into emails;
+    return emails;
+end;
+$$ language plpgsql;
