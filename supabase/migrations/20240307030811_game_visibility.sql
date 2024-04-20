@@ -8,6 +8,7 @@ create table if not exists "public"."profiles" (
   "id" "uuid" unique references auth.users on delete cascade not null primary key default "auth"."uid"(),
   "updated_at" timestamp with time zone,
   "username" text unique not null,
+  "email" text not null,
   "display_name" text,
   "avatar_url" text,
   "bio" text
@@ -30,8 +31,8 @@ create policy "Users can update own profile." on profiles
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, username)
-  values (new.id, new.raw_user_meta_data->>'username');
+  insert into public.profiles (id, username, email)
+  values (new.id, new.raw_user_meta_data->>'username', new.email);
   return new;
 end;
 $$ language plpgsql security definer;

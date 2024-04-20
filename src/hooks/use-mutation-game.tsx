@@ -64,6 +64,26 @@ function useMutationGame() {
     }
   };
 
+  const getFriendsEmails = async () => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("No user on the session!");
+
+      const { data, error } = await supabase.rpc("get_friends_emails");
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error getting friends' emails! Please try again later.");
+      }
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const createGame = async (
     title: string,
     datetime: Date,
@@ -80,6 +100,9 @@ function useMutationGame() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
+
+      const emails = await getFriendsEmails();
+      if (!emails) return null;
 
       //if no location, for now, default location is charmander marmander
       const lat = location ? location.coords.latitude : 39.3289357;
