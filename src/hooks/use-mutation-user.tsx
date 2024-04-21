@@ -154,23 +154,26 @@ function useMutationUser() {
     }
   };
 
-  const sendEmailForRequest = async(
-    username:string|undefined, 
-    userId: string) => {
-    try{
-      const {data:email, error: error1} =
-        await supabase.rpc("get_user_email",{user_id: userId});
-      if (error1){
+  const sendEmailForRequest = async (
+    username: string | undefined,
+    userId: string,
+  ) => {
+    try {
+      const { data: email, error: error1 } = await supabase.rpc(
+        "get_user_email",
+        { user_id: userId },
+      );
+      if (error1) {
         throw error1;
-      } 
-      const formattedUsername = username ? `@${username} ` : "a user";
-      const formattedHtml = `<strong>You just recieved a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
+      }
+      const formattedUsername = username ? `@${username}` : "a user";
+      const formattedHtml = `<strong>You just received a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
             to: email,
-            subject: "You just recieved a friend request on Pickup!",
+            subject: "Someone sent you a friend request on Pickup!",
             html: formattedHtml,
           },
         },
@@ -181,7 +184,7 @@ function useMutationUser() {
       // don't do anything else if email notifications failed;
       // just alert and continue with creating the game as usual
     }
-    };
+  };
 
   const sendFriendRequest = async (userId: string) => {
     try {
@@ -202,7 +205,7 @@ function useMutationUser() {
       if (data) {
         addFriendRequest();
         updatehasRequestedInCache(userId, true);
-        await sendEmailForRequest(user?.username,userId);
+        await sendEmailForRequest(user?.username, userId);
         return friendRequest;
       }
     } catch (error) {

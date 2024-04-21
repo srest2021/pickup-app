@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import 'text-encoding';
 import {
   Adapt,
   Dialog,

@@ -23,14 +23,18 @@ select has_column('games', 'title');
 select has_column('games', 'description');
 select has_column('games', 'datetime');
 select has_column('games', 'skill_level');
+select has_column('games', 'is_public');
 select col_is_pk('games', 'id');
 select col_is_fk('games', 'organizer_id');
+select col_type_is('games', 'created_at', 'timestamp with time zone');
 select col_type_is('games', 'datetime', 'timestamp with time zone');
+select col_type_is('games', 'is_public', 'boolean');
 
 -- joined_game table columns
 select has_column('joined_game', 'id');
 select has_column('joined_game', 'game_id');
 select has_column('joined_game', 'player_id');
+select has_column('joined_game', 'plus_one');
 select col_is_pk('joined_game', 'id');
 select col_is_fk('joined_game', 'game_id');
 select col_is_fk('joined_game', 'player_id');
@@ -76,6 +80,7 @@ select has_column('game_requests', 'id');
 select has_column('game_requests', 'created_at');
 select has_column('game_requests', 'game_id');
 select has_column('game_requests', 'player_id');
+select has_column('game_requests', 'plus_one');
 select col_is_pk('game_requests', 'id');
 select col_type_is('game_requests', 'created_at', 'timestamp with time zone');
 
@@ -219,6 +224,166 @@ begin
         'Current players should be incremented in games table after accepting'
     );
 END $$;
+
+-- get_game_by_id()
+select results_eq(
+  'select * from get_game_by_id($$a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e$$)', 
+  $$VALUES ('{"title": "public game", "organizerId": "273dc833-4e44-4f22-bdc9-3b13c9253d2a"}'::jsonb)$$,
+  'The correct game information should be returned'
+);
+
+-- check_game_capacity()
+select results_eq(
+  'select * from check_game_capacity($$373dc833-4e44-4f22-bdc9-3b13c9253d2a$$, $$a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e$$, false)', 
+  $$VALUES (true)$$,
+  'Game should not be full for a regular request for a 9/10 game'
+);
+select results_eq(
+  'select * from check_game_capacity($$373dc833-4e44-4f22-bdc9-3b13c9253d2a$$, $$a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e$$, true)', 
+  $$VALUES (false)$$,
+  'Game should be full for a +1 request for a 9/10 game'
+);
+
+-- remove_player()
+do $$
+begin
+    insert into joined_game
+      (id, game_id, player_id, plus_one)
+    values
+      (uuid_generate_v4(), '78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a', false);
+
+    perform remove_player('78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- row removed from joined_game table
+    perform ok(
+        not exists (
+            select 1 from joined_game
+            where game_id = '78d89525-46bf-4032-8572-5428bec482eb'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Player should be removed from joined_game'
+    );
+
+    -- current_players is decremented by 1 in games table
+    perform ok(
+        (select current_players from games where id = '78d89525-46bf-4032-8572-5428bec482eb') = 1,
+        'Current players should be decremented in games table after removing player'
+    );
+END $$;
+do $$
+begin
+    insert into joined_game
+      (id, game_id, player_id, plus_one)
+    values
+      (uuid_generate_v4(), '78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a', true);
+
+    perform remove_player('78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- row removed from joined_game table
+    perform ok(
+        not exists (
+            select 1 from joined_game
+            where game_id = '78d89525-46bf-4032-8572-5428bec482eb'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Player should be removed from joined_game'
+    );
+
+    -- current_players is decremented by 2 in games table
+    perform ok(
+        (select current_players from games where id = '78d89525-46bf-4032-8572-5428bec482eb') = 1,
+        'Current players should be decremented in games table after removing player'
+    );
+END $$;
+
+-- accept_friend_request()
+do $$
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+    perform accept_friend_request('373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- row removed from friend_requests table
+    perform ok(
+        not exists (
+            select 1 from friend_requests
+            where request_sent_by = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+              and request_sent_to = '273dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Row should be removed from friend_requests'
+    );
+
+    -- row added to friends table
+    perform ok(
+        exists (
+            select 1 from friends
+            where player1_id = '273dc833-4e44-4f22-bdc9-3b13c9253d2a'
+              and player2_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Row should be added to friends'
+    );
+END $$;
+
+-- reject_friend_request()
+do $$
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+    perform reject_friend_request('373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- row removed from friend_requests table
+    perform ok(
+        not exists (
+            select 1 from friend_requests
+            where request_sent_by = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+              and request_sent_to = '273dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Row should be removed from friend_requests'
+    );
+
+    -- row not added to friends table
+    perform ok(
+        not exists (
+            select 1 from friends
+            where player1_id = '273dc833-4e44-4f22-bdc9-3b13c9253d2a'
+              and player2_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Row should not be added to friends'
+    );
+END $$;
+
+-- get_user_email()
+select results_eq(
+  'select * from get_user_email($$273dc833-4e44-4f22-bdc9-3b13c9253d2a$$)', 
+  $$VALUES ('user1@example.com')$$,
+  'The correct user email should be returned'
+);
+
+-- add_message()
+do $$
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+    perform add_message('78d89525-46bf-4032-8572-5428bec482eb','hello world');
+
+    -- row added to messages table
+    perform ok(
+        exists (
+            select 1 from messages
+            where content = 'hello world'
+        ),
+        'Row should be added to messages'
+    );
+END $$;
+
+-- get_friend_requests()
+set role authenticated;
+set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+select results_eq(
+  'select * from get_friend_requests()', 
+  $$VALUES ('[{"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username2", "displayName": null, "avatarUrl": null, "bio": null}]'::jsonb)$$,
+  'The correct friend requests should be returned'
+);
 
 select * from finish();
 rollback;

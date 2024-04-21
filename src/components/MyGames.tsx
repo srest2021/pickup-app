@@ -7,8 +7,6 @@ import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
 import { PlusCircle } from "@tamagui/lucide-icons";
-import 'text-encoding';
-
 
 const MyGames = ({ navigation }: { navigation: any }) => {
   const [session, myGames, joinedGames, loading] = useStore((state) => [

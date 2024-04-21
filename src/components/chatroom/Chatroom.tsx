@@ -1,5 +1,4 @@
-import { H4, Text, YStack, View } from "tamagui";
-import 'text-encoding';
+import { H4, View } from "tamagui";
 import { useStore } from "../../lib/store";
 import ChatWindow from "./ChatWindow";
 import MessageInput from "./MessageInput";

@@ -41,7 +41,13 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
   // Request to Join Game Logic:
   const requestToJoinGame = async () => {
-    const atCapacity = await requestToJoinById(gameId, user!.id, hasPlusOne);
+    const atCapacity = await requestToJoinById(
+      gameId,
+      selectedFeedGame?.title,
+      selectedFeedGame?.organizerId,
+      user!.id,
+      hasPlusOne,
+    );
     // Go back to feed once request is sent.
     if (!atCapacity) {
       navigation.goBack();
