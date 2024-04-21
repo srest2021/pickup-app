@@ -10,12 +10,14 @@ import {
   ScrollView,
   H6,
   View,
+  Text,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import useMutationGame from "../../hooks/use-mutation-game";
 import SportSkill from "../SportSkill";
 import MyGamePlayers from "./MyGamePlayers";
-import { MessageCircle } from "@tamagui/lucide-icons";
+import { Lock, MessageCircle, Unlock } from "@tamagui/lucide-icons";
+import { capitalizeFirstLetter } from "../../lib/types";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
@@ -28,6 +30,11 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
     state.setRoomCode,
   ]);
   const { removeMyGameById } = useMutationGame();
+
+  let sportNameCapitalized = "";
+  if (selectedMyGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedMyGame.sport.name);
+  }
 
   const deleteGame = async () => {
     const removedId = await removeMyGameById(gameId);
@@ -43,7 +50,10 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
       {session && session.user && user ? (
         selectedMyGame ? (
           <View padding="$7" flex={1}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 100 }}
+              showsVerticalScrollIndicator={false}
+            >
               <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
@@ -103,9 +113,21 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
                     </Label>
-                    <SizableText flex={1} size="$5">
-                      {selectedMyGame.isPublic ? "public" : "friends-only"}
-                    </SizableText>
+                    {selectedMyGame.isPublic ? (
+                      <XStack flex={1} space="$2">
+                        <Unlock />
+                        <SizableText flex={1} size="$5">
+                          Public
+                        </SizableText>
+                      </XStack>
+                    ) : (
+                      <XStack flex={1} space="$2">
+                        <Lock />
+                        <SizableText flex={1} size="$5">
+                          Friends-Only
+                        </SizableText>
+                      </XStack>
+                    )}
                   </XStack>
 
                   <XStack space="$2" alignItems="left">
@@ -122,7 +144,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedMyGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 
@@ -134,7 +156,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <MyGamePlayers navigation={undefined} />
+                <MyGamePlayers navigation={navigation} />
 
                 <XStack space="$3" paddingTop="$5">
                   <Button
@@ -149,7 +171,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     }}
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : "Edit"}
+                    Edit
                   </Button>
                   <Button
                     variant="outlined"
@@ -161,7 +183,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     onPress={() => deleteGame()}
                     disabled={loading}
                   >
-                    {loading ? "Loading..." : "Delete"}
+                    Delete
                   </Button>
                 </XStack>
               </YStack>
@@ -173,14 +195,15 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                 borderColor: "#ff7403",
                 backgroundColor: "#ff7403",
                 color: "#ffffff",
+                width: 55,
               }}
               variant="outlined"
               theme="active"
-              size="$5"
+              size="$6"
               position="absolute"
               alignSelf="flex-end"
               right="$7"
-              top="$7"
+              bottom="$7"
               onPress={() => {
                 setRoomCode(gameId);
                 navigation.navigate("Chatroom");

@@ -72,9 +72,13 @@ type Action = {
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
-  acceptJoinRequest: (gameId: string, playerId: string) => void;
+  acceptJoinRequest: (
+    gameId: string,
+    playerId: string,
+    plusOne: boolean,
+  ) => void;
   rejectJoinRequest: (gameId: string, playerId: string) => void;
-  removePlayer: (gameId: string, playerId: string) => void;
+  removePlayer: (gameId: string, playerId: string, plusOne: boolean) => void;
 
   setSelectedMyGame: (myGame: MyGame) => void;
   clearSelectedMyGame: () => void;
@@ -119,6 +123,7 @@ type Action = {
   setMessages: (messages: Message[]) => void;
   clearMessages: () => void;
   addMessage: (message: Message) => void;
+  addMessages: (messages: Message[]) => void;
   setChannel: (channel: RealtimeChannel | undefined) => void;
   setRoomCode: (roomCode: string) => void;
   editAvatarPath: (userId: string, avatarPath: string | null) => void;
@@ -273,7 +278,7 @@ export const useStore = create<State & Action>()(
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
-    acceptJoinRequest: (gameId, playerId) => {
+    acceptJoinRequest: (gameId, playerId, plusOne) => {
       // find player object in join requests
       const newPlayer = get()
         .myGames.find((game) => game.id === gameId)
@@ -288,7 +293,9 @@ export const useStore = create<State & Action>()(
           );
           // add player object to acceptedPlayers and increment count
           if (newPlayer) {
-            myGame.currentPlayers += 1;
+            plusOne
+              ? (myGame.currentPlayers += 2)
+              : (myGame.currentPlayers += 1);
             myGame.acceptedPlayers.push(newPlayer);
           }
           set({ selectedMyGame: { ...myGame } });
@@ -312,14 +319,14 @@ export const useStore = create<State & Action>()(
       set({ myGames: updatedMyGames });
     },
 
-    removePlayer: (gameId, playerId) => {
+    removePlayer: (gameId, playerId, plusOne) => {
       const updatedMyGames = get().myGames.map((myGame) => {
         if (myGame.id === gameId) {
           // remove player object from accepted players
           myGame.acceptedPlayers = myGame.acceptedPlayers.filter(
             (user) => user.id != playerId,
           );
-          myGame.currentPlayers -= 1;
+          plusOne ? (myGame.currentPlayers -= 2) : (myGame.currentPlayers -= 1);
           set({ selectedMyGame: { ...myGame } });
         }
         return myGame;
@@ -380,6 +387,9 @@ export const useStore = create<State & Action>()(
     clearMessages: () => set({ messages: [] }),
 
     addMessage: (message) => set({ messages: [...get().messages, message] }),
+
+    addMessages: (messages) =>
+      set({ messages: [...get().messages, ...messages] }),
 
     setChannel: (channel) => set({ channel }),
 

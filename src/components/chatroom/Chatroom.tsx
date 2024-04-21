@@ -1,4 +1,4 @@
-import { H4, Text, YStack, View } from "tamagui";
+import { H4, View } from "tamagui";
 import { useStore } from "../../lib/store";
 import ChatWindow from "./ChatWindow";
 import MessageInput from "./MessageInput";
@@ -30,7 +30,7 @@ const Chatroom = ({ navigation }: { navigation: any }) => {
           }}
         >
           <View flex={1}>
-            <ChatWindow />
+            <ChatWindow navigation={navigation} />
             <MessageInput />
           </View>
         </KeyboardAvoidingView>

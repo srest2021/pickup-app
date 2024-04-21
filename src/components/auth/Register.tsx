@@ -96,7 +96,7 @@ export default function Register() {
           backgroundColor={"white"}
           variant="outlined"
         >
-          Register
+          {loading ? "Loading" : "Register"}
         </Button>
       </YStack>
     </View>

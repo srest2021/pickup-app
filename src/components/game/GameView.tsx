@@ -10,15 +10,21 @@ import {
   ScrollView,
   H6,
   View,
+  AlertDialog,
+  Checkbox,
+  Text,
+  Switch,
 } from "tamagui";
 import { useStore } from "../../lib/store";
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
+import { capitalizeFirstLetter } from "../../lib/types";
+import { Unlock, Lock } from "@tamagui/lucide-icons";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
-  const { gameId, username } = route.params;
+  const { gameId, username, userId } = route.params;
   const [session, user, loading, selectedFeedGame] = useStore((state) => [
     state.session,
     state.user,
@@ -26,27 +32,37 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
     state.selectedFeedGame,
   ]);
   const { requestToJoinById } = useMutationGame();
+  let hasPlusOne: boolean = false;
+
+  let sportNameCapitalized = "";
+  if (selectedFeedGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedFeedGame.sport.name);
+  }
 
   // Request to Join Game Logic:
-  function requestToJoinGame() {
-    if (
-      selectedFeedGame &&
-      selectedFeedGame?.currentPlayers >= selectedFeedGame?.maxPlayers
-    ) {
-      Alert.alert("This game is already full!");
-    } else {
-      requestToJoinById(gameId, user!.id);
-      // Go back to feed once request is sent.
+  const requestToJoinGame = async () => {
+    const atCapacity = await requestToJoinById(
+      gameId,
+      selectedFeedGame?.title,
+      selectedFeedGame?.organizerId,
+      user!.id,
+      hasPlusOne,
+    );
+    // Go back to feed once request is sent.
+    if (!atCapacity) {
       navigation.goBack();
     }
-  }
+  };
 
   return (
     <View flex={1}>
       {session && session.user && user ? (
         selectedFeedGame ? (
           <View padding="$7" flex={1}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 100 }}
+              showsVerticalScrollIndicator={false}
+            >
               <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
@@ -78,9 +94,20 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </YStack>
 
                   <YStack alignItems="center">
-                    <SizableText alignItems="center" size="$4">
-                      by @{username}
-                    </SizableText>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("OtherProfileView", {
+                          userId: userId,
+                        });
+                      }}
+                    >
+                      <Text fontSize="$5" ellipsizeMode="tail">
+                        <Text style={{ textDecorationLine: "none" }}>@</Text>
+                        <Text style={{ textDecorationLine: "underline" }}>
+                          {username}
+                        </Text>
+                      </Text>
+                    </TouchableOpacity>
                   </YStack>
                 </YStack>
 
@@ -106,9 +133,21 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
                     </Label>
-                    <SizableText size="$5">
-                      {selectedFeedGame.isPublic ? "public" : "friends-only"}
-                    </SizableText>
+                    {selectedFeedGame.isPublic ? (
+                      <XStack flex={1} space="$2">
+                        <Unlock />
+                        <SizableText flex={1} size="$5">
+                          Public
+                        </SizableText>
+                      </XStack>
+                    ) : (
+                      <XStack flex={1} space="$2">
+                        <Lock />
+                        <SizableText flex={1} size="$5">
+                          Friends-Only
+                        </SizableText>
+                      </XStack>
+                    )}
                   </XStack>
 
                   <XStack space="$2" alignItems="center" flex={1} space="$5">
@@ -125,7 +164,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedFeedGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 
@@ -137,30 +176,107 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                   </XStack>
                 </YStack>
 
-                <GamePlayers
-                  navigation={undefined}
-                  game={selectedFeedGame}
-                  gametype="feed"
-                />
+                <YStack paddingBottom="$5">
+                  <GamePlayers
+                    navigation={undefined}
+                    game={selectedFeedGame}
+                    gametype="feed"
+                  />
+                </YStack>
 
-                <XStack paddingTop="$5">
-                  <Button
-                    variant="outlined"
-                    size="$5"
-                    color="#ff7403"
-                    borderColor="#ff7403"
-                    backgroundColor="#ffffff"
-                    disabled={selectedFeedGame.hasRequested ? true : false}
-                    flex={1}
-                    onPress={() => requestToJoinGame()}
-                  >
-                    {loading
-                      ? "Loading..."
-                      : selectedFeedGame.hasRequested
-                        ? "Requested"
-                        : "Request to Join"}
-                  </Button>
-                </XStack>
+                <AlertDialog modal>
+                  <AlertDialog.Trigger asChild>
+                    <Button
+                      variant="outlined"
+                      size="$5"
+                      color="#ff7403"
+                      borderColor="#ff7403"
+                      backgroundColor="#ffffff"
+                      disabled={selectedFeedGame.hasRequested ? true : false}
+                      flex={1}
+                    >
+                      {loading
+                        ? "Loading..."
+                        : selectedFeedGame.hasRequested
+                          ? "Requested"
+                          : "Request to Join"}
+                    </Button>
+                  </AlertDialog.Trigger>
+                  <AlertDialog.Portal>
+                    <AlertDialog.Overlay
+                      key="overlay"
+                      animation="quick"
+                      opacity={0.5}
+                      enterStyle={{ opacity: 0 }}
+                      exitStyle={{ opacity: 0 }}
+                    />
+
+                    <AlertDialog.Content
+                      bordered
+                      elevate
+                      key="content"
+                      animation={[
+                        "quick",
+                        {
+                          opacity: {
+                            overshootClamping: true,
+                          },
+                        },
+                      ]}
+                      enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
+                      exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
+                      x={0}
+                      scale={1}
+                      opacity={1}
+                      y={0}
+                    >
+                      <YStack space>
+                        <AlertDialog.Title size={"$6"}>
+                          Bringing someone?
+                        </AlertDialog.Title>
+                        <XStack justifyContent="space-evenly">
+                          <AlertDialog.Description size={"$3"}>
+                            No
+                          </AlertDialog.Description>
+                          <AlertDialog.Description size={"$3"}>
+                            <Switch
+                              size="$4"
+                              defaultChecked={hasPlusOne}
+                              onCheckedChange={() => {
+                                hasPlusOne = !hasPlusOne;
+                              }}
+                              style={{
+                                backgroundColor: "#ff7403",
+                              }}
+                            >
+                              <Switch.Thumb
+                                style={{ backgroundColor: "#e54b07" }}
+                                animation="bouncy"
+                              />
+                            </Switch>
+                          </AlertDialog.Description>
+                          <AlertDialog.Description size={"$3"}>
+                            Yes
+                          </AlertDialog.Description>
+                        </XStack>
+
+                        <XStack space="$3" justifyContent="flex-end">
+                          <AlertDialog.Cancel asChild>
+                            <Button>Cancel</Button>
+                          </AlertDialog.Cancel>
+                          <AlertDialog.Action asChild>
+                            <Button
+                              theme="active"
+                              onPress={() => requestToJoinGame()}
+                            >
+                              Request
+                            </Button>
+                          </AlertDialog.Action>
+                        </XStack>
+                      </YStack>
+                    </AlertDialog.Content>
+                  </AlertDialog.Portal>
+                </AlertDialog>
               </YStack>
             </ScrollView>
           </View>

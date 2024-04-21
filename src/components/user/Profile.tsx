@@ -3,19 +3,12 @@ import { ScrollView, View, Text } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
 import { Button, Card, SizableText, YStack } from "tamagui";
-import useMutationUser from "../../hooks/use-mutation-user";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
 import { Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
-import { ToastViewport, useToastController } from "@tamagui/toast";
+import { ToastViewport } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
-
-// Get the height of the screen
-const windowHeight = Dimensions.get("window").height;
-
-// Calculate the height for the top third
-const topThirdHeight = windowHeight / 4;
 
 export default function Profile({ navigation }: { navigation: any }) {
   const [
@@ -51,16 +44,6 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearAvatarUrls,
     state.setChannel,
   ]);
-  const { setSport } = useMutationUser();
-  const toast = useToastController();
-
-  const handleSportSelect = async (
-    sportName: string,
-    sportSkillLevel: number,
-  ) => {
-    // Handle the new sport as needed
-    const userSport = await setSport(sportName, sportSkillLevel);
-  };
 
   const handleLogOut = async () => {
     setLoading(true);
@@ -81,15 +64,26 @@ export default function Profile({ navigation }: { navigation: any }) {
     setLoading(false);
   };
 
+  // Get the height of the screen
+  const windowHeight = Dimensions.get("window").height;
+
+  // Calculate the height for the top third
+  const topThirdHeight = windowHeight / 5;
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
       <ToastViewport />
       <ToastDemo />
+      <View
+        style={{ flex: 1, backgroundColor: "#08348c", flexDirection: "column" }}
+      />
+      <View style={{ flex: 1, flexDirection: "column" }} />
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, position: "absolute", width: "100%", height: "100%" }}
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "space-between",
+          backgroundColor: "#f2f2f2",
         }}
       >
         <View
@@ -105,12 +99,17 @@ export default function Profile({ navigation }: { navigation: any }) {
         >
           <Button
             icon={loading ? Loader : Edit3}
+            style={{
+              width: 55,
+              height: 60,
+              borderColor: "#ffffff",
+              color: "#ffffff",
+              borderRadius: 50,
+            }}
             theme="active"
             disabled={loading}
             onPress={() => navigation.navigate("EditProfile")}
-            size="$5"
-            color="#ffffff"
-            borderColor="#ffffff"
+            size="$6"
             variant="outlined"
           ></Button>
         </View>
@@ -120,7 +119,7 @@ export default function Profile({ navigation }: { navigation: any }) {
             <View>
               <View
                 className="items-center mb-10"
-                style={{ marginTop: -topThirdHeight / 2 }}
+                style={{ marginTop: -topThirdHeight / 1.05 }}
               >
                 <Avatar
                   url={user.avatarUrl}
@@ -132,7 +131,7 @@ export default function Profile({ navigation }: { navigation: any }) {
 
               <View className="self-stretch py-0">
                 <Text className="text-2xl text-center">
-                  {user.displayName ? user.displayName : "No display name"}
+                  {user.displayName ? user.displayName : "No display name yet"}
                 </Text>
               </View>
               <View className="self-stretch py-2">
@@ -154,9 +153,9 @@ export default function Profile({ navigation }: { navigation: any }) {
                 </Card>
               </YStack>
 
-              <Sports sports={userSports} />
+              <Sports sports={userSports} otherUser={false} />
 
-              <AddSport onSportSelect={handleSportSelect} />
+              <AddSport />
             </View>
           ) : (
             <Text>No user on the session.</Text>

@@ -3,18 +3,19 @@ import { useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { SkillLevel, User, UserSport } from "../lib/types";
+import {
+  updateIsFriendInCache,
+  updatehasRequestedInCache,
+} from "../lib/upstash-redis";
 
 function useMutationUser() {
   const [
     session,
     user,
-    userSports,
     setSession,
     setLoading,
     setUser,
     editUser,
-    addUserSport,
-    editUserSport,
     setUserSports,
     addFriendRequest,
     acceptFriendRequest,
@@ -25,13 +26,10 @@ function useMutationUser() {
   ] = useStore((state) => [
     state.session,
     state.user,
-    state.userSports,
     state.setSession,
     state.setLoading,
     state.setUser,
     state.editUser,
-    state.addUserSport,
-    state.editUserSport,
     state.setUserSports,
     state.addFriendRequest,
     state.acceptFriendRequest,
@@ -115,92 +113,6 @@ function useMutationUser() {
     }
   };
 
-  const editSport = async (sport: UserSport) => {
-    try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
-
-      const updates = {
-        id: sport.id,
-        user_id: session?.user.id,
-        name: sport.name,
-        skill_level: sport.skillLevel,
-      };
-      const { data, error } = await supabase
-        .from("sports")
-        .upsert(updates)
-        .select();
-      if (error) {
-        throw error;
-      }
-
-      if (data && data[0]) {
-        const userSport: UserSport = {
-          id: data[0].id,
-          name: data[0].name,
-          skillLevel: data[0].skill_level,
-        };
-        editUserSport(userSport);
-        return userSport;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const addSport = async (sportName: string, sportSkillLevel: SkillLevel) => {
-    try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
-
-      const updates = {
-        user_id: session?.user.id,
-        name: sportName,
-        skill_level: Number(sportSkillLevel),
-      };
-      const { data, error } = await supabase
-        .from("sports")
-        .insert(updates)
-        .select();
-      if (error) {
-        throw error;
-      }
-
-      if (data && data[0]) {
-        const userSport: UserSport = {
-          id: data[0].id,
-          name: data[0].name,
-          skillLevel: data[0].skill_level,
-        };
-        addUserSport(userSport);
-        return userSport;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const setSport = async (sportName: string, sportSkillLevel: SkillLevel) => {
-    const userSport = userSports.find(
-      (userSport) => userSport.name === sportName,
-    );
-    if (!userSport) {
-      return addSport(sportName, sportSkillLevel);
-    } else {
-      let updatedSport = userSport;
-      updatedSport.skillLevel = sportSkillLevel;
-      return editSport(updatedSport);
-    }
-  };
-
   const updateProfile = async (
     username: string,
     display_name: string,
@@ -242,6 +154,38 @@ function useMutationUser() {
     }
   };
 
+  const sendEmailForRequest = async (
+    username: string | undefined,
+    userId: string,
+  ) => {
+    try {
+      const { data: email, error: error1 } = await supabase.rpc(
+        "get_user_email",
+        { user_id: userId },
+      );
+      if (error1) {
+        throw error1;
+      }
+      const formattedUsername = username ? `@${username}` : "a user";
+      const formattedHtml = `<strong>You just received a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
+      const { data, error: error2 } = await supabase.functions.invoke(
+        "resend2",
+        {
+          body: {
+            to: email,
+            subject: "Someone sent you a friend request on Pickup!",
+            html: formattedHtml,
+          },
+        },
+      );
+      if (error2) throw error2;
+    } catch (error) {
+      Alert.alert("Error sending email notifications to friend requests!");
+      // don't do anything else if email notifications failed;
+      // just alert and continue with creating the game as usual
+    }
+  };
+
   const sendFriendRequest = async (userId: string) => {
     try {
       setLoading(true);
@@ -260,6 +204,8 @@ function useMutationUser() {
 
       if (data) {
         addFriendRequest();
+        updatehasRequestedInCache(userId, true);
+        await sendEmailForRequest(user?.username, userId);
         return friendRequest;
       }
     } catch (error) {
@@ -283,6 +229,7 @@ function useMutationUser() {
 
       // Friend Request successfully accepted.
       acceptFriendRequest(userId);
+      updateIsFriendInCache(userId, true);
       return true;
     } catch (error) {
       if (error instanceof Error) {
@@ -328,6 +275,7 @@ function useMutationUser() {
 
       // friend successfully removed
       removeFriend(userId);
+      updateIsFriendInCache(userId, false);
       return userId;
     } catch (error) {
       if (error instanceof Error) {
@@ -343,7 +291,6 @@ function useMutationUser() {
     user,
     getProfile,
     updateProfile,
-    setSport,
     sendFriendRequest,
     acceptFriendRequestById,
     rejectFriendRequestById,

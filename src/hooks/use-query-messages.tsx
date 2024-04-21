@@ -3,6 +3,7 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Message, ThumbnailUser } from "../lib/types";
+import { redis, MESSAGE_LIMIT } from "../lib/upstash-redis";
 
 function useQueryMessages() {
   const [
@@ -12,7 +13,7 @@ function useQueryMessages() {
     roomCode,
     setMessages,
     addMessage,
-    channel,
+    addMessages,
     setChannel,
     addAvatarUrls,
   ] = useStore((state) => [
@@ -22,12 +23,23 @@ function useQueryMessages() {
     state.roomCode,
     state.setMessages,
     state.addMessage,
-    state.channel,
+    state.addMessages,
     state.setChannel,
     state.addAvatarUrls,
   ]);
 
   const username = user?.username;
+  const cacheKey = `room:${roomCode}`;
+
+  const addMessageToCache = async (payload: any) => {
+    await redis.lpush(cacheKey, payload);
+    await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
+  };
+
+  const addMessagesToCache = async (messages: Message[]) => {
+    await redis.lpush(cacheKey, ...messages);
+    await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
+  };
 
   useEffect(() => {
     if (roomCode && username) {
@@ -41,7 +53,11 @@ function useQueryMessages() {
 
       // listen to broadcast messages with a "message" event
       channel.on("broadcast", { event: "message" }, ({ payload }) => {
+        // add message to store
         addMessage(payload);
+
+        // add message to cache
+        addMessageToCache(payload);
       });
 
       channel.subscribe();
@@ -98,40 +114,64 @@ function useQueryMessages() {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
 
-      const { data, error } = await supabase
+      // get messages from cache
+      const cachedData: Message[] | null = await redis.lrange(
+        cacheKey,
+        0,
+        MESSAGE_LIMIT,
+      );
+      let mostRecentSentAt = null;
+      if (cachedData && cachedData.length > 0) {
+        // set store
+        setMessages(cachedData.reverse());
+        // get most recent sent_at
+        mostRecentSentAt = cachedData[cachedData.length - 1].sentAt;
+      }
+
+      // get all messages from supabase past that sent_at (where sent_at > date)
+      const query = supabase
         .from("messages")
         .select(
           `
-          id,
-          sent_at,
-          game_id,
-          player_id,
-          content,
-          profiles (
-            username,
-            display_name,
-            avatar_url
-          )
-        `,
+        id,
+        sent_at,
+        game_id,
+        player_id,
+        content,
+        profiles (
+          username,
+          display_name,
+          avatar_url
         )
-        .eq("game_id", roomCode)
-        .order("sent_at", { ascending: true });
+      `,
+        )
+        .eq("game_id", roomCode);
+      if (mostRecentSentAt) query.gt("sent_at", mostRecentSentAt);
+      query.order("sent_at", { ascending: true }).limit(MESSAGE_LIMIT);
+      const { data, error } = await query;
       if (error) throw error;
 
       if (data) {
-        const messages: Message[] = data.map((message: any) => ({
-          id: message.id,
-          roomCode: message.game_id,
-          sentAt: message.sent_at,
-          content: message.content,
-          user: {
-            id: message.player_id,
-            username: message.profiles.username,
-            displayName: message.profiles.display_name,
-            avatarUrl: message.profiles.avatarUrl,
-          } as ThumbnailUser,
-        }));
-        setMessages(messages);
+        if (data.length > 0) {
+          const messages: Message[] = data.map((message: any) => ({
+            id: message.id,
+            roomCode: message.game_id,
+            sentAt: message.sent_at,
+            content: message.content,
+            user: {
+              id: message.player_id,
+              username: message.profiles.username,
+              displayName: message.profiles.display_name,
+              avatarUrl: message.profiles.avatarUrl,
+            } as ThumbnailUser,
+          }));
+
+          // add to store
+          addMessages(messages);
+
+          // add to cache
+          addMessagesToCache(messages);
+        }
       } else {
         throw new Error("Error getting messages! Please try again later.");
       }

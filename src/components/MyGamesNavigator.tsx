@@ -4,6 +4,8 @@ import MyGameView from "./game/MyGameView";
 import EditGame from "./game/EditGame";
 import JoinedGameView from "./game/JoinedGameView";
 import Chatroom from "./chatroom/Chatroom";
+import OtherProfile from "./user/OtherProfile";
+import AddGame from "./game/AddGame";
 
 export default function MyGamesNavigator() {
   const Stack = createNativeStackNavigator();
@@ -69,10 +71,39 @@ export default function MyGamesNavigator() {
         }}
       />
       <Stack.Screen
+        name="OtherProfileView"
+        component={OtherProfile}
+        options={{
+          title: "Other Profile",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+          headerTintColor: "#ffffff",
+        }}
+      />
+      <Stack.Screen
         name="EditGame"
         component={EditGame}
         options={{
           title: "Edit Game",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#08348c",
+          },
+          headerTitleStyle: {
+            color: "#ffffff",
+          },
+        }}
+      />
+      <Stack.Screen
+        name="AddGame"
+        component={AddGame}
+        options={{
+          title: "Add Game",
           headerShown: true,
           headerStyle: {
             backgroundColor: "#08348c",

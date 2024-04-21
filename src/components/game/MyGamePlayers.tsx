@@ -46,6 +46,7 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                         user={user}
                         gameId={selectedMyGame.id}
                         isOrganizer={true}
+                        navigation={navigation}
                       />
                     ))}
                   </YStack>
@@ -83,6 +84,7 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                         gameId={selectedMyGame.id}
                         currentPlayers={selectedMyGame.currentPlayers}
                         maxPlayers={selectedMyGame.maxPlayers}
+                        navigation={navigation}
                       />
                     ))}
                   </YStack>

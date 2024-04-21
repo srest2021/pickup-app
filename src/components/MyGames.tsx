@@ -1,16 +1,19 @@
 import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
-import { Alert, Button, View } from "react-native";
+import { Alert, Button } from "react-native";
+import { View } from "tamagui";
 import useQueryGames from "../hooks/use-query-games";
-import { Tabs, Text } from "tamagui";
+import { Tabs, Text, Button as TamaguiButton } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
+import { PlusCircle } from "@tamagui/lucide-icons";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
-  const [session, myGames, joinedGames] = useStore((state) => [
+  const [session, myGames, joinedGames, loading] = useStore((state) => [
     state.session,
     state.myGames,
     state.joinedGames,
+    state.loading,
   ]);
   const { fetchMyGames, fetchJoinedGames } = useQueryGames();
   const [refreshing, setRefreshing] = useState(false);
@@ -33,13 +36,26 @@ const MyGames = ({ navigation }: { navigation: any }) => {
         <View style={{ flex: 1 }}>
           <Tabs
             alignSelf="center"
-            justifyContent="center"
+            justifyContent="space-between"
             flex={0}
+            paddingBottom="$3"
             defaultValue="MyGames"
           >
-            <Tabs.List>
+            <Tabs.List paddingTop="$2">
+              <View paddingHorizontal="$2">
+                <TamaguiButton
+                  size="$4"
+                  color="#ffffff"
+                  borderColor="#08348c"
+                  backgroundColor="#08348c"
+                  icon={PlusCircle}
+                  variant="outlined"
+                  disabled={loading}
+                  style={{ alignSelf: "flex-start" }}
+                  onPress={() => navigation.navigate("AddGame")}
+                />
+              </View>
               <Tabs.Tab
-                width={200}
                 testID="my-games"
                 value="MyGames"
                 onInteraction={() => {
@@ -50,7 +66,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               </Tabs.Tab>
               <Separator vertical></Separator>
               <Tabs.Tab
-                width={200}
                 testID="joined-games"
                 value="JoinedGames"
                 onInteraction={() => {
@@ -70,10 +85,15 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                 handleRefresh();
               }
             }}
-            contentContainerStyle={{ paddingTop: 20 }}
+            contentContainerStyle={{ paddingTop: "$3" }}
           >
             {refreshing && (
-              <Spinner size="small" color="#ff7403" testID="spinner" />
+              <Spinner
+                size="large"
+                color="#ff7403"
+                testID="spinner"
+                paddingBottom="$3"
+              />
             )}
 
             {(myGamesToggle === "myGames" && myGames.length > 0) ||
@@ -103,17 +123,17 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               )
             ) : refreshing ? (
               myGamesToggle === "myGames" ? (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching published games...</H4>
+                <View flex={1} alignSelf="center" justifyContent="center">
+                  <H4 textAlign="center">Loading published games...</H4>
                 </View>
               ) : (
-                <View className="items-center justify-center flex-1 p-12 text-center">
-                  <H4>Fetching joined games...</H4>
+                <View flex={1} alignSelf="center" justifyContent="center">
+                  <H4 textAlign="center">Loading joined games...</H4>
                 </View>
               )
             ) : (
-              <View className="items-center justify-center flex-1 p-12 text-center">
-                <H4>
+              <View flex={1} alignSelf="center" justifyContent="center">
+                <H4 textAlign="center">
                   No {myGamesToggle === "myGames" ? "published" : "joined"}{" "}
                   games.
                 </H4>
@@ -123,8 +143,8 @@ const MyGames = ({ navigation }: { navigation: any }) => {
           </ScrollView>
         </View>
       ) : (
-        <View className="items-center justify-center flex-1 p-12 text-center">
-          <H4>Loading...</H4>
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
+          <H4 textAlign="center">Loading...</H4>
         </View>
       )}
     </>

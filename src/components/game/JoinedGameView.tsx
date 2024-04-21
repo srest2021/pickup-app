@@ -10,12 +10,15 @@ import {
   ScrollView,
   H6,
   View,
+  Text,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import SportSkill from "../SportSkill";
 import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
-import { MessageCircle } from "@tamagui/lucide-icons";
+import { MessageCircle, Unlock, Lock } from "@tamagui/lucide-icons";
+import { TouchableOpacity } from "react-native";
+import { capitalizeFirstLetter } from "../../lib/types";
 
 const JoinedGameView = ({
   navigation,
@@ -24,29 +27,38 @@ const JoinedGameView = ({
   navigation: any;
   route: any;
 }) => {
-  const { gameId, username } = route.params;
+  const { gameId, username, userId } = route.params;
 
   const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
-  const [session, user, setRoomCode] = useStore((state) => [
+  const [session, user, loading, setRoomCode] = useStore((state) => [
     state.session,
     state.user,
+    state.loading,
     state.setRoomCode,
   ]);
   const { leaveJoinedGameById } = useMutationGame();
 
-  // Leaving a Joined Game Logic:
-  function leaveJoinedGame() {
-    leaveJoinedGameById(gameId, user!.id);
-    //navigate back to myGames
-    navigation.goBack();
+  let sportNameCapitalized = "";
+  if (selectedJoinedGame) {
+    sportNameCapitalized = capitalizeFirstLetter(selectedJoinedGame.sport.name);
   }
+
+  // Leaving a Joined Game Logic:
+  const leaveJoinedGame = async () => {
+    const res = await leaveJoinedGameById(gameId, user!.id);
+    //wait for call to complete, then navigate back to myGames
+    if (res) navigation.goBack();
+  };
 
   return (
     <View flex={1}>
       {session && session.user && user ? (
         selectedJoinedGame ? (
           <View padding="$7" flex={1}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 100 }}
+              showsVerticalScrollIndicator={false}
+            >
               <YStack space="$3" flex={1}>
                 <YStack space="$3">
                   <YStack alignItems="center">
@@ -78,9 +90,20 @@ const JoinedGameView = ({
                   </YStack>
 
                   <YStack alignItems="center">
-                    <SizableText alignItems="center" size="$4">
-                      by @{username}
-                    </SizableText>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate("OtherProfileView", {
+                          userId: userId,
+                        });
+                      }}
+                    >
+                      <Text fontSize="$5" ellipsizeMode="tail">
+                        <Text style={{ textDecorationLine: "none" }}>@</Text>
+                        <Text style={{ textDecorationLine: "underline" }}>
+                          {username}
+                        </Text>
+                      </Text>
+                    </TouchableOpacity>
                   </YStack>
                 </YStack>
 
@@ -106,9 +129,21 @@ const JoinedGameView = ({
                     <Label size="$5" width={90}>
                       <H6>Status: </H6>
                     </Label>
-                    <SizableText flex={1} size="$5">
-                      {selectedJoinedGame.isPublic ? "public" : "friends-only"}
-                    </SizableText>
+                    {selectedJoinedGame.isPublic ? (
+                      <XStack flex={1} space="$2">
+                        <Unlock />
+                        <SizableText flex={1} size="$5">
+                          Public
+                        </SizableText>
+                      </XStack>
+                    ) : (
+                      <XStack flex={1} space="$2">
+                        <Lock />
+                        <SizableText flex={1} size="$5">
+                          Friends-Only
+                        </SizableText>
+                      </XStack>
+                    )}
                   </XStack>
 
                   <XStack space="$2" alignItems="left">
@@ -125,7 +160,7 @@ const JoinedGameView = ({
                       <H6>Sport:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {selectedJoinedGame.sport.name}
+                      {sportNameCapitalized}
                     </SizableText>
                   </XStack>
 
@@ -138,7 +173,7 @@ const JoinedGameView = ({
                 </YStack>
 
                 <GamePlayers
-                  navigation={undefined}
+                  navigation={navigation}
                   game={selectedJoinedGame}
                   gametype="joined"
                 />
@@ -153,7 +188,7 @@ const JoinedGameView = ({
                     flex={1}
                     onPress={() => leaveJoinedGame()}
                   >
-                    Leave Game
+                    {loading ? "Loading..." : "Leave Game"}
                   </Button>
                 </XStack>
               </YStack>
@@ -166,14 +201,15 @@ const JoinedGameView = ({
                 borderColor: "#ff7403",
                 backgroundColor: "#ff7403",
                 color: "#ffffff",
+                width: 55,
               }}
               variant="outlined"
               theme="active"
-              size="$5"
+              size="$6"
               position="absolute"
               alignSelf="flex-end"
               right="$7"
-              top="$7"
+              bottom="$7"
               onPress={() => {
                 setRoomCode(gameId);
                 navigation.navigate("Chatroom");

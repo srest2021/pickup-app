@@ -9,11 +9,12 @@ import {
   View,
   Paragraph,
   XStack,
+  Text,
 } from "tamagui";
 import SportSkill from "../SportSkill";
 import { useStore } from "../../lib/store";
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity } from "react-native";
 import { supabase } from "../../lib/supabase";
 
 export default function GameThumbnail({
@@ -40,6 +41,7 @@ export default function GameThumbnail({
   ]);
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const datetime = new Date(game.datetime);
   const time = datetime.toLocaleTimeString([], {
     hour: "numeric",
@@ -71,6 +73,7 @@ export default function GameThumbnail({
       const gameWithOrganizer =
         gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
       setUsername(gameWithOrganizer.organizer.username);
+      setUserId(gameWithOrganizer.organizerId);
       gameWithOrganizer.organizer.avatarUrl &&
         fetchData(gameWithOrganizer.organizer.avatarUrl);
     }
@@ -119,7 +122,18 @@ export default function GameThumbnail({
                       accessibilityLabel="Avatar"
                     />
                   )}
-                  <Paragraph>@{username}</Paragraph>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate("OtherProfileView", {
+                        userId: userId,
+                      });
+                    }}
+                  >
+                    <Text fontSize="$5" ellipsizeMode="tail">
+                      <Text textDecorationLine="none">@</Text>
+                      <Text textDecorationLine="underline">{username}</Text>
+                    </Text>
+                  </TouchableOpacity>
                 </XStack>
               )}
             </View>
@@ -133,12 +147,17 @@ export default function GameThumbnail({
                     navigation.navigate("MyGameView", { gameId });
                   } else if (gametype === "feed") {
                     setSelectedFeedGame(game as FeedGame);
-                    navigation.navigate("GameView", { gameId, username });
+                    navigation.navigate("GameView", {
+                      gameId,
+                      username,
+                      userId,
+                    });
                   } else if (gametype === "joined") {
                     setSelectedJoinedGame(game as JoinedGame);
                     navigation.navigate("JoinedGameView", {
                       gameId,
                       username,
+                      userId,
                     });
                   }
                 }}
