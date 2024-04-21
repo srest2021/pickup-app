@@ -220,5 +220,106 @@ begin
     );
 END $$;
 
+-- get_game_by_id()
+select results_eq(
+  'select * from get_game_by_id($$a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e$$)', 
+  $$VALUES ('{"title": "public game", "organizerId": "273dc833-4e44-4f22-bdc9-3b13c9253d2a"}'::jsonb)$$,
+  'The correct game information should be returned'
+);
+
+-- check_game_capacity()
+select results_eq(
+  'select * from check_game_capacity($$373dc833-4e44-4f22-bdc9-3b13c9253d2a$$, $$a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e$$, false)', 
+  $$VALUES (true)$$,
+  'Game should not be full for a regular request for a 9/10 game'
+);
+select results_eq(
+  'select * from check_game_capacity($$373dc833-4e44-4f22-bdc9-3b13c9253d2a$$, $$a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e$$, true)', 
+  $$VALUES (false)$$,
+  'Game should be full for a +1 request for a 9/10 game'
+);
+
+-- remove_player()
+do $$
+begin
+    insert into joined_game
+      (id, game_id, player_id, plus_one)
+    values
+      (uuid_generate_v4(), '78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a', false);
+
+    perform remove_player('78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- row removed from joined_game table
+    perform ok(
+        not exists (
+            select 1 from joined_game
+            where game_id = '78d89525-46bf-4032-8572-5428bec482eb'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Player should be removed from joined_game'
+    );
+
+    -- current_players is decremented by 1 in games table
+    perform ok(
+        (select current_players from games where id = '78d89525-46bf-4032-8572-5428bec482eb') = 1,
+        'Current players should be decremented in games table after removing player'
+    );
+END $$;
+do $$
+begin
+    insert into joined_game
+      (id, game_id, player_id, plus_one)
+    values
+      (uuid_generate_v4(), '78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a', true);
+
+    perform remove_player('78d89525-46bf-4032-8572-5428bec482eb', '373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- row removed from joined_game table
+    perform ok(
+        not exists (
+            select 1 from joined_game
+            where game_id = '78d89525-46bf-4032-8572-5428bec482eb'
+              and player_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Player should be removed from joined_game'
+    );
+
+    -- current_players is decremented by 2 in games table
+    perform ok(
+        (select current_players from games where id = '78d89525-46bf-4032-8572-5428bec482eb') = 1,
+        'Current players should be decremented in games table after removing player'
+    );
+END $$;
+
+-- accept_friend_request()
+do $$
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+    perform accept_friend_request('373dc833-4e44-4f22-bdc9-3b13c9253d2a');
+
+    -- row removed from friend_requests table
+    perform ok(
+        not exists (
+            select 1 from friend_requests
+            where request_sent_by = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+              and request_sent_to = '273dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Row should be removed from friend_requests'
+    );
+
+    -- row added to friends table
+    perform ok(
+        exists (
+            select 1 from friends
+            where player1_id = '273dc833-4e44-4f22-bdc9-3b13c9253d2a'
+              and player2_id = '373dc833-4e44-4f22-bdc9-3b13c9253d2a'
+        ),
+        'Row should be added to friends'
+    );
+END $$;
+
+-- reject_friend_request()
+
 select * from finish();
 rollback;

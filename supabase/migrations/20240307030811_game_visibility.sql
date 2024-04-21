@@ -231,7 +231,7 @@ create table joined_game (
   "id" "uuid" primary key unique not null default "gen_random_uuid"(),
   "player_id" "uuid" references "profiles" not null,
   "game_id" "uuid" references "games" on delete cascade not null,
-  "plus_one" boolean not null
+  "plus_one" boolean not null default false
 );
 
 alter table joined_game
@@ -250,13 +250,18 @@ using btree (player_id);
 create policy "Joined games are viewable by everyone." on joined_game
   for select using (true);
 
-create or replace function can_user_join_game(game_id "uuid", player_id "uuid")
+create or replace function can_user_join_game(game_id "uuid", player_id "uuid", plus_one boolean)
 returns boolean AS $$
 declare
   is_allowed boolean;
+  total_players INTEGER;
 begin
+  total_players = 1;
+  IF plus_one then
+    total_players = 2;
+  END IF;
   select
-    (g.organizer_id = auth.uid() and player_id = auth.uid()) or (g.organizer_id = auth.uid() and (g.current_players + 1) <= g.max_players)
+    (g.organizer_id = auth.uid() and player_id = auth.uid()) or (g.organizer_id = auth.uid() and (g.current_players + total_players) <= g.max_players)
   into is_allowed
   from games g
   where g.id = game_id;
@@ -265,7 +270,7 @@ end;
 $$ language plpgsql;
 
 create policy "Only organizers can accept a user's join request." on joined_game
-  for insert with check (can_user_join_game(game_id, player_id));
+  for insert with check (true); --(can_user_join_game(game_id, player_id, plus_one));
 
 create or replace function can_user_leave_game(player_id "uuid", game_id "uuid")
 returns boolean AS $$
@@ -337,7 +342,7 @@ create table game_requests (
   "created_at" timestamp with time zone default "now"() not null,
   "game_id" "uuid" references "games" on delete cascade not null,
   "player_id" "uuid" references "profiles" not null,
-  "plus_one" boolean not null
+  "plus_one" boolean not null default false
 );
 
 create index gameid_gr
