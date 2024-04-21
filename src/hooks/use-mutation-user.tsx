@@ -166,14 +166,14 @@ function useMutationUser() {
       if (error1) {
         throw error1;
       }
-      const formattedUsername = username ? `@${username} ` : "a user";
-      const formattedHtml = `<strong>You just recieved a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
+      const formattedUsername = username ? `@${username}` : "a user";
+      const formattedHtml = `<strong>You just received a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
             to: email,
-            subject: "You just recieved a friend request on Pickup!",
+            subject: "Someone sent you a friend request on Pickup!",
             html: formattedHtml,
           },
         },

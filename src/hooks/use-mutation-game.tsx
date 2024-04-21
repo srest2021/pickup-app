@@ -116,7 +116,7 @@ function useMutationGame() {
       if (error1) {
         throw error1;
       }
-      const formattedUsername = username ? `@${username} ` : "A user";
+      const formattedUsername = username ? `@${username}` : "A user";
       const formattedHtml = `<strong>${formattedUsername} requested to join your game ${gameTitle}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
