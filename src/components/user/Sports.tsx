@@ -1,5 +1,5 @@
 //import { View, Text } from "react-native";
-import { View, Text, H5 } from "tamagui";
+import { View, Text, H5, YStack } from "tamagui";
 import { UserSport } from "../../lib/types";
 import Sport from "./Sport";
 
@@ -11,9 +11,9 @@ export default function Sports({
   otherUser: boolean;
 }) {
   return (
-    <View paddingBottom="$3" paddingTop="$3">
+    <YStack paddingBottom="$3" paddingTop="$3" space="$2">
       <H5>{otherUser ? "Sports" : "My Sports"}</H5>
-      <View>
+      <YStack space="$3">
         {sports && sports.length > 0 ? (
           sports.map((sport: UserSport) => (
             <Sport key={sport.id} sport={sport} />
@@ -21,7 +21,7 @@ export default function Sports({
         ) : (
           <Text>No sports yet</Text>
         )}
-      </View>
-    </View>
+      </YStack>
+    </YStack>
   );
 }

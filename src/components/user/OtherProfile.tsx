@@ -1,4 +1,4 @@
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView } from "react-native";
 import Avatar from "./Avatar";
 import Sports from "./Sports";
 import {
@@ -8,7 +8,8 @@ import {
   SizableText,
   Spinner,
   YStack,
-  View as TamaguiView,
+  Text,
+  View,
 } from "tamagui";
 import { useStore } from "../../lib/store";
 import { Dimensions } from "react-native";
@@ -61,30 +62,22 @@ export default function OtherProfile({
   const windowHeight = Dimensions.get("window").height;
 
   // Calculate the height for the top third
-  const topThirdHeight = windowHeight / 5;
+  const topThirdHeight = windowHeight / 4;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
+    <View flex={1} backgroundColor="#f2f2f2">
       {otherUser && user ? (
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "#08348c",
-              flexDirection: "column",
-            }}
-          />
-          <View style={{ flex: 1, flexDirection: "column" }} />
+        <View flex={1}>
+          <View flex={1} backgroundColor="#08348c" flexDirection="column" />
+          <View flex={1} flexDirection="column" />
           <ScrollView
             style={{
-              flex: 1,
               position: "absolute",
               width: "100%",
               height: "100%",
             }}
             contentContainerStyle={{
               flexGrow: 1,
-              justifyContent: "space-between",
               backgroundColor: "#f2f2f2",
             }}
             scrollEventThrottle={16}
@@ -96,58 +89,65 @@ export default function OtherProfile({
             }}
           >
             <View
-              style={{
-                backgroundColor: "#08348c",
-                height: topThirdHeight,
-                position: "absolute",
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-                alignItems: "flex-start",
-                padding: 12,
-              }}
-            />
+              backgroundColor="#08348c"
+              height={topThirdHeight}
+              padding="$7"
+              overflow="visible"
+            >
+              <View marginTop={topThirdHeight / 4.4}>
+                <Avatar
+                  url={otherUser.avatarUrl}
+                  user={otherUser}
+                  onUpload={() => {}}
+                  allowUpload={false}
+                />
+              </View>
+            </View>
             {refreshing && (
               <Spinner
+                position="absolute"
                 paddingTop="$5"
+                width="100%"
                 size="large"
                 color="#f2f2f2"
                 backgroundColor="#08348c"
                 testID="spinner"
               />
             )}
-            <View
-              className="p-12"
-              //style={{ position: "absolute", width: "100%", height: "100%" }}
-            >
-              <YStack space="$4">
-                <View
-                  className="items-center"
-                  style={{ marginTop: topThirdHeight / 4 }}
-                >
-                  <Avatar
-                    url={otherUser.avatarUrl}
-                    user={otherUser}
-                    onUpload={() => {}}
-                    allowUpload={false}
-                  />
-                </View>
 
-                <YStack space="$2" paddingVertical="$3">
+            <View padding="$7">
+              <YStack space="$4" flex={1}>
+                <YStack
+                  marginTop={topThirdHeight / 4}
+                  space="$2"
+                  paddingVertical="$3"
+                  flex={1}
+                >
                   {otherUser.displayName &&
                     otherUser.displayName.trim().length > 0 && (
-                      <View className="self-stretch">
-                        <Text className="text-2xl text-center">
-                          {otherUser.displayName}
-                        </Text>
-                      </View>
+                      <SizableText size="$7" textAlign="center">
+                        {otherUser.displayName}
+                      </SizableText>
                     )}
 
-                  <View className="self-stretch">
-                    <Text className="text-xl text-center">
-                      @{otherUser.username}
-                    </Text>
-                  </View>
+                  <SizableText size="$5" textAlign="center">
+                    @{otherUser.username}
+                  </SizableText>
+
+                  {otherUser.isFriend && (
+                    <View flex={1} alignItems="center" justifyContent="center">
+                      <SizableText
+                        textAlign="center"
+                        color="#ffffff"
+                        backgroundColor="#ff7403"
+                        paddingVertical="$2"
+                        paddingHorizontal="$3"
+                        style={{ borderRadius: 17, overflow: "hidden" }}
+                      >
+                        Friends
+                      </SizableText>
+                    </View>
+                  )}
                 </YStack>
 
                 {otherUser.bio && otherUser.bio.trim().length > 0 && (
@@ -170,7 +170,7 @@ export default function OtherProfile({
                 <Sports sports={otherUser.sports} otherUser={true} />
 
                 <YStack space="$6" alignItems="center">
-                  {!otherUser.isFriend ? (
+                  {!otherUser.isFriend && (
                     <Button
                       variant="outlined"
                       disabled={otherUser.hasRequested || otherUser.isFriend}
@@ -187,8 +187,6 @@ export default function OtherProfile({
                           ? "Requested"
                           : "Send Friend Request"}
                     </Button>
-                  ) : (
-                    <Text>You are friends!</Text>
                   )}
                 </YStack>
               </YStack>
@@ -196,14 +194,9 @@ export default function OtherProfile({
           </ScrollView>
         </View>
       ) : (
-        <TamaguiView
-          padding="$7"
-          flex={1}
-          alignSelf="center"
-          justifyContent="center"
-        >
+        <View padding="$7" flex={1} alignSelf="center" justifyContent="center">
           <H4 textAlign="center">Loading profile...</H4>
-        </TamaguiView>
+        </View>
       )}
     </View>
   );
