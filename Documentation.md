@@ -8,6 +8,7 @@ It can be difficult for people to organize future pick-up games or find live pic
 Our app allows users to organize, find, and join pick-up games in a convenient and streamlined manner. Users have access to nearby games that fit their skill level and match the desired sport, while organizers can share and coordinate games with their friends or anyone nearby. Organizers can control game visibility (public vs. private), accept or reject user requests to join a game, and invite specific users to join, allowing full control over who has access to the game location and details. Organizers can coordinate user responsibilities for bringing gear, equipment, and more. Users can add friends and communicate easily with each other through game-specific chatrooms.
 
 ### 1.2 Scope
+The scope of our app encompasses a social network for users to find and engage with their local community, make friends, and communicate with other players. Our app also functions as a tool for organizers to schedule and manage pickup games and their players. 
 
 ### 1.3 Audience
 Our potential users include individuals who organize or want to organize pick-up games with their friends, as well as individuals looking to find and join pick-up games easily.
@@ -18,12 +19,12 @@ Our potential users include individuals who organize or want to organize pick-up
 Our app utilizes the client-server architecture, where the client (or frontend) provides the UI and allows the user to interact with the app, and the server (or backend) receives and processes requests from the client. We use Expo with React Native for the frontend, and Supabase for the backend.
 
 ### 2.2 Technologies Used
-**Front end**: 
+**Frontend**: 
 - **Framework**: Expo with React Native
 - **Navigation**: React Navigation
 - **UI library**: Tamagui with NativeWind CSS
 
-**Back end**: 
+**Backend**: 
 - **Database and Authentication**: Supabase Database
 - **Storage**: Supabase Storage
 - **Cloud Functions**: Supabase Cloud Functions
@@ -37,57 +38,48 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 - **Testing Frameworks**: Jest and Detox
 
 ### 2.3 Dependencies
-**Development**:
-- @babel/runtime: ^7.23.9
+- @babel/runtime: ^7.24.4
+- @react-native-async-storage/async-storage: 1.21.0
+- @react-native-community/datetimepicker: ^7.6.4
+- @react-navigation/bottom-tabs: ^6.5.20
+- @react-navigation/native: ^6.1.17
+- @react-navigation/native-stack: ^6.9.26
+- @supabase/supabase-js: ^2.42.1
+- @tamagui/alert-dialog: ^1.94.4
+- @tamagui/card: ^1.94.4
+- @tamagui/checkbox: ^1.94.4
+- @tamagui/config: ^1.94.4
+- @tamagui/font-inter: ^1.94.4
+- @tamagui/lucide-icons: ^1.94.4
+- @tamagui/slider: ^1.94.4
+- @tamagui/toast: ^1.94.4
 - @testing-library/jest-dom: ^6.4.2
-- jest-expo: ~50.0.3
-
-**Expo SDK**:
-- expo: ^50.0.14
+- @upstash/redis: ^1.29.0
+- burnt: ^0.12.2
+- expo: ^50.0.15
 - expo-app-loading: ^2.1.1
 - expo-dev-client: ~3.3.11
 - expo-font: ~11.10.3
 - expo-image-picker: ~14.7.1
 - expo-location: ^16.5.5
 - expo-status-bar: ~1.11.1
-- expo-updates: ^0.24.11
-
-**React Native**:
+- expo-updates: ^0.24.12
+- immer: ^10.0.4
+- jest-expo: ~50.0.4
+- lodash: ^4.17.21
+- nativewind: ^4.0.36
 - react: 18.2.0
 - react-native: 0.73.6
-- react-native-community/datetimepicker: ^7.6.2
+- react-native-css-interop: ^0.0.34
+- react-native-elements: ^3.4.3
 - react-native-reanimated: ~3.6.3
 - react-native-safe-area-context: 4.8.2
 - react-native-screens: ~3.29.0
 - react-native-svg: ^14.1.0
 - react-native-url-polyfill: ^2.0.0
-- @react-navigation/bottom-tabs: ^6.5.14
-- @react-navigation/native: ^6.1.12
-- @react-navigation/native-stack: ^6.9.20
-- react-native-css-interop: ^0.0.34
-- react-native-elements: ^3.4.3
-
-**Supabase**:
-- @supabase/supabase-js: ^2.39.7
-
-**Upstash Redis**:
-- @upstash/redis: ^1.29.0
-
-**State Management**:
-- zustand: ^4.5.1
-- immer: ^10.0.3
-
-**Tamagui**:
-- @tamagui/card: ^1.90.9
-- @tamagui/config: ^1.90.7
-- @tamagui/font-inter: ^1.90.7
-- @tamagui/lucide-icons: ^1.90.7
-- @tamagui/slider: ^1.91.4
-- @tamagui/toast: ^1.90.7
-
-**Other**:
-- burnt: ^0.12.2
-- nativewind: ^4.0.36
+- resend: ^3.2.0
+- tamagui: ^1.94.4
+- zustand: ^4.5.2
 
 ## Installation Guide
 
@@ -96,6 +88,8 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 Make sure you have these prerequisites installed: [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) and [Expo CLI](https://docs.expo.dev/get-started/installation/).  
 
 ### 3.2 System Requirements
+
+For testing the app using Expo Go, you will need a compatible mobile device (iOS or Android) with the Expo Go app installed. For iOS development, Xcode must be installed to run the iOS simulator. For Android development, Android Studio or an Android device/emulator must be set up.
 
 ### 3.3 Installation Steps
 
@@ -160,6 +154,14 @@ Follow the below steps to download the build from the Expo Dashboard and run it 
 
 ### 4.2 Environment Setup
 
+To set up the environment, add a `.env` file to the root of the project directory in the following format, as in `.env.example`:
+```
+ANON_KEY=
+AUTOCOMPLETE_API_KEY=
+UPSTASH_TOKEN=
+RESEND_API_KEY=
+```
+
 ### 4.3 External Services Integration
 
 ## Usage Guide
@@ -170,6 +172,50 @@ Follow the below steps to download the build from the Expo Dashboard and run it 
 Our app uses Supabase to authenticate and authorize our users. Users may register by entering an email, password, and unique username. They must click on the confirmation link sent to their email address. Users can sign in using their email and password.
 
 ### 5.3 Core Functionality
+
+- User profile
+  - [must-have] As a user, I want to register for the app and login using my credentials, so that I can store and access my data.
+  - [must-have] As a user, I want to view and edit my profile, including my username, display name, avatar, bio, sports that I’m interested in, and my skill level in each sport.
+
+- CRUD operations on pickup games
+  - [must-have] As an organizer, I want to create a pick-up game so that others can join it.
+  - [must-have] As an organizer, I want to create a public game, so that any other users in my area can request to join the game.
+  - [must-have] As an organizer, I want to create a friends-only game, so that my friends can request to join the game.
+  - [must-have] As an organizer, I want to change my game’s visibility to public or friends-only, so that I can control who can view and request to join the game.
+  - [must-have] As an organizer, I want to edit a game’s title, description, location, date, time, maximum number of players, and sport, so that players can see the game's most up-to-date details.
+  - [must-have] As an organizer, I want to see a list of the games that I’ve organized, so that I can keep track of my upcoming games.
+  - [must-have] As a player, I want to see a list of my accepted games, so that I can quickly access game details.
+  - [must-have] As a player, I want games I’ve previously attended to no longer show up on my accepted games feed, so that I can clearly keep track of my current events.
+  - [must-have] As an organizer, I want to be warned if there is another event going on in the same location and time that I am setting up my event.
+  - [must-have] As an organizer, I want the addresses for my games to be autocompleted so I know I am submitting a valid address.
+
+- Join requests, joining, and leaving pickup games
+  - [must-have] As an organizer, I want accepted users to see my game’s location and non-accepted users to see the distance of my game’s location to their location.
+  - [must-have] As an organizer, I want to accept or reject user requests to join, so that I can control who can join the game.
+  - [must-have] As an organizer, I want to remove an accepted user from my game, so that they no longer have access to the game location or details.
+  - [must-have] As a player, I want to request to join a game so that I can see the game details.
+  - [must-have] As a player, I want to leave a game that I have already joined, so that I no longer receive game details or notifications.
+  - [nice-to-have] As a player, I want to bring a +1 to a game, so that they can come too while keeping the number of players below maximum capacity. 
+
+- Feed of nearby pickup games
+  - [must-have] As a player, I want to see a feed of public games in my area so that I know which games I could join.
+  - [must-have] As a player, I want my feed to also display games organized by my friends, so that I can request to join them.
+  - [must-have] As a player, I want to change the limit on game distance from me so that I can view games in my nearby area.
+  - [must-have] As a player, I want to be able to filter through games in my feed by skill level and sport type, so that I can join games relevant to me.
+
+- Friends
+  - [nice-to-have] As a player or organizer, I want to be able to click on another player in the accepted players list, join requests list, avatar in chatroom, or organizer in game view so I can view their profile.
+  - [must-have] As a user, I want to search for another user by username, so that I can view their profile.
+  - [must-have] As a user, I want to request to add a friend, so that we can view each other’s friends-only games in our feeds.
+  - [must-have] As a user, I want to accept a friend request, so that we can view each other’s friends-only games in our feeds.
+  - [must-have] As a user, I want to reject a friend request, so that they can’t see my friends-only games in their feed.
+  - [must-have] As a user, I want to be able to view my requests, so I can see who wants to become my friend.
+  - [must-have] As a user, I want to be able to view my friends list, so I can see all the users who I am currently friends with.
+  - [nice-to-have] As an organizer, I want to send notifications to my friends when I create an event, so that they are aware and can join.
+
+- Chatroom
+  - [nice-to-have] As a user, I want to be able to communicate with other accepted users through a game-specific chatroom, so that we can coordinate or discuss the game.
+  - [nice-to-have] As a player, I want to be able to quickly load and view chats from a chatroom so I don't have to wait for them to load.
 
 ### 5.4 Advanced Features
 
@@ -184,6 +230,12 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 ## Database Schema
 
 ### 7.1 Entity-Relationship Diagram
+
+Entity-Relationship Diagram:
+
+UML Diagram:
+
+![UML Diagram](assets/uml_diagram.png)
 
 ### 7.2 Table Definitions
 
@@ -206,6 +258,8 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 - `messages`: contains chatroom messages for each game chatroom.
 
 ### 7.3 Relationships and Constraints
+
+
 
 ## Testing
 
