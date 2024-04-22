@@ -250,9 +250,11 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 
 Entity-Relationship Diagram:
 
+![ERD Diagram](assets/erd-diagram.png)
+
 UML Diagram:
 
-![UML Diagram](assets/uml_diagram.png)
+![UML Diagram](assets/uml-diagram.png)
 
 ### 7.2 Table Definitions
 
