@@ -98,3 +98,93 @@ Follow the instructions to create a build [here](https://docs.expo.dev/build/set
 2. Login to your EAS account: `eas login`.
 3. For iOS: run `eas build --profile development-simulator --platform ios`. For Android: run `eas build --profile development --platform android`.
 4. Run `npx expo start --dev-client`.
+
+
+
+ERD:
+
+```mermaid 
+erDiagram
+    profiles ||--o{ sports : has
+    profiles ||--o{ games : assigned_to
+    friend_requests }o--|| profiles : associated_with_2
+    friends }o--|| profiles: associated_with_2
+    game_locations ||--|| games: associated_with
+    game_requests }o--|| games: associated_with
+    game_requests }o--|| profiles: associated_with
+    joined_game }o--o{ profiles: associated_with
+    messages }o--|| profiles: associated_with
+    games ||--o{ messages: associated_with
+
+    
+
+    game_locations {
+        uuid id PK
+        uuid game_id FK
+        string street
+        string city
+        string state
+        string zip
+        geography loc
+    }
+    friend_requests {
+        uuid id PK
+        timestampz created_at
+        uuid request_sent_by
+        uuid request_sent_to
+    }
+    friends {
+        uuid id PK
+        timestampz created_at 
+        uuid player1_id FK
+        uuid player2_id FK
+    }
+    game_requests {
+        uuid id PK
+        timestampz created_at
+        uuid game_id FK
+        uuid player_id FK
+        bool plus_one 
+    }
+    games {
+        uuid id PK
+        uuid organizer_id FK
+        string title
+        string description
+        timestampz created_at
+        timestampz datetime
+        string sport
+        int skill_level
+        int max_players
+        int current_players
+        bool is_public
+    }
+    joined_game {
+        uuid id PK
+        uuid player_id FK
+        uuid game_id FK
+        bool plus_one 
+    }
+    messages {
+        uuid id PK
+        timestampz sent_at
+        uuid game_id FK
+        uuid player_id FK
+        string content 
+    }
+    sports {
+        uuid id PK
+        uuid user_id FK
+        string name 
+        int skill_level
+    }
+    profiles {
+        uuid id PK
+        timestampz updated_at
+        string displaye_name
+        string avatar_url
+        string bio
+        string username
+        string email 
+    }
+```
