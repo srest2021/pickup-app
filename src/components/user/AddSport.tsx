@@ -24,7 +24,7 @@ const AddSport = () => {
   const { setSport } = useMutationSports();
 
   const handleSave = async () => {
-    const userSport = await setSport(sportName, convertSkillLevel());
+    const userSport = await setSport(sportName.toLowerCase(), convertSkillLevel());
   };
 
   function convertSkillLevel(): number {
