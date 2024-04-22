@@ -8,7 +8,7 @@ It can be difficult for people to organize future pick-up games or find live pic
 Our app allows users to organize, find, and join pick-up games in a convenient and streamlined manner. Users have access to nearby games that fit their skill level and match the desired sport, while organizers can share and coordinate games with their friends or anyone nearby. Organizers can control game visibility (public vs. private), accept or reject user requests to join a game, and invite specific users to join, allowing full control over who has access to the game location and details. Organizers can coordinate user responsibilities for bringing gear, equipment, and more. Users can add friends and communicate easily with each other through game-specific chatrooms.
 
 ### 1.2 Scope
-The scope of our app encompasses a social network for users to find and engage with their local community, make friends, and communicate with other players. Our app also functions as a tool for organizers to schedule and manage pickup games and their players. 
+The scope of our app encompasses a social network for users to find and engage with their local community, make friends, find nearby games, and communicate with other players. Our app also functions as a tool for organizers to schedule and manage pickup games and their players. 
 
 ### 1.3 Audience
 Our potential users include individuals who organize or want to organize pick-up games with their friends, as well as individuals looking to find and join pick-up games easily.
@@ -167,9 +167,20 @@ RESEND_API_KEY=
 ## Usage Guide
 
 ### 5.1 User Interface Overview
+For our user interface, our app is divided into four main views: Feed, My Games, Profile, and Friends.
+
+The Feed view contains a feed of nearby public games and a feed of friends-only games, along with an option to filter the feed.
+
+The My Games view contains a list of the user's published games and a list of the user's joined games, along with an option to create a new game. Published and joined games are managed by the user through this view.
+
+The Profile view contains the user's profile information and options to edit their profile or logout.
+
+The Friends view contains three tabs, one for viewing the friends list, one for viewing friend requests, and one for searching for other users. 
+
+In addition, users will be greated by a page for logging in or registering when they open the app for the first time. 
 
 ### 5.2 User Authentication
-Our app uses Supabase to authenticate and authorize our users. Users may register by entering an email, password, and unique username. They must click on the confirmation link sent to their email address. Users can sign in using their email and password.
+Our app uses Supabase to authenticate and authorize our users. Users may register by entering an email, password, and unique username. They must click on the confirmation link sent to their email address before they can login using their email and password.
 
 ### 5.3 Core Functionality
 
@@ -213,11 +224,17 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
   - [must-have] As a user, I want to be able to view my friends list, so I can see all the users who I am currently friends with.
   - [nice-to-have] As an organizer, I want to send notifications to my friends when I create an event, so that they are aware and can join.
 
+### 5.4 Advanced Features
+
+- Email notifications
+  - [nice-to-have] As an organizer, I want to send notifications to my friends when I create an event, so that they are aware and can join.
+  - The following user stories were not originally in the roadmap but are integrated features in the app:
+    - [nice-to-have] As a user, I want a notification to be sent to another user when I send them a friend request.
+    - [nice-to-have] As a player, I want a notification to be sent to the organizer of a game when I request to join.
+
 - Chatroom
   - [nice-to-have] As a user, I want to be able to communicate with other accepted users through a game-specific chatroom, so that we can coordinate or discuss the game.
   - [nice-to-have] As a player, I want to be able to quickly load and view chats from a chatroom so I don't have to wait for them to load.
-
-### 5.4 Advanced Features
 
 ## API Documentation (if applicable)
 
