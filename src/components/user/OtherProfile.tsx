@@ -61,8 +61,11 @@ export default function OtherProfile({
   // Get the height of the screen
   const windowHeight = Dimensions.get("window").height;
 
-  // Calculate the height for the top third
-  const topThirdHeight = windowHeight / 4;
+  // Calculate the banner height and the top margin for the avatar
+  const bannerHeight = windowHeight / 5;
+  const avatarHeight = 170;
+  const paddingHeight = 39;
+  const bannerMargin = bannerHeight - avatarHeight / 2 - paddingHeight;
 
   return (
     <View flex={1} backgroundColor="#f2f2f2">
@@ -90,11 +93,11 @@ export default function OtherProfile({
           >
             <View
               backgroundColor="#08348c"
-              height={topThirdHeight}
+              height={bannerHeight}
               padding="$7"
               overflow="visible"
             >
-              <View marginTop={topThirdHeight / 4.4}>
+              <View marginTop={bannerMargin}>
                 <Avatar
                   url={otherUser.avatarUrl}
                   user={otherUser}
@@ -103,6 +106,7 @@ export default function OtherProfile({
                 />
               </View>
             </View>
+
             {refreshing && (
               <Spinner
                 position="absolute"
@@ -118,8 +122,8 @@ export default function OtherProfile({
             <View padding="$7">
               <YStack space="$4" flex={1}>
                 <YStack
-                  marginTop={topThirdHeight / 4}
-                  space="$2"
+                  marginTop={bannerMargin + 15}
+                  space="$1"
                   paddingVertical="$3"
                   flex={1}
                 >
@@ -135,7 +139,12 @@ export default function OtherProfile({
                   </SizableText>
 
                   {otherUser.isFriend && (
-                    <View flex={1} alignItems="center" justifyContent="center">
+                    <View
+                      flex={1}
+                      alignItems="center"
+                      justifyContent="center"
+                      paddingTop="$2"
+                    >
                       <SizableText
                         textAlign="center"
                         color="#ffffff"

@@ -130,7 +130,7 @@ function useMutationUser() {
         avatar_url_param: avatar_url,
         updated_at_param: new Date(),
       };
-      const { error } = await supabase.rpc('update_profile', updates);
+      const { error } = await supabase.rpc("update_profile", updates);
       if (error) throw error;
 
       const updatedUser = {
@@ -145,7 +145,7 @@ function useMutationUser() {
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
-        Alert.alert("Error updating profile! Please try again later.")
+        Alert.alert("Error updating profile! Please try again later.");
       }
     } finally {
       setLoading(false);
