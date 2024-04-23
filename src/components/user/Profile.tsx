@@ -109,7 +109,8 @@ export default function Profile({ navigation }: { navigation: any }) {
             </View>
 
             <Button
-              icon={loading ? Loader : Edit3}
+              //icon={loading ? Loader : Edit3}
+              icon={Edit3}
               position="absolute"
               alignSelf="flex-end"
               right="$7"
@@ -122,7 +123,7 @@ export default function Profile({ navigation }: { navigation: any }) {
                 borderRadius: 50,
               }}
               theme="active"
-              disabled={loading}
+              //disabled={loading}
               onPress={() => navigation.navigate("EditProfile")}
               size="$6"
               variant="outlined"

@@ -845,7 +845,7 @@ returns table (
   with distances as (
     select 
       gl.game_id,
-      st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
+      st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters
     from game_locations gl
   )
   select 
@@ -893,7 +893,7 @@ returns table (
   from public.games as g
   join friends f on (
     (f.player1_id = g.organizer_id and f.player2_id = auth.uid()) 
-    or (f.player1_id = auth.uid() and f.player2_id =g.organizer_id)
+    or (f.player1_id = auth.uid() and f.player2_id = g.organizer_id)
   ) -- friends with the organizer
   join distances d on g.id = d.game_id
   where 
