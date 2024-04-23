@@ -124,18 +124,14 @@ function useMutationUser() {
       if (!session?.user) throw new Error("No user on the session!");
 
       const updates = {
-        id: session?.user.id,
-        username,
-        display_name,
-        bio,
-        avatar_url,
-        updated_at: new Date(),
+        username_param: username,
+        display_name_param: display_name,
+        bio_param: bio,
+        avatar_url_param: avatar_url,
+        updated_at_param: new Date(),
       };
-      const { error } = await supabase.from("profiles").upsert(updates);
-
-      if (error) {
-        throw error;
-      }
+      const { error } = await supabase.rpc('update_profile', updates);
+      if (error) throw error;
 
       const updatedUser = {
         displayName: display_name,
@@ -148,6 +144,8 @@ function useMutationUser() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error updating profile! Please try again later.")
       }
     } finally {
       setLoading(false);

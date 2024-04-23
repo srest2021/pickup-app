@@ -41,6 +41,20 @@ create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
+create or replace function update_profile(username_param text, display_name_param text, bio_param text, avatar_url_param text, updated_at_param timestamp with time zone)
+returns void as $$
+begin
+  update profiles
+  set
+    username = username_param,
+    display_name = display_name_param,
+    bio = bio_param,
+    avatar_url = avatar_url_param,
+    updated_at = updated_at_param
+  where profiles.id = auth.uid();
+end;
+$$ language plpgsql;
+
 -- avatar storage bucket
 
 insert into storage.buckets (id, name)
