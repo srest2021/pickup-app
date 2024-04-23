@@ -36,6 +36,8 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 **Additional technologies**:
 - **Version Control**: Git and GitHub
 - **Testing Frameworks**: Jest and Detox
+- **Caching**: Upstash Redis
+- **Email Notifications**: Resend
 
 ### 2.3 Dependencies
 - @babel/runtime: ^7.24.4
@@ -152,17 +154,37 @@ Follow the below steps to download the build from the Expo Dashboard and run it 
 
 ### 4.1 Configuration Parameters
 
+- `app.json`: contains app information such as name, slug, icon, splash icon, etc.
+- `babel.config.js`: configure presets and plugins such as NativeWind
+- `eas.json`: configure build profiles, distribution settings, and submission configurations for EAS
+- `jest.setup.js`: set up the Jest testing environment
+- `metro.config.js`: customize the Metro bundler configuration and integrate additional plugins like NativeWind 
+- `package.json`: define and manage dependencies
+- `tailwind.config.js`: configure Tailwind CSS
+- `tamagui.config.js`: configure Tamagui, specify theme configuration, etc.
+- `tsconfig.js`: configure TypeScript settings like compiler options, etc.
+
 ### 4.2 Environment Setup
 
-To set up the environment, add a `.env` file to the root of the project directory in the following format, as in `.env.example`:
-```
-ANON_KEY=
-AUTOCOMPLETE_API_KEY=
-UPSTASH_TOKEN=
-RESEND_API_KEY=
-```
+Refer to the Installation Guide's Prerequisites and System Requirements. 
+
+Run `npm install` to install all dependencies.
+
+To set up the environment variables, add a `.env` file to the root of the project directory in the following format, as in `.env.example`, and fill it out with the correct keys:
+  ```
+  ANON_KEY=
+  AUTOCOMPLETE_API_KEY=
+  UPSTASH_TOKEN=
+  RESEND_API_KEY=
+  ```
 
 ### 4.3 External Services Integration
+
+In order to use Pickup!, the following external keys/tokens are required in `.env`:
+- `ANON_KEY`: The Supabase anon key, which will allow queries to the Pickup! production database.
+- `AUTOCOMPLETE_API_KEY`: The `https://locationiq.com` API key necessary for the address autocomplete feature.
+- `UPSTASH_TOKEN`: The token for Upstash Redis necessary to handle the cache.
+- `RESEND_API_KEY`: The API key for Resend necessary to handle the email notifications.
 
 ## Usage Guide
 
@@ -238,11 +260,23 @@ Our app uses Supabase to authenticate and authorize our users. Users may registe
 
 ## API Documentation (if applicable)
 
+Since our app architecture uses Supabase as a BaaS, we do not have a publicly available API. 
+
+However, we do utilize several third-party APIs, listed below, in order to handle caching and get location information for games.
+
+1. `https://locationiq.com`: this API is necessary for our address autocomplete feature, which repeatedly searches for and presents matching addresses as the user types in an address. 
+2. `https://geocode.maps.co`: we query this API in order to get latitude and longitude coordinates for a given address on the backend. 
+3. `https://us1-pleased-kangaroo-41719.upstash.io`: we use Upstash Redis to handle caching for chatroom messages and other players' profile information. 
+4. `https://api.resend.com/emails`: we use Resend to implement email notifications on friends-only game creation, friend requests, and join requests. In order to make this work, we registered the `pickup-app-notifications.com` domain and built an Edge Function on Supabase that posts the body of the desired email to Resend. 
+
 ### 6.1 Endpoints
+None
 
 ### 6.2 Request and Response Formats
+None
 
 ### 6.3 Authentication and Authorization
+None
 
 ## Database Schema
 
@@ -278,7 +312,74 @@ UML Diagram:
 
 ### 7.3 Relationships and Constraints
 
+`profiles`
+- `id` uuid, cannot be null
+- `updated_at` timestamp with time zone, cannot be null
+- `display_name` text
+- `avatar_url` text
+- `bio` text `length(bio) < 500`
+- `username` text, must be unique, cannot be null, `length(username) < 20`, can contain letters, numbers, and underscores
+- `email` text, cannot be null
 
+`sports`
+- `id` uuid, cannot be null
+- `user_id` uuid, references `profiles.id`, cannot be null
+- `name` text, cannot be null
+- `skill_level` int4, cannot be null, `skill_level >= 0 and skill_level <= 2`
+
+`games`
+- `id` uuid, cannot be null
+- `organizer_id` uuid, references `profiles.id`, cannot be null
+- `title` text, cannot be null
+- `description` text, `length(description) < 500`
+- `created_at` timestamp with time zone, cannot be null
+- `datetime`timestamp with time zone, cannot be null,
+- `sport` text, cannot be null
+- `skill_level` int4, cannot be null, `skill_level >= 0 and skill_level <= 2`
+- `max_players` bigint, cannot be null, `max_players >= 1`
+- `current_players` bigint, cannot be null
+- `is_public` boolean, cannot be null
+
+`game_locations`
+- `id` uuid, cannot be null
+- `game_id` uuid, references `games.id`, cannot be null
+- `street` text, cannot be null
+- `city` text, cannot be null
+- `state` text, cannot be null
+- `zip` text, cannot be null
+- `loc` "extensions"."geography"(Point,4326)
+
+`joined_game`
+- `id` uuid, cannot be null
+- `player_id` uuid, references `profiles.id`, cannot be null
+- `game_id` uuid, references `games.id`, cannot be null
+- `plus_one` boolean, cannot be null
+
+`game_requests`
+- `id` uuid, cannot be null
+- `created_at` timestamp with time zone, cannot be null
+- `player_id` uuid, references `profiles.id`, cannot be null
+- `game_id` uuid, references `games.id`, cannot be null
+- `plus_one` boolean, cannot be null
+
+`friend_requests`
+- `id` uuid, cannot be null
+- `created_at` timestamp with time zone, cannot be null
+- `request_sent_by` uuid, references `profiles.id`, cannot be null
+- `request_sent_to` uuid, references `profiles.id`, cannot be null
+
+`friends`
+- `id` uuid, cannot be null
+- `created_at` timestamp with time zone, cannot be null
+- `player1_id` uuid, references `profiles.id`, cannot be null
+- `player2_id` uuid, references `profiles.id`, cannot be null
+
+`messages`
+- `id` uuid, cannot be null
+- `sent_at` timestamp with time zone, cannot be null
+- `player_id` uuid, references `profiles.id`, cannot be null
+- `game_id` uuid, references `games.id`, cannot be null
+- `content` text, cannot be null
 
 ## Testing
 
@@ -298,8 +399,10 @@ Our second approach, frontend tests, targets our frontend components and tests w
 
 ### 9.1 Deployment Process
 
-We build and deploy our app automatically on pushes to `main` via GitHub Actions using Expo EAS.
+We build and deploy our app automatically on pushes to `main` via GitHub Actions using Expo EAS. `.yml` scripts written to automate this process are available at `./.github/workflows`. 
 
 ## Glossary
 
 ### 12.1 Terms and Definitions
+
+None
