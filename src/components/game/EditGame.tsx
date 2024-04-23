@@ -17,7 +17,11 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
+import {
+  SkillLevel,
+  capitalizeFirstLetter,
+  capitalizedSports,
+} from "../../lib/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
@@ -57,7 +61,9 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
     selectedMyGame && selectedMyGame.address ? selectedMyGame.address.zip : "",
   );
   const [sport, setSport] = useState(
-    selectedMyGame && selectedMyGame.sport ? selectedMyGame.sport.name : "",
+    selectedMyGame && selectedMyGame.sport
+      ? capitalizeFirstLetter(selectedMyGame.sport.name)
+      : "",
   );
   const [skillLevel, setSkillLevel] = useState(
     selectedMyGame && selectedMyGame.sport
@@ -344,6 +350,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               </Label>
               <YStack space="$2">
                 <Input
+                  size="$5"
                   placeholder="Street"
                   value={
                     isSearchFocused
@@ -453,7 +460,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                       <Select.Label color={`orange`}>Sports</Select.Label>
                       {useMemo(
                         () =>
-                          sports.map((sport, i) => {
+                          capitalizedSports.map((sport, i) => {
                             return (
                               <Select.Item
                                 index={i}
@@ -467,7 +474,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                               </Select.Item>
                             );
                           }),
-                        [sports],
+                        [capitalizedSports],
                       )}
                     </Select.Group>
                   </Select.Viewport>
