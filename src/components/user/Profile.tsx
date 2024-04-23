@@ -75,7 +75,7 @@ export default function Profile({ navigation }: { navigation: any }) {
     <View flex={1} backgroundColor="#f2f2f2">
       <ToastViewport />
       <ToastDemo />
-      {!user ? (
+      {user ? (
         <View flex={1}>
           <View flex={1} backgroundColor="#08348c" flexDirection="column" />
           <View flex={1} flexDirection="column" />

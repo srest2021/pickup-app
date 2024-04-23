@@ -58,10 +58,8 @@ export default function OtherProfile({
     const friendRequest = await sendFriendRequest(otherUser!.id);
   };
 
-  // Get the height of the screen
-  const windowHeight = Dimensions.get("window").height;
-
   // Calculate the banner height and the top margin for the avatar
+  const windowHeight = Dimensions.get("window").height;
   const bannerHeight = windowHeight / 5;
   const avatarHeight = 170;
   const paddingHeight = 39;
@@ -75,6 +73,7 @@ export default function OtherProfile({
           <View flex={1} flexDirection="column" />
           <ScrollView
             style={{
+              flex: 1,
               position: "absolute",
               width: "100%",
               height: "100%",
