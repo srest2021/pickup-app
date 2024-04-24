@@ -90,7 +90,7 @@ View the tutorial to set up Supabase local development [here](https://supabase.c
 
 7. To run the unit tests: `npx supabase test db`.
 
-### Create a development build
+### Create and run a development build
 
 Follow the instructions to create a build [here](https://docs.expo.dev/build/setup/) and [here](https://docs.expo.dev/develop/development-builds/create-a-build/).
 
@@ -98,3 +98,6 @@ Follow the instructions to create a build [here](https://docs.expo.dev/build/set
 2. Login to your EAS account: `eas login`.
 3. For iOS: run `eas build --profile development-simulator --platform ios`. For Android: run `eas build --profile development --platform android`.
 4. Run `npx expo start --dev-client`.
+5. Download and unzip the build from the Expo dashboard.
+6. Open the Xcode simulator and drag the build onto the simulator screen.
+7. Open the Pickup! app.

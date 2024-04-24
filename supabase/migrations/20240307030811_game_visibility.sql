@@ -41,6 +41,20 @@ create or replace trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
+create or replace function update_profile(username_param text, display_name_param text, bio_param text, avatar_url_param text, updated_at_param timestamp with time zone)
+returns void as $$
+begin
+  update profiles
+  set
+    username = username_param,
+    display_name = display_name_param,
+    bio = bio_param,
+    avatar_url = avatar_url_param,
+    updated_at = updated_at_param
+  where profiles.id = auth.uid();
+end;
+$$ language plpgsql;
+
 -- avatar storage bucket
 
 insert into storage.buckets (id, name)
@@ -831,7 +845,7 @@ returns table (
   with distances as (
     select 
       gl.game_id,
-      st_distance(gl.loc, st_point($2, $1)::geography)/1609.344 as dist_meters
+      st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters
     from game_locations gl
   )
   select 
@@ -879,7 +893,7 @@ returns table (
   from public.games as g
   join friends f on (
     (f.player1_id = g.organizer_id and f.player2_id = auth.uid()) 
-    or (f.player1_id = auth.uid() and f.player2_id =g.organizer_id)
+    or (f.player1_id = auth.uid() and f.player2_id = g.organizer_id)
   ) -- friends with the organizer
   join distances d on g.id = d.game_id
   where 

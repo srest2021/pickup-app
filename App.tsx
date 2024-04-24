@@ -104,12 +104,12 @@ export default function App() {
                 initialParams={{ key: session.user.id }}
               />
               <Tab.Screen
-                name="My Profile"
-                component={EditProfileNavigator}
+                name="My Friends"
+                component={FriendNavigator}
                 options={{
-                  tabBarLabel: "Profile",
+                  tabBarLabel: "Friends",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <CircleUser
+                    <PersonStanding
                       color={focused ? focusedColor : notFocusedColor}
                     />
                   ),
@@ -118,12 +118,12 @@ export default function App() {
                 initialParams={{ key: session.user.id }}
               />
               <Tab.Screen
-                name="My Friends"
-                component={FriendNavigator}
+                name="My Profile"
+                component={EditProfileNavigator}
                 options={{
-                  tabBarLabel: "Friends",
+                  tabBarLabel: "Profile",
                   tabBarIcon: ({ color, size, focused }) => (
-                    <PersonStanding
+                    <CircleUser
                       color={focused ? focusedColor : notFocusedColor}
                     />
                   ),

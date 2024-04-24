@@ -6,27 +6,25 @@ import { useStore } from "../../lib/store";
 import useMutationUser from "../../hooks/use-mutation-user";
 
 export default function EditProfile({ navigation }: { navigation: any }) {
-  const [session, loading, user] = useStore((state) => [
-    state.session,
-    state.loading,
-    state.user,
-  ]);
+  const [session, user] = useStore((state) => [state.session, state.user]);
 
   const { updateProfile } = useMutationUser();
 
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [bio, setBio] = useState(user?.bio || "");
   const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatarUrl || "");
+  const [clicked, setClicked] = useState(false);
 
   const handleUpdate = async (
     username: string,
     displayName: string,
     bio: string,
     avatarUrl: string,
+    goBack: boolean,
   ) => {
     const update = await updateProfile(username, displayName, bio, avatarUrl);
     setAvatarUrl(avatarUrl);
-    navigation.goBack();
+    if (goBack) navigation.goBack();
   };
 
   return (
@@ -47,7 +45,7 @@ export default function EditProfile({ navigation }: { navigation: any }) {
                 url={avatarUrl}
                 user={user}
                 onUpload={(url: string) => {
-                  handleUpdate(user.username, displayName, bio, url);
+                  handleUpdate(user.username, displayName, bio, url, false);
                 }}
                 allowUpload={true}
               />
@@ -104,14 +102,22 @@ export default function EditProfile({ navigation }: { navigation: any }) {
                 color="#ff7403"
                 borderColor="#ff7403"
                 variant="outlined"
-                disabled={loading}
-                onPress={() =>
-                  handleUpdate(user.username, displayName, bio, avatarUrl)
-                }
+                disabled={clicked}
+                onPress={async () => {
+                  setClicked(true);
+                  await handleUpdate(
+                    user.username,
+                    displayName,
+                    bio,
+                    avatarUrl,
+                    true,
+                  );
+                  setClicked(false);
+                }}
                 size="$5"
                 width="94%"
               >
-                {loading ? "Loading..." : "Update"}
+                {clicked ? "Loading..." : "Update"}
               </Button>
             </YStack>
           </YStack>
