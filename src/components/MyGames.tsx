@@ -76,29 +76,30 @@ const MyGames = ({ navigation }: { navigation: any }) => {
               </Tabs.Tab>
             </Tabs.List>
           </Tabs>
-          <ScrollView
-            scrollEventThrottle={16}
-            showsVerticalScrollIndicator={false}
-            onScroll={(e) => {
-              const { contentOffset } = e.nativeEvent;
-              if (contentOffset.y < -50 && !refreshing) {
-                handleRefresh();
-              }
-            }}
-            contentContainerStyle={{ paddingTop: "$3" }}
-          >
-            {refreshing && (
-              <Spinner
-                size="large"
-                color="#ff7403"
-                testID="spinner"
-                paddingBottom="$3"
-              />
-            )}
 
-            {(myGamesToggle === "myGames" && myGames.length > 0) ||
-            (myGamesToggle === "joinedGames" && joinedGames.length > 0) ? (
-              myGamesToggle === "myGames" ? (
+          {(myGamesToggle === "myGames" && myGames.length > 0) ||
+          (myGamesToggle === "joinedGames" && joinedGames.length > 0) ? (
+            <ScrollView
+              scrollEventThrottle={16}
+              showsVerticalScrollIndicator={false}
+              onScroll={(e) => {
+                const { contentOffset } = e.nativeEvent;
+                if (contentOffset.y < -50 && !refreshing) {
+                  handleRefresh();
+                }
+              }}
+              contentContainerStyle={{ paddingTop: "$3" }}
+            >
+              {refreshing && (
+                <Spinner
+                  size="large"
+                  color="#ff7403"
+                  testID="spinner"
+                  paddingBottom="$3"
+                />
+              )}
+
+              {myGamesToggle === "myGames" ? (
                 <YStack space="$5" paddingTop={5} paddingBottom="$5">
                   {myGames.map((myGame) => (
                     <GameThumbnail
@@ -120,27 +121,23 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                     />
                   ))}
                 </YStack>
-              )
-            ) : refreshing ? (
-              myGamesToggle === "myGames" ? (
-                <View flex={1} alignSelf="center" justifyContent="center">
-                  <H4 textAlign="center">Loading published games...</H4>
-                </View>
-              ) : (
-                <View flex={1} alignSelf="center" justifyContent="center">
-                  <H4 textAlign="center">Loading joined games...</H4>
-                </View>
-              )
-            ) : (
-              <View flex={1} alignSelf="center" justifyContent="center">
-                <H4 textAlign="center">
-                  No {myGamesToggle === "myGames" ? "published" : "joined"}{" "}
-                  games.
-                </H4>
-                <Button title="Click to Refresh" onPress={handleRefresh} />
-              </View>
-            )}
-          </ScrollView>
+              )}
+            </ScrollView>
+          ) : refreshing ? (
+            <View flex={1} alignSelf="center" justifyContent="center">
+              <H4 textAlign="center">
+                Loading {myGamesToggle === "myGames" ? "published" : "joined"}{" "}
+                games...
+              </H4>
+            </View>
+          ) : (
+            <View flex={1} alignSelf="center" justifyContent="center">
+              <H4 textAlign="center">
+                No {myGamesToggle === "myGames" ? "published" : "joined"} games.
+              </H4>
+              <Button title="Click to Refresh" onPress={handleRefresh} />
+            </View>
+          )}
         </View>
       ) : (
         <View padding="$7" flex={1} alignSelf="center" justifyContent="center">

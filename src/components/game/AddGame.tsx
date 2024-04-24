@@ -18,7 +18,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useStore } from "../../lib/store";
 import { Check, ChevronDown, Unlock, Lock } from "@tamagui/lucide-icons";
-import { SkillLevel, sports } from "../../lib/types";
+import { SkillLevel, capitalizedSports } from "../../lib/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const AddGame = ({ navigation }: { navigation: any }) => {
@@ -37,7 +37,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
-  const [sport, setSport] = useState(sports[0].name);
+  const [sport, setSport] = useState(capitalizedSports[0].name);
   const [skillLevel, setSkillLevel] = useState("0");
   const [playerLimit, setPlayerLimit] = useState("1");
   const [description, setDescription] = useState("");
@@ -57,7 +57,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
     setCity("");
     setState("");
     setZip("");
-    setSport(sports[0].name);
+    setSport(capitalizedSports[0].name);
     setSkillLevel("0");
     setPlayerLimit("1");
     setDescription("");
@@ -445,7 +445,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                       <Select.Label color={"orange"}>Sports</Select.Label>
                       {useMemo(
                         () =>
-                          sports.map((sport, i) => {
+                          capitalizedSports.map((sport, i) => {
                             return (
                               <Select.Item
                                 index={i}
@@ -459,7 +459,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                               </Select.Item>
                             );
                           }),
-                        [sports],
+                        [capitalizedSports],
                       )}
                     </Select.Group>
                   </Select.Viewport>
