@@ -337,6 +337,7 @@ const AddGame = ({ navigation }: { navigation: any }) => {
                 <Input
                   size="$5"
                   placeholder="Street"
+                  testID="streetInput"
                   value={
                     isSearchFocused
                       ? searchTerm

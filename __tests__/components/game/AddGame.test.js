@@ -9,97 +9,156 @@ import AddGame from "../../../src/components/game/AddGame";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
+import { User } from "../../../src/lib/types";
 import { Alert } from "react-native";
+import { useStore } from "../../../src/lib/store";
+jest.useFakeTimers();
 
-// mock user
-const mockUser = {
-  id: "testid",
-  username: "testusername",
-  displayName: "test display name",
-  bio: "test bio",
-  avatarUrl: "test avatar url",
-  sports: [],
-};
 
-// mock session with user object
-const mockSession = {
-  access_token: "access_token_test_string",
-  refresh_token: "refresh_token_test_string",
-  expires_in: 90000000,
-  token_type: "token_type_test",
-  user: mockUser,
-};
 
-// mock useMutationUser hook
-jest.mock("../../../src/hooks/use-mutation-user", () => ({
-  __esModule: true,
-  default: jest.fn(() => ({
-    session: mockSession,
-    setSession: jest.fn(),
-    user: mockUser,
-  })),
-}));
 
-// mock store
-jest.mock("../../../src/lib/store", () => ({
-  useStore: jest.fn(() => [false, { user: { id: "testid" } }]),
-}));
+/*
+    jest.mock("../../../src/lib/store", () => ({
+      useStore: jest.fn(() => [false, null, null]), // Mocking no session
+    }));
+    describe("AddGame", () => {
+      test("should prompt user to log in when there is no session", async () => {
+        
+        let loginMessage = screen.getByText("Log in to create a new game!")
 
-// mock useMutationGame hook
-const mockCreateGameById = jest.fn();
-jest.mock("../../../src/hooks/use-mutation-game", () => () => ({
-  createGame: mockCreateGameById,
-}));
+    
+        // Render the component
+        const { root } = render(
+          <TamaguiProvider config={appConfig}>
+            <AddGame navigation={{ navigate: jest.fn() }} />
+          </TamaguiProvider>,
+        );
+    
+        // Wait for the component to render
+        await waitFor(() => {
+          // Check if the user is prompted to log in
+          expect(loginMessage).toBeTruthy();
+        });
+      });
+    });
+    
+    jest.clearAllMocks();
+    jest.resetModules();
+    // mock store
+  */
+    jest.mock("../../../src/lib/store", () => ({
+      
+      useStore: jest.fn(() => [false, null, {
+        access_token: "access_token_test_string",
+        refresh_token: "refresh_token_test_string",
+        expires_in: 90000000,
+        token_type: "token_type_test",
+        user: {
+          id: "testid",
+          username: "testusername",
+          displayName: "test display name",
+          bio: "test bio",
+          avatarUrl: "test avatar url",
+          sports: [],
+          }}]),
+      
+    }));
+
+
+
 
 describe("AddGame", () => {
-  test("Should render component successfully", () => {
+  
+  test("Should render component successfully", async () => {
+  
+    
     const navigation = { navigate: jest.fn() };
-
+    //console.log(useStore());
+    //console.log(useStore()[1]); // This logs the second element of the array returned by useStore
+    //console.log(useStore()[2].user); // Access session.user directly from the third element of the array returned by useStore
+    //console.log(session);
+    //console.log(user);
+    
     const { root } = render(
       <TamaguiProvider config={appConfig}>
         <AddGame navigation={navigation} />
       </TamaguiProvider>,
     );
-
+    
+  
+    
+    await act(async () => {
     // Check form elements are rendered.
+    //let titleInput;
     const titleInput = screen.getByTestId("titleInput");
-    expect(titleInput).toBeTruthy();
+    //console.log(titleInput);
+ 
 
+    
     const datePicker = screen.getByTestId("dateInput");
+    const timePicker = screen.getByTestId("timeInput");
+    const visibilitySwitch = screen.getByTestId("visibilityInput");
+    const streetInput = screen.getByTestId("streetInput");
+    const cityInput = screen.getByTestId("cityInput");
+    const stateInput = screen.getByTestId("stateInput");
+    const zipInput = screen.getByTestId("zipInput");
+    const skillInput = screen.getByTestId("skillInput");
+    const maxPlayerInput = screen.getByTestId("maxPlayerInput");
+    const descriptionInput = screen.getByTestId("descriptionInput");
+    const publishButton = screen.getByTestId("addGameButton");
+    
+
+
+
+
+
+
+
+
+    //await act(async () => {
+      
+    //const titleInput = screen.getByTestId("titleInput");
+     // expect(titleInput).toBeTruthy();
+
+    //const datePicker = screen.getByTestId("dateInput");
     expect(datePicker).toBeTruthy();
 
-    const timePicker = screen.getByTestId("timeInput");
+    //const timePicker = screen.getByTestId("timeInput");
     expect(timePicker).toBeTruthy();
 
-    const visibilitySwitch = screen.getByTestId("visibilityInput");
+    //const visibilitySwitch = screen.getByTestId("visibilityInput");
     expect(visibilitySwitch).toBeTruthy();
 
-    const streetInput = screen.getByTestId("streetInput");
+    //const streetInput = screen.getByTestId("streetInput");
     expect(streetInput).toBeTruthy();
 
-    const cityInput = screen.getByTestId("cityInput");
+    //const cityInput = screen.getByTestId("cityInput");
     expect(cityInput).toBeTruthy();
 
-    const stateInput = screen.getByTestId("stateInput");
+    //const stateInput = screen.getByTestId("stateInput");
     expect(stateInput).toBeTruthy();
 
-    const zipInput = screen.getByTestId("zipInput");
+    //const zipInput = screen.getByTestId("zipInput");
     expect(zipInput).toBeTruthy();
 
-    const skillInput = screen.getByTestId("skillInput");
+    //const skillInput = screen.getByTestId("skillInput");
     expect(skillInput).toBeTruthy();
 
-    const maxPlayerInput = screen.getByTestId("maxPlayerInput");
+    //const maxPlayerInput = screen.getByTestId("maxPlayerInput");
     expect(maxPlayerInput).toBeTruthy();
 
-    const descriptionInput = screen.getByTestId("descriptionInput");
+    //const descriptionInput = screen.getByTestId("descriptionInput");
     expect(descriptionInput).toBeTruthy();
 
-    const publishButton = screen.getByTestId("addGameButton");
+    //const publishButton = screen.getByTestId("addGameButton");
     expect(publishButton).toBeTruthy();
 
     expect(root).toBeTruthy();
+    
   });
+});
+    //});
+  
 });
 
 describe("AddGame", () => {
@@ -149,12 +208,13 @@ describe("AddGame", () => {
         "Test Description",
         true,
       );
-
+      expect(clearGameAttributes).toHaveBeenCalled();
       // Ensure navigation to 'MyGames' is triggered after creating the game
       expect(navigation.navigate).toHaveBeenCalledWith("MyGames");
+
     });
   });
-});
+
 
 describe("AddGame", () => {
   beforeEach(() => {
@@ -200,4 +260,57 @@ describe("AddGame", () => {
       );
     });
   });
+
+  test("Should display alert when selected date and time are in the past", async () => {
+    const navigation = { navigate: jest.fn() };
+    const { getByTestId } = render(
+      <TamaguiProvider config={appConfig}>
+        <AddGame navigation={navigation} />
+      </TamaguiProvider>
+    );
+  
+    // Set date and time to a past date/time
+    const dateInput = getByTestId("dateInput");
+    fireEvent.changeText(dateInput, new Date("2020-01-01"));
+  
+    const timeInput = getByTestId("timeInput");
+    fireEvent.changeText(timeInput, new Date("2020-01-01T00:00:00"));
+  
+    // Click the "Publish" button to create a new game
+    const addGameButton = getByTestId("addGameButton");
+    fireEvent.press(addGameButton);
+  
+    // Check if alert message is displayed
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalled();
+    });
+  });
 });
+
+});
+/*
+jest.mock("../../../src/lib/store", () => ({
+  useStore: jest.fn(() => [false, null, null]
+)})),
+
+describe("AddGame", () => {
+  beforeEach(() => {
+    jest.spyOn(Alert, "alert");
+  });
+  test("Should display login message when there is no session", async () => {
+  const navigation = { navigate: jest.fn() };
+    // Render the AddGame component without providing a session
+    const { getByText } = render(
+      <TamaguiProvider config={appConfig}>
+        <AddGame navigation={navigation} />
+      </TamaguiProvider>
+    );
+    console.log(useStore()[2]);
+
+    // Check if the login message is displayed
+    const loginMessage = getByText("Log in to create a new game!");
+    expect(loginMessage).toBeTruthy();
+  });
+});
+
+*/
