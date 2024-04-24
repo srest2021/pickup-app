@@ -178,7 +178,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
 
                 <YStack paddingBottom="$5">
                   <GamePlayers
-                    navigation={undefined}
+                    navigation={navigation}
                     game={selectedFeedGame}
                     gametype="feed"
                   />
