@@ -503,6 +503,8 @@ function useMutationGame() {
     requestToJoinById,
     leaveJoinedGameById,
     checkGameOverlap,
+    sendEmailToFriends, //added for testing
+    sendEmailForJoinRequest, //added for testing
   };
 }
 
