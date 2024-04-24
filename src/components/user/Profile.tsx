@@ -186,6 +186,19 @@ export default function Profile({ navigation }: { navigation: any }) {
       ) : (
         <View flex={1} alignSelf="center" justifyContent="center">
           <H4 textAlign="center">No user on the session.</H4>
+          <YStack space="$6" alignItems="center" paddingTop="$3">
+            <Button
+              variant="outlined"
+              onPress={() => handleLogOut()}
+              size="$5"
+              color="#ff7403"
+              borderColor="#ff7403"
+              backgroundColor={"#ffffff"}
+              width="100%"
+            >
+              Log Out
+            </Button>
+          </YStack>
         </View>
       )}
     </View>
