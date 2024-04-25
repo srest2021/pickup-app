@@ -3,17 +3,19 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Message } from "../lib/types";
+import { addMessageToCache, getChatroomCacheKey } from "../lib/upstash-redis";
 
 function useMutationMessages() {
-  const [session, setLoading, channel, roomCode, addMessage] = useStore(
+  const [session, setLoading, channel, roomCode] = useStore(
     (state) => [
       state.session,
       state.setLoading,
       state.channel,
       state.roomCode,
-      state.addMessage,
     ],
   );
+
+  const cacheKey = getChatroomCacheKey(roomCode);
 
   const addChatroomMessage = async (content: string) => {
     try {
@@ -28,6 +30,9 @@ function useMutationMessages() {
 
       if (data) {
         const message: Message = data;
+
+        // add message to cache
+        addMessageToCache(cacheKey, message);
 
         // broadcast message through channel
         channel?.send({

@@ -3,7 +3,7 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Message, ThumbnailUser } from "../lib/types";
-import { redis, MESSAGE_LIMIT } from "../lib/upstash-redis";
+import { redis, MESSAGE_LIMIT, getChatroomCacheKey, addMessageToCache, addMessagesToCache } from "../lib/upstash-redis";
 
 function useQueryMessages() {
   const [
@@ -29,18 +29,8 @@ function useQueryMessages() {
   ]);
 
   const username = user?.username;
-  const cacheKey = `room:${roomCode}`;
-
-  const addMessageToCache = async (payload: any) => {
-    await redis.lpush(cacheKey, payload);
-    await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
-  };
-
-  const addMessagesToCache = async (messages: Message[]) => {
-    await redis.lpush(cacheKey, ...messages);
-    await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
-  };
-
+  const cacheKey = getChatroomCacheKey(roomCode);
+  
   useEffect(() => {
     if (roomCode && username) {
       const channel = supabase.channel(`room:${roomCode}`, {
@@ -55,9 +45,6 @@ function useQueryMessages() {
       channel.on("broadcast", { event: "message" }, ({ payload }) => {
         // add message to store
         addMessage(payload);
-
-        // add message to cache
-        addMessageToCache(payload);
       });
 
       channel.subscribe();
@@ -120,12 +107,13 @@ function useQueryMessages() {
         0,
         MESSAGE_LIMIT,
       );
+
       let mostRecentSentAt = null;
       if (cachedData && cachedData.length > 0) {
+        // get most recent sent_at
+        mostRecentSentAt = cachedData[0].sentAt;
         // set store
         setMessages(cachedData.reverse());
-        // get most recent sent_at
-        mostRecentSentAt = cachedData[cachedData.length - 1].sentAt;
       }
 
       // get all messages from supabase past that sent_at (where sent_at > date)
@@ -165,12 +153,12 @@ function useQueryMessages() {
               avatarUrl: message.profiles.avatarUrl,
             } as ThumbnailUser,
           }));
-
+          
           // add to store
           addMessages(messages);
 
           // add to cache
-          addMessagesToCache(messages);
+          addMessagesToCache(cacheKey, messages);
         }
       } else {
         throw new Error("Error getting messages! Please try again later.");

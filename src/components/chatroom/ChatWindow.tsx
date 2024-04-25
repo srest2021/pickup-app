@@ -4,15 +4,14 @@ import { useEffect, useRef } from "react";
 import useQueryMessages from "../../hooks/use-query-messages";
 import MyMessage from "./MyMessage";
 import OtherMessage from "./OtherMessage";
-import { ScrollView, Alert } from "react-native";
-import { supabase } from "../../lib/supabase";
+import { ScrollView } from "react-native";
 import useQueryAvatars from "../../hooks/use-query-avatars";
 
 const ChatWindow = ({ navigation }: { navigation: any }) => {
-  const [user, messages, setMessages] = useStore((state) => [
+  const [user, messages, clearMessages] = useStore((state) => [
     state.user,
     state.messages,
-    state.setMessages,
+    state.clearMessages,
   ]);
 
   const { getChatroomMessages, getChatroomUsers } = useQueryMessages();
@@ -35,7 +34,7 @@ const ChatWindow = ({ navigation }: { navigation: any }) => {
     };
     getData();
     return () => {
-      setMessages([]);
+      clearMessages();
     };
   }, []);
 
