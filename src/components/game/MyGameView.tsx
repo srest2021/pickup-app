@@ -18,17 +18,23 @@ import SportSkill from "../SportSkill";
 import MyGamePlayers from "./MyGamePlayers";
 import { Lock, MessageCircle, Unlock } from "@tamagui/lucide-icons";
 import { capitalizeFirstLetter } from "../../lib/types";
+import { useState } from "react";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
-  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
-  const [session, user, loading, setRoomCode] = useStore((state) => [
-    state.session,
-    state.user,
-    state.loading,
-    state.setRoomCode,
-  ]);
+  const [session, user, loading, setRoomCode, selectedMyGame] = useStore(
+    (state) => [
+      state.session,
+      state.user,
+      state.loading,
+      state.setRoomCode,
+      state.selectedMyGame,
+    ],
+  );
+
+  const [deleteClicked, setDeleteClicked] = useState(false);
+
   const { removeMyGameById } = useMutationGame();
 
   let sportNameCapitalized = "";
@@ -37,7 +43,9 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   }
 
   const deleteGame = async () => {
+    setDeleteClicked(true);
     const removedId = await removeMyGameById(gameId);
+    setDeleteClicked(false);
     // navigate back to myGames list.
     if (removedId) {
       navigation.goBack();
@@ -183,7 +191,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     onPress={() => deleteGame()}
                     disabled={loading}
                   >
-                    Delete
+                    {deleteClicked ? "Loading..." : "Delete"}
                   </Button>
                 </XStack>
               </YStack>

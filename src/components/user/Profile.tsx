@@ -155,7 +155,9 @@ export default function Profile({ navigation }: { navigation: any }) {
                         paddingTop="$3"
                         paddingBottom="$3"
                       >
-                        {user.bio ? user.bio : "No bio yet"}
+                        {user.bio && user.bio.trim().length > 0
+                          ? user.bio
+                          : "No bio yet"}
                       </SizableText>
                     </View>
                   </Card>
