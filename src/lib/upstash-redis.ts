@@ -13,14 +13,17 @@ export const redis = new Redis({
 
 export const getChatroomCacheKey = (roomCode: string | null) => {
   return `room:${roomCode}`;
-}
+};
 
 export const addMessageToCache = async (cacheKey: string, payload: any) => {
   await redis.lpush(cacheKey, payload);
   await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
 };
 
-export const addMessagesToCache = async (cacheKey: string, messages: Message[]) => {
+export const addMessagesToCache = async (
+  cacheKey: string,
+  messages: Message[],
+) => {
   await redis.lpush(cacheKey, ...messages);
   await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
 };

@@ -30,14 +30,12 @@ function useQueryUsers() {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
-      console.log("AWAIT")
       const { data, error } = await supabase
         .from("profiles")
         .select("id, username, display_name, bio, avatar_url")
         .or(`username.ilike.%${input}%, display_name.ilike.%${input}%`)
         .not("id", "eq", session.user.id)
         .order("username", { ascending: true });
-      console.log("GOT")
       if (error) throw error;
       if (data) {
         const users = data.map((elem: any) => {
@@ -50,7 +48,6 @@ function useQueryUsers() {
           };
           return user;
         });
-        console.log("setting results for ",input)
         setSearchResults(users);
 
         const avatarUrls = data.map((elem: any) => ({

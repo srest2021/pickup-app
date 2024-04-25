@@ -8,14 +8,13 @@ import {
   YGroup,
   SizableText,
 } from "tamagui";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input, Form } from "tamagui";
-import { Search, UserSearch } from "@tamagui/lucide-icons";
+import { Search } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import { ThumbnailUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import { useStore } from "../../lib/store";
-import { debounce } from "lodash";
 import { Alert } from "react-native";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
@@ -28,20 +27,9 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [currentInput, setCurrentInput] = useState<string>("");
   const [searching, setSearching] = useState(false);
 
-  const debouncedSearch = useCallback(
-    debounce(async (input: string) => {
-      setSearching(true);
-      console.log("debounced search: ",input)
-      await searchByUsername(input.trim(), true);
-      setSearching(false);
-    }, 300),
-    [],
-  );
-
   const regularSearch = async () => {
     if (currentInput.trim().length > 0) {
       setSearching(true);
-      debouncedSearch.cancel();
       await searchByUsername(currentInput.trim(), false);
       setSearching(false);
     } else {
@@ -49,18 +37,9 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
     }
   };
 
-  const handleTextChange = async (input: string) => {
-    setCurrentInput(input);
-    if (input.trim().length > 0) {
-      debouncedSearch.cancel();
-      debouncedSearch(input);
-    }
-  };
-
-  // clear pending debounced calls on component unmount
   useEffect(() => {
     return () => {
-      debouncedSearch.cancel();
+      setResults(null);
     };
   }, []);
 
@@ -74,7 +53,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
               borderWidth={2}
               placeholder="Search for other users"
               autoCapitalize="none"
-              onChangeText={(text: string) => handleTextChange(text)}
+              onChangeText={(text: string) => setCurrentInput(text)}
               value={currentInput}
             />
             <Form.Trigger asChild>
@@ -86,7 +65,6 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
                 backgroundColor="#e54b07"
                 icon={
                   searching ? (
-                    
                     () => <Spinner color="#ffffff" />
                   ) : (
                     <Search color="#ffffff" />
@@ -146,7 +124,6 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
           onPress={() => {
             setResults(null);
             setCurrentInput("");
-            debouncedSearch.cancel();
             setSearching(false);
           }}
         >

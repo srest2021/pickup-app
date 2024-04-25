@@ -6,14 +6,12 @@ import { Message } from "../lib/types";
 import { addMessageToCache, getChatroomCacheKey } from "../lib/upstash-redis";
 
 function useMutationMessages() {
-  const [session, setLoading, channel, roomCode] = useStore(
-    (state) => [
-      state.session,
-      state.setLoading,
-      state.channel,
-      state.roomCode,
-    ],
-  );
+  const [session, setLoading, channel, roomCode] = useStore((state) => [
+    state.session,
+    state.setLoading,
+    state.channel,
+    state.roomCode,
+  ]);
 
   const cacheKey = getChatroomCacheKey(roomCode);
 

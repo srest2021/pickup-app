@@ -3,7 +3,13 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Message, ThumbnailUser } from "../lib/types";
-import { redis, MESSAGE_LIMIT, getChatroomCacheKey, addMessageToCache, addMessagesToCache } from "../lib/upstash-redis";
+import {
+  redis,
+  MESSAGE_LIMIT,
+  getChatroomCacheKey,
+  addMessageToCache,
+  addMessagesToCache,
+} from "../lib/upstash-redis";
 
 function useQueryMessages() {
   const [
@@ -30,7 +36,7 @@ function useQueryMessages() {
 
   const username = user?.username;
   const cacheKey = getChatroomCacheKey(roomCode);
-  
+
   useEffect(() => {
     if (roomCode && username) {
       const channel = supabase.channel(`room:${roomCode}`, {
@@ -153,7 +159,7 @@ function useQueryMessages() {
               avatarUrl: message.profiles.avatarUrl,
             } as ThumbnailUser,
           }));
-          
+
           // add to store
           addMessages(messages);
 
