@@ -26,14 +26,14 @@ function useQueryUsers() {
     state.addAvatarUrls,
   ]);
 
-  const searchByUsername = async (username: string) => {
+  const searchByUsername = async (input: string, debounced: boolean) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
       const { data, error } = await supabase
         .from("profiles")
         .select("id, username, display_name, bio, avatar_url")
-        .or(`username.ilike.%${username}%, display_name.ilike.%${username}%`)
+        .or(`username.ilike.%${input}%, display_name.ilike.%${input}%`)
         .not("id", "eq", session.user.id)
         .order("username", { ascending: true });
       if (error) throw error;
@@ -48,7 +48,7 @@ function useQueryUsers() {
           };
           return user;
         });
-        setSearchResults(users);
+        if (!debounced) setSearchResults(users);
 
         const avatarUrls = data.map((elem: any) => ({
           userId: elem.id,
@@ -56,6 +56,8 @@ function useQueryUsers() {
           avatarUrl: null,
         }));
         addAvatarUrls(avatarUrls);
+        
+        if (debounced) return users;
       } else {
         throw new Error(
           "Error processing your search! Please try again later.",

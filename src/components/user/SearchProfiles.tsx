@@ -8,7 +8,7 @@ import {
   YGroup,
   SizableText,
 } from "tamagui";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Input, Form } from "tamagui";
 import { UserSearch } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
@@ -16,6 +16,7 @@ import { ThumbnailUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import { useStore } from "../../lib/store";
 import { debounce } from "lodash";
+import { Alert } from "react-native";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [loading, results, setResults] = useStore((state) => [
@@ -26,26 +27,42 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const { searchByUsername } = useQueryUsers();
   const [currentInput, setCurrentInput] = useState<string>("");
   const [searching, setSearching] = useState(false);
+  const latestInputRef = useRef('');
 
   const debouncedSearch = useCallback(
     debounce(async (input: string) => {
       setSearching(true);
-      await searchByUsername(input.trim());
+      console.log("debounced search: ",input)
+      const users = await searchByUsername(input.trim(), true);
+      if (users && input.trim() === latestInputRef.current) {
+        console.log(`setting results for: ${input.trim()} ${latestInputRef.current}`)
+        setResults(users);
+      } else {
+        console.log(`skipping results for: ${input.trim()} ${currentInput.trim()}`)
+      }
       setSearching(false);
     }, 300),
     [],
   );
 
   const regularSearch = async () => {
-    setSearching(true);
-    await searchByUsername(currentInput.trim());
-    setSearching(false);
+    if (currentInput.trim().length > 0) {
+      setSearching(true);
+      await searchByUsername(currentInput.trim(), false);
+      setSearching(false);
+    } else {
+      Alert.alert("Search field cannot be empty!");
+    }
   };
 
   const handleTextChange = async (input: string) => {
+    console.log("HELLO?")
     setCurrentInput(input);
+    latestInputRef.current = input.trim();
     if (input.trim().length > 0) {
       debouncedSearch(input);
+    } else {
+      console.log("no")
     }
   };
 
@@ -64,7 +81,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
             <Input
               flex={1}
               borderWidth={2}
-              placeholder="Search by username"
+              placeholder="Search for other users"
               autoCapitalize="none"
               onChangeText={(text: string) => handleTextChange(text)}
               value={currentInput}
@@ -121,7 +138,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
               </View>
             )
           ) : (
-            !loading && (
+            !searching && (
               <View flex={1} alignSelf="center" justifyContent="center">
                 <SizableText size="$5" textAlign="center">
                   No search yet.
