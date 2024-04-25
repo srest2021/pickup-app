@@ -181,7 +181,7 @@ export default function OtherProfile({
                   {!otherUser.isFriend && (
                     <Button
                       variant="outlined"
-                      disabled={otherUser.hasRequested || otherUser.isFriend}
+                      disabled={otherUser.hasRequested || otherUser.isFriend || loading}
                       onPress={() => handleRequestLogic()}
                       size="$5"
                       color="#ff7403"

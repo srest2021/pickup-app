@@ -267,6 +267,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                           <AlertDialog.Action asChild>
                             <Button
                               theme="active"
+                              disabled={loading}
                               onPress={() => requestToJoinGame()}
                             >
                               Request
