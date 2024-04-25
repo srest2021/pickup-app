@@ -186,6 +186,7 @@ const JoinedGameView = ({
                     borderColor="#ff7403"
                     backgroundColor="#ffffff"
                     flex={1}
+                    disabled={loading}
                     onPress={() => leaveJoinedGame()}
                   >
                     {loading ? "Loading..." : "Leave Game"}
