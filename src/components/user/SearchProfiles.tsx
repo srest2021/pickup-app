@@ -10,7 +10,7 @@ import {
 } from "tamagui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Input, Form } from "tamagui";
-import { UserSearch } from "@tamagui/lucide-icons";
+import { Search, UserSearch } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import { ThumbnailUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
@@ -27,19 +27,12 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const { searchByUsername } = useQueryUsers();
   const [currentInput, setCurrentInput] = useState<string>("");
   const [searching, setSearching] = useState(false);
-  const latestInputRef = useRef('');
 
   const debouncedSearch = useCallback(
     debounce(async (input: string) => {
       setSearching(true);
       console.log("debounced search: ",input)
-      const users = await searchByUsername(input.trim(), true);
-      if (users && input.trim() === latestInputRef.current) {
-        console.log(`setting results for: ${input.trim()} ${latestInputRef.current}`)
-        setResults(users);
-      } else {
-        console.log(`skipping results for: ${input.trim()} ${currentInput.trim()}`)
-      }
+      await searchByUsername(input.trim(), true);
       setSearching(false);
     }, 300),
     [],
@@ -48,6 +41,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const regularSearch = async () => {
     if (currentInput.trim().length > 0) {
       setSearching(true);
+      debouncedSearch.cancel();
       await searchByUsername(currentInput.trim(), false);
       setSearching(false);
     } else {
@@ -56,13 +50,10 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   };
 
   const handleTextChange = async (input: string) => {
-    console.log("HELLO?")
     setCurrentInput(input);
-    latestInputRef.current = input.trim();
     if (input.trim().length > 0) {
+      debouncedSearch.cancel();
       debouncedSearch(input);
-    } else {
-      console.log("no")
     }
   };
 
@@ -95,9 +86,10 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
                 backgroundColor="#e54b07"
                 icon={
                   searching ? (
+                    
                     () => <Spinner color="#ffffff" />
                   ) : (
-                    <UserSearch color="#ffffff" />
+                    <Search color="#ffffff" />
                   )
                 }
               ></Button>
@@ -154,6 +146,8 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
           onPress={() => {
             setResults(null);
             setCurrentInput("");
+            debouncedSearch.cancel();
+            setSearching(false);
           }}
         >
           Clear All
