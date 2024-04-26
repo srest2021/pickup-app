@@ -38,6 +38,7 @@ const JoinedGameView = ({
     setRoomCode,
     selectedJoinedGame,
     clearSelectedJoinedGame,
+    updateJoinedGame,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -45,6 +46,7 @@ const JoinedGameView = ({
     state.setRoomCode,
     state.selectedJoinedGame,
     state.clearSelectedJoinedGame,
+    state.updateJoinedGame,
   ]);
 
   const { leaveJoinedGameById } = useMutationGame();
@@ -56,7 +58,8 @@ const JoinedGameView = ({
   }
 
   useEffect(() => {
-    if (!(selectedJoinedGame?.address)) fetchGameAddress(gameId, "joined");
+    updateJoinedGame(gameId, { acceptedPlayers: null });
+    if (!selectedJoinedGame?.address) fetchGameAddress(gameId, "joined");
     fetchGameAcceptedPlayers(gameId, selectedJoinedGame?.organizerId, "joined");
 
     return () => {

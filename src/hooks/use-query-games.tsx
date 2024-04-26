@@ -255,9 +255,9 @@ function useQueryGames() {
           zip: data.zip,
         };
         if (gameType === "my") {
-          updateMyGame(gameId, { address }, true);
+          updateMyGame(gameId, { address });
         } else if (gameType === "joined") {
-          updateJoinedGame(gameId, { address }, true);
+          updateJoinedGame(gameId, { address });
         }
       } else {
         throw new Error("Error fetching feed games! Please try again later.");
@@ -273,14 +273,18 @@ function useQueryGames() {
     }
   };
 
-  const fetchGameAcceptedPlayers = async (gameId: string, organizerId: string | undefined, gameType: string) => {
+  const fetchGameAcceptedPlayers = async (
+    gameId: string,
+    organizerId: string | undefined,
+    gameType: string,
+  ) => {
     try {
       if (!session?.user)
         throw new Error("Please sign in to view accepted players!");
 
       let { data, error } = await supabase.rpc("get_accepted_players", {
         game_id_param: gameId,
-        organizer_id: organizerId
+        organizer_id: organizerId,
       });
       if (error) throw error;
       if (data == null) data = [];
@@ -289,17 +293,17 @@ function useQueryGames() {
         updateMyGame(gameId, {
           acceptedPlayers: data,
           currentPlayers: data.length + 1,
-        }, false);
+        });
       } else if (gameType === "joined") {
         updateJoinedGame(gameId, {
           acceptedPlayers: data,
           currentPlayers: data.length + 1,
-        }, false);
+        });
       } else if (gameType === "feed") {
         updateFeedGame(gameId, {
           acceptedPlayers: data,
           currentPlayers: data.length + 1,
-        }, false);
+        });
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -314,12 +318,13 @@ function useQueryGames() {
     try {
       if (!session?.user)
         throw new Error("Please sign in to view join requests!");
+      //updateMyGame(gameId, { joinRequests: null });
       let { data, error } = await supabase.rpc("get_join_requests", {
         game_id_param: gameId,
       });
       if (error) throw error;
       if (data == null) data = [];
-      updateMyGame(gameId, { joinRequests: data }, false);
+      updateMyGame(gameId, { joinRequests: data });
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -336,7 +341,7 @@ function useQueryGames() {
         game_id_param: gameId,
       });
       if (error) throw error;
-      //updateFeedGame(gameId, { hasRequested: data }, false);
+      updateFeedGame(gameId, { hasRequested: data });
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

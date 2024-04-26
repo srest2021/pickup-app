@@ -31,6 +31,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
     setRoomCode,
     selectedMyGame,
     clearSelectedMyGame,
+    updateMyGame,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -38,6 +39,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
     state.setRoomCode,
     state.selectedMyGame,
     state.clearSelectedMyGame,
+    state.updateMyGame,
   ]);
 
   const [deleteClicked, setDeleteClicked] = useState(false);
@@ -52,8 +54,8 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   }
 
   useEffect(() => {
-    console.log(selectedMyGame)
-    if (!(selectedMyGame?.address)) fetchGameAddress(gameId, "my");
+    updateMyGame(gameId, { acceptedPlayers: null, joinRequests: null });
+    if (!selectedMyGame?.address) fetchGameAddress(gameId, "my");
     fetchGameAcceptedPlayers(gameId, selectedMyGame?.organizerId, "my");
     fetchGameJoinRequests(gameId);
 

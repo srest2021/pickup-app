@@ -83,7 +83,7 @@ type Action = {
 
   // selected my game
   setSelectedMyGame: (myGame: MyGame) => void;
-  updateMyGame: (gameId: string, update: any, keep: boolean) => void;
+  updateMyGame: (gameId: string, update: any) => void;
   clearSelectedMyGame: () => void;
 
   // feed games
@@ -96,7 +96,7 @@ type Action = {
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
   updateHasRequestedFeedGame: (feedGameId: string) => void;
-  updateFeedGame: (gameId: string, update: any, keep: boolean) => void;
+  updateFeedGame: (gameId: string, update: any) => void;
 
   // joined games
   setJoinedGames: (feedGames: JoinedGame[]) => void;
@@ -107,7 +107,7 @@ type Action = {
   // selected joined game
   setSelectedJoinedGame: (joinedGame: JoinedGame) => void;
   clearSelectedJoinedGame: () => void;
-  updateJoinedGame: (gameId: string, update: any, keep: boolean) => void;
+  updateJoinedGame: (gameId: string, update: any) => void;
 
   // location
   setLocation: (location: Location.LocationObject) => void;
@@ -246,21 +246,19 @@ export const useStore = create<State & Action>()(
       set({ selectedFeedGame: null });
     },
 
-    updateFeedGame: (gameId, update, keep) => {
+    updateFeedGame: (gameId, update) => {
       const feedGame = get().selectedFeedGame;
       if (feedGame && feedGame.id === gameId) {
         const updatedFeedGame = { ...feedGame, ...update };
         set({ selectedFeedGame: updatedFeedGame });
 
-        if (keep) {
-          const updatedFeedGames = get().feedGames.map((game) => {
-            if (game.id === gameId) {
-              return updatedFeedGame;
-            }
-            return game;
-          });
-          set({ feedGames: updatedFeedGames });
-        }
+        const updatedFeedGames = get().feedGames.map((game) => {
+          if (game.id === gameId) {
+            return updatedFeedGame;
+          }
+          return game;
+        });
+        set({ feedGames: updatedFeedGames });
       }
     },
 
@@ -300,22 +298,19 @@ export const useStore = create<State & Action>()(
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
-    updateMyGame: (gameId, update, keep) => {
+    updateMyGame: (gameId, update) => {
       const myGame = get().selectedMyGame;
       if (myGame && myGame.id === gameId) {
         const updatedMyGame = { ...myGame, ...update };
         set({ selectedMyGame: updatedMyGame });
 
-        if (keep) {
-          console.log("huh???")
-          const updatedMyGames = get().myGames.map((game) => {
-            if (game.id === gameId) {
-              return updatedMyGame;
-            }
-            return game;
-          });
-          set({ myGames: updatedMyGames });
-        }  
+        const updatedMyGames = get().myGames.map((game) => {
+          if (game.id === gameId) {
+            return updatedMyGame;
+          }
+          return game;
+        });
+        set({ myGames: updatedMyGames });
       }
     },
 
@@ -403,21 +398,19 @@ export const useStore = create<State & Action>()(
     setSelectedJoinedGame: (joinedGame) =>
       set({ selectedJoinedGame: joinedGame }),
 
-    updateJoinedGame: (gameId, update, keep) => {
+    updateJoinedGame: (gameId, update) => {
       const joinedGame = get().selectedJoinedGame;
       if (joinedGame && joinedGame.id === gameId) {
         const updatedJoinedGame = { joinedGame, ...update };
         set({ selectedJoinedGame: updatedJoinedGame });
 
-        if (keep) {
-          const updatedJoinedGames = get().joinedGames.map((game) => {
-            if (game.id === gameId) {
-              return updatedJoinedGame;
-            }
-            return game;
-          });
-          set({ joinedGames: updatedJoinedGames });
-        }
+        const updatedJoinedGames = get().joinedGames.map((game) => {
+          if (game.id === gameId) {
+            return updatedJoinedGame;
+          }
+          return game;
+        });
+        set({ joinedGames: updatedJoinedGames });
       }
     },
 

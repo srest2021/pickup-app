@@ -27,14 +27,21 @@ import { useEffect } from "react";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, username, userId } = route.params;
-  const [session, user, loading, selectedFeedGame, clearSelectedFeedGame] =
-    useStore((state) => [
-      state.session,
-      state.user,
-      state.loading,
-      state.selectedFeedGame,
-      state.clearSelectedFeedGame,
-    ]);
+  const [
+    session,
+    user,
+    loading,
+    selectedFeedGame,
+    clearSelectedFeedGame,
+    updateFeedGame,
+  ] = useStore((state) => [
+    state.session,
+    state.user,
+    state.loading,
+    state.selectedFeedGame,
+    state.clearSelectedFeedGame,
+    state.updateFeedGame,
+  ]);
 
   const { requestToJoinById } = useMutationGame();
   const { fetchGameAcceptedPlayers, fetchGameHasRequested } = useQueryGames();
@@ -47,6 +54,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   }
 
   useEffect(() => {
+    updateFeedGame(gameId, { acceptedPlayers: null });
     fetchGameAcceptedPlayers(gameId, selectedFeedGame?.organizerId, "feed");
     if (selectedFeedGame?.hasRequested == null) fetchGameHasRequested(gameId);
 
