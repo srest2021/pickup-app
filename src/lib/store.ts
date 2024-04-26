@@ -82,7 +82,7 @@ type Action = {
 
   // selected my game
   setSelectedMyGame: (myGame: MyGame) => void;
-  updateSelectedMyGame: (update: any) => void;
+  updateSelectedMyGame: (gameId: string, update: any) => void;
   clearSelectedMyGame: () => void;
 
   // feed games
@@ -95,7 +95,7 @@ type Action = {
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
   updateHasRequestedFeedGame: (feedGameId: string) => void;
-  updateSelectedFeedGame: (update: any) => void;
+  updateSelectedFeedGame: (gameId: string, update: any) => void;
 
   // joined games
   setJoinedGames: (feedGames: JoinedGame[]) => void;
@@ -106,7 +106,7 @@ type Action = {
   // selected joined game
   setSelectedJoinedGame: (joinedGame: JoinedGame) => void;
   clearSelectedJoinedGame: () => void;
-  updateSelectedJoinedGame: (update: any) => void;
+  updateSelectedJoinedGame: (gameId: string, update: any) => void;
 
   // location
   setLocation: (location: Location.LocationObject) => void;
@@ -245,9 +245,10 @@ export const useStore = create<State & Action>()(
       set({ selectedFeedGame: null });
     },
 
-    updateSelectedFeedGame: (update) => {
-      if (get().selectedFeedGame) {
-        const updatedFeedGame = { ...get().selectedFeedGame, ...update };
+    updateSelectedFeedGame: (gameId, update) => {
+      const feedGame = get().selectedFeedGame;
+      if (feedGame && feedGame.id === gameId) {
+        const updatedFeedGame = { ...feedGame, ...update };
         set({ selectedFeedGame: updatedFeedGame });
       }
     },
@@ -288,9 +289,10 @@ export const useStore = create<State & Action>()(
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
-    updateSelectedMyGame: (update) => {
-      if (get().selectedMyGame) {
-        const updatedMyGame = { ...get().selectedMyGame, ...update };
+    updateSelectedMyGame: (gameId, update) => {
+      const myGame = get().selectedMyGame;
+      if (myGame && myGame.id === gameId) {
+        const updatedMyGame = { ...myGame, ...update };
         set({ selectedMyGame: updatedMyGame });
       }
     },
@@ -379,9 +381,10 @@ export const useStore = create<State & Action>()(
     setSelectedJoinedGame: (joinedGame) =>
       set({ selectedJoinedGame: joinedGame }),
 
-    updateSelectedJoinedGame: (update) => {
-      if (get().selectedJoinedGame) {
-        const updatedJoinedGame = { ...get().selectedJoinedGame, ...update };
+    updateSelectedJoinedGame: (gameId, update) => {
+      const joinedGame = get().selectedJoinedGame;
+      if (joinedGame && joinedGame.id === gameId) {
+        const updatedJoinedGame = { joinedGame, ...update };
         set({ selectedJoinedGame: updatedJoinedGame });
       }
     },
