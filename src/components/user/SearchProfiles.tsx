@@ -30,7 +30,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const regularSearch = async () => {
     if (currentInput.trim().length > 0) {
       setSearching(true);
-      await searchByUsername(currentInput.trim(), false);
+      await searchByUsername(currentInput.trim());
       setSearching(false);
     } else {
       Alert.alert("Search field cannot be empty!");

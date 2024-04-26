@@ -19,6 +19,21 @@ create table if not exists "public"."profiles" (
 alter table profiles
   enable row level security;
 
+-- create index for id column
+create index pid
+on profiles
+using btree (id);
+
+-- create index for username column
+create index pusername
+on profiles
+using btree (username);
+
+-- create index for display_name column
+create index pdisplay_name
+on profiles
+using btree (display_name);
+
 create policy "Public profiles are viewable by everyone." on profiles
   for select using (true);
 

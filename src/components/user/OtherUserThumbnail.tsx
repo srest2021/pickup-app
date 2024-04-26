@@ -71,7 +71,7 @@ export default function OtherUserThumbnail({
           navigation.navigate("OtherProfileView", { userId: user.id });
         }}
       >
-        {user.bio && user.bio.trim().length > 0 && user.bio}
+        {user.bio && user.bio.trim().length > 0 && user.bio.trim()}
       </ListItem>
 
       {!isSearch && isFriend ? (
