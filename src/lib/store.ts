@@ -246,8 +246,10 @@ export const useStore = create<State & Action>()(
     },
 
     updateSelectedFeedGame: (update) => {
-      const updatedFeedGame = { ...get().selectedFeedGame, ...update };
-      set({ selectedFeedGame: updatedFeedGame });
+      if (get().selectedFeedGame) {
+        const updatedFeedGame = { ...get().selectedFeedGame, ...update };
+        set({ selectedFeedGame: updatedFeedGame });
+      }
     },
 
     // my games
@@ -287,8 +289,10 @@ export const useStore = create<State & Action>()(
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
     updateSelectedMyGame: (update) => {
-      const updatedMyGame = { ...get().selectedMyGame, ...update };
-      set({ selectedMyGame: updatedMyGame });
+      if (get().selectedMyGame) {
+        const updatedMyGame = { ...get().selectedMyGame, ...update };
+        set({ selectedMyGame: updatedMyGame });
+      }
     },
 
     acceptJoinRequest: (gameId, playerId, plusOne) => {
@@ -376,8 +380,10 @@ export const useStore = create<State & Action>()(
       set({ selectedJoinedGame: joinedGame }),
 
     updateSelectedJoinedGame: (update) => {
-      const updatedJoinedGame = { ...get().selectedJoinedGame, ...update };
-      set({ selectedJoinedGame: updatedJoinedGame });
+      if (get().selectedJoinedGame) {
+        const updatedJoinedGame = { ...get().selectedJoinedGame, ...update };
+        set({ selectedJoinedGame: updatedJoinedGame });
+      }
     },
 
     clearSelectedJoinedGame: () => set({ selectedJoinedGame: null }),

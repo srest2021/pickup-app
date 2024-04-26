@@ -1091,6 +1091,19 @@ begin
 end;
 $$ language plpgsql;
 
+create or replace function get_has_requested(game_id_param text)
+returns jsonb as $$
+declare 
+  has_requested boolean;
+begin
+  return exists (
+    select 1
+    from game_requests
+    where player_id = auth.uid() and game_id = game_id_param
+  );
+end;
+$$ language plpgsql;
+
 create or replace function get_game_by_id(game_id "uuid")
 returns jsonb as $$
 declare 

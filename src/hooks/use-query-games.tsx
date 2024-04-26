@@ -320,7 +320,7 @@ function useQueryGames() {
     try {
       setLoading(true);
       if (!session?.user)
-        throw new Error("Please sign in to view accepted players!");
+        throw new Error("Please sign in to view join requests!");
 
       const { data, error } = await supabase.rpc("get_join_requests", {
         game_id: gameId,
@@ -345,15 +345,30 @@ function useQueryGames() {
     }
   };
 
-  const fetchGameOrganizer = async (
-    organizerId: string,
-    gameType: string,
-  ) => {
-    
-  };
-
   const fetchGameHasRequested = async (gameId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user) throw new Error("Please sign in to request to join!");
 
+      const { data, error } = await supabase.rpc("get_has_requested", {
+        game_id_param: gameId,
+      });
+      if (error) throw error;
+
+      if (data) {
+        updateSelectedFeedGame({ hasRequested: data });
+      } else {
+        throw new Error("Error fetching game info! Please try again later.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching game info! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
@@ -363,7 +378,6 @@ function useQueryGames() {
     fetchGameAddress,
     fetchGameAcceptedPlayers,
     fetchGameJoinRequests,
-    fetchGameOrganizer,
     fetchGameHasRequested,
   };
 }
