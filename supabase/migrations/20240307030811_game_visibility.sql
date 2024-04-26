@@ -1047,6 +1047,50 @@ returns table(
   order by datetime ASC;
 $$;
 
+create or replace function get_accepted_players(game_id text) 
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+  SELECT jsonb_agg(
+    jsonb_build_object(
+      'id', p.id,
+      'username', p.username,
+      'displayName', p.display_name,
+      'avatarUrl', p.avatar_url,
+      'hasPlusOne', jg.plus_one
+    )
+  )
+  FROM public.joined_game AS jg
+  JOIN public.profiles AS p ON jg.player_id = p.id
+  WHERE jg.game_id = game_id and jg.player_id != auth.uid()
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
+create or replace function get_join_requests(game_id text) 
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+  SELECT jsonb_agg(
+    jsonb_build_object(
+      'id', p.id,
+      'username', p.username,
+      'displayName', p.display_name,
+      'avatarUrl', p.avatar_url,
+      'hasPlusOne', gr.plus_one
+    )
+  )
+  FROM public.game_requests AS gr
+  JOIN public.profiles AS p ON gr.player_id = p.id
+  WHERE gr.game_id = game_id
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
 create or replace function get_game_by_id(game_id "uuid")
 returns jsonb as $$
 declare 

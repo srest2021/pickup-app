@@ -29,6 +29,9 @@ function useQueryGames() {
     getFilterSport,
     getFilterDist,
     getFilterLevel,
+    updateSelectedMyGame,
+    updateSelectedJoinedGame,
+    updateSelectedFeedGame,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -45,6 +48,9 @@ function useQueryGames() {
     state.getFilterSport,
     state.getFilterDist,
     state.getFilterLevel,
+    state.updateSelectedMyGame,
+    state.updateSelectedJoinedGame,
+    state.updateSelectedFeedGame,
   ]);
 
   const { getUserLocation } = useQueryUsers();
@@ -236,21 +242,119 @@ function useQueryGames() {
     }
   };
 
-  const fetchGameAddress = async (gameId: string, gameType: string) => {};
+  const fetchGameAddress = async (gameId: string, gameType: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user)
+        throw new Error("Please sign in to view game address!");
 
-  const fetchGameAcceptedPlayers = async (
-    gameId: string,
-    gameType: string,
-  ) => {};
+      const { data, error } = await supabase
+        .from("game_locations")
+        .select("*")
+        .eq("id", gameId)
+        .single();
+      if (error) throw error;
 
-  const fetchGameJoinRequests = async (gameId: string, gameType: string) => {};
+      if (data) {
+        const address: Address = {
+          street: data.street,
+          city: data.city,
+          state: data.state,
+          zip: data.zip,
+        };
+        if (gameType === "my") {
+          updateSelectedMyGame({ address });
+        } else if (gameType === "joined") {
+          updateSelectedJoinedGame({ address });
+        }
+      } else {
+        throw new Error("Error fetching feed games! Please try again later.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching address! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchGameAcceptedPlayers = async (gameId: string, gameType: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user)
+        throw new Error("Please sign in to view accepted players!");
+
+      const { data, error } = await supabase.rpc("get_accepted_players", {
+        game_id: gameId,
+      });
+      if (error) throw error;
+
+      if (data) {
+        if (gameType === "my") {
+          updateSelectedMyGame({ acceptedPlayers: data });
+        } else if (gameType === "joined") {
+          updateSelectedJoinedGame({ acceptedPlayers: data });
+        } else if (gameType === "feed") {
+          updateSelectedFeedGame({ acceptedPlayers: data });
+        }
+      } else {
+        throw new Error(
+          "Error fetching accepted players! Please try again later.",
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching accepted players! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchGameJoinRequests = async (gameId: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user)
+        throw new Error("Please sign in to view accepted players!");
+
+      const { data, error } = await supabase.rpc("get_join_requests", {
+        game_id: gameId,
+      });
+      if (error) throw error;
+
+      if (data) {
+        updateSelectedMyGame({ joinRequests: data });
+      } else {
+        throw new Error(
+          "Error fetching join requests! Please try again later.",
+        );
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching join requests! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchGameOrganizer = async (
     organizerId: string,
     gameType: string,
-  ) => {};
+  ) => {
+    
+  };
 
-  const fetchGameHasRequested = async (gameId: string) => {};
+  const fetchGameHasRequested = async (gameId: string) => {
+
+  };
 
   return {
     fetchMyGames,

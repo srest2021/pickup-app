@@ -55,7 +55,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
     const fetchData = async () => {
       await fetchGameAddress(gameId, "my");
       await fetchGameAcceptedPlayers(gameId, "my");
-      await fetchGameJoinRequests(gameId, "my");
+      await fetchGameJoinRequests(gameId);
     };
     fetchData();
 

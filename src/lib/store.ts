@@ -53,24 +53,25 @@ type Action = {
 
   setLoading: (loading: boolean) => void;
 
+  // user
   setUser: (user: User | null) => void;
   editUser: (updated: any) => void;
-
-  setOtherUser: (otherUser: OtherUser | null) => void;
-
   addUserSport: (userSport: UserSport) => void;
   editUserSport: (userSport: UserSport) => void;
   setUserSports: (userSports: UserSport[]) => void;
   clearUserSports: () => void;
 
-  // my games
+  // other user
+  setOtherUser: (otherUser: OtherUser | null) => void;
 
+  // my games
   setMyGames: (myGames: MyGame[]) => void;
   clearMyGames: () => void;
   addMyGame: (myGame: MyGame) => void;
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
+  // game players
   acceptJoinRequest: (
     gameId: string,
     playerId: string,
@@ -79,41 +80,42 @@ type Action = {
   rejectJoinRequest: (gameId: string, playerId: string) => void;
   removePlayer: (gameId: string, playerId: string, plusOne: boolean) => void;
 
+  // selected my game
   setSelectedMyGame: (myGame: MyGame) => void;
+  updateSelectedMyGame: (update: any) => void;
   clearSelectedMyGame: () => void;
 
   // feed games
-
   setFeedGames: (feedGames: FeedGame[]) => void;
   clearFeedGames: () => void;
-
   setFeedGamesFriendsOnly: (feedGames: FeedGame[]) => void;
   clearFeedGamesFriendsOnly: () => void;
 
+  // selected feed game
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
-
   updateHasRequestedFeedGame: (feedGameId: string) => void;
+  updateSelectedFeedGame: (update: any) => void;
 
   // joined games
-
   setJoinedGames: (feedGames: JoinedGame[]) => void;
   clearJoinedGames: () => void;
   addJoinedGame: (joinedGame: JoinedGame) => void;
   removeJoinedGame: (joinedGameId: string) => void;
 
+  // selected joined game
   setSelectedJoinedGame: (joinedGame: JoinedGame) => void;
   clearSelectedJoinedGame: () => void;
+  updateSelectedJoinedGame: (update: any) => void;
 
-  //location
+  // location
   setLocation: (location: Location.LocationObject) => void;
-  clearLocation: () => void; //not sure if we'll need this
+  clearLocation: () => void;
 
-  //feed filters
+  // feed filters
   setFilterSport: (sport: string | null) => void;
   setFilterDist: (dist: number) => void;
   setFilterLevel: (level: string | null) => void;
-
   getFilterSport: () => string | null;
   getFilterDist: () => number;
   getFilterLevel: () => string | null;
@@ -125,6 +127,8 @@ type Action = {
   addMessages: (messages: Message[]) => void;
   setChannel: (channel: RealtimeChannel | undefined) => void;
   setRoomCode: (roomCode: string) => void;
+
+  // avatar urls
   editAvatarPath: (userId: string, avatarPath: string | null) => void;
   addAvatarUrls: (newAvatarUrls: any[]) => void;
   addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
@@ -241,6 +245,11 @@ export const useStore = create<State & Action>()(
       set({ selectedFeedGame: null });
     },
 
+    updateSelectedFeedGame: (update) => {
+      const updatedFeedGame = { ...get().selectedFeedGame, ...update };
+      set({ selectedFeedGame: updatedFeedGame });
+    },
+
     // my games
 
     setMyGames: (myGames) => set({ myGames }),
@@ -276,6 +285,11 @@ export const useStore = create<State & Action>()(
     setSelectedMyGame: (myGame) => set({ selectedMyGame: myGame }),
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
+
+    updateSelectedMyGame: (update) => {
+      const updatedMyGame = { ...get().selectedMyGame, ...update };
+      set({ selectedMyGame: updatedMyGame });
+    },
 
     acceptJoinRequest: (gameId, playerId, plusOne) => {
       // find player object in join requests
@@ -360,6 +374,11 @@ export const useStore = create<State & Action>()(
 
     setSelectedJoinedGame: (joinedGame) =>
       set({ selectedJoinedGame: joinedGame }),
+
+    updateSelectedJoinedGame: (update) => {
+      const updatedJoinedGame = { ...get().selectedJoinedGame, ...update };
+      set({ selectedJoinedGame: updatedJoinedGame });
+    },
 
     clearSelectedJoinedGame: () => set({ selectedJoinedGame: null }),
 
