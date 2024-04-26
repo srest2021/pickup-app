@@ -960,7 +960,7 @@ returns table(
   order by datetime ASC;
 $$;
 
-create or replace function get_accepted_players(game_id text) 
+create or replace function get_accepted_players(game_id_param uuid, organizer_id uuid) 
 returns jsonb as $$
 declare
   data jsonb;
@@ -976,13 +976,13 @@ begin
   )
   FROM public.joined_game AS jg
   JOIN public.profiles AS p ON jg.player_id = p.id
-  WHERE jg.game_id = game_id and jg.player_id != auth.uid()
+  WHERE jg.game_id = game_id_param and jg.player_id != organizer_id
   into data;
   return data;
 end;
 $$ language plpgsql;
 
-create or replace function get_join_requests(game_id text) 
+create or replace function get_join_requests(game_id_param uuid) 
 returns jsonb as $$
 declare
   data jsonb;
@@ -998,7 +998,7 @@ begin
   )
   FROM public.game_requests AS gr
   JOIN public.profiles AS p ON gr.player_id = p.id
-  WHERE gr.game_id = game_id
+  WHERE gr.game_id = game_id_param
   into data;
   return data;
 end;

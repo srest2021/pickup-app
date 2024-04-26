@@ -33,15 +33,17 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
               <ScrollView>
                 {selectedMyGame?.acceptedPlayers ? (
                   selectedMyGame?.acceptedPlayers.length > 0 ? (
-                    selectedMyGame?.acceptedPlayers.map((user, index) => (
-                      <AcceptedPlayer
-                        key={index}
-                        user={user}
-                        gameId={selectedMyGame.id}
-                        isOrganizer={true}
-                        navigation={navigation}
-                      />
-                    ))
+                    <YStack space="$2" padding="$3">
+                      {selectedMyGame?.acceptedPlayers.map((user, index) => (
+                        <AcceptedPlayer
+                          key={index}
+                          user={user}
+                          gameId={selectedMyGame.id}
+                          isOrganizer={true}
+                          navigation={navigation}
+                        />
+                      ))}
+                    </YStack>
                   ) : (
                     <Text padding="$3">No accepted players yet</Text>
                   )

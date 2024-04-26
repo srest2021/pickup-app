@@ -21,9 +21,9 @@ function useQueryGames() {
     getFilterSport,
     getFilterDist,
     getFilterLevel,
-    updateSelectedMyGame,
-    updateSelectedJoinedGame,
-    updateSelectedFeedGame,
+    updateMyGame,
+    updateJoinedGame,
+    updateFeedGame,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -40,9 +40,9 @@ function useQueryGames() {
     state.getFilterSport,
     state.getFilterDist,
     state.getFilterLevel,
-    state.updateSelectedMyGame,
-    state.updateSelectedJoinedGame,
-    state.updateSelectedFeedGame,
+    state.updateMyGame,
+    state.updateJoinedGame,
+    state.updateFeedGame,
   ]);
 
   const { getUserLocation } = useQueryUsers();
@@ -245,7 +245,6 @@ function useQueryGames() {
         .select("*")
         .eq("game_id", gameId)
         .single();
-      console.log("address: ", data, error);
       if (error) throw error;
 
       if (data) {
@@ -256,9 +255,9 @@ function useQueryGames() {
           zip: data.zip,
         };
         if (gameType === "my") {
-          updateSelectedMyGame(gameId, { address });
+          updateMyGame(gameId, { address }, true);
         } else if (gameType === "joined") {
-          updateSelectedJoinedGame(gameId, { address });
+          updateJoinedGame(gameId, { address }, true);
         }
       } else {
         throw new Error("Error fetching feed games! Please try again later.");
@@ -274,24 +273,33 @@ function useQueryGames() {
     }
   };
 
-  const fetchGameAcceptedPlayers = async (gameId: string, gameType: string) => {
+  const fetchGameAcceptedPlayers = async (gameId: string, organizerId: string | undefined, gameType: string) => {
     try {
       if (!session?.user)
         throw new Error("Please sign in to view accepted players!");
 
       let { data, error } = await supabase.rpc("get_accepted_players", {
         game_id_param: gameId,
+        organizer_id: organizerId
       });
-      console.log("accepted players: ", data, error);
       if (error) throw error;
       if (data == null) data = [];
 
       if (gameType === "my") {
-        updateSelectedMyGame(gameId, { acceptedPlayers: data });
+        updateMyGame(gameId, {
+          acceptedPlayers: data,
+          currentPlayers: data.length + 1,
+        }, false);
       } else if (gameType === "joined") {
-        updateSelectedJoinedGame(gameId, { acceptedPlayers: data });
+        updateJoinedGame(gameId, {
+          acceptedPlayers: data,
+          currentPlayers: data.length + 1,
+        }, false);
       } else if (gameType === "feed") {
-        updateSelectedFeedGame(gameId, { acceptedPlayers: data });
+        updateFeedGame(gameId, {
+          acceptedPlayers: data,
+          currentPlayers: data.length + 1,
+        }, false);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -306,14 +314,12 @@ function useQueryGames() {
     try {
       if (!session?.user)
         throw new Error("Please sign in to view join requests!");
-
       let { data, error } = await supabase.rpc("get_join_requests", {
         game_id_param: gameId,
       });
-      console.log("join requests: ", data, error);
       if (error) throw error;
       if (data == null) data = [];
-      updateSelectedMyGame(gameId, { joinRequests: data });
+      updateMyGame(gameId, { joinRequests: data }, false);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
@@ -326,13 +332,11 @@ function useQueryGames() {
   const fetchGameHasRequested = async (gameId: string) => {
     try {
       if (!session?.user) throw new Error("Please sign in to request to join!");
-
       const { data, error } = await supabase.rpc("get_has_requested", {
         game_id_param: gameId,
       });
-      console.log("has requested: ", data, error);
       if (error) throw error;
-      updateSelectedFeedGame(gameId, { hasRequested: data });
+      //updateFeedGame(gameId, { hasRequested: data }, false);
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);

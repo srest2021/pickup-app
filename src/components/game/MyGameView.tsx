@@ -52,12 +52,10 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchGameAddress(gameId, "my");
-      await fetchGameAcceptedPlayers(gameId, "my");
-      await fetchGameJoinRequests(gameId);
-    };
-    fetchData();
+    console.log(selectedMyGame)
+    if (!(selectedMyGame?.address)) fetchGameAddress(gameId, "my");
+    fetchGameAcceptedPlayers(gameId, selectedMyGame?.organizerId, "my");
+    fetchGameJoinRequests(gameId);
 
     return () => {
       clearSelectedMyGame();

@@ -80,7 +80,7 @@ export default function OtherUserThumbnail({
           icon={clicked ? Loader : X}
           testID="remove-button"
           size="$3"
-          disabled={loading}
+          disabled={clicked}
           style={{
             backgroundColor: "#e90d52",
             color: "white",
@@ -95,7 +95,7 @@ export default function OtherUserThumbnail({
               testID="accept-button"
               size="$3"
               alignSelf="center"
-              disabled={loading}
+              disabled={clicked}
               style={{
                 backgroundColor: "#05a579",
                 color: "white",
@@ -107,7 +107,7 @@ export default function OtherUserThumbnail({
               testID="reject-button"
               size="$3"
               alignSelf="center"
-              disabled={loading}
+              disabled={clicked}
               style={{
                 backgroundColor: "#e90d52",
                 color: "white",

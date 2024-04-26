@@ -47,11 +47,8 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchGameAcceptedPlayers(gameId, "feed");
-      await fetchGameHasRequested(gameId);
-    };
-    fetchData();
+    fetchGameAcceptedPlayers(gameId, selectedFeedGame?.organizerId, "feed");
+    if (selectedFeedGame?.hasRequested == null) fetchGameHasRequested(gameId);
 
     return () => {
       clearSelectedFeedGame();

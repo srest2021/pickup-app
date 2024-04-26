@@ -56,11 +56,8 @@ const JoinedGameView = ({
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchGameAddress(gameId, "joined");
-      await fetchGameAcceptedPlayers(gameId, "joined");
-    };
-    fetchData();
+    if (!(selectedJoinedGame?.address)) fetchGameAddress(gameId, "joined");
+    fetchGameAcceptedPlayers(gameId, selectedJoinedGame?.organizerId, "joined");
 
     return () => {
       clearSelectedJoinedGame();
