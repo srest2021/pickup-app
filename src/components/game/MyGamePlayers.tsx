@@ -10,9 +10,6 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
     state.selectedMyGame,
   ]);
 
-  const acceptedPlayers = selectedMyGame?.acceptedPlayers;
-  const joinRequests = selectedMyGame?.joinRequests;
-
   return (
     <View style={{ display: "flex" }}>
       {session && session.user ? (
@@ -34,13 +31,9 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
               size="$5"
             >
               <ScrollView>
-                {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack
-                    space="$2"
-                    padding="$3"
-                    testID="accepted-players-container"
-                  >
-                    {acceptedPlayers.map((user, index) => (
+                {selectedMyGame?.acceptedPlayers ? (
+                  selectedMyGame?.acceptedPlayers.length > 0 ? (
+                    selectedMyGame?.acceptedPlayers.map((user, index) => (
                       <AcceptedPlayer
                         key={index}
                         user={user}
@@ -48,10 +41,12 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
                         isOrganizer={true}
                         navigation={navigation}
                       />
-                    ))}
-                  </YStack>
+                    ))
+                  ) : (
+                    <Text padding="$3">No accepted players yet</Text>
+                  )
                 ) : (
-                  <Text padding="$3">No accepted players yet</Text>
+                  <Text padding="$3">Loading...</Text>
                 )}
               </ScrollView>
             </Card>
@@ -71,25 +66,29 @@ const MyGamePlayers = ({ navigation }: { navigation: any }) => {
               size="$5"
             >
               <ScrollView>
-                {joinRequests && joinRequests.length > 0 ? (
-                  <YStack
-                    space="$2"
-                    padding="$3"
-                    testID="join-requests-container"
-                  >
-                    {joinRequests.map((user, index) => (
-                      <NonAcceptedPlayer
-                        key={index}
-                        user={user}
-                        gameId={selectedMyGame.id}
-                        currentPlayers={selectedMyGame.currentPlayers}
-                        maxPlayers={selectedMyGame.maxPlayers}
-                        navigation={navigation}
-                      />
-                    ))}
-                  </YStack>
+                {selectedMyGame?.joinRequests ? (
+                  selectedMyGame?.joinRequests.length > 0 ? (
+                    <YStack
+                      space="$2"
+                      padding="$3"
+                      testID="join-requests-container"
+                    >
+                      {selectedMyGame?.joinRequests.map((user, index) => (
+                        <NonAcceptedPlayer
+                          key={index}
+                          user={user}
+                          gameId={selectedMyGame?.id}
+                          currentPlayers={selectedMyGame?.currentPlayers}
+                          maxPlayers={selectedMyGame?.maxPlayers}
+                          navigation={navigation}
+                        />
+                      ))}
+                    </YStack>
+                  ) : (
+                    <Text padding="$3">No join requests yet</Text>
+                  )
                 ) : (
-                  <Text padding="$3">No join requests yet</Text>
+                  <Text padding="$3">Loading...</Text>
                 )}
               </ScrollView>
             </Card>

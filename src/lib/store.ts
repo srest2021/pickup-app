@@ -29,9 +29,8 @@ type State = {
   selectedJoinedGame: JoinedGame | null;
 
   feedGames: FeedGame[];
-  selectedFeedGame: FeedGame | null;
-
   feedGamesFriendsOnly: FeedGame[];
+  selectedFeedGame: FeedGame | null;
 
   location: Location.LocationObject | null;
 
@@ -282,14 +281,20 @@ export const useStore = create<State & Action>()(
       // find player object in join requests
       const newPlayer = get()
         .myGames.find((game) => game.id === gameId)
-        ?.joinRequests.find((user) => user.id === playerId);
+        ?.joinRequests?.find((user) => user.id === playerId);
+      // do nothing if new player can't be found (shouldn't ever happen)
+      if (!newPlayer) return;
 
       // update myGames
       const updatedMyGames = get().myGames.map((myGame) => {
-        if (myGame.id === gameId) {
+        if (
+          myGame.id === gameId &&
+          myGame.joinRequests &&
+          myGame.acceptedPlayers
+        ) {
           // remove player object from join requests
           myGame.joinRequests = myGame.joinRequests.filter(
-            (user) => user.id != playerId,
+            (user) => user.id !== playerId,
           );
           // add player object to acceptedPlayers and increment count
           if (newPlayer) {
@@ -307,7 +312,7 @@ export const useStore = create<State & Action>()(
 
     rejectJoinRequest: (gameId, playerId) => {
       const updatedMyGames = get().myGames.map((myGame) => {
-        if (myGame.id === gameId) {
+        if (myGame.id === gameId && myGame.joinRequests) {
           // remove player object from join requests
           myGame.joinRequests = myGame.joinRequests.filter(
             (user) => user.id != playerId,
@@ -321,7 +326,7 @@ export const useStore = create<State & Action>()(
 
     removePlayer: (gameId, playerId, plusOne) => {
       const updatedMyGames = get().myGames.map((myGame) => {
-        if (myGame.id === gameId) {
+        if (myGame.id === gameId && myGame.acceptedPlayers) {
           // remove player object from accepted players
           myGame.acceptedPlayers = myGame.acceptedPlayers.filter(
             (user) => user.id != playerId,

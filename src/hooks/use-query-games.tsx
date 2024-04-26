@@ -1,7 +1,15 @@
 import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
-import { Address, GameSport, MyGame, JoinedGame, FeedGame } from "../lib/types";
+import {
+  Address,
+  GameSport,
+  MyGame,
+  JoinedGame,
+  FeedGame,
+  ThumbnailUser,
+  ThumbnailGame,
+} from "../lib/types";
 import useQueryUsers from "./use-query-users";
 
 function useQueryGames() {
@@ -64,12 +72,6 @@ function useQueryGames() {
             title: game.title,
             description: game.description,
             datetime: game.datetime,
-            address: {
-              street: game.street,
-              city: game.city,
-              state: game.state,
-              zip: game.zip,
-            } as Address,
             sport: {
               name: game.sport,
               skillLevel: game.skill_level,
@@ -82,8 +84,9 @@ function useQueryGames() {
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10
               : "?",
-            joinRequests: game.join_requests ? game.join_requests : [],
-            acceptedPlayers: game.accepted_players ? game.accepted_players : [],
+            address: null,
+            joinRequests: null,
+            acceptedPlayers: null,
           };
           return myGame;
         });
@@ -128,12 +131,6 @@ function useQueryGames() {
             title: game.title,
             description: game.description,
             datetime: game.datetime,
-            address: {
-              street: game.street,
-              city: game.city,
-              state: game.state,
-              zip: game.zip,
-            } as Address,
             sport: {
               name: game.sport,
               skillLevel: game.skill_level,
@@ -146,8 +143,9 @@ function useQueryGames() {
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10
               : "?",
-            acceptedPlayers: game.accepted_players ? game.accepted_players : [],
-            organizer: { ...game.organizer },
+            address: null,
+            acceptedPlayers: null,
+            organizer: game.organizer,
           };
           return joinedGame;
         });
@@ -213,9 +211,9 @@ function useQueryGames() {
               Math.trunc(game.dist_meters) !== 0
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10,
-            acceptedPlayers: game.accepted_players ? game.accepted_players : [],
-            hasRequested: Boolean(game.has_requested),
-            organizer: { ...game.organizer },
+            hasRequested: null,
+            acceptedPlayers: null,
+            organizer: game.organizer,
           };
           return feedGame;
         });
@@ -238,11 +236,31 @@ function useQueryGames() {
     }
   };
 
+  const fetchGameAddress = async (gameId: string, gameType: string) => {};
+
+  const fetchGameAcceptedPlayers = async (
+    gameId: string,
+    gameType: string,
+  ) => {};
+
+  const fetchGameJoinRequests = async (gameId: string, gameType: string) => {};
+
+  const fetchGameOrganizer = async (
+    organizerId: string,
+    gameType: string,
+  ) => {};
+
+  const fetchGameHasRequested = async (gameId: string) => {};
+
   return {
-    myGames,
     fetchMyGames,
     fetchJoinedGames,
     fetchFeedGames,
+    fetchGameAddress,
+    fetchGameAcceptedPlayers,
+    fetchGameJoinRequests,
+    fetchGameOrganizer,
+    fetchGameHasRequested,
   };
 }
 

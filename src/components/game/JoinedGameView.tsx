@@ -19,6 +19,8 @@ import GamePlayers from "./GamePlayers";
 import { MessageCircle, Unlock, Lock } from "@tamagui/lucide-icons";
 import { TouchableOpacity } from "react-native";
 import { capitalizeFirstLetter } from "../../lib/types";
+import useQueryGames from "../../hooks/use-query-games";
+import { useEffect } from "react";
 
 const JoinedGameView = ({
   navigation,
@@ -29,19 +31,41 @@ const JoinedGameView = ({
 }) => {
   const { gameId, username, userId } = route.params;
 
-  const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
-  const [session, user, loading, setRoomCode] = useStore((state) => [
+  const [
+    session,
+    user,
+    loading,
+    setRoomCode,
+    selectedJoinedGame,
+    clearSelectedJoinedGame,
+  ] = useStore((state) => [
     state.session,
     state.user,
     state.loading,
     state.setRoomCode,
+    state.selectedJoinedGame,
+    state.clearSelectedJoinedGame,
   ]);
+
   const { leaveJoinedGameById } = useMutationGame();
+  const { fetchGameAcceptedPlayers, fetchGameAddress } = useQueryGames();
 
   let sportNameCapitalized = "";
   if (selectedJoinedGame) {
     sportNameCapitalized = capitalizeFirstLetter(selectedJoinedGame.sport.name);
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchGameAddress(gameId, "joined");
+      await fetchGameAcceptedPlayers(gameId, "joined");
+    };
+    fetchData();
+
+    return () => {
+      clearSelectedJoinedGame();
+    };
+  }, []);
 
   // Leaving a Joined Game Logic:
   const leaveJoinedGame = async () => {
@@ -151,7 +175,9 @@ const JoinedGameView = ({
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedJoinedGame.address.street}, ${selectedJoinedGame.address.city}, ${selectedJoinedGame.address.state} ${selectedJoinedGame.address.zip}`}
+                      {selectedJoinedGame.address
+                        ? `${selectedJoinedGame.address.street}, ${selectedJoinedGame.address.city}, ${selectedJoinedGame.address.state} ${selectedJoinedGame.address.zip}`
+                        : "Loading..."}
                     </SizableText>
                   </XStack>
 

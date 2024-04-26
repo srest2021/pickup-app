@@ -17,7 +17,6 @@ const GamePlayers = ({
 
   const convertedGame =
     gametype === "feed" ? (game as FeedGame) : (game as JoinedGame);
-  const acceptedPlayers = convertedGame.acceptedPlayers;
 
   return (
     <View style={{ display: "flex" }}>
@@ -40,20 +39,24 @@ const GamePlayers = ({
               size="$5"
             >
               <ScrollView testID="accepted-players-container">
-                {acceptedPlayers && acceptedPlayers.length > 0 ? (
-                  <YStack space="$2" padding="$3">
-                    {acceptedPlayers.map((user, index) => (
-                      <AcceptedPlayer
-                        key={index}
-                        user={user}
-                        gameId={convertedGame.id}
-                        isOrganizer={false}
-                        navigation={navigation}
-                      />
-                    ))}
-                  </YStack>
+                {convertedGame.acceptedPlayers ? (
+                  convertedGame.acceptedPlayers.length > 0 ? (
+                    <YStack space="$2" padding="$3">
+                      {convertedGame.acceptedPlayers.map((user, index) => (
+                        <AcceptedPlayer
+                          key={index}
+                          user={user}
+                          gameId={convertedGame.id}
+                          isOrganizer={false}
+                          navigation={navigation}
+                        />
+                      ))}
+                    </YStack>
+                  ) : (
+                    <Text padding="$3">No accepted players yet</Text>
+                  )
                 ) : (
-                  <Text padding="$3">No accepted players yet</Text>
+                  <Text padding="$3">Loading...</Text>
                 )}
               </ScrollView>
             </Card>

@@ -18,29 +18,51 @@ import SportSkill from "../SportSkill";
 import MyGamePlayers from "./MyGamePlayers";
 import { Lock, MessageCircle, Unlock } from "@tamagui/lucide-icons";
 import { capitalizeFirstLetter } from "../../lib/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useQueryGames from "../../hooks/use-query-games";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
-  const [session, user, loading, setRoomCode, selectedMyGame] = useStore(
-    (state) => [
-      state.session,
-      state.user,
-      state.loading,
-      state.setRoomCode,
-      state.selectedMyGame,
-    ],
-  );
+  const [
+    session,
+    user,
+    loading,
+    setRoomCode,
+    selectedMyGame,
+    clearSelectedMyGame,
+  ] = useStore((state) => [
+    state.session,
+    state.user,
+    state.loading,
+    state.setRoomCode,
+    state.selectedMyGame,
+    state.clearSelectedMyGame,
+  ]);
 
   const [deleteClicked, setDeleteClicked] = useState(false);
 
   const { removeMyGameById } = useMutationGame();
+  const { fetchGameAddress, fetchGameAcceptedPlayers, fetchGameJoinRequests } =
+    useQueryGames();
 
   let sportNameCapitalized = "";
   if (selectedMyGame) {
     sportNameCapitalized = capitalizeFirstLetter(selectedMyGame.sport.name);
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchGameAddress(gameId, "my");
+      await fetchGameAcceptedPlayers(gameId, "my");
+      await fetchGameJoinRequests(gameId, "my");
+    };
+    fetchData();
+
+    return () => {
+      clearSelectedMyGame();
+    };
+  }, []);
 
   const deleteGame = async () => {
     setDeleteClicked(true);
@@ -143,7 +165,9 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`}
+                      {selectedMyGame.address
+                        ? `${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`
+                        : "Loading..."}
                     </SizableText>
                   </XStack>
 
