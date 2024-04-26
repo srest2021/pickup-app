@@ -39,7 +39,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
   // for scroll to top
   const flatListRef = useRef();
   const scrollToTop = async () => {
-    flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+    flatListRef?.current?.scrollToOffset({ animated: true, offset: 0 });
   };
 
   // on component render, clear state and get all games
@@ -133,10 +133,10 @@ const Feed = ({ navigation }: { navigation: any }) => {
               <Tabs.List paddingTop="$2">
                 <FeedFilter
                   handleRefresh={async () => {
-                    await flatListRef.current.scrollToOffset({
-                      animated: true,
-                      offset: 0,
-                    });
+                    // await flatListRef.current.scrollToOffset({
+                    //   animated: true,
+                    //   offset: 0,
+                    // });
                     handleRefresh();
                   }}
                 />

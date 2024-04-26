@@ -46,11 +46,6 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
     ? useState(filterSport)
     : useState("any");
 
-  // const capitalizedSports = sports.map((sport) => {
-  //   sport.name = capitalizeFirstLetter(sport.name);
-  //   return sport;
-  // })
-
   const handleSave = async () => {
     setFilterDist(distance);
     sport === "any" ? setFilterSport(null) : setFilterSport(sport);
@@ -156,7 +151,7 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
                                 <Select.Item
                                   index={i}
                                   key={sport.name}
-                                  value={sport.name.toLowerCase()}
+                                  value={sport.name}
                                 >
                                   <Select.ItemText>
                                     {sport.name}

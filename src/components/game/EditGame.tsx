@@ -464,7 +464,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                               <Select.Item
                                 index={i}
                                 key={sport.name}
-                                value={sport.name.toLowerCase()}
+                                value={sport.name}
                               >
                                 <Select.ItemText>{sport.name}</Select.ItemText>
                                 <Select.ItemIndicator marginLeft="auto">

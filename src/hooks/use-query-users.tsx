@@ -36,7 +36,6 @@ function useQueryUsers() {
         .or(`username.ilike.%${input}%, display_name.ilike.%${input}%`)
         .not("id", "eq", session.user.id)
         .order("username", { ascending: true });
-      console.log(data, error);
       if (error) throw error;
       if (data) {
         const users = data.map((elem: any) => {

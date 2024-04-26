@@ -27,6 +27,9 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearMessages,
     clearAvatarUrls,
     setChannel,
+    setFriends,
+    setFriendRequests,
+    setSearchResults,
   ] = useStore((state) => [
     state.loading,
     state.setLoading,
@@ -43,6 +46,9 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearMessages,
     state.clearAvatarUrls,
     state.setChannel,
+    state.setFriends,
+    state.setFriendRequests,
+    state.setSearchResults,
   ]);
 
   const handleLogOut = async () => {
@@ -62,6 +68,9 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearAvatarUrls();
     setChannel(undefined);
     setLoading(false);
+    setFriends([]);
+    setFriendRequests([]);
+    setSearchResults(null);
   };
 
   // Calculate the banner height and the top margin for the avatar
