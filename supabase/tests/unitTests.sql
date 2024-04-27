@@ -51,7 +51,7 @@ select col_is_fk('profiles', 'id');
 select col_type_is('profiles', 'updated_at', 'timestamp with time zone');
 select results_eq(
   'select username from profiles',
-  $$VALUES ('username1'), ('username2')$$,
+  $$VALUES ('username1'), ('username2'), ('username3')$$,
   'profiles should return all users'
 );
 
@@ -128,7 +128,7 @@ select col_type_is('messages', 'sent_at', 'timestamp with time zone');
 -- username_search()
 select results_eq(
   'select * from username_search($$username$$)', 
-  $$VALUES ('[{"id": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username1", "displayName":null, "bio":null, "avatarUrl":null}, {"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username2", "displayName":null, "bio":null, "avatarUrl":null}]'::jsonb) $$,
+  $$VALUES ('[{"id": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username1", "displayName":null, "bio":null, "avatarUrl":null}, {"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username2", "displayName":null, "bio":null, "avatarUrl":null}, {"id": "473dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username3", "displayName":null, "bio":null, "avatarUrl":null}]'::jsonb) $$,
   'username search should return like users'
 );
 select results_eq(
@@ -159,6 +159,20 @@ begin
     ),
     'Created game should be added to games table'
   );
+end $$;
+
+-- get_accepted_players()
+do $$
+declare
+    players jsonb;
+    expected_players text := '[{"id": "473dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username3", "avatarUrl": null, "hasPlusOne": false, "displayName": null}]';
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+    select get_accepted_players('a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', '273dc833-4e44-4f22-bdc9-3b13c9253d2a') into players;
+    if players::text != expected_players then
+        raise exception 'Accepted players do not match the expected string';
+    end if;
 end $$;
 
 -- accept_join_request()
@@ -193,6 +207,11 @@ begin
     );
 end $$;
 
+rollback;
+
+begin;
+select no_plan();
+
 -- reject_join_request()
 do $$
 begin
@@ -224,6 +243,11 @@ begin
         'Current players should be incremented in games table after accepting'
     );
 END $$;
+
+rollback;
+
+begin;
+select no_plan();
 
 -- get_game_by_id()
 select results_eq(
@@ -270,6 +294,11 @@ begin
         'Current players should be decremented in games table after removing player'
     );
 END $$;
+rollback;
+
+begin;
+select no_plan();
+
 do $$
 begin
     insert into joined_game
@@ -295,6 +324,11 @@ begin
         'Current players should be decremented in games table after removing player'
     );
 END $$;
+
+rollback;
+
+begin;
+select no_plan();
 
 -- accept_friend_request()
 do $$
@@ -322,7 +356,12 @@ begin
         ),
         'Row should be added to friends'
     );
-END $$;
+end $$;
+
+rollback;
+
+begin;
+select no_plan();
 
 -- reject_friend_request()
 do $$
@@ -350,7 +389,7 @@ begin
         ),
         'Row should not be added to friends'
     );
-END $$;
+end $$;
 
 -- get_user_email()
 select results_eq(
@@ -360,37 +399,69 @@ select results_eq(
 );
 
 -- add_message()
+-- do $$
+-- begin
+--     set role authenticated;
+--     set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+--     perform add_message('78d89525-46bf-4032-8572-5428bec482eb','hello world');
+
+--     -- row added to messages table
+--     perform ok(
+--         exists (
+--             select 1 from messages
+--             where content = 'hello world'
+--         ),
+--         'Row should be added to messages'
+--     );
+-- END $$;
+
+rollback;
+
+begin;
+select no_plan();
+
+-- get_friend_requests()
 do $$
+declare
+    friend_requests jsonb;
+    expected_friend_requests text := '[{"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "bio": null, "username": "username2", "avatarUrl": null, "displayName": null}]';
 begin
     set role authenticated;
     set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
-    perform add_message('78d89525-46bf-4032-8572-5428bec482eb','hello world');
-
-    -- row added to messages table
-    perform ok(
-        exists (
-            select 1 from messages
-            where content = 'hello world'
-        ),
-        'Row should be added to messages'
-    );
-END $$;
-
--- get_friend_requests()
-set role authenticated;
-set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
-select results_eq(
-  'select * from get_friend_requests()', 
-  $$VALUES ('[{"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username2", "displayName": null, "avatarUrl": null, "bio": null}]'::jsonb)$$,
-  'The correct friend requests should be returned'
-);
+    select get_friend_requests() into friend_requests;
+    if friend_requests::text != expected_friend_requests then
+        raise exception 'Friend requests do not match the expected string';
+    end if;
+end $$;
 
 -- get_has_requested()
+do $$
+declare
+    has_requested boolean;
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user2@email.com" }';
+    select get_has_requested('a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e') into has_requested;
 
--- get_accepted_players()
+    perform ok(
+      has_requested,
+      'User has requested to join the game'
+    );
+end $$;
 
 -- get_join_requests()
-
+do $$
+declare
+    join_requests jsonb;
+    expected_join_requests text := '[{"id": "373dc833-4e44-4f22-bdc9-3b13c9253d2a", "username": "username2", "avatarUrl": null, "hasPlusOne": false, "displayName": null}]';
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+    select get_join_requests('a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e') into join_requests;
+    if join_requests::text != expected_join_requests then
+        raise exception 'Join requests do not match the expected string';
+    end if;
+end $$;
 
 select * from finish();
 rollback;

@@ -896,7 +896,7 @@ returns table(
   max_players bigint, 
   current_players bigint, 
   is_public boolean, 
-  "dist_meters" double precision, 
+  "dist_meters" double precision
 ) language "sql" as $$
   select 
     g.id,
@@ -982,7 +982,7 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function get_join_requests(game_id_param uuid) 
+create or replace function get_join_requests(game_id_param "uuid") 
 returns jsonb as $$
 declare
   data jsonb;
@@ -1004,8 +1004,8 @@ begin
 end;
 $$ language plpgsql;
 
-create or replace function get_has_requested(game_id_param text)
-returns jsonb as $$
+create or replace function get_has_requested(game_id_param "uuid")
+returns boolean as $$
 declare 
   has_requested boolean;
 begin
