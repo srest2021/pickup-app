@@ -2,6 +2,17 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Address, MyGame, GameSport } from "../lib/types";
+import fs from 'fs';
+
+async function readHTMLFile(filePath) {
+  try {
+      const html = await fs.promises.readFile(filePath, 'utf8');
+      return html;
+  } catch (err) {
+      console.error('Error reading HTML file:', err);
+      return null;
+  }
+}
 
 function useMutationGame() {
   const [
@@ -83,14 +94,21 @@ function useMutationGame() {
         weekday: "long",
       });
       const formattedUsername = username ? `@${username} ` : "";
-      const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
+      //const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
+      const htmlFilePath = 'email_template.html';
+      const htmlContent = await readHTMLFile(htmlFilePath);
+      if (!htmlContent) throw new Error('HTML content not available.');
+
+      const formattedHtml = htmlContent
+          .replace('{formattedUsername}', formattedUsername)
+          .replace('{gameTitle}', title);
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
             to: emails,
-            subject: "Your friend just created a game on Pickup!",
+            subject: "PickupApp: Your friend just created a game on Pickup!",
             html: formattedHtml,
           },
         },
@@ -117,13 +135,13 @@ function useMutationGame() {
         throw error1;
       }
       const formattedUsername = username ? `@${username}` : "A user";
-      const formattedHtml = `<strong>${formattedUsername} requested to join your game ${gameTitle}!</strong><br><br>Open the app to interact!`;
+      const formattedHtml = `<strong>${formattedUsername} requested to join a game you organized, ${gameTitle}!</strong><br><br>Open the app to interact!`;
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
             to: email,
-            subject: "A user just requested to join your game!",
+            subject: "PickupApp: A user just requested to join your game!",
             html: formattedHtml,
           },
         },
