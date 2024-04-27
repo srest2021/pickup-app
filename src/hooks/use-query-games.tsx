@@ -52,13 +52,12 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
-      //if no location, for now, default location is charmander marmander
-      const lat = location ? location.coords.latitude : 39.3289357;
-      const long = location ? location.coords.longitude : -76.6172978;
+      const { location, error1 } = await getUserLocation();
+      if (!location || error1) throw error1;
 
       const { data, error } = await supabase.rpc("get_my_games", {
-        lat: lat,
-        long: long,
+        lat: location?.coords.latitude,
+        long: location?.coords.longitude,
       });
       if (error) throw error;
 
@@ -110,13 +109,12 @@ function useQueryGames() {
       if (!session?.user)
         throw new Error("Please sign in to view joined games");
 
-      //if no location, for now, default location is charmander marmander
-      const lat = location ? location.coords.latitude : 39.3289357;
-      const long = location ? location.coords.longitude : -76.6172978;
+      const { location, error1 } = await getUserLocation();
+      if (!location || error1) throw error1;
 
       const { data, error } = await supabase.rpc("get_joined_games", {
-        lat: lat,
-        long: long,
+        lat: location?.coords.latitude,
+        long: location?.coords.longitude,
       });
 
       if (error) throw error;

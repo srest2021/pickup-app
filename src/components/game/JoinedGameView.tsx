@@ -38,7 +38,7 @@ const JoinedGameView = ({
     setRoomCode,
     selectedJoinedGame,
     updateJoinedGame,
-    clearSelectedJoinedGame
+    clearSelectedJoinedGame,
   ] = useStore((state) => [
     state.session,
     state.user,
@@ -46,7 +46,7 @@ const JoinedGameView = ({
     state.setRoomCode,
     state.selectedJoinedGame,
     state.updateJoinedGame,
-    state.clearSelectedJoinedGame
+    state.clearSelectedJoinedGame,
   ]);
 
   const { leaveJoinedGameById } = useMutationGame();
