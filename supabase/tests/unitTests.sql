@@ -398,7 +398,7 @@ select results_eq(
   'The correct user email should be returned'
 );
 
-add_message()
+-- add_message()
 do $$
 begin
     set role authenticated;

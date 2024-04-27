@@ -399,6 +399,20 @@ Tests:       56 failed, 29 passed, 85 total
 Snapshots:   0 total
 Time:        47.924 s, estimated 66 s
 
+For the unit tests, we were not able to get all tests to run/pass, but the output is as follows:
+
+```
+Test Summary Report
+-------------------
+./unitTests.sql (Wstat: 0 Tests: 107 Failed: 0)
+  Parse errors: Tests out of sequence.  Found (1) but expected (104)
+                Tests out of sequence.  Found (2) but expected (105)
+                Tests out of sequence.  Found (3) but expected (106)
+                Tests out of sequence.  Found (3) but expected (107)
+                Bad plan.  You planned 1 tests but ran 107.
+Files=1, Tests=107,  2 wallclock secs ( 0.04 usr  0.01 sys +  0.02 cusr  0.02 csys =  0.09 CPU)
+Result: FAIL
+```
 
 ### 8.3 Known Issues and Limitations
 
