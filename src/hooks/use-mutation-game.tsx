@@ -91,10 +91,8 @@ function useMutationGame() {
           </style>
       </head>
       <body>
-          <div class="message">
-            Your friend <span style="color: #e54b07; font-weight: bold;">{formattedUsername}</span> just created a game titled <span style="color: #e54b07; font-weight: bold;">{title}</span><br><br>
-            Open the app to join the game!
-          </div>
+          Your friend <span style="color: #e54b07; font-weight: bold;">{formattedUsername}</span> just created a game titled <span style="color: #e54b07; font-weight: bold;">{title}</span><br><br>
+          Open the app to join the game!
       </body>
   </html>`
 
