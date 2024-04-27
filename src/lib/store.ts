@@ -401,7 +401,7 @@ export const useStore = create<State & Action>()(
     updateJoinedGame: (gameId, update) => {
       const joinedGame = get().selectedJoinedGame;
       if (joinedGame && joinedGame.id === gameId) {
-        const updatedJoinedGame = { joinedGame, ...update };
+        const updatedJoinedGame = { ...joinedGame, ...update };
         set({ selectedJoinedGame: updatedJoinedGame });
 
         const updatedJoinedGames = get().joinedGames.map((game) => {
