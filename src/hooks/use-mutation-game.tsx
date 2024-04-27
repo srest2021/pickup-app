@@ -92,8 +92,8 @@ function useMutationGame() {
       </head>
       <body>
           <div class="message">
-              Your friend <span class="username">{formattedUsername}</span> just created a game titled <span class="gamename">{gametitle}</span><br><br>
-              Open the app to join the game!
+            Your friend <span style="color: #e54b07; font-weight: bold;">{formattedUsername}</span> just created a game titled <span style="color: #e54b07; font-weight: bold;">{title}</span><br><br>
+            Open the app to join the game!
           </div>
       </body>
   </html>`
@@ -152,12 +152,9 @@ function useMutationGame() {
       //const htmlContent = await readHTMLFile();
       if (!htmlContent) throw new Error('HTML content not available.');
 
-      console.log('formattedUsername:', formattedUsername);
-      console.log('title:', title);
-
       const formattedHtml = htmlContent
           .replace('{formattedUsername}', formattedUsername)
-          .replace('{gameTitle}', title)
+          .replace('{title}', title)
           .replace('{formattedDate}', formattedDate)
 
       const { data, error: error2 } = await supabase.functions.invoke(
