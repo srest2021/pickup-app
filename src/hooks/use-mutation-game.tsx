@@ -60,7 +60,7 @@ function useMutationGame() {
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Email Template</title>
-          <img src="image.png" alt="Pickup! App Logo">
+          <img src="https://ibb.co/LJD4FrV" alt="Pickup! App Logo">
           <style>
               /* Center the content horizontally and vertically */
               body {
