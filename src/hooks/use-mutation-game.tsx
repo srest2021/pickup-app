@@ -10,7 +10,7 @@ async function readHTMLFile() {
       //const html = await fs.promises.readFile(filePath, 'utf8');
       //return html;
       //Load asset
-      const asset = Asset.fromModule(require('email_template.html'));
+      const asset = Asset.fromModule(require('./email_template.html'));
       await asset.downloadAsync();
 
       //Read file
