@@ -68,7 +68,6 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 - expo-updates: ^0.24.12
 - immer: ^10.0.4
 - jest-expo: ~50.0.4
-- lodash: ^4.17.21
 - nativewind: ^4.0.36
 - react: 18.2.0
 - react-native: 0.73.6

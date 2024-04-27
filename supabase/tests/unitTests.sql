@@ -385,5 +385,12 @@ select results_eq(
   'The correct friend requests should be returned'
 );
 
+-- get_has_requested()
+
+-- get_accepted_players()
+
+-- get_join_requests()
+
+
 select * from finish();
 rollback;

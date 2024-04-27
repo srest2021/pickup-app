@@ -49,7 +49,7 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                   borderColor="#08348c"
                   backgroundColor="#08348c"
                   width={50}
-                  icon={<Plus size="$2"/>}
+                  icon={<Plus size="$2" />}
                   variant="outlined"
                   disabled={loading}
                   style={{ alignSelf: "flex-start" }}

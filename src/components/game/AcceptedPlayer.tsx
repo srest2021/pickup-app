@@ -65,7 +65,8 @@ const AcceptedPlayer = ({
         {isOrganizer && (
           <Button
             testID="remove-button"
-            icon={clicked ? Loader : X}
+            icon={clicked ? <Loader size="$1" /> : <X size="$1" />}
+            width={30}
             size="$2"
             style={{ backgroundColor: "#e90d52", color: "white" }}
             onPress={() => handleRemove()}

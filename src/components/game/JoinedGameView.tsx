@@ -222,7 +222,7 @@ const JoinedGameView = ({
             </ScrollView>
 
             <Button
-              icon={MessageCircle}
+              icon={<MessageCircle size="$1" />}
               style={{
                 borderRadius: 50,
                 borderColor: "#ff7403",

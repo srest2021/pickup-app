@@ -1,9 +1,5 @@
 import { ThumbnailUser } from "../../lib/types";
-import {
-  Button,
-  XStack,
-  ListItem,
-} from "tamagui";
+import { Button, XStack, ListItem } from "tamagui";
 import { Check, ChevronRight, X, Loader } from "@tamagui/lucide-icons";
 import SmallAvatar from "./SmallAvatar";
 import useMutationUser from "../../hooks/use-mutation-user";
@@ -68,7 +64,7 @@ export default function OtherUserThumbnail({
       {!isSearch && isFriend ? (
         <Button
           alignSelf="center"
-          icon={clicked ? Loader : <X size="$1"/>}
+          icon={clicked ? <Loader size="$1" /> : <X size="$1" />}
           width={40}
           testID="remove-button"
           size="$3"
@@ -83,7 +79,7 @@ export default function OtherUserThumbnail({
         !isSearch && (
           <XStack space="$2" alignSelf="center">
             <Button
-              icon={clicked ? Loader : <Check size="$1"/>}
+              icon={clicked ? <Loader size="$1" /> : <Check size="$1" />}
               testID="accept-button"
               width={40}
               size="$3"
@@ -96,7 +92,7 @@ export default function OtherUserThumbnail({
               onPress={() => handleAccept()}
             />
             <Button
-              icon={clicked ? Loader : <X size="$1"/>}
+              icon={clicked ? <Loader size="$1" /> : <X size="$1" />}
               testID="reject-button"
               width={40}
               size="$3"

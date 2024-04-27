@@ -221,7 +221,7 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
               </YStack>
             </ScrollView>
             <Button
-              icon={MessageCircle}
+              icon={<MessageCircle size="$1" />}
               style={{
                 borderRadius: 50,
                 borderColor: "#ff7403",
