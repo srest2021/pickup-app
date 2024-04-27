@@ -393,7 +393,17 @@ Our second approach, frontend tests, targets our frontend components and tests w
 
 ### 8.2 Test Results
 
+We encountered a lot of difficulty with our frontend test suite. We ended with a total of 39.43% coverage in the front end with many tests failing, often due to continued issues with jest mocks. These are our front end test results: 
+
+Test Suites: 22 failed, 6 passed, 28 total
+Tests:       58 failed, 27 passed, 85 total
+Snapshots:   0 total
+Time:        47.924 s, estimated 66 s
+
+
 ### 8.3 Known Issues and Limitations
+
+For our frontend testing, one of the biggest difficulties we encountered was mocking our zustand store (useStore), which is manipulated in virtually every component. However, many components import and use different functions and variables from the store, making each store mock unique for each component. Testing the store itself proved to be very difficult as well. As such, many tests did not properly render because of issues with the mocked store, which caused cascading error with the other tests that relied on a properly rendered component. By the same logic, an improperly mocked store also ended up hurting our overall testing coverage, as the tests treated the non-rendered components and functions as non-existent. 
 
 ## Deployment
 
