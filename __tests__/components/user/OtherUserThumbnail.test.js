@@ -7,11 +7,11 @@ import SearchProfiles from "../../../src/components/user/SearchProfiles";
 import { AlignVerticalJustifyCenter } from "@tamagui/lucide-icons";
 
 describe("OtherUserThumbnail component", () => {
-  jest.mock("../../hooks/use-query-users", () => ({
+  jest.mock("../../src/hooks/use-query-users", () => ({
     __esModule: true,
     default: jest.fn(),
   }));
-  jest.mock("../../hooks/use-mutation-user", () => ({
+  jest.mock("../../src/hooks/use-mutation-user", () => ({
     __esModule: true,
     default: jest.fn(),
   }));

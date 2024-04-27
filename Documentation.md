@@ -395,7 +395,7 @@ Our second approach, frontend tests, targets our frontend components and tests w
 We encountered a lot of difficulty with our frontend test suite. We ended with a total of 39.43% coverage in the front end with many tests failing, often due to continued issues with jest mocks. These are our front end test results: 
 
 Test Suites: 22 failed, 6 passed, 28 total
-Tests:       58 failed, 27 passed, 85 total
+Tests:       56 failed, 29 passed, 85 total
 Snapshots:   0 total
 Time:        47.924 s, estimated 66 s
 
