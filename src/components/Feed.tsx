@@ -204,13 +204,13 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   contentContainerStyle={{ gap: 23, paddingTop: 18 }}
                 />
                 <TamaguiButton
-                  icon={ChevronsUp}
+                  icon={<ChevronsUp size="$2"/>}
                   style={{
-                    borderRadius: 50,
+                    borderRadius: 55,
                     borderColor: "#08348c",
                     backgroundColor: "#08348c",
                     color: "#ffffff",
-                    width: 45,
+                    width: 55,
                   }}
                   variant="outlined"
                   theme="active"
