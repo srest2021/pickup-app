@@ -70,11 +70,10 @@ describe("useStore", () => {
   // Add more tests for other actions and state mutations as needed
   test("setLocation should update location state", () => {
     const newLocation = {
-      coords: { latitude: 40.7128, longitude: -74.0060 },
+      coords: { latitude: 40.7128, longitude: -74.006 },
       timestamp: 1648717800000,
     };
     store.setLocation(newLocation);
     expect(store.location).toEqual(newLocation);
   });
-  
 });

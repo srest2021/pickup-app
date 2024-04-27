@@ -97,20 +97,20 @@ export interface Game {
 }
 
 export type MyGame = Game & {
-  address: Address;
-  joinRequests: PlusOneUser[];
-  acceptedPlayers: PlusOneUser[];
+  address: Address | null;
+  joinRequests: PlusOneUser[] | null;
+  acceptedPlayers: PlusOneUser[] | null;
 };
 
 export type JoinedGame = Game & {
-  address: Address;
-  acceptedPlayers: PlusOneUser[];
+  address: Address | null;
+  acceptedPlayers: PlusOneUser[] | null;
   organizer: ThumbnailUser;
 };
 
 export type FeedGame = Game & {
-  hasRequested: boolean;
-  acceptedPlayers: PlusOneUser[];
+  hasRequested: boolean | null;
+  acceptedPlayers: PlusOneUser[] | null;
   organizer: ThumbnailUser;
 };
 

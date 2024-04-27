@@ -57,10 +57,10 @@ describe("useQueryUsers", () => {
     expect(setLoadingMock).toHaveBeenCalledWith(true);
     expect(supabase.from).toHaveBeenCalledWith("profiles");
     expect(supabase.from().select).toHaveBeenCalledWith(
-      "id, username, display_name, bio, avatar_url"
+      "id, username, display_name, bio, avatar_url",
     );
     expect(supabase.from().or).toHaveBeenCalledWith(
-      `username.ilike.%test%, display_name.ilike.%test%`
+      `username.ilike.%test%, display_name.ilike.%test%`,
     );
     expect(supabase.from().not).toHaveBeenCalledWith("id", "eq", 1);
     expect(setSearchResultsMock).toHaveBeenCalledWith([
@@ -97,10 +97,10 @@ describe("useQueryUsers", () => {
     expect(setLoadingMock).toHaveBeenCalledWith(true);
     expect(supabase.from).toHaveBeenCalledWith("profiles");
     expect(supabase.from().select).toHaveBeenCalledWith(
-      "id, username, display_name, bio, avatar_url"
+      "id, username, display_name, bio, avatar_url",
     );
     expect(supabase.from().or).toHaveBeenCalledWith(
-      `username.ilike.%test%, display_name.ilike.%test%`
+      `username.ilike.%test%, display_name.ilike.%test%`,
     );
     expect(supabase.from().not).toHaveBeenCalledWith("id", "eq", 1);
     expect(Alert.alert).toHaveBeenCalledWith(errorMock.message);

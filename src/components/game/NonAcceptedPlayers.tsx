@@ -77,14 +77,16 @@ const NonAcceptedPlayer = ({
         <XStack justifyContent="flex-end" space="$2">
           <Button
             testID="reject-button"
-            icon={clicked ? Loader : X}
+            icon={clicked ? <Loader size="$1" /> : <X size="$1" />}
+            width={30}
             size="$2"
             style={{ backgroundColor: "#e90d52", color: "white" }}
             onPress={() => handleReject()}
           />
           <Button
             testID="accept-button"
-            icon={clicked ? Loader : Check}
+            icon={clicked ? <Loader size="$1" /> : <Check size="$1" />}
+            width={30}
             size="$2"
             style={{ backgroundColor: "#05a579", color: "white" }}
             onPress={() => handleAccept()}

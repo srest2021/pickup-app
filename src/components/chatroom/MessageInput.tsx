@@ -31,7 +31,7 @@ const MessageInput = () => {
         />
         <Button
           size="$5"
-          icon={loading ? Loader : SendHorizontal}
+          icon={loading ? <Loader size="$1" /> : <SendHorizontal size="$1" />}
           disabled={loading}
           style={{
             borderColor: "#ff7403",

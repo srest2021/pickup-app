@@ -1,20 +1,8 @@
 import { ThumbnailUser } from "../../lib/types";
-import {
-  Button,
-  View,
-  Paragraph,
-  XStack,
-  YStack,
-  Separator,
-  Text,
-  YGroup,
-  ListItem,
-} from "tamagui";
+import { Button, XStack, ListItem } from "tamagui";
 import { Check, ChevronRight, X, Loader } from "@tamagui/lucide-icons";
-import useQueryUsers from "../../hooks/use-query-users";
 import SmallAvatar from "./SmallAvatar";
 import useMutationUser from "../../hooks/use-mutation-user";
-import { useStore } from "../../lib/store";
 import { useState } from "react";
 
 export default function OtherUserThumbnail({
@@ -28,7 +16,6 @@ export default function OtherUserThumbnail({
   isFriend: boolean;
   isSearch: boolean;
 }) {
-  const [loading] = useStore((state) => [state.loading]); // disable buttons on loading
   const [clicked, setClicked] = useState(false); // thumbnail-specific loader for buttons
 
   const avatarUrl =
@@ -71,16 +58,17 @@ export default function OtherUserThumbnail({
           navigation.navigate("OtherProfileView", { userId: user.id });
         }}
       >
-        {user.bio && user.bio.trim().length > 0 && user.bio}
+        {user.bio && user.bio.trim().length > 0 && user.bio.trim()}
       </ListItem>
 
       {!isSearch && isFriend ? (
         <Button
           alignSelf="center"
-          icon={clicked ? Loader : X}
+          icon={clicked ? <Loader size="$1" /> : <X size="$1" />}
+          width={40}
           testID="remove-button"
           size="$3"
-          disabled={loading}
+          disabled={clicked}
           style={{
             backgroundColor: "#e90d52",
             color: "white",
@@ -91,11 +79,12 @@ export default function OtherUserThumbnail({
         !isSearch && (
           <XStack space="$2" alignSelf="center">
             <Button
-              icon={clicked ? Loader : Check}
+              icon={clicked ? <Loader size="$1" /> : <Check size="$1" />}
               testID="accept-button"
+              width={40}
               size="$3"
               alignSelf="center"
-              disabled={loading}
+              disabled={clicked}
               style={{
                 backgroundColor: "#05a579",
                 color: "white",
@@ -103,11 +92,12 @@ export default function OtherUserThumbnail({
               onPress={() => handleAccept()}
             />
             <Button
-              icon={clicked ? Loader : X}
+              icon={clicked ? <Loader size="$1" /> : <X size="$1" />}
               testID="reject-button"
+              width={40}
               size="$3"
               alignSelf="center"
-              disabled={loading}
+              disabled={clicked}
               style={{
                 backgroundColor: "#e90d52",
                 color: "white",

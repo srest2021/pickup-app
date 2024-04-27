@@ -4,11 +4,13 @@ import ChatWindow from "../../../src/components/chatroom/ChatWindow";
 
 // Mock the useStore, useQueryMessages, useQueryAvatars, and supabase functions
 jest.mock("../../../src/lib/store", () => ({
-    useStore: jest.fn(() => [{
-        user: "testuser",
-        messages: [],
-        setMessages: jest.fn(),
-    }]),
+  useStore: jest.fn(() => [
+    {
+      user: "testuser",
+      messages: [],
+      setMessages: jest.fn(),
+    },
+  ]),
   __esModule: true,
   default: jest.fn(() => ({
     user: {
@@ -83,5 +85,4 @@ describe("ChatWindow component", () => {
     const otherMessageText = getByText("Hello from another user");
     expect(otherMessageText).toBeTruthy();
   });
-
 });

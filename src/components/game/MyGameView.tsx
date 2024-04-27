@@ -18,26 +18,56 @@ import SportSkill from "../SportSkill";
 import MyGamePlayers from "./MyGamePlayers";
 import { Lock, MessageCircle, Unlock } from "@tamagui/lucide-icons";
 import { capitalizeFirstLetter } from "../../lib/types";
+import { useEffect, useState } from "react";
+import useQueryGames from "../../hooks/use-query-games";
 
 const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
 
-  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
-  const [session, user, loading, setRoomCode] = useStore((state) => [
+  const [
+    session,
+    user,
+    loading,
+    setRoomCode,
+    selectedMyGame,
+    clearSelectedMyGame,
+    updateMyGame,
+  ] = useStore((state) => [
     state.session,
     state.user,
     state.loading,
     state.setRoomCode,
+    state.selectedMyGame,
+    state.clearSelectedMyGame,
+    state.updateMyGame,
   ]);
+
+  const [deleteClicked, setDeleteClicked] = useState(false);
+
   const { removeMyGameById } = useMutationGame();
+  const { fetchGameAddress, fetchGameAcceptedPlayers, fetchGameJoinRequests } =
+    useQueryGames();
 
   let sportNameCapitalized = "";
   if (selectedMyGame) {
     sportNameCapitalized = capitalizeFirstLetter(selectedMyGame.sport.name);
   }
 
+  useEffect(() => {
+    updateMyGame(gameId, { acceptedPlayers: null, joinRequests: null });
+    if (!selectedMyGame?.address) fetchGameAddress(gameId, "my");
+    fetchGameAcceptedPlayers(gameId, selectedMyGame?.organizerId, "my");
+    fetchGameJoinRequests(gameId);
+
+    return () => {
+      clearSelectedMyGame();
+    };
+  }, []);
+
   const deleteGame = async () => {
+    setDeleteClicked(true);
     const removedId = await removeMyGameById(gameId);
+    setDeleteClicked(false);
     // navigate back to myGames list.
     if (removedId) {
       navigation.goBack();
@@ -135,7 +165,9 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`}
+                      {selectedMyGame.address
+                        ? `${selectedMyGame.address.street}, ${selectedMyGame.address.city}, ${selectedMyGame.address.state} ${selectedMyGame.address.zip}`
+                        : "Loading..."}
                     </SizableText>
                   </XStack>
 
@@ -183,13 +215,13 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
                     onPress={() => deleteGame()}
                     disabled={loading}
                   >
-                    Delete
+                    {deleteClicked ? "Loading..." : "Delete"}
                   </Button>
                 </XStack>
               </YStack>
             </ScrollView>
             <Button
-              icon={MessageCircle}
+              icon={<MessageCircle size="$1" />}
               style={{
                 borderRadius: 50,
                 borderColor: "#ff7403",

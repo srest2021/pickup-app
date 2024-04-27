@@ -4,32 +4,30 @@ import FeedFilter from "../../../src/components/FeedFilter";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";
 import "@testing-library/jest-dom";
-jest.useFakeTimers()
-
+jest.useFakeTimers();
 
 // Mock the useStore hook
 jest.mock("../../../src/lib/store", () => ({
-    useStore: jest.fn(() => [
-        {
-          loading: false,
-          setFilterSport: jest.fn(),
-          setFilterDist: jest.fn(),
-          setFilterLevel: jest.fn(),
-          getFilterSport: jest.fn(),
-          getFilterDist: jest.fn(),
-          getFilterLevel: jest.fn(),
-          session: {
-            access_token: "access_token_test_string",
-            refresh_token: "refresh_token_test_string",
-            expires_in: 90000000,
-            token_type: "token_type_test",
-            user: "user",
-          },
-          
-        },
-        [],
-        [],
-      ]),
+  useStore: jest.fn(() => [
+    {
+      loading: false,
+      setFilterSport: jest.fn(),
+      setFilterDist: jest.fn(),
+      setFilterLevel: jest.fn(),
+      getFilterSport: jest.fn(),
+      getFilterDist: jest.fn(),
+      getFilterLevel: jest.fn(),
+      session: {
+        access_token: "access_token_test_string",
+        refresh_token: "refresh_token_test_string",
+        expires_in: 90000000,
+        token_type: "token_type_test",
+        user: "user",
+      },
+    },
+    [],
+    [],
+  ]),
   __esModule: true,
   default: jest.fn(() => ({
     loading: false,
@@ -45,13 +43,15 @@ jest.mock("../../../src/lib/store", () => ({
 describe("FeedFilter component", () => {
   test("renders correctly with default values", () => {
     const { root } = render(
-        <TamaguiProvider config={appConfig}>
+      <TamaguiProvider config={appConfig}>
         <FeedFilter handleRefresh={() => {}} />
       </TamaguiProvider>,
     );
-    
+
     // Check if the distance slider and its label are rendered with default value
-    const distanceSlider = screen.getByLabelText("Set the maximum distance away from you:");
+    const distanceSlider = screen.getByLabelText(
+      "Set the maximum distance away from you:",
+    );
     expect(distanceSlider).toBeTruthy();
     expect(getByTestId("distanceLabel").props.children).toBe(10); // Assuming you set a testID for the label
 
@@ -72,13 +72,15 @@ describe("FeedFilter component", () => {
     const setFilterLevelMock = jest.fn();
 
     const { root } = render(
-        <TamaguiProvider config={appConfig}>
+      <TamaguiProvider config={appConfig}>
         <FeedFilter handleRefresh={() => {}} />
       </TamaguiProvider>,
     );
 
     // Simulate changing distance value
-    const distanceSlider = screen.getByLabelText("Set the maximum distance away from you:");
+    const distanceSlider = screen.getByLabelText(
+      "Set the maximum distance away from you:",
+    );
     fireEvent(distanceSlider, "valueChange", 15);
 
     // Simulate changing sport value
@@ -101,13 +103,15 @@ describe("FeedFilter component", () => {
 
   test("resets values on Cancel button press", () => {
     const { root } = render(
-        <TamaguiProvider config={appConfig}>
+      <TamaguiProvider config={appConfig}>
         <FeedFilter handleRefresh={() => {}} />
       </TamaguiProvider>,
     );
 
     // Simulate changing distance value
-    const distanceSlider = screen.getByLabelText("Set the maximum distance away from you:");
+    const distanceSlider = screen.getByLabelText(
+      "Set the maximum distance away from you:",
+    );
     fireEvent(distanceSlider, "valueChange", 20);
 
     // Simulate changing sport value
@@ -123,7 +127,9 @@ describe("FeedFilter component", () => {
     fireEvent.press(cancelButton);
 
     // Check if values are reset to default
-    expect(screen.getByLabelText("Set the maximum distance away from you:")).toBeTruthy();
+    expect(
+      screen.getByLabelText("Set the maximum distance away from you:"),
+    ).toBeTruthy();
     expect(screen.getByLabelText("Select a sport:")).toBeTruthy();
     expect(screen.getByLabelText("Select a skill level:")).toBeTruthy();
   });

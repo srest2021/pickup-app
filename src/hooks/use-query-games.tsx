@@ -21,6 +21,9 @@ function useQueryGames() {
     getFilterSport,
     getFilterDist,
     getFilterLevel,
+    updateMyGame,
+    updateJoinedGame,
+    updateFeedGame,
   ] = useStore((state) => [
     state.session,
     state.setLoading,
@@ -37,6 +40,9 @@ function useQueryGames() {
     state.getFilterSport,
     state.getFilterDist,
     state.getFilterLevel,
+    state.updateMyGame,
+    state.updateJoinedGame,
+    state.updateFeedGame,
   ]);
 
   const { getUserLocation } = useQueryUsers();
@@ -46,13 +52,12 @@ function useQueryGames() {
       setLoading(true);
       if (!session?.user) throw new Error("Please sign in to view games");
 
-      //if no location, for now, default location is charmander marmander
-      const lat = location ? location.coords.latitude : 39.3289357;
-      const long = location ? location.coords.longitude : -76.6172978;
+      const { location, error1 } = await getUserLocation();
+      if (!location || error1) throw error1;
 
-      const { data, error } = await supabase.rpc("my_games", {
-        lat: lat,
-        long: long,
+      const { data, error } = await supabase.rpc("get_my_games", {
+        lat: location?.coords.latitude,
+        long: location?.coords.longitude,
       });
       if (error) throw error;
 
@@ -64,12 +69,6 @@ function useQueryGames() {
             title: game.title,
             description: game.description,
             datetime: game.datetime,
-            address: {
-              street: game.street,
-              city: game.city,
-              state: game.state,
-              zip: game.zip,
-            } as Address,
             sport: {
               name: game.sport,
               skillLevel: game.skill_level,
@@ -82,8 +81,9 @@ function useQueryGames() {
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10
               : "?",
-            joinRequests: game.join_requests ? game.join_requests : [],
-            acceptedPlayers: game.accepted_players ? game.accepted_players : [],
+            address: null,
+            joinRequests: null,
+            acceptedPlayers: null,
           };
           return myGame;
         });
@@ -109,13 +109,12 @@ function useQueryGames() {
       if (!session?.user)
         throw new Error("Please sign in to view joined games");
 
-      //if no location, for now, default location is charmander marmander
-      const lat = location ? location.coords.latitude : 39.3289357;
-      const long = location ? location.coords.longitude : -76.6172978;
+      const { location, error1 } = await getUserLocation();
+      if (!location || error1) throw error1;
 
-      const { data, error } = await supabase.rpc("joined_games", {
-        lat: lat,
-        long: long,
+      const { data, error } = await supabase.rpc("get_joined_games", {
+        lat: location?.coords.latitude,
+        long: location?.coords.longitude,
       });
 
       if (error) throw error;
@@ -128,12 +127,6 @@ function useQueryGames() {
             title: game.title,
             description: game.description,
             datetime: game.datetime,
-            address: {
-              street: game.street,
-              city: game.city,
-              state: game.state,
-              zip: game.zip,
-            } as Address,
             sport: {
               name: game.sport,
               skillLevel: game.skill_level,
@@ -146,8 +139,9 @@ function useQueryGames() {
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10
               : "?",
-            acceptedPlayers: game.accepted_players ? game.accepted_players : [],
-            organizer: { ...game.organizer },
+            address: null,
+            acceptedPlayers: null,
+            organizer: game.organizer,
           };
           return joinedGame;
         });
@@ -181,7 +175,7 @@ function useQueryGames() {
       const filterLevel = getFilterLevel();
 
       const { data, error } = await supabase.rpc(
-        friendsOnly ? "friends_only_games" : "nearby_games",
+        friendsOnly ? "get_friends_only_games" : "get_public_games",
         {
           lat: location.coords.latitude,
           long: location.coords.longitude,
@@ -213,9 +207,9 @@ function useQueryGames() {
               Math.trunc(game.dist_meters) !== 0
                 ? Math.trunc(game.dist_meters)
                 : Math.round(game.dist_meters * 10) / 10,
-            acceptedPlayers: game.accepted_players ? game.accepted_players : [],
-            hasRequested: Boolean(game.has_requested),
-            organizer: { ...game.organizer },
+            hasRequested: null,
+            acceptedPlayers: null,
+            organizer: game.organizer,
           };
           return feedGame;
         });
@@ -238,11 +232,131 @@ function useQueryGames() {
     }
   };
 
+  const fetchGameAddress = async (gameId: string, gameType: string) => {
+    try {
+      setLoading(true);
+      if (!session?.user)
+        throw new Error("Please sign in to view game address!");
+
+      const { data, error } = await supabase
+        .from("game_locations")
+        .select("*")
+        .eq("game_id", gameId)
+        .single();
+      if (error) throw error;
+
+      if (data) {
+        const address: Address = {
+          street: data.street,
+          city: data.city,
+          state: data.state,
+          zip: data.zip,
+        };
+        if (gameType === "my") {
+          updateMyGame(gameId, { address });
+        } else if (gameType === "joined") {
+          updateJoinedGame(gameId, { address });
+        }
+      } else {
+        throw new Error("Error fetching feed games! Please try again later.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching address! Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchGameAcceptedPlayers = async (
+    gameId: string,
+    organizerId: string | undefined,
+    gameType: string,
+  ) => {
+    try {
+      if (!session?.user)
+        throw new Error("Please sign in to view accepted players!");
+
+      let { data, error } = await supabase.rpc("get_accepted_players", {
+        game_id_param: gameId,
+        organizer_id: organizerId,
+      });
+      if (error) throw error;
+      if (data == null) data = [];
+
+      if (gameType === "my") {
+        updateMyGame(gameId, {
+          acceptedPlayers: data,
+          currentPlayers: data.length + 1,
+        });
+      } else if (gameType === "joined") {
+        updateJoinedGame(gameId, {
+          acceptedPlayers: data,
+          currentPlayers: data.length + 1,
+        });
+      } else if (gameType === "feed") {
+        updateFeedGame(gameId, {
+          acceptedPlayers: data,
+          currentPlayers: data.length + 1,
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching accepted players! Please try again later.");
+      }
+    }
+  };
+
+  const fetchGameJoinRequests = async (gameId: string) => {
+    try {
+      if (!session?.user)
+        throw new Error("Please sign in to view join requests!");
+      //updateMyGame(gameId, { joinRequests: null });
+      let { data, error } = await supabase.rpc("get_join_requests", {
+        game_id_param: gameId,
+      });
+      if (error) throw error;
+      if (data == null) data = [];
+      updateMyGame(gameId, { joinRequests: data });
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching join requests! Please try again later.");
+      }
+    }
+  };
+
+  const fetchGameHasRequested = async (gameId: string) => {
+    try {
+      if (!session?.user) throw new Error("Please sign in to request to join!");
+      const { data, error } = await supabase.rpc("get_has_requested", {
+        game_id_param: gameId,
+      });
+      if (error) throw error;
+      updateFeedGame(gameId, { hasRequested: data });
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message);
+      } else {
+        Alert.alert("Error fetching game info! Please try again later.");
+      }
+    }
+  };
+
   return {
-    myGames,
     fetchMyGames,
     fetchJoinedGames,
     fetchFeedGames,
+    fetchGameAddress,
+    fetchGameAcceptedPlayers,
+    fetchGameJoinRequests,
+    fetchGameHasRequested,
   };
 }
 

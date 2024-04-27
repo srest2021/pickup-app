@@ -22,22 +22,46 @@ import useMutationGame from "../../hooks/use-mutation-game";
 import GamePlayers from "./GamePlayers";
 import { capitalizeFirstLetter } from "../../lib/types";
 import { Unlock, Lock } from "@tamagui/lucide-icons";
+import useQueryGames from "../../hooks/use-query-games";
+import { useEffect } from "react";
 
 const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId, username, userId } = route.params;
-  const [session, user, loading, selectedFeedGame] = useStore((state) => [
+  const [
+    session,
+    user,
+    loading,
+    selectedFeedGame,
+    clearSelectedFeedGame,
+    updateFeedGame,
+  ] = useStore((state) => [
     state.session,
     state.user,
     state.loading,
     state.selectedFeedGame,
+    state.clearSelectedFeedGame,
+    state.updateFeedGame,
   ]);
+
   const { requestToJoinById } = useMutationGame();
+  const { fetchGameAcceptedPlayers, fetchGameHasRequested } = useQueryGames();
+
   let hasPlusOne: boolean = false;
 
   let sportNameCapitalized = "";
   if (selectedFeedGame) {
     sportNameCapitalized = capitalizeFirstLetter(selectedFeedGame.sport.name);
   }
+
+  useEffect(() => {
+    updateFeedGame(gameId, { acceptedPlayers: null });
+    fetchGameAcceptedPlayers(gameId, selectedFeedGame?.organizerId, "feed");
+    if (selectedFeedGame?.hasRequested == null) fetchGameHasRequested(gameId);
+
+    return () => {
+      clearSelectedFeedGame();
+    };
+  }, []);
 
   // Request to Join Game Logic:
   const requestToJoinGame = async () => {
@@ -195,7 +219,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                       disabled={selectedFeedGame.hasRequested ? true : false}
                       flex={1}
                     >
-                      {loading
+                      {loading || selectedFeedGame.hasRequested == null
                         ? "Loading..."
                         : selectedFeedGame.hasRequested
                           ? "Requested"
@@ -267,6 +291,7 @@ const GameView = ({ navigation, route }: { navigation: any; route: any }) => {
                           <AlertDialog.Action asChild>
                             <Button
                               theme="active"
+                              disabled={loading}
                               onPress={() => requestToJoinGame()}
                             >
                               Request

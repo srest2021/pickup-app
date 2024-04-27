@@ -19,6 +19,21 @@ create table if not exists "public"."profiles" (
 alter table profiles
   enable row level security;
 
+-- create index for id column
+create index pid
+on profiles
+using btree (id);
+
+-- create index for username column
+create index pusername
+on profiles
+using btree (username);
+
+-- create index for display_name column
+create index pdisplay_name
+on profiles
+using btree (display_name);
+
 create policy "Public profiles are viewable by everyone." on profiles
   for select using (true);
 
@@ -743,7 +758,7 @@ end;
 $$ language plpgsql;
 
 -- sort games from closest to farthest given lat, long
-create or replace function nearby_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null) 
+create or replace function get_public_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null) 
 returns table(
   id "uuid", 
   organizer_id "uuid", 
@@ -755,9 +770,7 @@ returns table(
   max_players bigint, 
   current_players bigint, 
   is_public boolean, 
-  has_requested boolean,
   dist_meters double precision,
-  accepted_players jsonb,
   organizer jsonb
 ) language "sql" as $$
   with distances as (
@@ -777,26 +790,7 @@ returns table(
     g.max_players, 
     g.current_players, 
     g.is_public, 
-    auth.uid() in (
-      select player_id 
-      from game_requests
-      where game_requests.game_id = g.id
-    ) as has_requested,
     d.dist_meters,
-    (
-      select jsonb_agg(
-        jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'avatarUrl', p.avatar_url,
-          'hasPlusOne', jg.plus_one
-        )
-      )
-      from public.joined_game as jg
-      join public.profiles as p on jg.player_id = p.id and jg.player_id != g.organizer_id
-      where jg.game_id = g.id
-    ) as accepted_players,
     (
       select
         jsonb_build_object(
@@ -825,7 +819,7 @@ returns table(
   limit "limit";
 $$;
 
-create or replace function friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null)
+create or replace function get_friends_only_games("lat" double precision, "long" double precision, "dist_limit" double precision, "offset" int, "limit" int, "sport_filter" varchar default null, "skill_level_filter" int default null)
 returns table (
   id "uuid", 
   organizer_id "uuid", 
@@ -837,9 +831,7 @@ returns table (
   max_players bigint, 
   current_players bigint, 
   is_public boolean, 
-  has_requested boolean,
   dist_meters double precision,
-  accepted_players jsonb,
   organizer jsonb
 ) language "sql" as $$
   with distances as (
@@ -859,26 +851,7 @@ returns table (
     g.max_players, 
     g.current_players, 
     g.is_public, 
-    auth.uid() in (
-      select player_id 
-      from game_requests
-      where game_requests.game_id = g.id
-    ) as has_requested,
     d.dist_meters,
-    (
-      SELECT jsonb_agg(
-        jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'avatarUrl', p.avatar_url,
-          'hasPlusOne', jg.plus_one
-        )
-      )
-      FROM public.joined_game AS jg
-      JOIN public.profiles AS p ON jg.player_id = p.id and jg.player_id != g.organizer_id
-      WHERE jg.game_id = g.id
-    ) AS accepted_players,
     (
       select
         jsonb_build_object(
@@ -911,7 +884,7 @@ returns table (
   limit "limit";
 $$;
 
-create or replace function my_games("lat" double precision, "long" double precision) 
+create or replace function get_my_games("lat" double precision, "long" double precision) 
 returns table(
   id "uuid", 
   organizer_id "uuid", 
@@ -923,13 +896,7 @@ returns table(
   max_players bigint, 
   current_players bigint, 
   is_public boolean, 
-  street text, 
-  city text, 
-  state text, 
-  zip text, 
-  "dist_meters" double precision, 
-  join_requests jsonb,
-  accepted_players jsonb
+  "dist_meters" double precision
 ) language "sql" as $$
   select 
     g.id,
@@ -942,45 +909,14 @@ returns table(
     g.max_players, 
     g.current_players, 
     g.is_public, 
-    gl.street, 
-    gl.city, 
-    gl.state, 
-    gl.zip, 
-    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters, 
-    (
-      SELECT jsonb_agg(
-        jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'avatarUrl', p.avatar_url,
-          'hasPlusOne', gr.plus_one
-        )
-      )
-      FROM public.game_requests AS gr
-      JOIN public.profiles AS p ON gr.player_id = p.id
-      WHERE gr.game_id = g.id
-    ) AS join_requests,
-    (
-      SELECT jsonb_agg(
-        jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'avatarUrl', p.avatar_url
-        )
-      )
-      FROM public.joined_game AS jg
-      JOIN public.profiles AS p ON jg.player_id = p.id
-      WHERE jg.game_id = g.id and jg.player_id != auth.uid()
-    ) AS accepted_players
+    st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters
   from public.games as g
   join public.game_locations as gl on g.id = gl.game_id
   where g.organizer_id = auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
 
-create or replace function joined_games("lat" double precision, "long" double precision) 
+create or replace function get_joined_games("lat" double precision, "long" double precision) 
 returns table(
   id "uuid", 
   organizer_id "uuid", 
@@ -992,12 +928,7 @@ returns table(
   max_players bigint, 
   current_players bigint, 
   is_public boolean, 
-  street text, 
-  city text, 
-  state text, 
-  zip text, 
   "dist_meters" double precision,
-  accepted_players jsonb,
   organizer jsonb
 ) language "sql" as $$
   select 
@@ -1011,25 +942,7 @@ returns table(
     g.max_players, 
     g.current_players, 
     g.is_public, 
-    gl.street, 
-    gl.city, 
-    gl.state, 
-    gl.zip, 
     st_distance(gl.loc, st_point(long, lat)::geography)/1609.344 as dist_meters,
-    (
-      SELECT jsonb_agg(
-        jsonb_build_object(
-          'id', p.id,
-          'username', p.username,
-          'displayName', p.display_name,
-          'avatarUrl', p.avatar_url,
-          'hasPlusOne', jg.plus_one
-        )
-      )
-      FROM public.joined_game AS jg
-      JOIN public.profiles AS p ON jg.player_id = p.id and jg.player_id != g.organizer_id
-      WHERE jg.game_id = g.id
-    ) AS accepted_players,
     (
       select jsonb_build_object(
         'id', p.id,
@@ -1046,6 +959,63 @@ returns table(
   where jg.player_id = auth.uid() and g.organizer_id != auth.uid() and datetime > CURRENT_TIMESTAMP - INTERVAL '1 day'
   order by datetime ASC;
 $$;
+
+create or replace function get_accepted_players(game_id_param uuid, organizer_id uuid) 
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+  SELECT jsonb_agg(
+    jsonb_build_object(
+      'id', p.id,
+      'username', p.username,
+      'displayName', p.display_name,
+      'avatarUrl', p.avatar_url,
+      'hasPlusOne', jg.plus_one
+    )
+  )
+  FROM public.joined_game AS jg
+  JOIN public.profiles AS p ON jg.player_id = p.id
+  WHERE jg.game_id = game_id_param and jg.player_id != organizer_id
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
+create or replace function get_join_requests(game_id_param "uuid") 
+returns jsonb as $$
+declare
+  data jsonb;
+begin
+  SELECT jsonb_agg(
+    jsonb_build_object(
+      'id', p.id,
+      'username', p.username,
+      'displayName', p.display_name,
+      'avatarUrl', p.avatar_url,
+      'hasPlusOne', gr.plus_one
+    )
+  )
+  FROM public.game_requests AS gr
+  JOIN public.profiles AS p ON gr.player_id = p.id
+  WHERE gr.game_id = game_id_param
+  into data;
+  return data;
+end;
+$$ language plpgsql;
+
+create or replace function get_has_requested(game_id_param "uuid")
+returns boolean as $$
+declare 
+  has_requested boolean;
+begin
+  return exists (
+    select 1
+    from game_requests
+    where player_id = auth.uid() and game_id = game_id_param
+  );
+end;
+$$ language plpgsql;
 
 create or replace function get_game_by_id(game_id "uuid")
 returns jsonb as $$

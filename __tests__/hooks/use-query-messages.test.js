@@ -6,7 +6,6 @@ import { redis } from "../../src/lib/upstash-redis";
 import { Alert } from "react-native";
 import useQueryMessages from "../../src/hooks/use-query-messages";
 
-
 jest.mock("../../src/lib/supabase");
 jest.mock("../../src/lib/store");
 jest.mock("../../src/lib/upstash-redis");
