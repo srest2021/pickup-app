@@ -2,11 +2,19 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Address, MyGame, GameSport } from "../lib/types";
-import fs from 'fs';
+import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
 
-async function readHTMLFile(filePath) {
+async function readHTMLFile() {
   try {
-      const html = await fs.promises.readFile(filePath, 'utf8');
+      //const html = await fs.promises.readFile(filePath, 'utf8');
+      //return html;
+      //Load asset
+      const asset = Asset.fromModule(require('email_template.html'));
+      await asset.downloadAsync();
+
+      //Read file
+      const html = await FileSystem.readAsStringAsync(asset.localUri || '');
       return html;
   } catch (err) {
       console.error('Error reading HTML file:', err);
