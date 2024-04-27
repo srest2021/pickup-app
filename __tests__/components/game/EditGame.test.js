@@ -99,8 +99,8 @@ describe("EditGame", () => {
     const timePicker = screen.getByTestId("timePicker");
     expect(timePicker).toBeTruthy();
 
-    const addressInput = screen.getByTestId("addressInput");
-    expect(addressInput).toBeTruthy();
+    const streetInput = screen.getByTestId("streetInput");
+    expect(streetInput).toBeTruthy();
 
     const cityInput = screen.getByTestId("cityInput");
     expect(cityInput).toBeTruthy();
@@ -202,7 +202,7 @@ describe("EditGame", () => {
         <EditGame navigation={navigation} route={route} />
       </TamaguiProvider>,
     );
-    const selectLocationButton = getByTestId("selectLocationButton");
+    const selectLocationButton = screen.getByTestId("selectLocationButton");
     fireEvent.press(selectLocationButton);
     // Assuming a location is selected and handleSelectLocation is called
     expect(screen.getByTestId("streetInput").props.value).not.toBe("");

@@ -349,6 +349,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               </Label>
               <YStack space="$2">
                 <Input
+                  testID="streetInput"
                   size="$5"
                   placeholder="Street"
                   value={
