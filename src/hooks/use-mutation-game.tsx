@@ -2,25 +2,25 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Address, MyGame, GameSport } from "../lib/types";
-import * as FileSystem from 'expo-file-system';
-import { Asset } from 'expo-asset';
+// import * as FileSystem from 'expo-file-system';
+// import { Asset } from 'expo-asset';
 
-async function readHTMLFile() {
-  try {
-      //const html = await fs.promises.readFile(filePath, 'utf8');
-      //return html;
-      //Load asset
-      const asset = Asset.fromModule(require('email_template.html'));
-      await asset.downloadAsync();
+// async function readHTMLFile() {
+//   try {
+//       //const html = await fs.promises.readFile(filePath, 'utf8');
+//       //return html;
+//       //Load asset
+//       const asset = Asset.fromModule(require('email_template.html'));
+//       await asset.downloadAsync();
 
-      //Read file
-      const html = await FileSystem.readAsStringAsync(asset.localUri || '');
-      return html;
-  } catch (err) {
-      console.error('Error reading HTML file:', err);
-      return null;
-  }
-}
+//       //Read file
+//       const html = await FileSystem.readAsStringAsync(asset.localUri || '');
+//       return html;
+//   } catch (err) {
+//       console.error('Error reading HTML file:', err);
+//       return null;
+//   }
+// }
 
 function useMutationGame() {
   const [
@@ -52,6 +52,51 @@ function useMutationGame() {
     state.updateHasRequestedFeedGame,
     state.removeJoinedGame,
   ]);
+
+  const htmlContent = `<!DOCTYPE html>
+  <!--<strong>Your friend {formattedUsername}just created a game titled "{title}" on {formattedDate}.</strong><br><br>Open the app to join the <game!-->
+  <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Email Template</title>
+          <img src="image.png" alt="Pickup! App Logo">
+          <style>
+              /* Center the content horizontally and vertically */
+              body {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  margin: 0;
+                  background-color: #f0f0f0; /* Set background color */
+              }
+              
+              /* Style the message */
+              .message {
+                  text-align: center; 
+              }
+              
+              /* Style the username */
+              .username {
+                  color: #e54b07;
+                  font-weight: bold;
+              }
+              
+              /* Style the game name */
+              .gamename {
+                  color: #e54b07; 
+                  font-weight: bold;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="message">
+              Your friend <span class="username">{formattedUsername}</span> just created a game titled <span class="gamename">{gametitle}</span><br><br>
+              Open the app to join the game!
+          </div>
+      </body>
+  </html>`
 
   const checkGameOverlap = async (
     datetime: Date,
@@ -104,12 +149,13 @@ function useMutationGame() {
       const formattedUsername = username ? `@${username} ` : "";
       //const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
       //const htmlFilePath = 'email_template.html';
-      const htmlContent = await readHTMLFile();
+      //const htmlContent = await readHTMLFile();
       if (!htmlContent) throw new Error('HTML content not available.');
 
       const formattedHtml = htmlContent
           .replace('{formattedUsername}', formattedUsername)
-          .replace('{gameTitle}', title);
+          .replace('{gameTitle}', title)
+          .replace('{formattedDate}', formattedDate)
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
