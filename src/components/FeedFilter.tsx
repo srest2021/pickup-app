@@ -71,7 +71,6 @@ const FeedFilter = (props: { handleRefresh: () => void }) => {
             color="#ffffff"
             borderColor="#08348c"
             backgroundColor="#08348c"
-            borderRadius={55}
             width={50}
             icon={<Filter size="$1"/>}
             variant="outlined"

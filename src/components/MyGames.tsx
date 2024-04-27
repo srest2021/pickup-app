@@ -48,7 +48,6 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                   color="#ffffff"
                   borderColor="#08348c"
                   backgroundColor="#08348c"
-                  borderRadius={55}
                   width={50}
                   icon={<Plus size="$2"/>}
                   variant="outlined"

@@ -67,7 +67,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
                   searching ? (
                     () => <Spinner color="#ffffff" />
                   ) : (
-                    <Search color="#ffffff" />
+                    <Search size="$1" color="#ffffff" />
                   )
                 }
               ></Button>
