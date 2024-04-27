@@ -53,7 +53,6 @@ const mockSelectedMyGame = {
   isPublic: true,
 };
 
-
 // mock useMutationUser hook
 jest.mock("../../../src/hooks/use-mutation-user", () => ({
   __esModule: true,
@@ -223,6 +222,8 @@ describe("EditGame", () => {
     );
     const editButton = screen.getByTestId("editButton");
     fireEvent.press(editButton);
-    expect(Alert.alert).toHaveBeenCalledWith("Please fill out all required fields.");
+    expect(Alert.alert).toHaveBeenCalledWith(
+      "Please fill out all required fields.",
+    );
   });
 });

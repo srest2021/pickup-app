@@ -5,17 +5,18 @@ import "@testing-library/jest-dom";
 import React from "react";
 import SearchProfiles from "../../../src/components/user/SearchProfiles";
 import { AlignVerticalJustifyCenter } from "@tamagui/lucide-icons";
+import OtherUserThumbnail from "../../../src/components/user/OtherUserThumbnail";
 
 describe("OtherUserThumbnail component", () => {
-  jest.mock("../../src/hooks/use-query-users", () => ({
+  jest.mock("../../../src/hooks/use-query-users", () => ({
     __esModule: true,
     default: jest.fn(),
   }));
-  jest.mock("../../src/hooks/use-mutation-user", () => ({
+  jest.mock("../../../src/hooks/use-mutation-user", () => ({
     __esModule: true,
     default: jest.fn(),
   }));
-  jest.mock("../../lib/store", () => ({
+  jest.mock("../../../src/lib/store", () => ({
     useStore: jest.fn(),
   }));
 

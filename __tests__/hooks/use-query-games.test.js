@@ -13,11 +13,20 @@ describe("useQueryGames", () => {
   });
 
   it("should fetch my games successfully", async () => {
-    const mockMyGames = [{ id: 1, title: "Game 1" }, { id: 2, title: "Game 2" }];
+    const mockMyGames = [
+      { id: 1, title: "Game 1" },
+      { id: 2, title: "Game 2" },
+    ];
     const setMyGamesMock = jest.fn();
     const setLoadingMock = jest.fn();
     const clearMyGamesMock = jest.fn();
-    useStore.mockReturnValue([null, setLoadingMock, mockMyGames, setMyGamesMock, clearMyGamesMock]);
+    useStore.mockReturnValue([
+      null,
+      setLoadingMock,
+      mockMyGames,
+      setMyGamesMock,
+      clearMyGamesMock,
+    ]);
 
     const { result, waitForNextUpdate } = renderHook(() => useQueryGames());
     await result.current.fetchMyGames();
@@ -31,7 +40,13 @@ describe("useQueryGames", () => {
   it("should handle error when fetching my games", async () => {
     const setLoadingMock = jest.fn();
     const clearMyGamesMock = jest.fn();
-    const useStoreMock = jest.fn(() => [null, setLoadingMock, [], jest.fn(), clearMyGamesMock]);
+    const useStoreMock = jest.fn(() => [
+      null,
+      setLoadingMock,
+      [],
+      jest.fn(),
+      clearMyGamesMock,
+    ]);
     useStore.mockImplementation(useStoreMock);
 
     const errorMock = new Error("Failed to fetch my games");
@@ -68,7 +83,10 @@ describe("useQueryGames", () => {
     await result.current.fetchJoinedGames();
 
     expect(setLoadingMock).toHaveBeenCalledWith(true);
-    expect(supabase.rpc).toHaveBeenCalledWith("joined_games", expect.any(Object));
+    expect(supabase.rpc).toHaveBeenCalledWith(
+      "joined_games",
+      expect.any(Object),
+    );
     expect(setJoinedGamesMock).toHaveBeenCalledWith(mockJoinedGames);
     expect(setLoadingMock).toHaveBeenCalledWith(false);
   });
@@ -91,7 +109,10 @@ describe("useQueryGames", () => {
     await result.current.fetchJoinedGames();
 
     expect(setLoadingMock).toHaveBeenCalledWith(true);
-    expect(supabase.rpc).toHaveBeenCalledWith("joined_games", expect.any(Object));
+    expect(supabase.rpc).toHaveBeenCalledWith(
+      "joined_games",
+      expect.any(Object),
+    );
     expect(Alert.alert).toHaveBeenCalledWith(errorMock.message);
     expect(clearJoinedGamesMock).toHaveBeenCalled();
     expect(setLoadingMock).toHaveBeenCalledWith(false);
@@ -131,7 +152,10 @@ describe("useQueryGames", () => {
     await result.current.fetchFeedGames(false, 0); // Non-friends only, offset 0
 
     expect(setLoadingMock).toHaveBeenCalledWith(true);
-    expect(supabase.rpc).toHaveBeenCalledWith("nearby_games", expect.any(Object));
+    expect(supabase.rpc).toHaveBeenCalledWith(
+      "nearby_games",
+      expect.any(Object),
+    );
     expect(setFeedGamesMock).toHaveBeenCalledWith(mockFeedGames);
     expect(clearFeedGamesMock).toHaveBeenCalled();
     expect(setLoadingMock).toHaveBeenCalledWith(false);
@@ -166,7 +190,10 @@ describe("useQueryGames", () => {
     await result.current.fetchFeedGames(true, 10); // Friends only, offset 10
 
     expect(setLoadingMock).toHaveBeenCalledWith(true);
-    expect(supabase.rpc).toHaveBeenCalledWith("friends_only_games", expect.any(Object));
+    expect(supabase.rpc).toHaveBeenCalledWith(
+      "friends_only_games",
+      expect.any(Object),
+    );
     expect(Alert.alert).toHaveBeenCalledWith(errorMock.message);
     expect(clearFeedGamesFriendsOnlyMock).toHaveBeenCalled();
     expect(setLoadingMock).toHaveBeenCalledWith(false);

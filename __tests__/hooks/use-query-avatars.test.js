@@ -33,7 +33,7 @@ describe("useQueryAvatars", () => {
 
     expect(useStoreMock).toHaveBeenCalled();
     expect(supabase.storage.from("avatars").download).toHaveBeenCalledWith(
-      avatarPath
+      avatarPath,
     );
     expect(addAvatarUrlMock).toHaveBeenCalledWith(userId, mockAvatarUrl);
   });
@@ -60,24 +60,22 @@ describe("useQueryAvatars", () => {
     expect(addAvatarUrlMock).not.toHaveBeenCalled();
   });
 
-
-
   it("should handle errors when downloading avatars", async () => {
     const userId = "123";
     const avatarPath = "avatar.jpg";
     const errorMock = new Error("Failed to download image");
-  
+
     const addAvatarUrlMock = jest.fn();
     const useStoreMock = jest.fn(() => [[], addAvatarUrlMock]);
     useStore.mockImplementation(useStoreMock);
-  
+
     //supabase.storage.from("avatars").download.mockRejectedValue(errorMock);
-  
+
     const { result, waitForNextUpdate } = renderHook(() => useQueryAvatars());
-  
+
     await result.current.fetchAvatar(userId, avatarPath);
     //await waitForNextUpdate();
-  
+
     expect(useStoreMock).toHaveBeenCalled();
     /*
     expect(supabase.storage.from("avatars").download).toHaveBeenCalledWith(
@@ -86,5 +84,4 @@ describe("useQueryAvatars", () => {
     */
     expect(addAvatarUrlMock).toHaveBeenCalledWith(userId, null);
   });
-  
 });

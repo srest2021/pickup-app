@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import useMutationMessages from '../../src/hooks/use-mutation-messages';
+import { useEffect } from "react";
+import useMutationMessages from "../../src/hooks/use-mutation-messages";
 import { useStore } from "../../src/lib/store";
 import { supabase } from "../../src/lib/supabase";
-import { Alert } from 'react-native';
+import { Alert } from "react-native";
 
 // Mocking react-native Alert
-jest.mock('react-native', () => ({
+jest.mock("react-native", () => ({
   Alert: {
     alert: jest.fn(),
   },
@@ -27,7 +27,7 @@ jest.mock("../../src/lib/store", () => ({
   useStore: jest.fn(),
 }));
 
-describe('useMutationMessages', () => {
+describe("useMutationMessages", () => {
   let setLoading, channel, roomCode, addMessage;
 
   beforeEach(() => {
@@ -35,20 +35,29 @@ describe('useMutationMessages', () => {
     jest.clearAllMocks();
     setLoading = jest.fn();
     channel = { send: jest.fn() };
-    roomCode = 'mockedRoomCode';
+    roomCode = "mockedRoomCode";
     addMessage = jest.fn();
 
     // Mocking useStore return values
-    useStore.mockReturnValueOnce([null, setLoading, channel, roomCode, addMessage]);
+    useStore.mockReturnValueOnce([
+      null,
+      setLoading,
+      channel,
+      roomCode,
+      addMessage,
+    ]);
   });
 
-  describe('addChatroomMessage', () => {
-    it('should add a chatroom message and broadcast it through the channel', async () => {
-      const mockedContent = 'Hello, world!';
-      const mockedMessage = { id: 'mockedMessageId', content: mockedContent };
+  describe("addChatroomMessage", () => {
+    it("should add a chatroom message and broadcast it through the channel", async () => {
+      const mockedContent = "Hello, world!";
+      const mockedMessage = { id: "mockedMessageId", content: mockedContent };
 
       // Mocking the add_message RPC call
-      mockSupabase.rpc.mockResolvedValueOnce({ data: mockedMessage, error: null });
+      mockSupabase.rpc.mockResolvedValueOnce({
+        data: mockedMessage,
+        error: null,
+      });
 
       // Initialize the hook
       const mutationMessages = useMutationMessages();
@@ -61,15 +70,15 @@ describe('useMutationMessages', () => {
       expect(setLoading).toHaveBeenNthCalledWith(2, false);
 
       // Check if the add_message RPC call was made with the correct arguments
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('add_message', {
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("add_message", {
         game_id: roomCode,
         content: mockedContent,
       });
 
       // Check if channel.send was called with the correct message payload
       expect(channel.send).toHaveBeenCalledWith({
-        type: 'broadcast',
-        event: 'message',
+        type: "broadcast",
+        event: "message",
         payload: mockedMessage,
       });
 
@@ -80,12 +89,15 @@ describe('useMutationMessages', () => {
       expect(Alert.alert).not.toHaveBeenCalled();
     });
 
-    it('should display an alert when there is an error adding a message', async () => {
-      const mockedContent = 'Hello, world!';
-      const mockedError = new Error('Mocked error message');
+    it("should display an alert when there is an error adding a message", async () => {
+      const mockedContent = "Hello, world!";
+      const mockedError = new Error("Mocked error message");
 
       // Mocking the add_message RPC call to throw an error
-      mockSupabase.rpc.mockResolvedValueOnce({ data: null, error: mockedError });
+      mockSupabase.rpc.mockResolvedValueOnce({
+        data: null,
+        error: mockedError,
+      });
 
       // Initialize the hook
       const mutationMessages = useMutationMessages();
@@ -98,7 +110,7 @@ describe('useMutationMessages', () => {
       expect(setLoading).toHaveBeenNthCalledWith(2, false);
 
       // Check if the add_message RPC call was made with the correct arguments
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('add_message', {
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("add_message", {
         game_id: roomCode,
         content: mockedContent,
       });
@@ -113,6 +125,4 @@ describe('useMutationMessages', () => {
       expect(Alert.alert).toHaveBeenCalledWith(mockedError.message);
     });
   });
-  
-  
 });
