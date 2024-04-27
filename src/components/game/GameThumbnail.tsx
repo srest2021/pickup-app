@@ -26,19 +26,13 @@ export default function GameThumbnail({
   game: Game;
   gametype: string;
 }) {
-  const [
-    user,
-    loading,
-    setSelectedMyGame,
-    setSelectedFeedGame,
-    setSelectedJoinedGame,
-  ] = useStore((state) => [
-    state.user,
-    state.loading,
-    state.setSelectedMyGame,
-    state.setSelectedFeedGame,
-    state.setSelectedJoinedGame,
-  ]);
+  const [user, setSelectedMyGame, setSelectedFeedGame, setSelectedJoinedGame] =
+    useStore((state) => [
+      state.user,
+      state.setSelectedMyGame,
+      state.setSelectedFeedGame,
+      state.setSelectedJoinedGame,
+    ]);
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);

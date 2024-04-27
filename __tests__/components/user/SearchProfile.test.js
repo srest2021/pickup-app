@@ -6,7 +6,7 @@ import React from "react";
 import SearchProfiles from "../../../src/components/user/SearchProfiles";
 
 describe("SearchProfiles component", () => {
-  jest.mock("../../hooks/use-query-users", () => ({
+  jest.mock("../../../src/hooks/use-query-users", () => ({
     __esModule: true,
     default: jest.fn(),
   }));

@@ -1,4 +1,4 @@
-import { render, fireEvent } from "@testing-library/react-native";
+import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import MessageInput from "../../../src/components/chatroom/MessageInput";
 import { TamaguiProvider } from "tamagui";
 import appConfig from "../../../tamagui.config";

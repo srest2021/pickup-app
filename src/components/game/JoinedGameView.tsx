@@ -19,6 +19,8 @@ import GamePlayers from "./GamePlayers";
 import { MessageCircle, Unlock, Lock } from "@tamagui/lucide-icons";
 import { TouchableOpacity } from "react-native";
 import { capitalizeFirstLetter } from "../../lib/types";
+import useQueryGames from "../../hooks/use-query-games";
+import { useEffect } from "react";
 
 const JoinedGameView = ({
   navigation,
@@ -29,19 +31,41 @@ const JoinedGameView = ({
 }) => {
   const { gameId, username, userId } = route.params;
 
-  const [selectedJoinedGame] = useStore((state) => [state.selectedJoinedGame]);
-  const [session, user, loading, setRoomCode] = useStore((state) => [
+  const [
+    session,
+    user,
+    loading,
+    setRoomCode,
+    selectedJoinedGame,
+    updateJoinedGame,
+    clearSelectedJoinedGame,
+  ] = useStore((state) => [
     state.session,
     state.user,
     state.loading,
     state.setRoomCode,
+    state.selectedJoinedGame,
+    state.updateJoinedGame,
+    state.clearSelectedJoinedGame,
   ]);
+
   const { leaveJoinedGameById } = useMutationGame();
+  const { fetchGameAcceptedPlayers, fetchGameAddress } = useQueryGames();
 
   let sportNameCapitalized = "";
   if (selectedJoinedGame) {
     sportNameCapitalized = capitalizeFirstLetter(selectedJoinedGame.sport.name);
   }
+
+  useEffect(() => {
+    updateJoinedGame(gameId, { acceptedPlayers: null });
+    if (!selectedJoinedGame?.address) fetchGameAddress(gameId, "joined");
+    fetchGameAcceptedPlayers(gameId, selectedJoinedGame?.organizerId, "joined");
+
+    return () => {
+      clearSelectedJoinedGame();
+    };
+  }, []);
 
   // Leaving a Joined Game Logic:
   const leaveJoinedGame = async () => {
@@ -151,7 +175,9 @@ const JoinedGameView = ({
                       <H6>Address:</H6>
                     </Label>
                     <SizableText flex={1} size="$5">
-                      {`${selectedJoinedGame.address.street}, ${selectedJoinedGame.address.city}, ${selectedJoinedGame.address.state} ${selectedJoinedGame.address.zip}`}
+                      {selectedJoinedGame.address
+                        ? `${selectedJoinedGame.address.street}, ${selectedJoinedGame.address.city}, ${selectedJoinedGame.address.state} ${selectedJoinedGame.address.zip}`
+                        : "Loading..."}
                     </SizableText>
                   </XStack>
 
@@ -186,6 +212,7 @@ const JoinedGameView = ({
                     borderColor="#ff7403"
                     backgroundColor="#ffffff"
                     flex={1}
+                    disabled={loading}
                     onPress={() => leaveJoinedGame()}
                   >
                     {loading ? "Loading..." : "Leave Game"}
@@ -195,7 +222,7 @@ const JoinedGameView = ({
             </ScrollView>
 
             <Button
-              icon={MessageCircle}
+              icon={<MessageCircle size="$1" />}
               style={{
                 borderRadius: 50,
                 borderColor: "#ff7403",

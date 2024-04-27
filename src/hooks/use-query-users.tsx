@@ -26,14 +26,14 @@ function useQueryUsers() {
     state.addAvatarUrls,
   ]);
 
-  const searchByUsername = async (username: string) => {
+  const searchByUsername = async (input: string) => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error("No user on the session!");
       const { data, error } = await supabase
         .from("profiles")
         .select("id, username, display_name, bio, avatar_url")
-        .or(`username.ilike.%${username}%, display_name.ilike.%${username}%`)
+        .or(`username.ilike.%${input}%, display_name.ilike.%${input}%`)
         .not("id", "eq", session.user.id)
         .order("username", { ascending: true });
       if (error) throw error;
@@ -49,6 +49,7 @@ function useQueryUsers() {
           return user;
         });
         setSearchResults(users);
+        setLoading(false);
 
         const avatarUrls = data.map((elem: any) => ({
           userId: elem.id,
@@ -62,11 +63,12 @@ function useQueryUsers() {
         );
       }
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error processing your search! Please try again later.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -102,6 +104,8 @@ function useQueryUsers() {
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert(error.message);
+      } else {
+        Alert.alert("Error getting player profile! Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -131,6 +135,7 @@ function useQueryUsers() {
           return myFriend;
         });
         setFriends(friends);
+        setLoading(false);
 
         const avatarUrls = data.map((elem: any) => ({
           userId: elem.id,
@@ -138,19 +143,16 @@ function useQueryUsers() {
           avatarUrl: null,
         }));
         addAvatarUrls(avatarUrls);
-
-        return friends;
       } else {
         throw new Error("Error fetching friends! Please try again later.");
       }
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
         Alert.alert("Error fetching friends! Please try again later.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -177,6 +179,7 @@ function useQueryUsers() {
           return myFriendRequest;
         });
         setFriendRequests(friendRequests);
+        setLoading(false);
 
         const avatarUrls = data.map((elem: any) => ({
           userId: elem.id,
@@ -184,21 +187,18 @@ function useQueryUsers() {
           avatarUrl: null,
         }));
         addAvatarUrls(avatarUrls);
-
-        return friendRequests;
       } else {
         throw new Error(
           "Error fetching friend requests! Please try again later.",
         );
       }
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
         Alert.alert(error.message);
       } else {
         Alert.alert("Error fetching friend requests! Please try again later.");
       }
-    } finally {
-      setLoading(false);
     }
   };
 

@@ -68,7 +68,6 @@ Our app utilizes the client-server architecture, where the client (or frontend) 
 - expo-updates: ^0.24.12
 - immer: ^10.0.4
 - jest-expo: ~50.0.4
-- lodash: ^4.17.21
 - nativewind: ^4.0.36
 - react: 18.2.0
 - react-native: 0.73.6
@@ -393,7 +392,31 @@ Our second approach, frontend tests, targets our frontend components and tests w
 
 ### 8.2 Test Results
 
+We encountered a lot of difficulty with our frontend test suite. We ended with a total of 39.43% coverage in the front end with many tests failing, often due to continued issues with jest mocks. These are our front end test results: 
+
+Test Suites: 22 failed, 6 passed, 28 total
+Tests:       56 failed, 29 passed, 85 total
+Snapshots:   0 total
+Time:        47.924 s, estimated 66 s
+
+For the unit tests, we were not able to get all tests to run/pass, but the output is as follows:
+
+```
+Test Summary Report
+-------------------
+./unitTests.sql (Wstat: 0 Tests: 107 Failed: 0)
+  Parse errors: Tests out of sequence.  Found (1) but expected (104)
+                Tests out of sequence.  Found (2) but expected (105)
+                Tests out of sequence.  Found (3) but expected (106)
+                Tests out of sequence.  Found (3) but expected (107)
+                Bad plan.  You planned 1 tests but ran 107.
+Files=1, Tests=107,  2 wallclock secs ( 0.04 usr  0.01 sys +  0.02 cusr  0.02 csys =  0.09 CPU)
+Result: FAIL
+```
+
 ### 8.3 Known Issues and Limitations
+
+For our frontend testing, one of the biggest difficulties we encountered was mocking our zustand store (useStore), which is manipulated in virtually every component. However, many components import and use different functions and variables from the store, making each store mock unique for each component. Testing the store itself proved to be very difficult as well. As such, many tests did not properly render because of issues with the mocked store, which caused cascading error with the other tests that relied on a properly rendered component. By the same logic, an improperly mocked store also ended up hurting our overall testing coverage, as the tests treated the non-rendered components and functions as non-existent. 
 
 ## Deployment
 

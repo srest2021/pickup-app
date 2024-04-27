@@ -29,9 +29,8 @@ type State = {
   selectedJoinedGame: JoinedGame | null;
 
   feedGames: FeedGame[];
-  selectedFeedGame: FeedGame | null;
-
   feedGamesFriendsOnly: FeedGame[];
+  selectedFeedGame: FeedGame | null;
 
   location: Location.LocationObject | null;
 
@@ -54,24 +53,25 @@ type Action = {
 
   setLoading: (loading: boolean) => void;
 
+  // user
   setUser: (user: User | null) => void;
   editUser: (updated: any) => void;
-
-  setOtherUser: (otherUser: OtherUser | null) => void;
-
   addUserSport: (userSport: UserSport) => void;
   editUserSport: (userSport: UserSport) => void;
   setUserSports: (userSports: UserSport[]) => void;
   clearUserSports: () => void;
 
-  // my games
+  // other user
+  setOtherUser: (otherUser: OtherUser | null) => void;
 
+  // my games
   setMyGames: (myGames: MyGame[]) => void;
   clearMyGames: () => void;
   addMyGame: (myGame: MyGame) => void;
   removeMyGame: (myGameId: string) => void;
   editMyGame: (myGameId: string, updated: any) => void;
 
+  // game players
   acceptJoinRequest: (
     gameId: string,
     playerId: string,
@@ -80,41 +80,42 @@ type Action = {
   rejectJoinRequest: (gameId: string, playerId: string) => void;
   removePlayer: (gameId: string, playerId: string, plusOne: boolean) => void;
 
+  // selected my game
   setSelectedMyGame: (myGame: MyGame) => void;
+  updateMyGame: (gameId: string, update: any) => void;
   clearSelectedMyGame: () => void;
 
   // feed games
-
   setFeedGames: (feedGames: FeedGame[]) => void;
   clearFeedGames: () => void;
-
   setFeedGamesFriendsOnly: (feedGames: FeedGame[]) => void;
   clearFeedGamesFriendsOnly: () => void;
 
+  // selected feed game
   setSelectedFeedGame: (feedGame: FeedGame) => void;
   clearSelectedFeedGame: () => void;
-
   updateHasRequestedFeedGame: (feedGameId: string) => void;
+  updateFeedGame: (gameId: string, update: any) => void;
 
   // joined games
-
   setJoinedGames: (feedGames: JoinedGame[]) => void;
   clearJoinedGames: () => void;
   addJoinedGame: (joinedGame: JoinedGame) => void;
   removeJoinedGame: (joinedGameId: string) => void;
 
+  // selected joined game
   setSelectedJoinedGame: (joinedGame: JoinedGame) => void;
   clearSelectedJoinedGame: () => void;
+  updateJoinedGame: (gameId: string, update: any) => void;
 
-  //location
+  // location
   setLocation: (location: Location.LocationObject) => void;
-  clearLocation: () => void; //not sure if we'll need this
+  clearLocation: () => void;
 
-  //feed filters
+  // feed filters
   setFilterSport: (sport: string | null) => void;
   setFilterDist: (dist: number) => void;
   setFilterLevel: (level: string | null) => void;
-
   getFilterSport: () => string | null;
   getFilterDist: () => number;
   getFilterLevel: () => string | null;
@@ -126,6 +127,8 @@ type Action = {
   addMessages: (messages: Message[]) => void;
   setChannel: (channel: RealtimeChannel | undefined) => void;
   setRoomCode: (roomCode: string) => void;
+
+  // avatar urls
   editAvatarPath: (userId: string, avatarPath: string | null) => void;
   addAvatarUrls: (newAvatarUrls: any[]) => void;
   addAvatarUrl: (userId: string, avatarUrl: string | null) => void;
@@ -242,6 +245,22 @@ export const useStore = create<State & Action>()(
       set({ selectedFeedGame: null });
     },
 
+    updateFeedGame: (gameId, update) => {
+      const feedGame = get().selectedFeedGame;
+      if (feedGame && feedGame.id === gameId) {
+        const updatedFeedGame = { ...feedGame, ...update };
+        set({ selectedFeedGame: updatedFeedGame });
+
+        const updatedFeedGames = get().feedGames.map((game) => {
+          if (game.id === gameId) {
+            return updatedFeedGame;
+          }
+          return game;
+        });
+        set({ feedGames: updatedFeedGames });
+      }
+    },
+
     // my games
 
     setMyGames: (myGames) => set({ myGames }),
@@ -278,18 +297,40 @@ export const useStore = create<State & Action>()(
 
     clearSelectedMyGame: () => set({ selectedMyGame: null }),
 
+    updateMyGame: (gameId, update) => {
+      const myGame = get().selectedMyGame;
+      if (myGame && myGame.id === gameId) {
+        const updatedMyGame = { ...myGame, ...update };
+        set({ selectedMyGame: updatedMyGame });
+
+        const updatedMyGames = get().myGames.map((game) => {
+          if (game.id === gameId) {
+            return updatedMyGame;
+          }
+          return game;
+        });
+        set({ myGames: updatedMyGames });
+      }
+    },
+
     acceptJoinRequest: (gameId, playerId, plusOne) => {
       // find player object in join requests
       const newPlayer = get()
         .myGames.find((game) => game.id === gameId)
-        ?.joinRequests.find((user) => user.id === playerId);
+        ?.joinRequests?.find((user) => user.id === playerId);
+      // do nothing if new player can't be found (shouldn't ever happen)
+      if (!newPlayer) return;
 
       // update myGames
       const updatedMyGames = get().myGames.map((myGame) => {
-        if (myGame.id === gameId) {
+        if (
+          myGame.id === gameId &&
+          myGame.joinRequests &&
+          myGame.acceptedPlayers
+        ) {
           // remove player object from join requests
           myGame.joinRequests = myGame.joinRequests.filter(
-            (user) => user.id != playerId,
+            (user) => user.id !== playerId,
           );
           // add player object to acceptedPlayers and increment count
           if (newPlayer) {
@@ -307,7 +348,7 @@ export const useStore = create<State & Action>()(
 
     rejectJoinRequest: (gameId, playerId) => {
       const updatedMyGames = get().myGames.map((myGame) => {
-        if (myGame.id === gameId) {
+        if (myGame.id === gameId && myGame.joinRequests) {
           // remove player object from join requests
           myGame.joinRequests = myGame.joinRequests.filter(
             (user) => user.id != playerId,
@@ -321,7 +362,7 @@ export const useStore = create<State & Action>()(
 
     removePlayer: (gameId, playerId, plusOne) => {
       const updatedMyGames = get().myGames.map((myGame) => {
-        if (myGame.id === gameId) {
+        if (myGame.id === gameId && myGame.acceptedPlayers) {
           // remove player object from accepted players
           myGame.acceptedPlayers = myGame.acceptedPlayers.filter(
             (user) => user.id != playerId,
@@ -355,6 +396,22 @@ export const useStore = create<State & Action>()(
 
     setSelectedJoinedGame: (joinedGame) =>
       set({ selectedJoinedGame: joinedGame }),
+
+    updateJoinedGame: (gameId, update) => {
+      const joinedGame = get().selectedJoinedGame;
+      if (joinedGame && joinedGame.id === gameId) {
+        const updatedJoinedGame = { ...joinedGame, ...update };
+        set({ selectedJoinedGame: updatedJoinedGame });
+
+        const updatedJoinedGames = get().joinedGames.map((game) => {
+          if (game.id === gameId) {
+            return updatedJoinedGame;
+          }
+          return game;
+        });
+        set({ joinedGames: updatedJoinedGames });
+      }
+    },
 
     clearSelectedJoinedGame: () => set({ selectedJoinedGame: null }),
 

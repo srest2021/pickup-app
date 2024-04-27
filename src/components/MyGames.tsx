@@ -1,12 +1,12 @@
 import { YStack, ScrollView, H4, Spinner, Separator } from "tamagui";
-import { Alert, Button } from "react-native";
+import { Button } from "react-native";
 import { View } from "tamagui";
 import useQueryGames from "../hooks/use-query-games";
 import { Tabs, Text, Button as TamaguiButton } from "tamagui";
 import GameThumbnail from "./game/GameThumbnail";
 import { useStore } from "../lib/store";
 import { useEffect, useState } from "react";
-import { PlusCircle } from "@tamagui/lucide-icons";
+import { Plus } from "@tamagui/lucide-icons";
 
 const MyGames = ({ navigation }: { navigation: any }) => {
   const [session, myGames, joinedGames, loading] = useStore((state) => [
@@ -48,7 +48,8 @@ const MyGames = ({ navigation }: { navigation: any }) => {
                   color="#ffffff"
                   borderColor="#08348c"
                   backgroundColor="#08348c"
-                  icon={PlusCircle}
+                  width={50}
+                  icon={<Plus size="$2" />}
                   variant="outlined"
                   disabled={loading}
                   style={{ alignSelf: "flex-start" }}
