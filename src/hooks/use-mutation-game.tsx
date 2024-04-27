@@ -152,6 +152,9 @@ function useMutationGame() {
       //const htmlContent = await readHTMLFile();
       if (!htmlContent) throw new Error('HTML content not available.');
 
+      console.log('formattedUsername:', formattedUsername);
+      console.log('title:', title);
+
       const formattedHtml = htmlContent
           .replace('{formattedUsername}', formattedUsername)
           .replace('{gameTitle}', title)
@@ -162,7 +165,7 @@ function useMutationGame() {
         {
           body: {
             to: emails,
-            subject: "PickupApp: Your friend just created a game on Pickup!",
+            subject: "PickupApp: Your friend just created a game!",
             html: formattedHtml,
           },
         },
