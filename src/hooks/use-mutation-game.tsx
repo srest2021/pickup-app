@@ -103,8 +103,8 @@ function useMutationGame() {
       });
       const formattedUsername = username ? `@${username} ` : "";
       //const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
-      const htmlFilePath = 'email_template.html';
-      const htmlContent = await readHTMLFile(htmlFilePath);
+      //const htmlFilePath = 'email_template.html';
+      const htmlContent = await readHTMLFile();
       if (!htmlContent) throw new Error('HTML content not available.');
 
       const formattedHtml = htmlContent
