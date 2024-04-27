@@ -398,22 +398,22 @@ select results_eq(
   'The correct user email should be returned'
 );
 
--- add_message()
--- do $$
--- begin
---     set role authenticated;
---     set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
---     perform add_message('78d89525-46bf-4032-8572-5428bec482eb','hello world');
+add_message()
+do $$
+begin
+    set role authenticated;
+    set local "request.jwt.claims" to '{ "sub": "273dc833-4e44-4f22-bdc9-3b13c9253d2a", "email": "user1@email.com" }';
+    perform add_message('78d89525-46bf-4032-8572-5428bec482eb','hello world');
 
---     -- row added to messages table
---     perform ok(
---         exists (
---             select 1 from messages
---             where content = 'hello world'
---         ),
---         'Row should be added to messages'
---     );
--- END $$;
+    -- row added to messages table
+    perform ok(
+        exists (
+            select 1 from messages
+            where content = 'hello world'
+        ),
+        'Row should be added to messages'
+    );
+END $$;
 
 rollback;
 

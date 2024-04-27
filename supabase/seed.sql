@@ -52,4 +52,5 @@ values
 insert into joined_game
   (id, game_id, player_id, plus_one)
 values
-  (uuid_generate_v4(), 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', '473dc833-4e44-4f22-bdc9-3b13c9253d2a', false);
+  (uuid_generate_v4(), 'a9b2e8f6-39eb-49d0-b9c0-92d97a82c20e', '473dc833-4e44-4f22-bdc9-3b13c9253d2a', false),
+  (uuid_generate_v4(), '78d89525-46bf-4032-8572-5428bec482eb', '273dc833-4e44-4f22-bdc9-3b13c9253d2a', false);
