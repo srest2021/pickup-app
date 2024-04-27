@@ -12,7 +12,6 @@ import {
   ThumbnailUser,
 } from "./types";
 import * as Location from "expo-location";
-import { Q } from "@upstash/redis/zmscore-07021e27";
 
 type State = {
   session: Session | null;
