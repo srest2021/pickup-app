@@ -60,7 +60,7 @@ function useMutationGame() {
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Email Template</title>
-          <img src="https://ibb.co/LJD4FrV" alt="Pickup! App Logo">
+          <a href="https://ibb.co/LJD4FrV"><img src="https://i.ibb.co/5nXq0kb/n-Ouu-Lhbg15w-Q-1584-396.png" alt="n-Ouu-Lhbg15w-Q-1584-396" border="0" /></a>
           <style>
               /* Center the content horizontally and vertically */
               body {
@@ -72,6 +72,12 @@ function useMutationGame() {
                   background-color: #f0f0f0; /* Set background color */
               }
               
+              .image-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+
               /* Style the message */
               .message {
                   text-align: center; 
@@ -91,7 +97,7 @@ function useMutationGame() {
           </style>
       </head>
       <body>
-          Your friend <span style="color: #e54b07; font-weight: bold;">{formattedUsername}</span> just created a game titled <span style="color: #e54b07; font-weight: bold;">{title}</span><br><br>
+          Your friend <span style="color: #e54b07; font-weight: bold;">__USER__</span> just created a game titled <span style="color: #e54b07; font-weight: bold;">__TITLE__</span><br><br>
           Open the app to join the game!
       </body>
   </html>`
@@ -151,9 +157,9 @@ function useMutationGame() {
       if (!htmlContent) throw new Error('HTML content not available.');
 
       const formattedHtml = htmlContent
-          .replace('{formattedUsername}', formattedUsername)
-          .replace('{title}', title)
-          .replace('{formattedDate}', formattedDate)
+          .replace('__USER__', formattedUsername)
+          .replace('__TITLE__', title)
+          //.replace('{formattedDate}', formattedDate)
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
