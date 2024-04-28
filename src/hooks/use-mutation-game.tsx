@@ -54,53 +54,62 @@ function useMutationGame() {
   ]);
 
   const htmlContent = `<!DOCTYPE html>
-  <!--<strong>Your friend {formattedUsername}just created a game titled "{title}" on {formattedDate}.</strong><br><br>Open the app to join the <game!-->
   <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Email Template</title>
-          <a href="https://ibb.co/LJD4FrV"><img src="https://i.ibb.co/5nXq0kb/n-Ouu-Lhbg15w-Q-1584-396.png" alt="n-Ouu-Lhbg15w-Q-1584-396" border="0" /></a>
-          <style>
-              /* Center the content horizontally and vertically */
-              body {
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  height: 100vh;
-                  margin: 0;
-                  background-color: #f0f0f0; /* Set background color */
-              }
-              
-              .image-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              }
-
-              /* Style the message */
-              .message {
-                  text-align: center; 
-              }
-              
-              /* Style the username */
-              .username {
-                  color: #e54b07;
-                  font-weight: bold;
-              }
-              
-              /* Style the game name */
-              .gamename {
-                  color: #e54b07; 
-                  font-weight: bold;
-              }
-          </style>
-      </head>
-      <body>
-          Your friend <span style="color: #e54b07; font-weight: bold;">__USER__</span> just created a game titled <span style="color: #e54b07; font-weight: bold;">__TITLE__</span><br><br>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Email Template</title>
+      <style>
+          /* Center the content horizontally and vertically */
+          body {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+              margin: 0;
+              background-color: #f0f0f0; /* Set background color */
+          }
+          
+          .container {
+              text-align: center; /* Center the text horizontally */
+          }
+  
+          .image-container {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+          }
+  
+          /* Style the message */
+          .message {
+              text-align: center; 
+          }
+          
+          /* Style the username */
+          .username {
+              color: #e54b07;
+              font-weight: bold;
+          }
+          
+          /* Style the game name */
+          .gamename {
+              color: #e54b07; 
+              font-weight: bold;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="image-container">
+              <a href="https://ibb.co/LJD4FrV"><img src="https://i.ibb.co/5nXq0kb/n-Ouu-Lhbg15w-Q-1584-396.png" alt="n-Ouu-Lhbg15w-Q-1584-396" border="0" class="centered-image" /></a>
+          </div>
+  
+          Your friend <span class="username">__USER__</span> just created a game titled <span class="gamename">__TITLE__</span><br><br>
           Open the app to join the game!
-      </body>
-  </html>`
+      </div>
+  </body>
+  </html>
+  `
 
   const checkGameOverlap = async (
     datetime: Date,
