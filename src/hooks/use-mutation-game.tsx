@@ -34,6 +34,122 @@ function useMutationGame() {
     state.removeJoinedGame,
   ]);
 
+  const htmlContent = `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Email Template</title>
+      <style>
+          /* Center the content horizontally and vertically */
+          body {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+              margin: 0;
+              background-color: #f0f0f0; /* Set background color */
+          }
+          
+          .container {
+              text-align: center; /* Center the text horizontally */
+          }
+  
+          .image-container {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+          }
+  
+          /* Style the message */
+          .message {
+              text-align: center; 
+          }
+          
+          /* Style the username */
+          .username {
+              color: #e54b07;
+              font-weight: bold;
+          }
+          
+          /* Style the game name */
+          .gamename {
+              color: #e54b07; 
+              font-weight: bold;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="image-container">
+          <a href="https://ibb.co/4ts0xD0"><img src="https://i.ibb.co/F3sdtfd/pickupimg.png" alt="pickupimg" border="0" /></a>
+          </div>
+  
+          Your friend <span class="username">__USER__</span> just created a game titled <span class="gamename">__TITLE__</span><br><br>
+          Open the app to join the game!
+      </div>
+  </body>
+  </html>
+  `;
+
+  const htmlContent2 = `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Email Template</title>
+          <style>
+              /* Center the content horizontally and vertically */
+              body {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  margin: 0;
+                  background-color: #f0f0f0; /* Set background color */
+              }
+              
+              .container {
+                  text-align: center; /* Center the text horizontally */
+              }
+      
+              .image-container {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+              }
+      
+              /* Style the message */
+              .message {
+                  text-align: center; 
+              }
+              
+              /* Style the username */
+              .username {
+                  color: #e54b07;
+                  font-weight: bold;
+              }
+              
+              /* Style the game name */
+              .gamename {
+                  color: #e54b07; 
+                  font-weight: bold;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="image-container">
+              <a href="https://ibb.co/4ts0xD0"><img src="https://i.ibb.co/F3sdtfd/pickupimg.png" alt="pickupimg" border="0" /></a>
+              </div>
+      
+              <span class="username">__USER__</span> requested to join a game you organized: <span class="gamename">__TITLE__</span><br><br>
+              Open the app to view the request!
+          </div>
+      </body>
+      </html>
+      `;
+
   const checkGameOverlap = async (
     datetime: Date,
     street: string,
@@ -83,14 +199,19 @@ function useMutationGame() {
         weekday: "long",
       });
       const formattedUsername = username ? `@${username} ` : "";
-      const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
+
+      if (!htmlContent) throw new Error("HTML content not available.");
+
+      const formattedHtml = htmlContent
+        .replace("__USER__", formattedUsername)
+        .replace("__TITLE__", title);
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
             to: emails,
-            subject: "Your friend just created a game on Pickup!",
+            subject: "PickupApp: Your friend just created a game!",
             html: formattedHtml,
           },
         },
@@ -117,14 +238,20 @@ function useMutationGame() {
         throw error1;
       }
       const formattedUsername = username ? `@${username}` : "A user";
-      const formattedHtml = `<strong>${formattedUsername} requested to join your game ${gameTitle}!</strong><br><br>Open the app to interact!`;
+
+      const titleReplacement = gameTitle ? gameTitle : "the game";
+
+      const formattedHtml2 = htmlContent2
+        .replace("__USER__", formattedUsername)
+        .replace("__TITLE__", titleReplacement);
+
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
             to: email,
-            subject: "A user just requested to join your game!",
-            html: formattedHtml,
+            subject: "PickupApp: A user just requested to join your game!",
+            html: formattedHtml2,
           },
         },
       );
