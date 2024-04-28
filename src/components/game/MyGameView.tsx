@@ -72,7 +72,6 @@ const MyGameView = ({ navigation, route }: { navigation: any; route: any }) => {
     if (removedId) {
       navigation.goBack();
     }
-    // TODO: Add success toast
   };
 
   return (

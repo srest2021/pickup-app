@@ -2,25 +2,6 @@ import { useStore } from "../lib/store";
 import { supabase } from "../lib/supabase";
 import { Alert } from "react-native";
 import { Address, MyGame, GameSport } from "../lib/types";
-// import * as FileSystem from 'expo-file-system';
-// import { Asset } from 'expo-asset';
-
-// async function readHTMLFile() {
-//   try {
-//       //const html = await fs.promises.readFile(filePath, 'utf8');
-//       //return html;
-//       //Load asset
-//       const asset = Asset.fromModule(require('email_template.html'));
-//       await asset.downloadAsync();
-
-//       //Read file
-//       const html = await FileSystem.readAsStringAsync(asset.localUri || '');
-//       return html;
-//   } catch (err) {
-//       console.error('Error reading HTML file:', err);
-//       return null;
-//   }
-// }
 
 function useMutationGame() {
   const [
@@ -109,7 +90,7 @@ function useMutationGame() {
       </div>
   </body>
   </html>
-  `
+  `;
 
   const htmlContent2 = `<!DOCTYPE html>
       <html lang="en">
@@ -167,7 +148,7 @@ function useMutationGame() {
           </div>
       </body>
       </html>
-      `
+      `;
 
   const checkGameOverlap = async (
     datetime: Date,
@@ -218,15 +199,12 @@ function useMutationGame() {
         weekday: "long",
       });
       const formattedUsername = username ? `@${username} ` : "";
-      //const formattedHtml = `<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the game!`;
-      //const htmlFilePath = 'email_template.html';
-      //const htmlContent = await readHTMLFile();
-      if (!htmlContent) throw new Error('HTML content not available.');
+
+      if (!htmlContent) throw new Error("HTML content not available.");
 
       const formattedHtml = htmlContent
-          .replace('__USER__', formattedUsername)
-          .replace('__TITLE__', title)
-          //.replace('{formattedDate}', formattedDate)
+        .replace("__USER__", formattedUsername)
+        .replace("__TITLE__", title);
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
@@ -260,13 +238,12 @@ function useMutationGame() {
         throw error1;
       }
       const formattedUsername = username ? `@${username}` : "A user";
-      //const formattedHtml = `<strong>${formattedUsername} requested to join a game you organized, ${gameTitle}!</strong><br><br>Open the app to interact!`;
-      
+
       const titleReplacement = gameTitle ? gameTitle : "the game";
 
       const formattedHtml2 = htmlContent2
-          .replace('__USER__', formattedUsername)
-          .replace('__TITLE__', titleReplacement)
+        .replace("__USER__", formattedUsername)
+        .replace("__TITLE__", titleReplacement);
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",

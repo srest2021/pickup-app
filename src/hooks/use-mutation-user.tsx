@@ -95,7 +95,7 @@ function useMutationUser() {
           </div>
       </body>
       </html>
-      `
+      `;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -223,9 +223,8 @@ function useMutationUser() {
         throw error1;
       }
       const formattedUsername = username ? `@${username}` : "a user";
-      //const formattedHtml = `<strong>You just received a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
-      const formattedHtml = htmlContent1
-          .replace('__USER__', formattedUsername)
+
+      const formattedHtml = htmlContent1.replace("__USER__", formattedUsername);
 
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
