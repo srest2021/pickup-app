@@ -39,7 +39,7 @@ const Feed = ({ navigation }: { navigation: any }) => {
   // for scroll to top
   const flatListRef = useRef();
   const scrollToTop = async () => {
-    flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+    flatListRef?.current?.scrollToOffset({ animated: true, offset: 0 });
   };
 
   // on component render, clear state and get all games
@@ -133,10 +133,10 @@ const Feed = ({ navigation }: { navigation: any }) => {
               <Tabs.List paddingTop="$2">
                 <FeedFilter
                   handleRefresh={async () => {
-                    await flatListRef.current.scrollToOffset({
-                      animated: true,
-                      offset: 0,
-                    });
+                    // await flatListRef.current.scrollToOffset({
+                    //   animated: true,
+                    //   offset: 0,
+                    // });
                     handleRefresh();
                   }}
                 />
@@ -204,13 +204,13 @@ const Feed = ({ navigation }: { navigation: any }) => {
                   contentContainerStyle={{ gap: 23, paddingTop: 18 }}
                 />
                 <TamaguiButton
-                  icon={ChevronsUp}
+                  icon={<ChevronsUp size="$2" />}
                   style={{
-                    borderRadius: 50,
+                    borderRadius: 55,
                     borderColor: "#08348c",
                     backgroundColor: "#08348c",
                     color: "#ffffff",
-                    width: 45,
+                    width: 55,
                   }}
                   variant="outlined"
                   theme="active"

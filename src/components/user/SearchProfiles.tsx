@@ -8,14 +8,14 @@ import {
   YGroup,
   SizableText,
 } from "tamagui";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input, Form } from "tamagui";
-import { UserSearch } from "@tamagui/lucide-icons";
+import { Search } from "@tamagui/lucide-icons";
 import useQueryUsers from "../../hooks/use-query-users";
 import { ThumbnailUser } from "../../lib/types";
 import OtherUserThumbnail from "./OtherUserThumbnail";
 import { useStore } from "../../lib/store";
-import { debounce } from "lodash";
+import { Alert } from "react-native";
 
 const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [loading, results, setResults] = useStore((state) => [
@@ -27,32 +27,19 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
   const [currentInput, setCurrentInput] = useState<string>("");
   const [searching, setSearching] = useState(false);
 
-  const debouncedSearch = useCallback(
-    debounce(async (input: string) => {
-      setSearching(true);
-      await searchByUsername(input.trim());
-      setSearching(false);
-    }, 300),
-    [],
-  );
-
   const regularSearch = async () => {
-    setSearching(true);
-    await searchByUsername(currentInput.trim());
-    setSearching(false);
-  };
-
-  const handleTextChange = async (input: string) => {
-    setCurrentInput(input);
-    if (input.trim().length > 0) {
-      debouncedSearch(input);
+    if (currentInput.trim().length > 0) {
+      setSearching(true);
+      await searchByUsername(currentInput.trim());
+      setSearching(false);
+    } else {
+      Alert.alert("Search field cannot be empty!");
     }
   };
 
-  // clear pending debounced calls on component unmount
   useEffect(() => {
     return () => {
-      debouncedSearch.cancel();
+      setResults(null);
     };
   }, []);
 
@@ -64,9 +51,9 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
             <Input
               flex={1}
               borderWidth={2}
-              placeholder="Search by username"
+              placeholder="Search for other users"
               autoCapitalize="none"
-              onChangeText={(text: string) => handleTextChange(text)}
+              onChangeText={(text: string) => setCurrentInput(text)}
               value={currentInput}
             />
             <Form.Trigger asChild>
@@ -80,7 +67,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
                   searching ? (
                     () => <Spinner color="#ffffff" />
                   ) : (
-                    <UserSearch color="#ffffff" />
+                    <Search size="$1" color="#ffffff" />
                   )
                 }
               ></Button>
@@ -121,7 +108,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
               </View>
             )
           ) : (
-            !loading && (
+            !searching && (
               <View flex={1} alignSelf="center" justifyContent="center">
                 <SizableText size="$5" textAlign="center">
                   No search yet.
@@ -137,6 +124,7 @@ const SearchProfiles = ({ navigation }: { navigation: any }) => {
           onPress={() => {
             setResults(null);
             setCurrentInput("");
+            setSearching(false);
           }}
         >
           Clear All

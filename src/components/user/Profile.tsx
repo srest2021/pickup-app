@@ -9,6 +9,7 @@ import { Edit3, Loader } from "@tamagui/lucide-icons";
 import AddSport from "./AddSport";
 import { ToastViewport } from "@tamagui/toast";
 import { ToastDemo } from "../Toast";
+import { useState } from "react";
 
 export default function Profile({ navigation }: { navigation: any }) {
   const [
@@ -27,6 +28,9 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearMessages,
     clearAvatarUrls,
     setChannel,
+    setFriends,
+    setFriendRequests,
+    setSearchResults,
   ] = useStore((state) => [
     state.loading,
     state.setLoading,
@@ -43,10 +47,15 @@ export default function Profile({ navigation }: { navigation: any }) {
     state.clearMessages,
     state.clearAvatarUrls,
     state.setChannel,
+    state.setFriends,
+    state.setFriendRequests,
+    state.setSearchResults,
   ]);
 
+  const [clicked, setClicked] = useState(false);
+
   const handleLogOut = async () => {
-    setLoading(true);
+    setClicked(true);
     await supabase.auth.signOut();
 
     // clear store
@@ -61,7 +70,10 @@ export default function Profile({ navigation }: { navigation: any }) {
     clearMessages();
     clearAvatarUrls();
     setChannel(undefined);
-    setLoading(false);
+    setFriends([]);
+    setFriendRequests([]);
+    setSearchResults(null);
+    setClicked(false);
   };
 
   // Calculate the banner height and the top margin for the avatar
@@ -155,7 +167,9 @@ export default function Profile({ navigation }: { navigation: any }) {
                         paddingTop="$3"
                         paddingBottom="$3"
                       >
-                        {user.bio ? user.bio : "No bio yet"}
+                        {user.bio && user.bio.trim().length > 0
+                          ? user.bio
+                          : "No bio yet"}
                       </SizableText>
                     </View>
                   </Card>
@@ -186,6 +200,20 @@ export default function Profile({ navigation }: { navigation: any }) {
       ) : (
         <View flex={1} alignSelf="center" justifyContent="center">
           <H4 textAlign="center">No user on the session.</H4>
+          <YStack space="$6" alignItems="center" paddingTop="$3">
+            <Button
+              disabled={clicked}
+              variant="outlined"
+              onPress={() => handleLogOut()}
+              size="$5"
+              color="#ff7403"
+              borderColor="#ff7403"
+              backgroundColor={"#ffffff"}
+              width="100%"
+            >
+              {clicked ? "Loading..." : "Log Out"}
+            </Button>
+          </YStack>
         </View>
       )}
     </View>

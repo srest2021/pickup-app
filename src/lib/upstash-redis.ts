@@ -1,7 +1,7 @@
 import { Redis } from "@upstash/redis";
-import { OtherUser } from "./types";
+import { Message, OtherUser } from "./types";
 
-export const MESSAGE_LIMIT = 50;
+export const MESSAGE_LIMIT = 2000;
 export const OTHER_USER_LIMIT = 50;
 const EXPIRATION_TIME = 7200;
 
@@ -11,12 +11,29 @@ export const redis = new Redis({
   responseEncoding: false,
 });
 
-export const getUserCacheKey = (userId: string) => {
+export const getChatroomCacheKey = (roomCode: string | null) => {
+  return `room:${roomCode}`;
+};
+
+export const addMessageToCache = async (cacheKey: string, payload: any) => {
+  await redis.lpush(cacheKey, payload);
+  await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
+};
+
+export const addMessagesToCache = async (
+  cacheKey: string,
+  messages: Message[],
+) => {
+  await redis.lpush(cacheKey, ...messages);
+  await redis.ltrim(cacheKey, 0, MESSAGE_LIMIT);
+};
+
+export const getOtherUserCacheKey = (userId: string) => {
   return `otherUser:${userId}`;
 };
 
 export const addUserToCache = async (user: OtherUser) => {
-  const cacheKey = getUserCacheKey(user.id);
+  const cacheKey = getOtherUserCacheKey(user.id);
   await redis.hset(cacheKey, user);
   await redis.expire(cacheKey, EXPIRATION_TIME);
 };
@@ -26,7 +43,7 @@ export const addUsersToCache = async (users: OtherUser[]) => {
 };
 
 export const getUserFromCache = async (userId: string) => {
-  const cacheKey = getUserCacheKey(userId);
+  const cacheKey = getOtherUserCacheKey(userId);
   const data: OtherUser | null = await redis.hgetall(cacheKey);
   return data;
 };
@@ -35,7 +52,7 @@ export const updateIsFriendInCache = async (
   userId: string,
   isFriend: boolean,
 ) => {
-  const cacheKey = getUserCacheKey(userId);
+  const cacheKey = getOtherUserCacheKey(userId);
   const data: OtherUser | null = await redis.hgetall(cacheKey);
   if (data) {
     data.isFriend = isFriend;
@@ -47,7 +64,7 @@ export const updatehasRequestedInCache = async (
   userId: string,
   hasRequested: boolean,
 ) => {
-  const cacheKey = getUserCacheKey(userId);
+  const cacheKey = getOtherUserCacheKey(userId);
   const data: OtherUser | null = await redis.hgetall(cacheKey);
   if (data) {
     data.hasRequested = hasRequested;

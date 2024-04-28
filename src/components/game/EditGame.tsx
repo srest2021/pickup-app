@@ -26,10 +26,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
   const { gameId } = route.params;
-  const [loading, selectedMyGame] = useStore((state) => [
-    state.loading,
-    state.selectedMyGame,
-  ]);
+  const [selectedMyGame] = useStore((state) => [state.selectedMyGame]);
+
+  const [clicked, setClicked] = useState(false);
 
   const { user } = useMutationUser();
   const { editGameById, checkGameOverlap } = useMutationGame();
@@ -350,6 +349,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
               </Label>
               <YStack space="$2">
                 <Input
+                  testID="streetInput"
                   size="$5"
                   placeholder="Street"
                   value={
@@ -465,7 +465,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                               <Select.Item
                                 index={i}
                                 key={sport.name}
-                                value={sport.name.toLowerCase()}
+                                value={sport.name}
                               >
                                 <Select.ItemText>{sport.name}</Select.ItemText>
                                 <Select.ItemIndicator marginLeft="auto">
@@ -552,8 +552,12 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
             <YStack paddingTop="$5">
               <Button
                 theme="active"
-                disabled={loading}
-                onPress={() => editGame()}
+                disabled={clicked}
+                onPress={async () => {
+                  setClicked(true);
+                  await editGame();
+                  setClicked(false);
+                }}
                 size="$5"
                 color="#ff7403"
                 borderColor="#ff7403"
@@ -561,7 +565,7 @@ const EditGame = ({ navigation, route }: { navigation: any; route: any }) => {
                 testID="editButton"
                 variant="outlined"
               >
-                {loading ? "Loading..." : "Save"}
+                {clicked ? "Loading..." : "Save"}
               </Button>
             </YStack>
           </YStack>
