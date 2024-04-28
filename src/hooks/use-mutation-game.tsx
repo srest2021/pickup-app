@@ -101,7 +101,7 @@ function useMutationGame() {
   <body>
       <div class="container">
           <div class="image-container">
-              <a href="https://ibb.co/LJD4FrV"><img src="https://i.ibb.co/5nXq0kb/n-Ouu-Lhbg15w-Q-1584-396.png" alt="n-Ouu-Lhbg15w-Q-1584-396" border="0" class="centered-image" /></a>
+          <a href="https://ibb.co/4ts0xD0"><img src="https://i.ibb.co/F3sdtfd/pickupimg.png" alt="pickupimg" border="0" /></a>
           </div>
   
           Your friend <span class="username">__USER__</span> just created a game titled <span class="gamename">__TITLE__</span><br><br>
