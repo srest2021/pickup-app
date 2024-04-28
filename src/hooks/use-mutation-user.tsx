@@ -39,6 +39,64 @@ function useMutationUser() {
     state.editAvatarPath,
   ]);
 
+  const htmlContent1 = `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Email Template</title>
+          <style>
+              /* Center the content horizontally and vertically */
+              body {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100vh;
+                  margin: 0;
+                  background-color: #f0f0f0; /* Set background color */
+              }
+              
+              .container {
+                  text-align: center; /* Center the text horizontally */
+              }
+      
+              .image-container {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+              }
+      
+              /* Style the message */
+              .message {
+                  text-align: center; 
+              }
+              
+              /* Style the username */
+              .username {
+                  color: #e54b07;
+                  font-weight: bold;
+              }
+              
+              /* Style the game name */
+              .gamename {
+                  color: #e54b07; 
+                  font-weight: bold;
+              }
+          </style>
+      </head>
+      <body>
+          <div class="container">
+              <div class="image-container">
+              <a href="https://ibb.co/4ts0xD0"><img src="https://i.ibb.co/F3sdtfd/pickupimg.png" alt="pickupimg" border="0" /></a>
+              </div>
+      
+              You just received a friend request from <span class="username">__USER__</span><br><br>
+              Open the app to view the request!
+          </div>
+      </body>
+      </html>
+      `;
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -165,13 +223,15 @@ function useMutationUser() {
         throw error1;
       }
       const formattedUsername = username ? `@${username}` : "a user";
-      const formattedHtml = `<strong>You just received a friend request from ${formattedUsername}!</strong><br><br>Open the app to interact!`;
+
+      const formattedHtml = htmlContent1.replace("__USER__", formattedUsername);
+
       const { data, error: error2 } = await supabase.functions.invoke(
         "resend2",
         {
           body: {
             to: email,
-            subject: "Someone sent you a friend request on Pickup!",
+            subject: "PickupApp: Someone sent you a friend request!",
             html: formattedHtml,
           },
         },

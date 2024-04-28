@@ -316,7 +316,7 @@ function useQueryGames() {
     try {
       if (!session?.user)
         throw new Error("Please sign in to view join requests!");
-      //updateMyGame(gameId, { joinRequests: null });
+
       let { data, error } = await supabase.rpc("get_join_requests", {
         game_id_param: gameId,
       });

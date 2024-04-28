@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--<strong>Your friend ${formattedUsername}just created a game titled "${title}" on ${formattedDate}.</strong><br><br>Open the app to join the <game!-->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Template</title>
+        <img src="image.png" alt="Pickup! App Logo">
+        <style>
+            /* Center the content horizontally and vertically */
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f0f0f0; /* Set background color */
+            }
+            
+            /* Style the message */
+            .message {
+                text-align: center; 
+            }
+            
+            /* Style the username */
+            .username {
+                color: #e54b07;
+                font-weight: bold;
+            }
+            
+            /* Style the game name */
+            .gamename {
+                color: #e54b07; 
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="message">
+            Your friend <span class="username">{formattedUsername}</span> just created a game titled <span class="gamename">{gametitle}</span><br><br>
+            Open the app to join the game!
+        </div>
+    </body>
+</html>
