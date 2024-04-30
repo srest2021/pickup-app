@@ -1,14 +1,10 @@
 import "react-native-url-polyfill/auto";
 import "./global.css";
-import Login from "./src/components/auth/Login";
-import Register from "./src/components/auth/Register";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TamaguiProvider, Text } from "tamagui";
 import appConfig from "./tamagui.config";
-import useMutationUser from "./src/hooks/use-mutation-user";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import EditProfileNavigator from "./src/components/EditProfileNavigator";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import {
@@ -17,11 +13,6 @@ import {
   GalleryVerticalEnd,
   PersonStanding,
 } from "@tamagui/lucide-icons";
-import MyGamesNavigator from "./src/components/MyGamesNavigator";
-import FeedNavigator from "./src/components/FeedNavigator";
-import { ToastProvider } from "@tamagui/toast";
-import useQueryUsers from "./src/hooks/use-query-users";
-import FriendNavigator from "./src/components/FriendNavigator";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -55,7 +46,6 @@ export default function App() {
 
   return (
     <TamaguiProvider config={appConfig}>
-      <ToastProvider>
         {session && session.user ? (
           <NavigationContainer>
             <Tab.Navigator
@@ -89,48 +79,6 @@ export default function App() {
                 }}
                 initialParams={{ key: session.user.id }}
               />
-              <Tab.Screen
-                name="My Games"
-                component={MyGamesNavigator}
-                options={{
-                  tabBarLabel: "My Games",
-                  tabBarIcon: ({ color, size, focused }) => (
-                    <AlignJustify
-                      color={focused ? focusedColor : notFocusedColor}
-                    />
-                  ),
-                  headerShown: false,
-                }}
-                initialParams={{ key: session.user.id }}
-              />
-              <Tab.Screen
-                name="My Friends"
-                component={FriendNavigator}
-                options={{
-                  tabBarLabel: "Friends",
-                  tabBarIcon: ({ color, size, focused }) => (
-                    <PersonStanding
-                      color={focused ? focusedColor : notFocusedColor}
-                    />
-                  ),
-                  headerShown: false,
-                }}
-                initialParams={{ key: session.user.id }}
-              />
-              <Tab.Screen
-                name="My Profile"
-                component={EditProfileNavigator}
-                options={{
-                  tabBarLabel: "Profile",
-                  tabBarIcon: ({ color, size, focused }) => (
-                    <CircleUser
-                      color={focused ? focusedColor : notFocusedColor}
-                    />
-                  ),
-                  headerShown: false,
-                }}
-                initialParams={{ key: session.user.id }}
-              />
             </Tab.Navigator>
           </NavigationContainer>
         ) : (
@@ -149,7 +97,6 @@ export default function App() {
             </Stack.Navigator>
           </NavigationContainer>
         )}
-      </ToastProvider>
     </TamaguiProvider>
   );
 }
